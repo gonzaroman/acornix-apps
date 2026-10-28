@@ -1,0 +1,14 @@
+{
+  "id": "pixel-city",
+  "name": "Pixel City",
+  "emoji": "🏙️",
+  "category": "games",
+  "description": "Build an isometric pixel city with cars, people, a day and night cycle and fireworks.",
+  "prompt": "An isometric pixel art city builder: tap empty tiles to build houses, shops, parks and skyscrapers. Little cars drive on the roads and tiny people walk around. Money and population counters, and a day and night cycle where the windows light up at night. Cute and colorful.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": true
+}

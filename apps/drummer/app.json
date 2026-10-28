@@ -1,0 +1,14 @@
+{
+  "id": "drummer",
+  "name": "Drummer",
+  "emoji": "🥁",
+  "category": "creative",
+  "description": "Eight pads, a 16-step sequencer and saved beats.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}

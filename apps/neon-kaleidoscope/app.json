@@ -1,0 +1,14 @@
+{
+  "id": "neon-kaleidoscope",
+  "name": "Neon Kaleidoscope",
+  "emoji": "🎨",
+  "category": "creative",
+  "description": "Draw with your finger and every stroke is mirrored eight ways in glowing neon.",
+  "prompt": "A neon kaleidoscope drawing app: draw with your finger and every stroke is mirrored in 8-way symmetry with glowing neon trails, sparkles and colors that slowly shift. Include an autoplay mode that draws by itself, and buttons to clear and change the symmetry.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": true
+}

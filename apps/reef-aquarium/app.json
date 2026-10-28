@@ -1,0 +1,14 @@
+{
+  "id": "reef-aquarium",
+  "name": "Reef Aquarium",
+  "emoji": "🐠",
+  "category": "creative",
+  "description": "A relaxing 3D reef: feed the fish and watch the jellyfish glow at night.",
+  "prompt": "A relaxing 3D aquarium: colorful fish swim in schools between swaying seaweed, coral and rocks, with rising bubbles and light rays from above. Tap the glass to drop food and the fish swim to eat it. Drag to rotate the camera.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": true
+}

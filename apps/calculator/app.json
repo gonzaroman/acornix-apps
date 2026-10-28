@@ -1,0 +1,14 @@
+{
+  "id": "calculator",
+  "name": "Calculator",
+  "emoji": "🧮",
+  "category": "tools",
+  "description": "A clean calculator with proper operator precedence and a saved history.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}

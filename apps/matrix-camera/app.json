@@ -1,0 +1,14 @@
+{
+  "id": "matrix-camera",
+  "name": "Matrix Camera",
+  "emoji": "💻",
+  "category": "creative",
+  "description": "Your camera live as Matrix rain, ASCII art or halftone dots, with photos you can save.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}

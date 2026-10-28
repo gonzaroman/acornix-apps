@@ -1,0 +1,14 @@
+{
+  "id": "bowling",
+  "name": "Bowling",
+  "emoji": "🎳",
+  "category": "games",
+  "description": "Swipe to throw, add hook spin and play a full game with real scoring.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}

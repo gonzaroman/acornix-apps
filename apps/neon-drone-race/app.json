@@ -1,0 +1,14 @@
+{
+  "id": "neon-drone-race",
+  "name": "Neon Drone Race",
+  "emoji": "🏎️",
+  "category": "games",
+  "description": "A 3D race through glowing neon rings over a city at night, with rival drones.",
+  "prompt": "A 3D drone racing game: fly a drone through glowing neon rings over a futuristic city at night, with a lap timer, a boost button and an autopilot demo mode.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": true
+}

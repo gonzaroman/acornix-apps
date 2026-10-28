@@ -1,0 +1,14 @@
+{
+  "id": "piano",
+  "name": "Piano",
+  "emoji": "🎹",
+  "category": "creative",
+  "description": "Four instruments, multitouch keys and recordings you can play back.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}

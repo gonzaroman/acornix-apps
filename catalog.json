@@ -1,0 +1,289 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "reef-aquarium",
+      "name": "Reef Aquarium",
+      "emoji": "🐠",
+      "category": "creative",
+      "description": "A relaxing 3D reef: feed the fish and watch the jellyfish glow at night.",
+      "prompt": "A relaxing 3D aquarium: colorful fish swim in schools between swaying seaweed, coral and rocks, with rising bubbles and light rays from above. Tap the glass to drop food and the fish swim to eat it. Drag to rotate the camera.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 39085,
+      "sha256": "0937f19cd4edf57ea23c70a0782ec698cccf3fcb8d13b4881463ec6b48ebe040"
+    },
+    {
+      "id": "pocket-coach",
+      "name": "Pocket Coach",
+      "emoji": "💪",
+      "category": "health",
+      "description": "A workout coach that talks you through a 3-minute routine and vibrates on every change.",
+      "prompt": "A personal workout coach that talks: a 3-minute routine of exercises with a big animated countdown ring. The phone says each exercise out loud, counts down the last 3 seconds by voice, vibrates when switching and cheers you at the end. Energetic, modern design.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 21849,
+      "sha256": "53033fec718a77825c8bcf3f347f4af7104b0863edfef4138870fc800f1a4fa7"
+    },
+    {
+      "id": "pixel-city",
+      "name": "Pixel City",
+      "emoji": "🏙️",
+      "category": "games",
+      "description": "Build an isometric pixel city with cars, people, a day and night cycle and fireworks.",
+      "prompt": "An isometric pixel art city builder: tap empty tiles to build houses, shops, parks and skyscrapers. Little cars drive on the roads and tiny people walk around. Money and population counters, and a day and night cycle where the windows light up at night. Cute and colorful.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 30223,
+      "sha256": "d23c943d3c8f1095f580c02546cf33142d2f61047b1682013f8213f70ebf639c"
+    },
+    {
+      "id": "notes",
+      "name": "Notes",
+      "emoji": "📝",
+      "category": "tools",
+      "description": "Notes with checklists, pinned notes, color labels and search.",
+      "prompt": "A professional notes app: write notes with a title and text, checklists, pin important notes, color labels and search, with a clean and elegant design.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 33035,
+      "sha256": "f44fa29ac8c6ecdab1a34276caf542b5e82b663be972acc7f456b75ff81820f3"
+    },
+    {
+      "id": "neon-kaleidoscope",
+      "name": "Neon Kaleidoscope",
+      "emoji": "🎨",
+      "category": "creative",
+      "description": "Draw with your finger and every stroke is mirrored eight ways in glowing neon.",
+      "prompt": "A neon kaleidoscope drawing app: draw with your finger and every stroke is mirrored in 8-way symmetry with glowing neon trails, sparkles and colors that slowly shift. Include an autoplay mode that draws by itself, and buttons to clear and change the symmetry.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 26946,
+      "sha256": "c1a050895a9537a20646aa8be94e5395e1899603174f0cffa3a122e6659cb5f8"
+    },
+    {
+      "id": "neon-drone-race",
+      "name": "Neon Drone Race",
+      "emoji": "🏎️",
+      "category": "games",
+      "description": "A 3D race through glowing neon rings over a city at night, with rival drones.",
+      "prompt": "A 3D drone racing game: fly a drone through glowing neon rings over a futuristic city at night, with a lap timer, a boost button and an autopilot demo mode.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 43995,
+      "sha256": "5cafc3b54bed5793458b147e7446ddd1dd7c5617bb3ef1eef4f21d671048e060"
+    },
+    {
+      "id": "super-m",
+      "name": "Super M",
+      "emoji": "🍄",
+      "category": "games",
+      "description": "A platformer with endless levels, coins and high scores.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 26063,
+      "sha256": "75c372530f175881a339109e8c31d2bf832683c7c8339e5e0ff04030814d7722"
+    },
+    {
+      "id": "piano",
+      "name": "Piano",
+      "emoji": "🎹",
+      "category": "creative",
+      "description": "Four instruments, multitouch keys and recordings you can play back.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 17868,
+      "sha256": "df5c8b94080bdeb74bfc0ed76fd89a76a07f5901479c8c03c522a381e6d244e9"
+    },
+    {
+      "id": "matrix-camera",
+      "name": "Matrix Camera",
+      "emoji": "💻",
+      "category": "creative",
+      "description": "Your camera live as Matrix rain, ASCII art or halftone dots, with photos you can save.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 15286,
+      "sha256": "dc5219f3ea9951f8283356debfcb7eade2fcda291793a96ed2f587d68c1b332d"
+    },
+    {
+      "id": "drummer",
+      "name": "Drummer",
+      "emoji": "🥁",
+      "category": "creative",
+      "description": "Eight pads, a 16-step sequencer and saved beats.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 17326,
+      "sha256": "802fd6029592e2071c469845ffe4807b78be6cb425ff29f9e3585e92e12c8d0b"
+    },
+    {
+      "id": "castle-defense",
+      "name": "Castle Defense",
+      "emoji": "🏰",
+      "category": "games",
+      "description": "Hold the castle against waves of enemies and bosses, with an upgrade shop.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 24672,
+      "sha256": "5d5c82a0e2c46c9e589a4c9abedbab43683cdd83f3271c743bb4237baabd0391"
+    },
+    {
+      "id": "calculator",
+      "name": "Calculator",
+      "emoji": "🧮",
+      "category": "tools",
+      "description": "A clean calculator with proper operator precedence and a saved history.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 14823,
+      "sha256": "8b40b17b8fe8fd903e33ddc43b3b9a8d496bf51d0aa1832e0cea6b5fe9c70152"
+    },
+    {
+      "id": "bowling",
+      "name": "Bowling",
+      "emoji": "🎳",
+      "category": "games",
+      "description": "Swipe to throw, add hook spin and play a full game with real scoring.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 21036,
+      "sha256": "5fb37beb36bd019b6b4a6774f3eec65901349a3817cfe13f2d68586b53512b81"
+    },
+    {
+      "id": "bmi",
+      "name": "BMI",
+      "emoji": "⚖️",
+      "category": "tools",
+      "description": "Body mass index with a gauge, the healthy range and a progress chart.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-28",
+      "updated": "2026-10-28",
+      "featured": false,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 16997,
+      "sha256": "2d51ad0205cba2a9454f2ffc95de8d34271c2d4f1d30d15581891d0480b2a3e8"
+    }
+  ]
+}

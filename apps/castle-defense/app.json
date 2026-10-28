@@ -1,0 +1,14 @@
+{
+  "id": "castle-defense",
+  "name": "Castle Defense",
+  "emoji": "🏰",
+  "category": "games",
+  "description": "Hold the castle against waves of enemies and bosses, with an upgrade shop.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}

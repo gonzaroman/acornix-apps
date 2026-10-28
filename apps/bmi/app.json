@@ -1,0 +1,14 @@
+{
+  "id": "bmi",
+  "name": "BMI",
+  "emoji": "⚖️",
+  "category": "tools",
+  "description": "Body mass index with a gauge, the healthy range and a progress chart.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-28",
+  "updated": "2026-10-28",
+  "featured": false
+}
