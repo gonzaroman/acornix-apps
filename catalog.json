@@ -142,29 +142,6 @@
       "trending": 0
     },
     {
-      "id": "super-m",
-      "name": "Super M",
-      "emoji": "🍄",
-      "category": "games",
-      "description": "A platformer with endless levels, coins and high scores.",
-      "prompt": "",
-      "author": "gonzaroman",
-      "language": "en",
-      "version": 1,
-      "added": "2026-10-28",
-      "updated": "2026-10-28",
-      "featured": false,
-      "official": true,
-      "tags": [],
-      "files": [
-        "index.html"
-      ],
-      "size": 26063,
-      "sha256": "75c372530f175881a339109e8c31d2bf832683c7c8339e5e0ff04030814d7722",
-      "downloads": 0,
-      "trending": 0
-    },
-    {
       "id": "piano",
       "name": "Piano",
       "emoji": "🎹",
@@ -184,31 +161,6 @@
       ],
       "size": 17868,
       "sha256": "df5c8b94080bdeb74bfc0ed76fd89a76a07f5901479c8c03c522a381e6d244e9",
-      "downloads": 0,
-      "trending": 0
-    },
-    {
-      "id": "matrix-camera",
-      "name": "Matrix Camera",
-      "emoji": "💻",
-      "category": "photo-video",
-      "description": "Your camera live as Matrix rain, ASCII art or halftone dots, with photos you can save.",
-      "prompt": "",
-      "author": "gonzaroman",
-      "language": "en",
-      "version": 1,
-      "added": "2026-10-28",
-      "updated": "2026-10-28",
-      "featured": false,
-      "official": true,
-      "tags": [
-        "camera"
-      ],
-      "files": [
-        "index.html"
-      ],
-      "size": 15286,
-      "sha256": "dc5219f3ea9951f8283356debfcb7eade2fcda291793a96ed2f587d68c1b332d",
       "downloads": 0,
       "trending": 0
     },
