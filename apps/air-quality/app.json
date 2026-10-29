@@ -1,7 +1,7 @@
 {
   "id": "air-quality",
   "name": "Air Quality",
-  "emoji": "⚖️",
+  "emoji": "🌫️",
   "category": "weather",
   "description": "The air you breathe now: a coloured AQI ring, PM2.5, PM10, ozone and NO2, a 2-day chart and the best hours to run or air the house.",
   "prompt": "An air quality app using the free Open-Meteo air quality API with no key, with my location or a searched city. Show the European AQI as a big coloured ring with a word like good or poor, the main pollutants PM2.5, PM10, ozone and nitrogen dioxide with small bars, an hourly AQI chart for the next 2 days, the best hours to go running or open the windows, and health advice for each level. Save favourite cities.",
