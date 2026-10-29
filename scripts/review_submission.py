@@ -137,7 +137,8 @@ def main():
         print("Not a submission")
         return
     set_labels(number, add=["submission"])
-    if too_many(author):
+    # The gallery's owner seeds it with many apps, so the daily limit is only for everyone else.
+    if author.lower() != repo().split("/")[0].lower() and too_many(author):
         reject(number, f"You've sent more than {MAX_SUBMISSIONS_PER_DAY} apps in the last day. Please try again tomorrow.")
         return
     try:
