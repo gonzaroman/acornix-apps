@@ -1,0 +1,15 @@
+{
+  "id": "photo-booth",
+  "name": "Photo Booth",
+  "emoji": "📷",
+  "category": "photo-video",
+  "description": "A party photo booth on your phone: a countdown, four shots in a row and a printed style strip or grid, in colour, black and white, retro or pop.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 17
+}

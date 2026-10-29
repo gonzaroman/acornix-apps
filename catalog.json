@@ -1739,6 +1739,31 @@
       "trending": 0
     },
     {
+      "id": "photo-booth",
+      "name": "Photo Booth",
+      "emoji": "📷",
+      "category": "photo-video",
+      "description": "A party photo booth on your phone: a countdown, four shots in a row and a printed style strip or grid, in colour, black and white, retro or pop.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 8448,
+      "sha256": "11f08900028dd9139012960f1a5c1775fff97856e092409da2a93f3341f31f90",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pace-calculator",
       "name": "Pace Calculator",
       "emoji": "🏃",

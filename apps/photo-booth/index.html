@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Photo Booth</title>
+<style>
+  :root { --bg:#2b1240; --card:#3d1b5a; --ink:#fff6fb; --muted:#cfb6e3; --a:#ff5fa2; --b:#ffd23f; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:radial-gradient(circle at 50% 0,#4a1d6e,var(--bg) 70%); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 14px); gap:12px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:22px; flex:1; }
+  .icon { width:42px; height:42px; border-radius:50%; background:var(--card); font-size:18px; }
+  .cam { flex:1; min-height:0; position:relative; border-radius:22px; overflow:hidden; background:#000; border:4px solid var(--b); box-shadow:0 0 0 4px var(--a), 0 14px 40px #0009; }
+  video { width:100%; height:100%; object-fit:cover; display:block; }
+  video.mirror { transform:scaleX(-1); }
+  .count { position:absolute; inset:0; display:grid; place-items:center; font-size:140px; font-weight:900; color:#fff; text-shadow:0 6px 30px #000a; pointer-events:none; }
+  .flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; transition:opacity .35s; }
+  .flash.on { opacity:1; transition:none; }
+  .msg { position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:24px; color:var(--muted); font-weight:700; line-height:1.5; }
+  .dots { position:absolute; top:12px; left:0; right:0; display:flex; justify-content:center; gap:8px; }
+  .dots i { width:12px; height:12px; border-radius:50%; background:#fff5; }
+  .dots i.on { background:var(--b); }
+  .row { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+  .row::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 13px; border-radius:20px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); }
+  .chip.on { background:var(--b); color:#3d1b5a; }
+  .shoot { align-self:center; width:84px; height:84px; border-radius:50%; background:var(--a); border:6px solid #fff; font-size:30px; box-shadow:0 8px 26px #ff5fa288; }
+  .shoot:disabled { opacity:.5; }
+  .result { position:fixed; inset:0; background:#000d; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:20px; }
+  .result img { max-width:100%; max-height:72vh; border-radius:6px; box-shadow:0 10px 40px #000; }
+  .result .acts { display:flex; gap:10px; }
+  .result button { padding:12px 20px; border-radius:14px; background:var(--card); font-weight:900; }
+  .result button.main { background:var(--a); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>📸 <span id="ttl"></span></h1><button class="icon" id="flip">🔄</button></div>
+  <div class="cam"><video id="v" class="mirror" playsinline muted autoplay></video><div class="msg" id="msg"></div><div class="dots" id="dots"></div><div class="count" id="count"></div><div class="flash" id="flash"></div></div>
+  <div class="row" id="looks"></div>
+  <div class="row" id="frames"></div>
+  <button class="shoot" id="shoot">📷</button>
+</div>
+<div class="result" id="result" hidden><img id="strip" alt=""><div class="acts"><button id="again"></button><button class="main" id="save"></button></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Fotomatón', start:'Permite el acceso a la cámara para empezar', denied:'No tengo acceso a la cámara. Dale permiso y vuelve a abrir la app.', again:'Repetir', save:'Guardar tira', saved:'Tira guardada en esta app', looks:['Color', 'B/N', 'Retro', 'Pop'], frames:['Tira', 'Cuadrícula'] }
+ : { title:'Photo Booth', start:'Allow camera access to start', denied:'No camera access. Grant permission and reopen the app.', again:'Again', save:'Save strip', saved:'Strip saved in this app', looks:['Color', 'B&W', 'Retro', 'Pop'], frames:['Strip', 'Grid'] };
+const LOOKS = ['none', 'grayscale(1) contrast(1.2)', 'sepia(.6) contrast(.95) saturate(.8)', 'saturate(1.8) contrast(1.15)'];
+const $ = id => document.getElementById(id), v = $('v');
+$('ttl').textContent = T.title; $('again').textContent = T.again; $('save').textContent = T.save; $('msg').textContent = T.start;
+let look = 0, frame = 0, facing = 'user', stream = null, busy = false, shots = [], stripUrl = '';
+$('dots').innerHTML = '<i></i>'.repeat(4);
+function chips() {
+  $('looks').innerHTML = T.looks.map((n, i) => `<button class="chip ${i === look ? 'on' : ''}" data-i="${i}">${['🌈', '🖤', '📼', '💥'][i]} ${n}</button>`).join('');
+  $('looks').querySelectorAll('.chip').forEach(b => b.onclick = () => { look = +b.dataset.i; v.style.filter = LOOKS[look]; chips(); });
+  $('frames').innerHTML = T.frames.map((n, i) => `<button class="chip ${i === frame ? 'on' : ''}" data-i="${i}">${['🎞️', '🔲'][i]} ${n}</button>`).join('');
+  $('frames').querySelectorAll('.chip').forEach(b => b.onclick = () => { frame = +b.dataset.i; chips(); });
+}
+async function start() {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
+    v.srcObject = stream; v.classList.toggle('mirror', facing === 'user'); $('msg').hidden = true;
+  } catch (e) { $('msg').textContent = T.denied; $('msg').hidden = false; }
+}
+$('flip').onclick = () => { facing = facing === 'user' ? 'environment' : 'user'; start(); };
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function grab() {
+  const s = Math.min(v.videoWidth, v.videoHeight * 4 / 3), sw = s, sh = s * 3 / 4, c = document.createElement('canvas'); c.width = 800; c.height = 600;
+  const g = c.getContext('2d'); g.filter = LOOKS[look];
+  if (facing === 'user') { g.translate(800, 0); g.scale(-1, 1); }
+  g.drawImage(v, (v.videoWidth - sw) / 2, (v.videoHeight - sh) / 2, sw, sh, 0, 0, 800, 600); return c;
+}
+$('shoot').onclick = async () => {
+  if (busy || !stream || !v.videoWidth) return; busy = true; $('shoot').disabled = true; shots = [];
+  const dots = $('dots').children; [...dots].forEach(d => d.classList.remove('on'));
+  for (let n = 0; n < 4; n++) {
+    for (let k = 3; k > 0; k--) { $('count').textContent = k; try { window.Acornix && Acornix.vibrate(10); } catch (e) {} await wait(700); }
+    $('count').textContent = ''; shots.push(grab()); dots[n].classList.add('on');
+    $('flash').classList.add('on'); await wait(60); $('flash').classList.remove('on'); await wait(500);
+  }
+  compose(); busy = false; $('shoot').disabled = false;
+};
+function compose() {
+  const pad = 40, grid = frame === 1, W = grid ? 800 * 2 + pad * 3 : 800 + pad * 2, H = grid ? 600 * 2 + pad * 3 + 110 : 600 * 4 + pad * 5 + 110;
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#ff5fa2'); bg.addColorStop(1, '#7b2ff7'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  shots.forEach((s, i) => { const x = grid ? pad + (i % 2) * (800 + pad) : pad, y = grid ? pad + Math.floor(i / 2) * (600 + pad) : pad + i * (600 + pad); g.fillStyle = '#fff'; g.fillRect(x - 8, y - 8, 816, 616); g.drawImage(s, x, y); });
+  g.fillStyle = '#fff'; g.font = '900 52px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('✨ ' + new Date().toLocaleDateString(ES ? 'es' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }) + ' ✨', W / 2, H - 70);
+  stripUrl = c.toDataURL('image/jpeg', .9); $('strip').src = stripUrl; $('result').hidden = false;
+}
+$('again').onclick = () => { $('result').hidden = true; };
+$('save').onclick = async () => {
+  const name = `photo-booth-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.save(name, stripUrl); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = stripUrl; a.download = name; a.click(); } } catch (e) {}
+  $('result').hidden = true;
+};
+chips(); start();
+</script>
+</body>
+</html>
