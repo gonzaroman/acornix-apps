@@ -34,7 +34,13 @@ RISKY = {
     "opens a WebSocket": re.compile(r"new\s+WebSocket\s*\("),
     "reads cookies": re.compile(r"document\.cookie"),
 }
-VERDICTS = {"safe": ("✅", "looks safe"), "caution": ("⚠️", "check it before publishing"), "danger": ("⛔", "looks dangerous")}
+VERDICTS = {
+    "safe": ("✅", "looks safe"),
+    "caution": ("⚠️", "check it before publishing"),
+    "danger": ("⛔", "looks dangerous"),
+    # No AI key in the repository: only the automatic checks run, and a person reads the code.
+    "manual": ("👀", "waiting for a person to review it"),
+}
 
 SYSTEM = """You review web apps that people send to the public gallery of Acornix, an Android app
 that runs each app in a sandboxed WebView with its own origin and a JavaScript bridge called
@@ -144,11 +150,14 @@ def main():
         return
 
     hosts, unknown, risky, tags = static_checks(app)
-    try:
-        review = ai_review(sub, app)
-    except anthropic.AnthropicError as e:
-        print(f"AI review failed: {e}", file=sys.stderr)
-        review = {"verdict": "caution", "summary": "The AI review couldn't run, so a person has to check this app.", "findings": []}
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        review = {"verdict": "manual", "summary": "Thanks for sharing it! A person will read the code before it's published.", "findings": []}
+    else:
+        try:
+            review = ai_review(sub, app)
+        except anthropic.AnthropicError as e:
+            print(f"AI review failed: {e}", file=sys.stderr)
+            review = {"verdict": "caution", "summary": "The AI review couldn't run, so a person has to check this app.", "findings": []}
     verdict = review.get("verdict") if review.get("verdict") in VERDICTS else "caution"
     emoji, label = VERDICTS[verdict]
 
@@ -165,7 +174,7 @@ def main():
         "",
         "**Automatic checks**",
         f"- {'Update of the published app (version ' + str(current['version']) + ' → ' + str(current['version'] + 1) + ')' if current else 'New app'}, category {sub['category']}",
-        f"- Files: {', '.join(sorted(app))} ({size // 1024 or 1} KB)",
+        f"- Files: {', '.join(sorted(app))} ({size // 1024 or 1} KB), in [the gist](https://gist.github.com/{owner}/{sub['gist']}/{revision})",
         f"- Uses: {', '.join(tags) if tags else 'nothing special'}",
         f"- Sites in the code: {', '.join(hosts) if hosts else 'none'}",
     ]
@@ -176,8 +185,8 @@ def main():
     lines += [
         "",
         "---",
-        f"@{os.environ.get('MAINTAINER', 'gonzaroman')}: add the **approved** label to publish it, or comment here to ask for changes. "
-        "The AI review helps but isn't a guarantee.",
+        f"@{os.environ.get('MAINTAINER', 'gonzaroman')}: add the **approved** label to publish it, or comment here to ask for changes."
+        + ("" if verdict == "manual" else " The AI review helps but isn't a guarantee."),
         "",
         "<!-- acornix-review " + json.dumps({
             "gist": sub["gist"], "revision": revision, "sha256": sha256(app["index.html"]),
