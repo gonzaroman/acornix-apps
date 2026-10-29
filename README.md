@@ -29,7 +29,16 @@ catalog.json              generated from all of the above; Acornix reads this fi
 
 ## ✍️ Publishing your app
 
-Publishing from Acornix is coming soon: you will sign in with your GitHub account and tap **Publish to the community**. Every app is reviewed before it appears here: first automatically (including an AI review of its code), then by a person.
+In Acornix, long-press your app in **My apps** and tap **Publish to the community**. You'll need a free GitHub account: Acornix shows a short code, you enter it at github.com/login/device, and that's it. Acornix uses the "Acornix Gallery" GitHub App, which can only create gists and open issues here, nothing else.
+
+What happens next:
+
+1. Acornix puts your app's code and screenshot in a secret gist of yours (never its data) and opens an issue here asking to publish it.
+2. A GitHub Action checks it and has an AI read the code, then comments what it found.
+3. A maintainer reads that review and, if everything is fine, adds the `approved` label.
+4. The app is added to `apps/` and appears in Acornix › Community apps. To publish a new version later, publish the same app again.
+
+Every app is reviewed before it appears here, and you can send up to five apps a day.
 
 ### Rules
 

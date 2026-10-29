@@ -1,0 +1,45 @@
+name: Publish submission
+
+# The maintainer publishes a reviewed app by adding the "approved" label to its issue.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+# One publish at a time, so catalog.json commits never race.
+concurrency:
+  group: publish
+
+jobs:
+  publish:
+    if: github.event.label.name == 'approved' && github.event.sender.login == github.repository_owner
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Add the app
+        id: add
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          message="$(python3 scripts/publish_submission.py | tail -n 1)"
+          echo "message=$message" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        env:
+          MESSAGE: ${{ steps.add.outputs.message }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps catalog.json
+          git commit -m "$MESSAGE"
+          git push
+      - name: Tell the author
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/publish_submission.py --announce

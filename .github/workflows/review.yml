@@ -1,0 +1,40 @@
+name: Review submission
+
+# An app sent from Acornix arrives as an issue. This checks it, has the AI read its code and
+# comments the result. The issue text and the app are only read as data, never run.
+on:
+  issues:
+    types: [opened, reopened]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to review again
+        required: true
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: review-${{ github.event.issue.number || inputs.issue }}
+
+jobs:
+  review:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.issue.body, 'acornix-submission')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet "anthropic>=1,<2"
+      - name: Review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
+          AI_EFFORT: ${{ vars.AI_EFFORT }}
+          MAINTAINER: ${{ github.repository_owner }}
+          ISSUE_NUMBER: ${{ inputs.issue }}
+        run: python3 scripts/review_submission.py
