@@ -245,6 +245,29 @@
       "trending": 0
     },
     {
+      "id": "time-tracker",
+      "name": "Time Tracker",
+      "emoji": "⌛",
+      "category": "business",
+      "description": "Track the hours you spend on each project and client, with hourly rates and a report to share.",
+      "prompt": "A time tracker with a big start and stop button, projects with hourly rates, what I'm working on, totals for today, this week, this month or all time with the money earned, a log and a report to share.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9610,
+      "sha256": "59f6321497ce22cee2217c6d0c5d30f58dd9919f7bec5af6b389ef28899f8369",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "tasks",
       "name": "Tasks",
       "emoji": "✅",
@@ -360,6 +383,29 @@
       ],
       "size": 10067,
       "sha256": "3c0ae791fdce6cb7192308ba15d1e8efdcc3516e90786fea946dc5361ea03ce5",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "stock-counter",
+      "name": "Stock Counter",
+      "emoji": "📦",
+      "category": "business",
+      "description": "Count your stock with big plus and minus buttons and get warned when something is running low.",
+      "prompt": "An inventory counter for a small shop with products, emoji, big plus and minus buttons that repeat when held, a minimum for each product, low stock warnings at the top and a restock list to share.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7338,
+      "sha256": "e110917a7a309a4a5579f9cf1c99dad906d5d4f55c65767ce1d1e57261f42f4c",
       "downloads": 0,
       "trending": 0
     },
@@ -483,6 +529,32 @@
       "trending": 0
     },
     {
+      "id": "listing-writer-ai",
+      "name": "Sell It",
+      "emoji": "🏷️",
+      "category": "business",
+      "description": "Snap what you want to sell and your AI writes the listing, picks keywords and suggests a fair price.",
+      "prompt": "A second-hand selling helper: I take up to four photos of something I want to sell, add details, choose a style, and my AI writes the title and description, suggests a price range, the condition, the category and keywords, ready to copy.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 8959,
+      "sha256": "a0a161484aa906ec4edce9511100c63bb957801562c363418ca73ef206fe0e94",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "savings-goals",
       "name": "Savings Goals",
       "emoji": "🐷",
@@ -502,6 +574,29 @@
       ],
       "size": 10643,
       "sha256": "f03bbfe2b73db80aa59b64676e346439ff21fd414523623822dd126cc252235a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "sales-pipeline",
+      "name": "Sales Pipeline",
+      "emoji": "🤝",
+      "category": "business",
+      "description": "Follow your deals from first contact to won, with a funnel, a forecast and next steps.",
+      "prompt": "A simple sales CRM with deals, client, value, next step date, contact and notes, stages from lead to won or lost, a funnel chart, open value, a weighted forecast and overdue follow-ups in red.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10638,
+      "sha256": "635c7390e3b1cf4db9df5196b4aa71e2e9c75568b4a7afeaae7c179266114950",
       "downloads": 0,
       "trending": 0
     },
@@ -599,6 +694,32 @@
       ],
       "size": 7341,
       "sha256": "6f0f6adc85862dded5b526cc0af39d75e42b2072f5c65bf4189f07c7805cfe87",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "pitch-writer-ai",
+      "name": "Pitch Writer",
+      "emoji": "🎤",
+      "category": "business",
+      "description": "Your AI turns your idea into a memorable elevator pitch, with a teleprompter to rehearse it.",
+      "prompt": "An elevator pitch writer: I describe my idea, the audience, the length and the style, and my AI writes a pitch with a tagline and three key points, which I can listen to, copy, or rehearse with a scrolling teleprompter and timer.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10494,
+      "sha256": "4a27b7cc7d6007284ecc8099cc1d29d7c0a6cdbb4fe935571662f78d7af2bb6f",
       "downloads": 0,
       "trending": 0
     },
@@ -720,6 +841,29 @@
       "trending": 0
     },
     {
+      "id": "margin-markup",
+      "name": "Margin & Markup",
+      "emoji": "🏷️",
+      "category": "business",
+      "description": "Work out the right selling price, your real margin or the most you can pay, including tax.",
+      "prompt": "A pricing calculator with three modes: the selling price for a target margin, the margin from cost and price, and the maximum cost for a price and margin, with markup, profit, price with tax and a breakdown bar.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7679,
+      "sha256": "8d434944af39d8ef1881bafc9e696bca5c61fda339de5ed69b17dc2741d1a79d",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "magnifier",
       "name": "Magnifier",
       "emoji": "🔍",
@@ -814,6 +958,29 @@
       "trending": 0
     },
     {
+      "id": "invoice-maker",
+      "name": "Invoice Maker",
+      "emoji": "🧾",
+      "category": "business",
+      "description": "Create clean, professional invoices with items, tax and discount, ready to send or print.",
+      "prompt": "An invoice maker where I fill in my details, the client, invoice number and dates, items with quantity and price, tax and discount, and see a clean professional invoice I can print as PDF or share.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11715,
+      "sha256": "835394dc76dcaf5f2fccbf307dcf5e6ad2c024dabaf4739bdb1321f87cad4d00",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "hoop-shot-3d",
       "name": "Hoop Shot 3D",
       "emoji": "🏀",
@@ -881,6 +1048,29 @@
       ],
       "size": 9707,
       "sha256": "9a1314baf1945af0240fc9e06d5b60ebee0d35181b7b7df9649973735f40bb51",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "freelance-rate",
+      "name": "Freelance Rate",
+      "emoji": "🧮",
+      "category": "business",
+      "description": "Calculate the hourly rate you need as a freelancer after taxes, costs, holidays and unbillable time.",
+      "prompt": "A freelance rate calculator: the net income I want, taxes, monthly costs, a buffer, working hours, the share of billable hours, holidays and sick days, giving the minimum hourly and daily rate and where the money goes.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 6919,
+      "sha256": "d7134e6dbd4c9d1c89d514dea402698be5035e91c479398b87e7e8e6d10e5a01",
       "downloads": 0,
       "trending": 0
     },
@@ -1167,6 +1357,29 @@
       "trending": 0
     },
     {
+      "id": "business-card",
+      "name": "Business Card",
+      "emoji": "🪪",
+      "category": "business",
+      "description": "Design a business card in four styles and colours, save it as an image or share your contact.",
+      "prompt": "A business card maker with my name, job title, company, phone, email and website, four templates like modern, classic, bold and minimal, colours, a flip animation, saving it as an image and sharing the contact.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8465,
+      "sha256": "782a202ffeb6ed4a41f72048e792ebe7f631e8f05de09712de0754c9e64b8bd7",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "bubble-level",
       "name": "Bubble Level",
       "emoji": "📐",
@@ -1209,6 +1422,29 @@
       ],
       "size": 12704,
       "sha256": "decec9c9fe5df459fecff424309e3b3b439e51113852ebb454bee45db059065a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "break-even",
+      "name": "Break-even",
+      "emoji": "📊",
+      "category": "business",
+      "description": "Find out how many units you must sell each month to cover your costs, with a chart and a profit simulator.",
+      "prompt": "A break-even calculator for small businesses with fixed costs, selling price and cost per unit, the units needed to break even, a chart of revenue and costs, and a slider to see profit or loss for any sales volume.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7628,
+      "sha256": "e3eaacf439dc890530267e3b828bdef3a0cd912909305a6f39fd593d36041d99",
       "downloads": 0,
       "trending": 0
     },

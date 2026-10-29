@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Freelance Rate</title>
+<style>
+  :root { --bg:#f2f7f5; --card:#fff; --ink:#10291f; --muted:#64837a; --line:#dcebe5; --a:#059669; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  input, select { font:inherit; color:inherit; border:0; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); margin:0 0 12px; line-height:1.4; }
+  .hero { background:linear-gradient(135deg,#065f46,#059669); color:#fff; border-radius:24px; padding:18px; text-align:center; }
+  .hero small { opacity:.85; font-weight:700; }
+  .hero .big { font-size:48px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .hero .row { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:8px; font-size:13px; }
+  .hero .row b { display:block; font-size:16px; font-variant-numeric:tabular-nums; }
+  h3 { font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin:16px 4px 8px; }
+  .f { display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:10px 12px; margin-bottom:6px; }
+  .f label { flex:1; font-weight:600; font-size:14px; }
+  .f label small { display:block; color:var(--muted); font-weight:500; font-size:12px; }
+  .f input { width:100px; text-align:right; font-weight:800; font-size:17px; outline:none; background:var(--bg); border-radius:8px; padding:6px 8px; }
+  .split { display:flex; height:16px; border-radius:8px; overflow:hidden; margin-top:12px; }
+  .legend { display:flex; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--muted); font-weight:700; margin-top:6px; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px; }
+  .cur { display:flex; justify-content:flex-end; gap:6px; align-items:center; color:var(--muted); font-size:13px; margin-top:12px; }
+  .cur select { background:var(--card); padding:5px; border-radius:8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🧮 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="hero"><small id="lRate"></small><div class="big" id="rate"></div><div class="row"><div><b id="day"></b><span id="lDay"></span></div><div><b id="hours"></b><span id="lHours"></span></div><div><b id="gross"></b><span id="lGross"></span></div></div>
+    <div class="split" id="split"></div><div class="legend" id="legend" style="color:#d1fae5"></div></div>
+  <h3 id="lMoney"></h3>
+  <div id="moneyF"></div>
+  <h3 id="lTime"></h3>
+  <div id="timeF"></div>
+  <div class="cur"><span id="lCur"></span><select id="cur"></select></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Tarifa freelance', sub:'¿Cuánto cobrar por hora para ganar lo que necesitas, contando impuestos, gastos y vacaciones?', rate:'Cobra al menos', day:'al día (8 h)', hours:'horas facturables/año', gross:'facturación/año', money:'Dinero', time:'Tiempo',
+  f:{ net:['Sueldo neto que quieres al año',''], tax:['Impuestos y seguridad social %','Lo que se lleva Hacienda de tu beneficio'], costs:['Gastos al mes','Cuota, ordenador, software, oficina…'], buffer:['Colchón %','Para meses flojos e imprevistos'] },
+  t:{ week:['Horas de trabajo por semana',''], billable:['% de horas facturables','El resto: emails, facturas, buscar clientes…'], holidays:['Semanas de vacaciones',''], sick:['Días de enfermedad/año',''] },
+  lg:['Tu sueldo','Impuestos','Gastos','Colchón'], cur:'Moneda' }
+ : { title:'Freelance Rate', sub:'What hourly rate do you need to earn what you want, after taxes, costs and holidays?', rate:'Charge at least', day:'per day (8 h)', hours:'billable hours/year', gross:'revenue/year', money:'Money', time:'Time',
+  f:{ net:['Net income you want per year',''], tax:['Taxes and social security %','What the taxman takes from your profit'], costs:['Business costs per month','Fees, laptop, software, office…'], buffer:['Buffer %','For slow months and surprises'] },
+  t:{ week:['Working hours per week',''], billable:['% of hours you can bill','The rest: emails, invoices, finding clients…'], holidays:['Weeks of holiday',''], sick:['Sick days per year',''] },
+  lg:['Your pay','Taxes','Costs','Buffer'], cur:'Currency' };
+const $ = id => document.getElementById(id);
+[['ttl', 'title'], ['sub', 'sub'], ['lRate', 'rate'], ['lDay', 'day'], ['lHours', 'hours'], ['lGross', 'gross'], ['lMoney', 'money'], ['lTime', 'time'], ['lCur', 'cur']].forEach(([i, k]) => $(i).textContent = T[k]);
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL'].map(c => `<option>${c}</option>`).join('');
+const st = (() => { try { return JSON.parse(localStorage.getItem('fr')); } catch (e) { return null; } })() || { net: 30000, tax: 30, costs: 350, buffer: 10, week: 40, billable: 65, holidays: 5, sick: 5, cur: ES ? 'EUR' : 'USD' };
+function fields(box, defs) { $(box).innerHTML = Object.entries(defs).map(([k, [l, s]]) => `<div class="f"><label>${l}${s ? `<small>${s}</small>` : ''}</label><input inputmode="decimal" data-k="${k}"></div>`).join(''); $(box).querySelectorAll('input').forEach(i => { i.value = st[i.dataset.k]; i.oninput = () => { st[i.dataset.k] = parseFloat(i.value.replace(',', '.')) || 0; calc(); }; }); }
+fields('moneyF', T.f); fields('timeF', T.t);
+const money = (v, d = 0) => new Intl.NumberFormat(undefined, { style: 'currency', currency: st.cur, maximumFractionDigits: d }).format(v);
+function calc() {
+  const costs = st.costs * 12, beforeTax = st.net / Math.max(.01, 1 - st.tax / 100), taxes = beforeTax - st.net;
+  const gross = (beforeTax + costs) * (1 + st.buffer / 100), buffer = gross - beforeTax - costs;
+  const weeks = 52 - st.holidays - st.sick / 5, hours = Math.max(1, weeks * st.week * st.billable / 100), rate = gross / hours;
+  $('rate').textContent = money(rate) + '/h'; $('day').textContent = money(rate * 8); $('hours').textContent = Math.round(hours).toLocaleString(); $('gross').textContent = money(gross);
+  const parts = [[st.net, '#a7f3d0'], [taxes, '#fde68a'], [costs, '#fca5a5'], [buffer, '#c4b5fd']];
+  $('split').innerHTML = parts.map(([v, c]) => `<div style="flex:${Math.max(0, v)};background:${c}"></div>`).join('');
+  $('legend').innerHTML = parts.map(([v, c], i) => `<span><i style="background:${c}"></i>${T.lg[i]} ${money(v)}</span>`).join('');
+  try { localStorage.setItem('fr', JSON.stringify(st)); } catch (e) {}
+}
+$('cur').value = st.cur; $('cur').onchange = () => { st.cur = $('cur').value; calc(); };
+calc();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "time-tracker",
+  "name": "Time Tracker",
+  "emoji": "⌛",
+  "category": "business",
+  "description": "Track the hours you spend on each project and client, with hourly rates and a report to share.",
+  "prompt": "A time tracker with a big start and stop button, projects with hourly rates, what I'm working on, totals for today, this week, this month or all time with the money earned, a log and a report to share.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

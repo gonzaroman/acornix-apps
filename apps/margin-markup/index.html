@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Margin & Markup</title>
+<style>
+  :root { --bg:#fff7ed; --card:#fff; --ink:#2b1a0d; --muted:#9a7b62; --line:#f5e2cf; --a:#ea580c; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); margin:0 0 12px; line-height:1.4; font-size:14px; }
+  .modes { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px; }
+  .modes button { padding:10px 4px; border-radius:14px; background:var(--card); font-weight:800; font-size:13px; }
+  .modes button.on { background:var(--a); color:#fff; }
+  .f { background:var(--card); border-radius:18px; padding:14px; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+  .f label { flex:1; font-weight:700; color:var(--muted); }
+  .f input { width:150px; text-align:right; font-size:26px; font-weight:900; outline:none; background:transparent; }
+  .f.out { background:linear-gradient(135deg,#ea580c,#f59e0b); color:#fff; } .f.out label { color:#fff; opacity:.9; }
+  .f.out b { font-size:28px; font-variant-numeric:tabular-nums; }
+  .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .stats div { background:var(--card); border-radius:16px; padding:12px; }
+  .stats small { display:block; color:var(--muted); font-size:12px; font-weight:700; }
+  .stats b { font-size:22px; font-variant-numeric:tabular-nums; }
+  .bar { display:flex; height:18px; border-radius:9px; overflow:hidden; margin:14px 0 6px; }
+  .legend { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); font-weight:700; }
+  .tip { margin-top:12px; background:var(--card); border-radius:16px; padding:12px 14px; font-size:14px; line-height:1.5; color:#5c4330; }
+  .tax { display:flex; justify-content:flex-end; gap:6px; align-items:center; font-size:13px; color:var(--muted); margin-top:10px; flex-wrap:wrap; }
+  .tax input { width:60px; padding:5px; border-radius:8px; background:var(--card); text-align:center; }
+  .tax select { padding:5px; border-radius:8px; background:var(--card); }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🏷️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="modes" id="modes"></div>
+  <div class="f"><label id="lA"></label><input id="a" inputmode="decimal"></div>
+  <div class="f"><label id="lB"></label><input id="b" inputmode="decimal"></div>
+  <div class="f out"><label id="lOut"></label><b id="out"></b></div>
+  <div class="stats"><div><small id="lM"></small><b id="m"></b></div><div><small id="lK"></small><b id="k"></b></div><div><small id="lP"></small><b id="p"></b></div><div><small id="lV"></small><b id="v"></b></div></div>
+  <div class="bar"><div id="bc" style="background:#fed7aa"></div><div id="bp" style="background:#ea580c"></div><div id="bt" style="background:#9a3412"></div></div>
+  <div class="legend"><span id="lgC"></span><span id="lgP"></span><span id="lgT"></span></div>
+  <div class="tip" id="tip"></div>
+  <div class="tax"><span id="lTax"></span><input id="tax" inputmode="decimal"><select id="cur"></select></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Margen y recargo', sub:'Calcula a qué precio vender, qué margen ganas o cuánto puedes pagar por un producto.', modes:['Precio','Margen','Coste máx.'], cost:'Coste', price:'Precio de venta (sin IVA)', margin:'Margen deseado %', markup:'Recargo %', profit:'Beneficio', withTax:'Precio con IVA', outPrice:'Vende a', outMargin:'Tu margen', outCost:'Paga como mucho', tax:'IVA %', c:'Coste', p:'Beneficio', t:'IVA', tip:'💡 Margen y recargo no son lo mismo: un recargo del 50 % solo da un 33 % de margen.' }
+ : { title:'Margin & Markup', sub:'Work out what to sell at, the margin you make or how much you can pay for a product.', modes:['Price','Margin','Max cost'], cost:'Cost', price:'Selling price (before tax)', margin:'Target margin %', markup:'Markup %', profit:'Profit', withTax:'Price with tax', outPrice:'Sell at', outMargin:'Your margin', outCost:'Pay at most', tax:'Tax %', c:'Cost', p:'Profit', t:'Tax', tip:'💡 Margin and markup aren\'t the same: a 50% markup only gives a 33% margin.' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('tip').textContent = T.tip; $('lTax').textContent = T.tax; $('lM').textContent = T.margin.replace(/ .*/, ' %'); $('lK').textContent = T.markup; $('lP').textContent = T.profit; $('lV').textContent = T.withTax;
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL'].map(c => `<option>${c}</option>`).join('');
+const st = (() => { try { return JSON.parse(localStorage.getItem('mm')); } catch (e) { return null; } })() || { mode: 0, cost: 12, price: 30, margin: 40, tax: ES ? 21 : 20, cur: ES ? 'EUR' : 'USD' };
+const money = v => isFinite(v) ? new Intl.NumberFormat(undefined, { style: 'currency', currency: st.cur }).format(v) : '—';
+const pct = v => isFinite(v) ? (Math.round(v * 10) / 10).toLocaleString() + ' %' : '—';
+const n = s => parseFloat(String(s).replace(',', '.')) || 0;
+T.modes.forEach((m, i) => { const b = document.createElement('button'); b.textContent = m; b.onclick = () => { st.mode = i; setup(); }; $('modes').appendChild(b); });
+// Mode 0: cost + margin -> price. Mode 1: cost + price -> margin. Mode 2: price + margin -> cost.
+const FIELDS = [[['cost', 'cost'], ['margin', 'margin'], 'outPrice'], [['cost', 'cost'], ['price', 'price'], 'outMargin'], [['price', 'price'], ['margin', 'margin'], 'outCost']];
+function setup() {
+  [...$('modes').children].forEach((b, i) => b.classList.toggle('on', i === st.mode));
+  const [[ka, la], [kb, lb], lo] = FIELDS[st.mode];
+  $('lA').textContent = T[la]; $('lB').textContent = T[lb]; $('lOut').textContent = T[lo];
+  $('a').value = st[ka]; $('b').value = st[kb];
+  $('a').oninput = () => { st[ka] = n($('a').value); calc(); }; $('b').oninput = () => { st[kb] = n($('b').value); calc(); };
+  $('tax').value = st.tax; $('cur').value = st.cur; calc();
+}
+function calc() {
+  let cost = st.cost, price = st.price;
+  if (st.mode === 0) price = st.margin < 100 ? cost / (1 - st.margin / 100) : NaN;
+  if (st.mode === 2) cost = price * (1 - st.margin / 100);
+  const profit = price - cost, margin = profit / price * 100, markup = profit / cost * 100, taxed = price * (1 + st.tax / 100);
+  $('out').textContent = st.mode === 1 ? pct(margin) : money(st.mode === 0 ? price : cost);
+  $('m').textContent = pct(margin); $('k').textContent = pct(markup); $('p').textContent = money(profit); $('v').textContent = money(taxed);
+  const tot = taxed || 1; $('bc').style.flex = Math.max(0, cost) / tot; $('bp').style.flex = Math.max(0, profit) / tot; $('bt').style.flex = (taxed - price) / tot;
+  $('lgC').textContent = `${T.c} ${money(cost)}`; $('lgP').textContent = `${T.p} ${money(profit)}`; $('lgT').textContent = `${T.t} ${money(taxed - price)}`;
+  try { localStorage.setItem('mm', JSON.stringify(st)); } catch (e) {}
+}
+$('tax').oninput = () => { st.tax = n($('tax').value); calc(); }; $('cur').onchange = () => { st.cur = $('cur').value; calc(); };
+setup();
+</script>
+</body>
+</html>

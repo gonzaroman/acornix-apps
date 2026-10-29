@@ -1,0 +1,14 @@
+{
+  "id": "listing-writer-ai",
+  "name": "Sell It",
+  "emoji": "🏷️",
+  "category": "business",
+  "description": "Snap what you want to sell and your AI writes the listing, picks keywords and suggests a fair price.",
+  "prompt": "A second-hand selling helper: I take up to four photos of something I want to sell, add details, choose a style, and my AI writes the title and description, suggests a price range, the condition, the category and keywords, ready to copy.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

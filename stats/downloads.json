@@ -20,6 +20,11 @@
       "base": 0,
       "count": 0
     },
+    "break-even": {
+      "asset": 689236127,
+      "base": 0,
+      "count": 0
+    },
     "brick-breaker": {
       "asset": 688998917,
       "base": 0,
@@ -27,6 +32,11 @@
     },
     "bubble-level": {
       "asset": 689141729,
+      "base": 0,
+      "count": 0
+    },
+    "business-card": {
+      "asset": 689236415,
       "base": 0,
       "count": 0
     },
@@ -120,6 +130,11 @@
       "base": 0,
       "count": 0
     },
+    "freelance-rate": {
+      "asset": 689236362,
+      "base": 0,
+      "count": 0
+    },
     "goals": {
       "asset": 689166882,
       "base": 0,
@@ -135,8 +150,18 @@
       "base": 0,
       "count": 0
     },
+    "invoice-maker": {
+      "asset": 689236040,
+      "base": 0,
+      "count": 0
+    },
     "kanban": {
       "asset": 689166735,
+      "base": 0,
+      "count": 0
+    },
+    "listing-writer-ai": {
+      "asset": 689236222,
       "base": 0,
       "count": 0
     },
@@ -152,6 +177,11 @@
     },
     "magnifier": {
       "asset": 689141915,
+      "base": 0,
+      "count": 0
+    },
+    "margin-markup": {
+      "asset": 689236182,
       "base": 0,
       "count": 0
     },
@@ -210,6 +240,11 @@
       "base": 0,
       "count": 0
     },
+    "pitch-writer-ai": {
+      "asset": 689236454,
+      "base": 0,
+      "count": 0
+    },
     "pixel-city": {
       "asset": 688547017,
       "base": 0,
@@ -237,6 +272,11 @@
     },
     "routine-runner": {
       "asset": 689166958,
+      "base": 0,
+      "count": 0
+    },
+    "sales-pipeline": {
+      "asset": 689236260,
       "base": 0,
       "count": 0
     },
@@ -280,6 +320,11 @@
       "base": 0,
       "count": 0
     },
+    "stock-counter": {
+      "asset": 689236298,
+      "base": 0,
+      "count": 0
+    },
     "subscriptions": {
       "asset": 689202312,
       "base": 0,
@@ -297,6 +342,11 @@
     },
     "tasks": {
       "asset": 689166620,
+      "base": 0,
+      "count": 0
+    },
+    "time-tracker": {
+      "asset": 689236084,
       "base": 0,
       "count": 0
     },

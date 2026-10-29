@@ -1,0 +1,14 @@
+{
+  "id": "margin-markup",
+  "name": "Margin & Markup",
+  "emoji": "🏷️",
+  "category": "business",
+  "description": "Work out the right selling price, your real margin or the most you can pay, including tax.",
+  "prompt": "A pricing calculator with three modes: the selling price for a target margin, the margin from cost and price, and the maximum cost for a price and margin, with markup, profit, price with tax and a breakdown bar.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

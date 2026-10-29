@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sell It</title>
+<style>
+  :root { --bg:#f0fdf9; --card:#fff; --ink:#062e26; --muted:#5b7f76; --line:#d5f2ea; --a:#10b981; --b:#0d9488; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0; font-size:28px; }
+  .sub { color:var(--muted); margin:4px 0 14px; line-height:1.4; }
+  .photos { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; }
+  .ph { flex:none; width:96px; height:96px; border-radius:16px; background:var(--card) center/cover; border:2px dashed #9be7cf; display:grid; place-items:center; font-size:30px; position:relative; }
+  .ph.img { border:0; }
+  .ph .x { position:absolute; top:4px; right:4px; width:22px; height:22px; border-radius:50%; background:#0009; color:#fff; font-size:11px; }
+  .extra { width:100%; margin-top:10px; padding:12px; border-radius:14px; background:var(--card); outline:none; min-height:54px; resize:vertical; }
+  .opts { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+  .opt { padding:8px 12px; border-radius:999px; background:var(--card); font-weight:700; font-size:13px; border:1px solid var(--line); }
+  .opt.on { background:var(--ink); color:#fff; }
+  .go { width:100%; margin-top:14px; padding:16px; border-radius:18px; background:linear-gradient(135deg,var(--a),var(--b)); color:#fff; font-weight:900; font-size:17px; }
+  .go:disabled { opacity:.5; }
+  .res { margin-top:16px; background:var(--card); border-radius:22px; padding:16px; display:none; box-shadow:0 8px 24px #062e2612; }
+  .res.on { display:block; }
+  .res .price { display:flex; align-items:baseline; gap:10px; }
+  .res .price b { font-size:34px; color:var(--b); }
+  .res .price small { color:var(--muted); font-weight:700; }
+  .res h2 { margin:10px 0 6px; font-size:20px; }
+  .res .desc { white-space:pre-wrap; line-height:1.55; color:#244a42; }
+  .res .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .res .tags span { padding:4px 9px; border-radius:999px; background:var(--bg); font-size:12px; font-weight:700; color:var(--b); }
+  .res .meta { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .res .meta span { padding:6px 10px; border-radius:10px; background:#fff8e1; font-size:13px; font-weight:700; }
+  .acts { display:flex; gap:8px; margin-top:14px; }
+  .acts button { flex:1; padding:12px; border-radius:12px; background:var(--bg); font-weight:800; }
+  .err { color:#b91c1c; margin-top:10px; }
+  input[type=file] { display:none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🏷️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="photos" id="photos"></div>
+  <textarea class="extra" id="extra" maxlength="300"></textarea>
+  <div class="opts" id="styles"></div>
+  <button class="go" id="go"></button>
+  <div class="err" id="err"></div>
+  <div class="res" id="res"></div>
+</div>
+<input type="file" id="file" accept="image/*" capture="environment">
+<canvas id="canvas" hidden></canvas>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Véndelo', sub:'Haz fotos de lo que quieres vender y tu IA escribe el anuncio y te sugiere un precio.', extra:'Detalles que la foto no dice (talla, años de uso, si tiene caja, defectos…)', styles:['✨ Atractivo','📋 Detallado','⚡ Corto'], go:'✍️ Escribir anuncio', writing:'Mirando las fotos…', price:'Precio sugerido', range:'rango', condition:'Estado', copy:'📋 Copiar', copied:'✓ Copiado', share:'📤 Compartir', again:'🔄 Otra versión', noAi:'Abre esta app en Acornix y conecta tu IA para escribir anuncios.', failed:'No he podido escribirlo: ', photo:'Añade al menos una foto.', lang:'Spanish' }
+ : { title:'Sell It', sub:'Take photos of what you want to sell and your AI writes the listing and suggests a price.', extra:'Details the photo can\'t show (size, how old it is, box included, flaws…)', styles:['✨ Catchy','📋 Detailed','⚡ Short'], go:'✍️ Write listing', writing:'Looking at the photos…', price:'Suggested price', range:'range', condition:'Condition', copy:'📋 Copy', copied:'✓ Copied', share:'📤 Share', again:'🔄 Another version', noAi:'Open this app in Acornix and connect your AI to write listings.', failed:'I couldn\'t write it: ', photo:'Add at least one photo.', lang:'English' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('extra').placeholder = T.extra; $('go').textContent = T.go;
+let photos = [], style = 0, last = null;
+T.styles.forEach((s, i) => { const b = document.createElement('button'); b.className = 'opt'; b.textContent = s; b.onclick = () => { style = i; marks(); }; $('styles').appendChild(b); });
+function marks() { [...$('styles').children].forEach((b, i) => b.classList.toggle('on', i === style)); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+function renderPhotos() {
+  $('photos').innerHTML = photos.map((p, i) => `<div class="ph img" style="background-image:url(${p})"><button class="x" data-i="${i}">✕</button></div>`).join('') + (photos.length < 4 ? `<button class="ph" id="addPh">📷</button>` : '');
+  $('photos').querySelectorAll('.x').forEach(b => b.onclick = () => { photos.splice(+b.dataset.i, 1); renderPhotos(); });
+  const a = $('addPh'); if (a) a.onclick = () => $('file').click();
+}
+$('file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; const im = new Image(); im.onload = () => { const c = $('canvas'), s = Math.min(1, 1024 / Math.max(im.width, im.height)); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); photos.push(c.toDataURL('image/jpeg', .85)); renderPhotos(); }; im.src = URL.createObjectURL(f); };
+async function write(variant) {
+  $('err').textContent = '';
+  if (!photos.length) { $('err').textContent = T.photo; return; }
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('go').disabled = true; $('go').textContent = T.writing;
+  try {
+    const r = await Acornix.askAI(
+      `Write a second-hand marketplace listing for this item. Style: ${T.styles[style].replace(/^\S+\s/, '')}. Extra details from the seller: ${$('extra').value.trim() || 'none'}.` + (variant && last ? ` Make it clearly different from: ${last.title}` : ''),
+      { images: photos, json: true, system: `You are an expert at selling second-hand items quickly. Write in ${T.lang}. Be honest: don't invent features you can't see or weren't told. Price in the local currency of a ${T.lang}-speaking buyer, realistic for used condition. Reply only with JSON: {"title":"max 60 chars","description":"3-6 short lines, with line breaks","price":0,"priceMin":0,"priceMax":0,"currency":"EUR","condition":"like new|good|fair","category":"","keywords":["5-8 search words"]}` });
+    last = r; show(r); try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { $('err').textContent = T.failed + (e && e.message || ''); }
+  $('go').disabled = false; $('go').textContent = T.go;
+}
+function money(v, c) { try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: c || 'EUR', maximumFractionDigits: 0 }).format(v); } catch (e) { return v + ' ' + (c || ''); } }
+function show(r) {
+  $('res').innerHTML = `<div class="price"><b>${money(r.price, r.currency)}</b><small>${T.range} ${money(r.priceMin, r.currency)}–${money(r.priceMax, r.currency)}</small></div><h2>${esc(r.title)}</h2><div class="desc">${esc(r.description)}</div>
+    <div class="meta"><span>⭐ ${T.condition}: ${esc(r.condition)}</span>${r.category ? `<span>📂 ${esc(r.category)}</span>` : ''}</div><div class="tags">${(r.keywords || []).map(k => `<span>#${esc(k)}</span>`).join('')}</div>
+    <div class="acts"><button id="copy">${T.copy}</button><button id="share">${T.share}</button><button id="again">${T.again}</button></div>`;
+  $('res').classList.add('on');
+  const text = `${r.title}\n\n${r.description}\n\n${money(r.price, r.currency)}`;
+  $('copy').onclick = async () => { try { await navigator.clipboard.writeText(text); $('copy').textContent = T.copied; } catch (e) {} };
+  $('share').onclick = async () => { try { if (window.Acornix) await Acornix.share(text); else if (navigator.share) await navigator.share({ text }); } catch (e) {} };
+  $('again').onclick = () => write(true);
+}
+$('go').onclick = () => write(false);
+marks(); renderPhotos();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Invoice Maker</title>
+<style>
+  :root { --bg:#f3f4f6; --card:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --a:#4f46e5; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, textarea, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:620px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 90px); }
+  .tabs { display:flex; background:var(--card); border-radius:14px; padding:4px; margin-bottom:12px; position:sticky; top:calc(env(safe-area-inset-top) + 4px); z-index:3; box-shadow:0 2px 8px #0001; }
+  .tabs button { flex:1; padding:10px; border-radius:11px; font-weight:800; }
+  .tabs button.on { background:var(--a); color:#fff; }
+  .card { background:var(--card); border-radius:18px; padding:14px; margin-bottom:10px; }
+  .card h3 { margin:0 0 8px; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+  .card input, .card textarea, .card select { width:100%; padding:10px; border-radius:10px; background:var(--bg); outline:none; margin-bottom:6px; }
+  .card textarea { min-height:60px; resize:vertical; }
+  .two { display:flex; gap:6px; } .two > * { flex:1; min-width:0; }
+  .line { display:grid; grid-template-columns:1fr 54px 80px 28px; gap:6px; align-items:center; margin-bottom:6px; }
+  .line input { margin:0; }
+  .line button { color:var(--muted); }
+  .addl { width:100%; padding:10px; border-radius:10px; background:var(--bg); font-weight:800; color:var(--a); }
+  .bar { position:fixed; left:0; right:0; bottom:0; padding:10px 14px calc(env(safe-area-inset-bottom) + 10px); background:#fffffff2; border-top:1px solid var(--line); display:flex; gap:8px; max-width:620px; margin:0 auto; }
+  .bar .tot { flex:1; font-weight:900; font-size:20px; display:flex; align-items:center; }
+  .bar button { padding:13px 16px; border-radius:14px; background:var(--a); color:#fff; font-weight:900; }
+  /* The invoice itself */
+  #paper { background:#fff; border-radius:6px; box-shadow:0 10px 30px #0002; padding:28px 24px; color:#111; font-size:13px; }
+  .inv-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+  .inv-head h1 { margin:0; font-size:28px; letter-spacing:2px; color:var(--a); }
+  .inv-meta { text-align:right; color:#555; line-height:1.6; }
+  .parties { display:flex; gap:20px; margin:22px 0; }
+  .parties div { flex:1; white-space:pre-line; line-height:1.5; }
+  .parties b { display:block; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#888; margin-bottom:4px; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#888; border-bottom:2px solid #111; padding:6px 4px; }
+  td { padding:8px 4px; border-bottom:1px solid #eee; }
+  th.r, td.r { text-align:right; }
+  .totals { margin-left:auto; width:60%; margin-top:12px; }
+  .totals div { display:flex; justify-content:space-between; padding:4px 0; }
+  .totals .grand { font-size:18px; font-weight:900; border-top:2px solid #111; padding-top:8px; margin-top:4px; color:var(--a); }
+  .notes { margin-top:22px; color:#555; white-space:pre-line; line-height:1.5; }
+  @media print { body { background:#fff; } #app { padding:0; max-width:none; } .tabs, .bar, #edit { display:none !important; } #preview { display:block !important; } #paper { box-shadow:none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="tabs"><button id="tEdit"></button><button id="tPrev"></button></div>
+  <div id="edit">
+    <div class="card"><h3 id="lFrom"></h3><textarea id="from"></textarea></div>
+    <div class="card"><h3 id="lTo"></h3><textarea id="to"></textarea></div>
+    <div class="card"><h3 id="lInfo"></h3><div class="two"><input id="num"><input id="date" type="date"></div><div class="two"><input id="due" type="date"><select id="cur"></select></div></div>
+    <div class="card"><h3 id="lItems"></h3><div id="lines"></div><button class="addl" id="addLine"></button></div>
+    <div class="card"><h3 id="lTax"></h3><div class="two"><input id="tax" inputmode="decimal"><input id="disc" inputmode="decimal"></div></div>
+    <div class="card"><h3 id="lNotes"></h3><textarea id="notes"></textarea></div>
+  </div>
+  <div id="preview" style="display:none"><div id="paper"></div></div>
+</div>
+<div class="bar"><div class="tot" id="total"></div><button id="print"></button></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { edit:'✏️ Editar', prev:'👁 Vista previa', from:'De (tus datos)', to:'Para (cliente)', info:'Factura', items:'Conceptos', tax:'IVA % · Descuento %', notes:'Notas y forma de pago', add:'＋ Añadir concepto', desc:'Concepto', qty:'Cant.', price:'Precio', print:'🖨️ PDF', share:'📤 Enviar', invoice:'FACTURA', number:'Nº', dateL:'Fecha', dueL:'Vence', billTo:'Facturar a', billFrom:'De', sub:'Subtotal', disc:'Descuento', taxL:'IVA', total:'Total', amount:'Importe',
+  fromPh:'Tu nombre o empresa\nNIF\nDirección\nemail@ejemplo.com', toPh:'Cliente\nNIF\nDirección', notesPh:'Pago por transferencia a ES00 0000 0000 0000 0000\n¡Gracias por tu confianza!' }
+ : { edit:'✏️ Edit', prev:'👁 Preview', from:'From (your details)', to:'To (client)', info:'Invoice', items:'Items', tax:'Tax % · Discount %', notes:'Notes and payment details', add:'＋ Add item', desc:'Description', qty:'Qty', price:'Price', print:'🖨️ PDF', share:'📤 Send', invoice:'INVOICE', number:'No.', dateL:'Date', dueL:'Due', billTo:'Bill to', billFrom:'From', sub:'Subtotal', disc:'Discount', taxL:'Tax', total:'Total', amount:'Amount',
+  fromPh:'Your name or company\nTax ID\nAddress\nemail@example.com', toPh:'Client\nTax ID\nAddress', notesPh:'Bank transfer to GB00 0000 0000 0000 0000\nThank you for your business!' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+[['tEdit', 'edit'], ['tPrev', 'prev'], ['lFrom', 'from'], ['lTo', 'to'], ['lInfo', 'info'], ['lItems', 'items'], ['lTax', 'tax'], ['lNotes', 'notes'], ['addLine', 'add'], ['print', window.Acornix ? 'share' : 'print']].forEach(([i, k]) => $(i).textContent = T[k]);
+$('from').placeholder = T.fromPh; $('to').placeholder = T.toPh; $('notes').placeholder = T.notesPh;
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL', 'CHF'].map(c => `<option>${c}</option>`).join('');
+const today = new Date().toISOString().slice(0, 10), in30 = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
+let inv;
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: inv.cur }).format(v);
+const num = s => parseFloat(String(s).replace(',', '.')) || 0;
+function totals() { const sub = inv.lines.reduce((a, l) => a + num(l.q) * num(l.p), 0), d = sub * num(inv.disc) / 100, t = (sub - d) * num(inv.tax) / 100; return { sub, d, t, total: sub - d + t }; }
+function save() { store.set('invoice', inv); }
+function bind() {
+  ['from', 'to', 'num', 'date', 'due', 'cur', 'tax', 'disc', 'notes'].forEach(k => { $(k).value = inv[k]; $(k).oninput = $(k).onchange = () => { inv[k] = $(k).value; save(); update(); }; });
+  lines();
+}
+function lines() {
+  $('lines').innerHTML = '';
+  inv.lines.forEach((l, i) => {
+    const d = document.createElement('div'); d.className = 'line';
+    d.innerHTML = `<input placeholder="${T.desc}"><input inputmode="decimal" placeholder="${T.qty}"><input inputmode="decimal" placeholder="${T.price}"><button>✕</button>`;
+    const [a, b, c] = d.querySelectorAll('input'); a.value = l.d; b.value = l.q; c.value = l.p;
+    a.oninput = () => { l.d = a.value; save(); update(); }; b.oninput = () => { l.q = b.value; save(); update(); }; c.oninput = () => { l.p = c.value; save(); update(); };
+    d.querySelector('button').onclick = () => { inv.lines.splice(i, 1); save(); lines(); update(); };
+    $('lines').appendChild(d);
+  });
+}
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function update() {
+  const t = totals(); $('total').textContent = money(t.total);
+  const fd = s => s ? new Date(s + 'T12:00').toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  $('paper').innerHTML = `<div class="inv-head"><div><h1>${T.invoice}</h1></div><div class="inv-meta">${T.number} <b>${esc(inv.num)}</b><br>${T.dateL}: ${fd(inv.date)}${inv.due ? `<br>${T.dueL}: ${fd(inv.due)}` : ''}</div></div>
+    <div class="parties"><div><b>${T.billFrom}</b>${esc(inv.from)}</div><div><b>${T.billTo}</b>${esc(inv.to)}</div></div>
+    <table><thead><tr><th>${T.desc}</th><th class="r">${T.qty}</th><th class="r">${T.price}</th><th class="r">${T.amount}</th></tr></thead><tbody>${inv.lines.filter(l => l.d || num(l.p)).map(l => `<tr><td>${esc(l.d)}</td><td class="r">${num(l.q)}</td><td class="r">${money(num(l.p))}</td><td class="r">${money(num(l.q) * num(l.p))}</td></tr>`).join('')}</tbody></table>
+    <div class="totals"><div><span>${T.sub}</span><span>${money(t.sub)}</span></div>${t.d ? `<div><span>${T.disc} (${num(inv.disc)}%)</span><span>−${money(t.d)}</span></div>` : ''}${num(inv.tax) ? `<div><span>${T.taxL} (${num(inv.tax)}%)</span><span>${money(t.t)}</span></div>` : ''}<div class="grand"><span>${T.total}</span><span>${money(t.total)}</span></div></div>
+    ${inv.notes ? `<div class="notes">${esc(inv.notes)}</div>` : ''}`;
+}
+function tab(p) { $('edit').style.display = p ? 'none' : 'block'; $('preview').style.display = p ? 'block' : 'none'; $('tEdit').classList.toggle('on', !p); $('tPrev').classList.toggle('on', p); scrollTo(0, 0); }
+$('tEdit').onclick = () => tab(false); $('tPrev').onclick = () => tab(true);
+$('addLine').onclick = () => { inv.lines.push({ d: '', q: '1', p: '' }); save(); lines(); update(); };
+// The Acornix viewer can't print, so there the invoice is shared as text; browsers print it or save a PDF.
+function asText() {
+  const t = totals(), lines = inv.lines.filter(l => l.d || num(l.p)).map(l => `• ${l.d} — ${num(l.q)} × ${money(num(l.p))} = ${money(num(l.q) * num(l.p))}`);
+  return [`${T.invoice} ${T.number} ${inv.num} · ${inv.date}`, '', `${T.billFrom}:\n${inv.from}`, '', `${T.billTo}:\n${inv.to}`, '', ...lines, '', `${T.sub}: ${money(t.sub)}`, t.d ? `${T.disc}: −${money(t.d)}` : '', num(inv.tax) ? `${T.taxL} (${num(inv.tax)}%): ${money(t.t)}` : '', `${T.total}: ${money(t.total)}`, '', inv.notes].filter(x => x !== '').join('\n');
+}
+$('print').onclick = async () => { tab(true); if (window.Acornix) { try { await Acornix.share(asText()); } catch (e) {} } else setTimeout(() => print(), 100); };
+(async () => {
+  inv = await store.get('invoice', null);
+  if (!inv) inv = { from: '', to: '', num: new Date().getFullYear() + '-001', date: today, due: in30, cur: ES ? 'EUR' : 'USD', tax: ES ? '21' : '20', disc: '', notes: '', lines: [{ d: ES ? 'Diseño de logotipo' : 'Logo design', q: '1', p: '450' }, { d: ES ? 'Horas de consultoría' : 'Consulting hours', q: '6', p: '60' }] };
+  bind(); update(); tab(false);
+})();
+</script>
+</body>
+</html>

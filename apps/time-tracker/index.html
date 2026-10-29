@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Time Tracker</title>
+<style>
+  :root { --bg:#0f141a; --card:#171f28; --line:#24303d; --ink:#e8f0f8; --muted:#8798ab; --a:#22d3ee; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .now { background:linear-gradient(135deg,#0e7490,#1e3a8a); border-radius:24px; padding:18px; text-align:center; }
+  .now .clock { font-size:52px; font-weight:200; font-variant-numeric:tabular-nums; }
+  .now .proj { font-weight:700; opacity:.9; min-height:22px; }
+  .now .row { display:flex; gap:8px; margin-top:12px; }
+  .now select, .now input { flex:1; min-width:0; padding:12px; border-radius:14px; background:#ffffff1f; outline:none; }
+  .now select option { color:#000; }
+  .go { margin-top:12px; width:100%; padding:16px; border-radius:16px; background:#fff; color:#0e7490; font-weight:900; font-size:17px; }
+  .go.stop { background:#f87171; color:#fff; }
+  h3 { font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin:18px 4px 8px; display:flex; justify-content:space-between; }
+  .proj-card { display:flex; align-items:center; gap:10px; background:var(--card); border-radius:16px; padding:12px; margin-bottom:6px; }
+  .dot { width:12px; height:12px; border-radius:50%; flex:none; }
+  .proj-card .t { flex:1; min-width:0; } .proj-card .t b { display:block; } .proj-card .t small { color:var(--muted); }
+  .proj-card .v { text-align:right; font-variant-numeric:tabular-nums; } .proj-card .v b { display:block; } .proj-card .v small { color:#86efac; font-weight:700; }
+  .entry { display:flex; gap:10px; align-items:center; padding:10px 4px; border-bottom:1px solid var(--line); font-size:14px; }
+  .entry .t { flex:1; min-width:0; } .entry .t small { color:var(--muted); display:block; }
+  .entry b { font-variant-numeric:tabular-nums; }
+  .entry button { color:var(--muted); }
+  .newp { display:flex; gap:6px; margin-top:6px; }
+  .newp input { flex:1; min-width:0; padding:10px; border-radius:12px; background:var(--card); outline:none; }
+  .newp input.rate { flex:none; width:90px; }
+  .newp button { padding:0 14px; border-radius:12px; background:var(--card); font-weight:800; }
+  .range { display:flex; gap:6px; }
+  .range button { padding:5px 10px; border-radius:999px; background:var(--card); font-size:12px; font-weight:800; color:var(--muted); }
+  .range button.on { background:var(--a); color:#06222a; }
+  .export { width:100%; margin-top:12px; padding:13px; border-radius:14px; background:var(--card); font-weight:800; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>⌛ <span id="ttl"></span></h1>
+  <div class="now"><div class="clock" id="clock">0:00:00</div><div class="proj" id="running"></div>
+    <div class="row"><select id="proj"></select><input id="task" maxlength="60"></div><button class="go" id="go"></button></div>
+  <h3><span id="lProjects"></span><span class="range" id="range"></span></h3><div id="projects"></div>
+  <form class="newp" id="newp"><input id="pname" maxlength="30"><input class="rate" id="prate" inputmode="decimal"><button>+</button></form>
+  <h3><span id="lLog"></span></h3><div id="log"></div>
+  <button class="export" id="export"></button>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Control de horas', start:'▶ Empezar', stop:'■ Parar', task:'¿En qué trabajas?', projects:'Proyectos', log:'Registro', newp:'Proyecto nuevo', rate:'€/hora', range:['Hoy','Semana','Mes','Todo'], export:'📤 Compartir informe', report:'Informe de horas', none:'—', samples:[['Web cliente A',40],['Diseño cartel',35],['Interno',0]] }
+ : { title:'Time Tracker', start:'▶ Start', stop:'■ Stop', task:'What are you working on?', projects:'Projects', log:'Log', newp:'New project', rate:'rate/h', range:['Today','Week','Month','All'], export:'📤 Share report', report:'Time report', none:'—', samples:[['Client A website',40],['Poster design',35],['Internal',0]] };
+const COLORS = ['#22d3ee','#a78bfa','#f472b6','#facc15','#4ade80','#fb923c'];
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('task').placeholder = T.task; $('lProjects').textContent = T.projects; $('lLog').textContent = T.log; $('pname').placeholder = T.newp; $('prate').placeholder = T.rate; $('export').textContent = T.export;
+let st = null, range = 1;
+const hms = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 3600) + ':' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+const hm = ms => { const m = Math.round(ms / 60000); return Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm'; };
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: ES ? 'EUR' : 'USD' }).format(v);
+function save() { store.set('tt', st); }
+function since() { const d = new Date(); d.setHours(0, 0, 0, 0); if (range === 1) d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); if (range === 2) d.setDate(1); return range === 3 ? 0 : d.getTime(); }
+T.range.forEach((r, i) => { const b = document.createElement('button'); b.textContent = r; b.onclick = () => { range = i; render(); }; $('range').appendChild(b); });
+function render() {
+  $('proj').innerHTML = st.projects.map((p, i) => `<option value="${i}">${p.n}</option>`).join(''); $('proj').value = st.cur;
+  [...$('range').children].forEach((b, i) => b.classList.toggle('on', i === range));
+  const from = since(), entries = st.entries.filter(e => e.end >= from);
+  $('projects').innerHTML = st.projects.map((p, i) => {
+    const ms = entries.filter(e => e.p === i).reduce((a, e) => a + e.end - e.start, 0) + (st.run && st.run.p === i ? Date.now() - st.run.start : 0);
+    return `<div class="proj-card"><span class="dot" style="background:${COLORS[i % COLORS.length]}"></span><div class="t"><b>${p.n.replace(/</g, '&lt;')}</b><small>${p.r ? money(p.r) + '/h' : T.none}</small></div><div class="v"><b>${hm(ms)}</b>${p.r ? `<small>${money(ms / 36e5 * p.r)}</small>` : ''}</div></div>`;
+  }).join('');
+  $('log').innerHTML = '';
+  st.entries.slice(-30).reverse().forEach(e => {
+    const d = document.createElement('div'); d.className = 'entry'; const p = st.projects[e.p] || { n: '?' };
+    d.innerHTML = `<span class="dot" style="background:${COLORS[e.p % COLORS.length]}"></span><div class="t"><span></span><small>${p.n.replace(/</g, '&lt;')} · ${new Date(e.start).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' })} ${new Date(e.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small></div><b>${hm(e.end - e.start)}</b><button>✕</button>`;
+    d.querySelector('span:not(.dot)').textContent = e.task || '—';
+    d.querySelector('button').onclick = () => { st.entries = st.entries.filter(x => x !== e); save(); render(); };
+    $('log').appendChild(d);
+  });
+  tick();
+}
+function tick() {
+  $('go').textContent = st.run ? T.stop : T.start; $('go').classList.toggle('stop', !!st.run);
+  $('clock').textContent = hms(st.run ? Date.now() - st.run.start : 0);
+  $('running').textContent = st.run ? '● ' + (st.projects[st.run.p] || {}).n + (st.run.task ? ' · ' + st.run.task : '') : '';
+}
+$('go').onclick = () => {
+  if (st.run) { if (Date.now() - st.run.start > 30000) st.entries.push({ ...st.run, end: Date.now() }); st.run = null; }
+  else st.run = { p: +$('proj').value, task: $('task').value.trim(), start: Date.now() };
+  try { if (window.Acornix) Acornix.vibrate(20); } catch (e) {}
+  save(); render();
+};
+$('proj').onchange = () => { st.cur = +$('proj').value; save(); };
+$('newp').onsubmit = e => { e.preventDefault(); const n = $('pname').value.trim(); if (!n) return; st.projects.push({ n, r: parseFloat($('prate').value.replace(',', '.')) || 0 }); st.cur = st.projects.length - 1; $('pname').value = ''; $('prate').value = ''; save(); render(); };
+$('export').onclick = async () => {
+  const from = since(), entries = st.entries.filter(e => e.end >= from);
+  const lines = st.projects.map((p, i) => { const ms = entries.filter(e => e.p === i).reduce((a, e) => a + e.end - e.start, 0); return ms ? `• ${p.n}: ${hm(ms)}${p.r ? ' = ' + money(ms / 36e5 * p.r) : ''}` : ''; }).filter(Boolean);
+  const text = `⌛ ${T.report} (${T.range[range]})\n${lines.join('\n') || T.none}`;
+  try { if (window.Acornix) await Acornix.share(text); else if (navigator.share) await navigator.share({ text }); else await navigator.clipboard.writeText(text); } catch (e) {}
+};
+setInterval(() => { if (st && st.run) tick(); }, 1000);
+(async () => { st = await store.get('tt', null); if (!st) { st = { projects: T.samples.map(([n, r]) => ({ n, r })), entries: [], run: null, cur: 0 }; save(); } render(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "break-even",
+  "name": "Break-even",
+  "emoji": "📊",
+  "category": "business",
+  "description": "Find out how many units you must sell each month to cover your costs, with a chart and a profit simulator.",
+  "prompt": "A break-even calculator for small businesses with fixed costs, selling price and cost per unit, the units needed to break even, a chart of revenue and costs, and a slider to see profit or loss for any sales volume.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

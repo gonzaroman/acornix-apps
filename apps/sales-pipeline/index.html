@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sales Pipeline</title>
+<style>
+  :root { --bg:#f4f6fb; --card:#fff; --ink:#18213a; --muted:#7a83a0; --line:#e3e7f1; --a:#3b5bdb; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 96px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .funnel { background:var(--card); border-radius:20px; padding:14px; }
+  .stage { display:flex; align-items:center; gap:10px; margin:6px 0; }
+  .stage .bar { height:30px; border-radius:8px; display:flex; align-items:center; padding:0 10px; color:#fff; font-weight:800; font-size:13px; white-space:nowrap; min-width:42px; transition:width .4s; }
+  .stage small { color:var(--muted); font-weight:700; font-size:12px; white-space:nowrap; }
+  .kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+  .kpis div { background:var(--card); border-radius:16px; padding:10px; }
+  .kpis small { display:block; color:var(--muted); font-size:11px; font-weight:700; }
+  .kpis b { font-size:17px; font-variant-numeric:tabular-nums; }
+  .filters { display:flex; gap:6px; overflow-x:auto; margin:14px 0 8px; scrollbar-width:none; }
+  .filters::-webkit-scrollbar { display:none; }
+  .filters button { flex:none; padding:7px 12px; border-radius:999px; background:var(--card); font-weight:700; font-size:13px; }
+  .filters button.on { background:var(--ink); color:#fff; }
+  .deal { display:flex; gap:10px; align-items:center; background:var(--card); border-radius:16px; padding:12px; margin-bottom:8px; width:100%; text-align:left; border-left:5px solid var(--c); }
+  .deal .t { flex:1; min-width:0; } .deal .t b { display:block; } .deal .t small { color:var(--muted); }
+  .deal .v { text-align:right; } .deal .v b { display:block; font-variant-numeric:tabular-nums; } .deal .v small { font-size:11px; font-weight:800; color:var(--c); }
+  .late { color:#dc2626 !important; font-weight:700; }
+  .fab { position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:16px 20px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; box-shadow:0 10px 24px #3b5bdb55; }
+  #sheet { position:fixed; inset:0; background:#18213a88; display:none; align-items:flex-end; z-index:5; }
+  #sheet.on { display:flex; }
+  .form { width:100%; max-width:560px; margin:0 auto; background:var(--card); border-radius:24px 24px 0 0; padding:16px 16px calc(env(safe-area-inset-bottom) + 16px); display:flex; flex-direction:column; gap:8px; max-height:92vh; overflow-y:auto; }
+  .form input, .form textarea { padding:12px; border-radius:12px; background:var(--bg); outline:none; }
+  .two { display:flex; gap:8px; } .two > * { flex:1; min-width:0; }
+  .stg { display:flex; gap:4px; flex-wrap:wrap; } .stg button { padding:7px 10px; border-radius:10px; background:var(--bg); font-size:12px; font-weight:800; } .stg button.on { color:#fff; }
+  .row { display:flex; gap:10px; } .row button { flex:1; padding:14px; border-radius:14px; background:var(--bg); font-weight:800; } .row .save { background:var(--a); color:#fff; } .row .del { color:#dc2626; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🤝 <span id="ttl"></span></h1>
+  <div class="funnel" id="funnel"></div>
+  <div class="kpis"><div><small id="lOpen"></small><b id="open"></b></div><div><small id="lWeighted"></small><b id="weighted"></b></div><div><small id="lWon"></small><b id="won"></b></div></div>
+  <div class="filters" id="filters"></div>
+  <div id="list"></div>
+</div>
+<button class="fab" id="add"></button>
+<div id="sheet"><form class="form" id="form"><input id="name" maxlength="40" required><input id="company" maxlength="40"><div class="two"><input id="value" inputmode="decimal"><input id="next" type="date"></div><input id="contact" maxlength="60"><textarea id="note" maxlength="300"></textarea><div class="stg" id="stg"></div><div class="row"><button type="button" class="del" id="del"></button><button type="button" id="cancel"></button><button class="save" id="save"></button></div></form></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Ventas', open:'En curso', weighted:'Previsión', won:'Ganado', all:'Todos', add:'＋ Oportunidad', name:'Oportunidad (ej.: Web nueva)', company:'Empresa o cliente', value:'Importe', contact:'Contacto (teléfono, email)', note:'Notas', cancel:'Cancelar', save:'Guardar', del:'Borrar', next:'Siguiente paso',
+  stages:[['Contacto',10,'#94a3b8'],['Reunión',25,'#60a5fa'],['Propuesta',50,'#a78bfa'],['Negociación',75,'#f59e0b'],['Ganado',100,'#22c55e'],['Perdido',0,'#ef4444']],
+  samples:[['Web corporativa','Panadería Sol',3200,2],['App de reservas','Clínica Norte',8500,1],['Logo y marca','Café Luna',900,3],['Tienda online','Moda Vera',5600,0],['Mantenimiento anual','Gestoría Ruiz',1800,4]] }
+ : { title:'Sales Pipeline', open:'Open', weighted:'Forecast', won:'Won', all:'All', add:'＋ Deal', name:'Deal (e.g. New website)', company:'Company or client', value:'Value', contact:'Contact (phone, email)', note:'Notes', cancel:'Cancel', save:'Save', del:'Delete', next:'Next step',
+  stages:[['Lead',10,'#94a3b8'],['Meeting',25,'#60a5fa'],['Proposal',50,'#a78bfa'],['Negotiation',75,'#f59e0b'],['Won',100,'#22c55e'],['Lost',0,'#ef4444']],
+  samples:[['Company website','Sunny Bakery',3200,2],['Booking app','North Clinic',8500,1],['Logo and brand','Moon Café',900,3],['Online shop','Vera Fashion',5600,0],['Yearly maintenance','Ruiz Accounting',1800,4]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+[['ttl', 'title'], ['lOpen', 'open'], ['lWeighted', 'weighted'], ['lWon', 'won'], ['add', 'add'], ['cancel', 'cancel'], ['save', 'save'], ['del', 'del']].forEach(([i, k]) => $(i).textContent = T[k]);
+['name', 'company', 'value', 'contact', 'note'].forEach(k => $(k).placeholder = T[k]);
+let deals = [], filter = -1, editing = null, pickS = 0;
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: ES ? 'EUR' : 'USD', maximumFractionDigits: 0 }).format(v);
+function save() { store.set('deals', deals); }
+function render() {
+  const openDeals = deals.filter(d => d.s < 4), max = Math.max(1, ...T.stages.slice(0, 5).map((_, i) => deals.filter(d => d.s === i).reduce((a, d) => a + d.v, 0)));
+  $('funnel').innerHTML = T.stages.slice(0, 5).map(([n, , c], i) => { const ds = deals.filter(d => d.s === i), sum = ds.reduce((a, d) => a + d.v, 0); return `<div class="stage"><div class="bar" style="background:${c};width:${Math.max(42, sum / max * 72)}%">${ds.length} · ${n}</div><small>${money(sum)}</small></div>`; }).join('');
+  $('open').textContent = money(openDeals.reduce((a, d) => a + d.v, 0));
+  $('weighted').textContent = money(openDeals.reduce((a, d) => a + d.v * T.stages[d.s][1] / 100, 0));
+  $('won').textContent = money(deals.filter(d => d.s === 4).reduce((a, d) => a + d.v, 0));
+  $('filters').innerHTML = [[-1, T.all], ...T.stages.map(([n], i) => [i, n])].map(([i, n]) => `<button data-i="${i}" class="${i === filter ? 'on' : ''}">${n}</button>`).join('');
+  $('filters').querySelectorAll('button').forEach(b => b.onclick = () => { filter = +b.dataset.i; render(); });
+  const today = new Date().toISOString().slice(0, 10);
+  $('list').innerHTML = '';
+  deals.filter(d => filter < 0 || d.s === filter).sort((a, b) => (a.s >= 4) - (b.s >= 4) || (a.next || '9').localeCompare(b.next || '9')).forEach(d => {
+    const [sn, , c] = T.stages[d.s], el = document.createElement('button'); el.className = 'deal'; el.style.setProperty('--c', c);
+    el.innerHTML = `<div class="t"><b></b><small></small>${d.next && d.s < 4 ? `<small class="${d.next < today ? 'late' : ''}"> · 📅 ${new Date(d.next + 'T12:00').toLocaleDateString([], { day: 'numeric', month: 'short' })}</small>` : ''}</div><div class="v"><b>${money(d.v)}</b><small>${sn}</small></div>`;
+    el.querySelector('b').textContent = d.n; el.querySelector('small').textContent = d.co || '';
+    el.onclick = () => openForm(d); $('list').appendChild(el);
+  });
+}
+function stg() { $('stg').innerHTML = T.stages.map(([n, , c], i) => `<button type="button" class="${i === pickS ? 'on' : ''}" style="${i === pickS ? 'background:' + c : ''}">${n}</button>`).join(''); $('stg').querySelectorAll('button').forEach((b, i) => b.onclick = () => { pickS = i; stg(); }); }
+function openForm(d) {
+  editing = d || null; $('form').reset(); pickS = d ? d.s : 0;
+  if (d) { $('name').value = d.n; $('company').value = d.co || ''; $('value').value = d.v; $('next').value = d.next || ''; $('contact').value = d.ct || ''; $('note').value = d.note || ''; }
+  stg(); $('del').style.display = d ? 'block' : 'none'; $('sheet').classList.add('on');
+}
+$('form').onsubmit = e => { e.preventDefault(); const data = { n: $('name').value.trim(), co: $('company').value.trim(), v: parseFloat($('value').value.replace(',', '.')) || 0, next: $('next').value || null, ct: $('contact').value.trim(), note: $('note').value.trim(), s: pickS };
+  if (editing) { if (editing.s !== 4 && pickS === 4) try { if (window.Acornix) Acornix.vibrate([30, 40, 80]); } catch (e) {} Object.assign(editing, data); } else deals.push(data); save(); $('sheet').classList.remove('on'); render(); };
+$('del').onclick = () => { deals = deals.filter(d => d !== editing); save(); $('sheet').classList.remove('on'); render(); };
+$('cancel').onclick = () => $('sheet').classList.remove('on');
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); };
+$('add').onclick = () => openForm(null);
+(async () => { deals = await store.get('deals', null); if (!deals) { const d = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10); deals = T.samples.map(([n, co, v, s], i) => ({ n, co, v, s, next: s < 4 ? d([-1, 2, 5, 1][i] || 3) : null })); save(); } render(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "stock-counter",
+  "name": "Stock Counter",
+  "emoji": "📦",
+  "category": "business",
+  "description": "Count your stock with big plus and minus buttons and get warned when something is running low.",
+  "prompt": "An inventory counter for a small shop with products, emoji, big plus and minus buttons that repeat when held, a minimum for each product, low stock warnings at the top and a restock list to share.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

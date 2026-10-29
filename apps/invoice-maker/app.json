@@ -1,0 +1,14 @@
+{
+  "id": "invoice-maker",
+  "name": "Invoice Maker",
+  "emoji": "🧾",
+  "category": "business",
+  "description": "Create clean, professional invoices with items, tax and discount, ready to send or print.",
+  "prompt": "An invoice maker where I fill in my details, the client, invoice number and dates, items with quantity and price, tax and discount, and see a clean professional invoice I can print as PDF or share.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

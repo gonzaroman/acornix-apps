@@ -1,0 +1,14 @@
+{
+  "id": "sales-pipeline",
+  "name": "Sales Pipeline",
+  "emoji": "🤝",
+  "category": "business",
+  "description": "Follow your deals from first contact to won, with a funnel, a forecast and next steps.",
+  "prompt": "A simple sales CRM with deals, client, value, next step date, contact and notes, stages from lead to won or lost, a funnel chart, open value, a weighted forecast and overdue follow-ups in red.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

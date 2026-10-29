@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Break-even</title>
+<style>
+  :root { --bg:#f5f3ff; --card:#fff; --ink:#1e1b4b; --muted:#6d6a99; --line:#e4e1fb; --a:#7c3aed; --g:#16a34a; --r:#dc2626; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  input, select { font:inherit; color:inherit; border:0; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); margin:0 0 12px; line-height:1.4; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .f { background:var(--card); border-radius:16px; padding:12px; }
+  .f label { display:block; font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; }
+  .f input, .f select { width:100%; font-size:22px; font-weight:800; outline:none; background:transparent; }
+  .hero { margin-top:12px; background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; border-radius:24px; padding:18px; text-align:center; }
+  .hero small { opacity:.85; font-weight:700; }
+  .hero .big { font-size:44px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .hero .row { display:flex; justify-content:space-around; margin-top:6px; font-size:14px; }
+  canvas { width:100%; height:220px; background:var(--card); border-radius:20px; margin-top:12px; }
+  .legend { display:flex; gap:14px; justify-content:center; font-size:12px; color:var(--muted); font-weight:700; margin-top:6px; }
+  .legend i { display:inline-block; width:12px; height:3px; margin-right:4px; vertical-align:middle; }
+  .sim { margin-top:12px; background:var(--card); border-radius:20px; padding:14px; }
+  .sim .lbl { display:flex; justify-content:space-between; font-weight:700; }
+  .sim input { width:100%; accent-color:var(--a); }
+  .sim .res { font-size:24px; font-weight:900; text-align:center; margin-top:6px; font-variant-numeric:tabular-nums; }
+  .warn { color:var(--r); font-weight:700; text-align:center; margin-top:10px; display:none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>📊 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="grid">
+    <div class="f"><label id="lFixed"></label><input id="fixed" inputmode="decimal"></div>
+    <div class="f"><label id="lPrice"></label><input id="price" inputmode="decimal"></div>
+    <div class="f"><label id="lVar"></label><input id="vari" inputmode="decimal"></div>
+    <div class="f"><label id="lCur"></label><select id="cur"></select></div>
+  </div>
+  <div class="warn" id="warn"></div>
+  <div class="hero"><small id="lUnits"></small><div class="big" id="units"></div><div class="row"><span id="revenue"></span><span id="margin"></span></div></div>
+  <canvas id="chart"></canvas>
+  <div class="legend"><span><i style="background:#16a34a"></i><span id="lgRev"></span></span><span><i style="background:#dc2626"></i><span id="lgCost"></span></span></div>
+  <div class="sim"><div class="lbl"><span id="lSell"></span><b id="sellN"></b></div><input type="range" id="sell" min="0" max="1000"><div class="res" id="profit"></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Punto de equilibrio', sub:'¿Cuántas unidades tienes que vender al mes para no perder dinero?', fixed:'Gastos fijos al mes', price:'Precio de venta', vari:'Coste por unidad', cur:'Moneda', units:'Unidades para cubrir gastos', rev:'Facturación', margin:'Margen por unidad', lgRev:'Ingresos', lgCost:'Costes', sell:'Si vendes', profit:'Beneficio', loss:'Pérdida', warn:'El precio tiene que ser mayor que el coste por unidad.', u:'uds.' }
+ : { title:'Break-even', sub:'How many units do you need to sell each month not to lose money?', fixed:'Fixed costs per month', price:'Selling price', vari:'Cost per unit', cur:'Currency', units:'Units to cover costs', rev:'Revenue', margin:'Margin per unit', lgRev:'Revenue', lgCost:'Costs', sell:'If you sell', profit:'Profit', loss:'Loss', warn:'The price must be higher than the cost per unit.', u:'units' };
+const $ = id => document.getElementById(id);
+[['ttl', 'title'], ['sub', 'sub'], ['lFixed', 'fixed'], ['lPrice', 'price'], ['lVar', 'vari'], ['lCur', 'cur'], ['lUnits', 'units'], ['lgRev', 'lgRev'], ['lgCost', 'lgCost'], ['lSell', 'sell'], ['warn', 'warn']].forEach(([i, k]) => $(i).textContent = T[k]);
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL'].map(c => `<option>${c}</option>`).join('');
+const st = (() => { try { return JSON.parse(localStorage.getItem('be')); } catch (e) { return null; } })() || { fixed: 2400, price: 25, vari: 9, cur: ES ? 'EUR' : 'USD', sell: 220 };
+['fixed', 'price', 'vari', 'cur'].forEach(k => { $(k).value = st[k]; $(k).oninput = $(k).onchange = () => { st[k] = k === 'cur' ? $(k).value : parseFloat($(k).value.replace(',', '.')) || 0; calc(); }; });
+$('sell').oninput = () => { st.sell = +$('sell').value; calc(); };
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: st.cur, maximumFractionDigits: 0 }).format(v);
+function calc() {
+  const m = st.price - st.vari, ok = m > 0 && st.fixed >= 0;
+  $('warn').style.display = ok ? 'none' : 'block';
+  const be = ok ? Math.ceil(st.fixed / m) : 0;
+  $('units').textContent = ok ? be.toLocaleString() + ' ' + T.u : '—';
+  $('revenue').textContent = ok ? `${T.rev}: ${money(be * st.price)}` : ''; $('margin').textContent = `${T.margin}: ${money(m)}`;
+  const max = Math.max(10, Math.ceil((be || 100) * 2 / 10) * 10); $('sell').max = max; if (st.sell > max) st.sell = max; $('sell').value = st.sell;
+  const p = st.sell * m - st.fixed; $('sellN').textContent = st.sell.toLocaleString() + ' ' + T.u;
+  $('profit').textContent = (p >= 0 ? T.profit + ': ' : T.loss + ': ') + money(Math.abs(p)); $('profit').style.color = p >= 0 ? 'var(--g)' : 'var(--r)';
+  const c = $('chart'), d = devicePixelRatio || 1; c.width = c.clientWidth * d; c.height = c.clientHeight * d; const g = c.getContext('2d'), w = c.width, h = c.height, pad = 14 * d;
+  g.clearRect(0, 0, w, h); const top = Math.max(max * st.price, st.fixed + max * st.vari) || 1;
+  const X = u => pad + u / max * (w - 2 * pad), Y = v => h - pad - v / top * (h - 2 * pad);
+  if (ok) { g.fillStyle = '#16a34a22'; g.beginPath(); g.moveTo(X(be), Y(be * st.price)); g.lineTo(X(max), Y(max * st.price)); g.lineTo(X(max), Y(st.fixed + max * st.vari)); g.closePath(); g.fill();
+    g.fillStyle = '#dc262618'; g.beginPath(); g.moveTo(X(0), Y(0)); g.lineTo(X(be), Y(be * st.price)); g.lineTo(X(0), Y(st.fixed)); g.closePath(); g.fill(); }
+  const line = (a, b, col) => { g.strokeStyle = col; g.lineWidth = 3 * d; g.beginPath(); g.moveTo(X(0), Y(a)); g.lineTo(X(max), Y(b)); g.stroke(); };
+  line(st.fixed, st.fixed + max * st.vari, '#dc2626'); line(0, max * st.price, '#16a34a');
+  if (ok) { g.fillStyle = '#7c3aed'; g.beginPath(); g.arc(X(be), Y(be * st.price), 6 * d, 0, 7); g.fill(); g.font = `700 ${12 * d}px system-ui`; g.fillText(be.toLocaleString(), X(be) + 8 * d, Y(be * st.price) + 16 * d); }
+  g.strokeStyle = '#7c3aed88'; g.setLineDash([4 * d, 4 * d]); g.lineWidth = 1.5 * d; g.beginPath(); g.moveTo(X(st.sell), pad); g.lineTo(X(st.sell), h - pad); g.stroke(); g.setLineDash([]);
+  try { localStorage.setItem('be', JSON.stringify(st)); } catch (e) {}
+}
+addEventListener('resize', calc); calc();
+</script>
+</body>
+</html>

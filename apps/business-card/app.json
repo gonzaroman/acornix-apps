@@ -1,0 +1,14 @@
+{
+  "id": "business-card",
+  "name": "Business Card",
+  "emoji": "🪪",
+  "category": "business",
+  "description": "Design a business card in four styles and colours, save it as an image or share your contact.",
+  "prompt": "A business card maker with my name, job title, company, phone, email and website, four templates like modern, classic, bold and minimal, colours, a flip animation, saving it as an image and sharing the contact.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

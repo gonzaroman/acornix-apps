@@ -1,0 +1,14 @@
+{
+  "id": "pitch-writer-ai",
+  "name": "Pitch Writer",
+  "emoji": "🎤",
+  "category": "business",
+  "description": "Your AI turns your idea into a memorable elevator pitch, with a teleprompter to rehearse it.",
+  "prompt": "An elevator pitch writer: I describe my idea, the audience, the length and the style, and my AI writes a pitch with a tagline and three key points, which I can listen to, copy, or rehearse with a scrolling teleprompter and timer.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "freelance-rate",
+  "name": "Freelance Rate",
+  "emoji": "🧮",
+  "category": "business",
+  "description": "Calculate the hourly rate you need as a freelancer after taxes, costs, holidays and unbillable time.",
+  "prompt": "A freelance rate calculator: the net income I want, taxes, monthly costs, a buffer, working hours, the share of billable hours, holidays and sick days, giving the minimum hourly and daily rate and where the money goes.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}
