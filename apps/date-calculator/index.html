@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Date Calculator</title>
+<style>
+  :root { --bg:#f2f7f5; --card:#fff; --ink:#10302a; --muted:#5f7f78; --a:#0f9d7a; --line:#dcebe6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 12px; font-size:28px; }
+  .tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:#e3efeb; padding:4px; border-radius:16px; margin-bottom:12px; }
+  .tabs button { padding:10px 4px; border-radius:12px; font-weight:800; color:var(--muted); font-size:14px; }
+  .tabs button.on { background:#fff; color:var(--a); box-shadow:0 2px 8px #0f9d7a22; }
+  .pane { display:none; } .pane.on { display:block; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; }
+  label { display:block; color:var(--muted); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+  input[type=date], input[type=number] { width:100%; padding:12px; border-radius:14px; border:2px solid var(--line); font:inherit; font-size:18px; color:var(--ink); background:#fbfdfc; outline:none; }
+  input:focus { border-color:var(--a); }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .today { margin-top:8px; padding:7px 12px; border-radius:10px; background:#e3efeb; color:var(--a); font-weight:800; font-size:13px; }
+  .check { display:flex; align-items:center; gap:8px; margin-top:10px; font-weight:700; color:var(--muted); font-size:14px; }
+  .check input { width:20px; height:20px; accent-color:var(--a); }
+  .big { padding:18px; border-radius:22px; background:linear-gradient(135deg,#0f9d7a,#16b8a0); color:#fff; text-align:center; margin-bottom:10px; }
+  .big b { display:block; font-size:44px; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
+  .big span { font-weight:700; opacity:.9; }
+  .facts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .facts div { background:var(--card); border-radius:16px; padding:10px 12px; }
+  .facts small { display:block; color:var(--muted); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+  .facts b { font-size:18px; font-variant-numeric:tabular-nums; }
+  .seg { display:flex; gap:6px; margin-bottom:10px; }
+  .seg button { flex:1; padding:10px; border-radius:12px; background:#e3efeb; font-weight:800; color:var(--muted); }
+  .seg button.on { background:var(--a); color:#fff; }
+  .units { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; }
+  .units button { padding:10px 2px; border-radius:12px; background:#e3efeb; font-weight:800; font-size:13px; color:var(--muted); }
+  .units button.on { background:var(--a); color:#fff; }
+</style>
+</head>
+<body>
+<h1>📅 <span id="ttl"></span></h1>
+<div class="tabs" id="tabs"></div>
+<section class="pane on" id="p0">
+  <div class="card two"><div><label id="lFrom"></label><input type="date" id="from"></div><div><label id="lTo"></label><input type="date" id="to"></div></div>
+  <div class="card" style="padding:10px 14px"><label class="check"><input type="checkbox" id="incl"><span id="lIncl"></span></label></div>
+  <div class="big"><b id="dDays"></b><span id="dHuman"></span></div>
+  <div class="facts" id="dFacts"></div>
+</section>
+<section class="pane" id="p1">
+  <div class="card"><label id="lStart"></label><input type="date" id="start"><button class="today" id="startToday"></button></div>
+  <div class="card"><div class="seg" id="sign"></div><input type="number" id="amount" value="90" min="0" inputmode="numeric"><div class="units" id="units"></div><label class="check"><input type="checkbox" id="work"><span id="lWork"></span></label></div>
+  <div class="big"><b id="aDate"></b><span id="aDay"></span></div>
+</section>
+<section class="pane" id="p2">
+  <div class="card"><label id="lBirth"></label><input type="date" id="birth"></div>
+  <div class="big"><b id="age"></b><span id="ageHuman"></span></div>
+  <div class="facts" id="ageFacts"></div>
+</section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const loc = ES ? 'es-ES' : 'en-GB';
+const T = ES ? { title:'Calculadora de fechas', tabs:['Entre fechas','Sumar','Edad'], from:'Desde', to:'Hasta', incl:'Contar también el último día', days:'días', y:['año','años'], m:['mes','meses'], d:['día','días'], weeks:'Semanas', work:'Días laborables', hours:'Horas', weekends:'Fines de semana', start:'Fecha de inicio', today:'Hoy', add:'＋ Sumar', sub:'− Restar', units:['Días','Semanas','Meses','Años'], workOnly:'Solo días laborables (lun–vie)', birth:'Fecha de nacimiento', old:'años', next:'Próximo cumpleaños', in:'Faltan', lived:'Días vividos', born:'Naciste en', heart:'Latidos (aprox.)', week:'Día de la semana', past:'atrás', future:'por delante', same:'Es el mismo día' }
+ : { title:'Date Calculator', tabs:['Between','Add','Age'], from:'From', to:'To', incl:'Include the end day', days:'days', y:['year','years'], m:['month','months'], d:['day','days'], weeks:'Weeks', work:'Working days', hours:'Hours', weekends:'Weekends', start:'Start date', today:'Today', add:'＋ Add', sub:'− Subtract', units:['Days','Weeks','Months','Years'], workOnly:'Working days only (Mon–Fri)', birth:'Date of birth', old:'years old', next:'Next birthday', in:'In', lived:'Days lived', born:'You were born on a', heart:'Heartbeats (approx.)', week:'Day of the week', past:'ago', future:'from now', same:'It\'s the same day' };
+const $ = id => document.getElementById(id);
+const nf = new Intl.NumberFormat(loc);
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const dayN = d => Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+const pl = (n, w) => `${nf.format(n)} ${w[n === 1 ? 0 : 1]}`;
+const longDate = d => new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+const weekday = d => new Intl.DateTimeFormat(loc, { weekday: 'long' }).format(d);
+['ttl', 'lFrom', 'lTo', 'lIncl', 'lStart', 'lWork', 'lBirth'].forEach((id, i) => $(id).textContent = [T.title, T.from, T.to, T.incl, T.start, T.workOnly, T.birth][i]);
+$('startToday').textContent = T.today;
+$('tabs').innerHTML = T.tabs.map((t, i) => `<button data-i="${i}">${t}</button>`).join('');
+function tab(i) { $('tabs').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.i === i)); document.querySelectorAll('.pane').forEach((p, k) => p.classList.toggle('on', k === i)); try { localStorage.setItem('tab', i); } catch (e) {} }
+$('tabs').querySelectorAll('button').forEach(b => b.onclick = () => tab(+b.dataset.i));
+// Calendar difference in years, months and days.
+function ymd(a, b) {
+  let y = b.getFullYear() - a.getFullYear(), m = b.getMonth() - a.getMonth(), d = b.getDate() - a.getDate();
+  if (d < 0) { m--; d += new Date(b.getFullYear(), b.getMonth(), 0).getDate(); }
+  if (m < 0) { y--; m += 12; }
+  return [y, m, d];
+}
+function workdays(a, b) { let n = 0; for (let t = new Date(a); t <= b; t.setDate(t.getDate() + 1)) { const w = t.getDay(); if (w && w !== 6) n++; } return n; }
+function between() {
+  if (!$('from').value || !$('to').value) return;
+  let a = parse($('from').value), b = parse($('to').value); if (a > b) [a, b] = [b, a];
+  const incl = $('incl').checked ? 1 : 0, days = dayN(b) - dayN(a) + incl;
+  $('dDays').textContent = `${nf.format(days)} ${T.days}`;
+  const [y, m, d] = ymd(a, new Date(b.getFullYear(), b.getMonth(), b.getDate() + incl));
+  $('dHuman').textContent = days === 0 ? T.same : [y && pl(y, T.y), m && pl(m, T.m), d && pl(d, T.d)].filter(Boolean).join(', ');
+  const wd = days > 0 && days < 40000 ? workdays(a, new Date(b.getFullYear(), b.getMonth(), b.getDate() - 1 + incl)) : 0;
+  $('dFacts').innerHTML = [[T.weeks, nf.format(Math.floor(days / 7)) + (days % 7 ? ` + ${days % 7}` : '')], [T.work, nf.format(wd)], [T.weekends, nf.format(Math.floor((days - wd) / 2))], [T.hours, nf.format(days * 24)]].map(([k, v]) => `<div><small>${k}</small><b>${v}</b></div>`).join('');
+  save();
+}
+let sign = 1, unit = 0;
+$('sign').innerHTML = `<button data-s="1">${T.add}</button><button data-s="-1">${T.sub}</button>`;
+$('units').innerHTML = T.units.map((u, i) => `<button data-u="${i}">${u}</button>`).join('');
+function paint() { $('sign').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.s === sign)); $('units').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.u === unit)); $('work').closest('.check').style.display = unit === 0 ? 'flex' : 'none'; }
+$('sign').querySelectorAll('button').forEach(b => b.onclick = () => { sign = +b.dataset.s; paint(); add(); });
+$('units').querySelectorAll('button').forEach(b => b.onclick = () => { unit = +b.dataset.u; paint(); add(); });
+function add() {
+  if (!$('start').value) return;
+  const s = parse($('start').value), n = Math.max(0, Math.floor(+$('amount').value || 0)) * sign, r = new Date(s);
+  if (unit === 0 && $('work').checked) { let left = Math.abs(n); while (left > 0) { r.setDate(r.getDate() + Math.sign(n)); if (r.getDay() % 6) left--; } }
+  else if (unit === 0) r.setDate(r.getDate() + n);
+  else if (unit === 1) r.setDate(r.getDate() + n * 7);
+  else { const day = r.getDate(); r.setDate(1); r.setMonth(r.getMonth() + (unit === 2 ? n : n * 12)); r.setDate(Math.min(day, new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate())); }
+  $('aDate').textContent = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'short', year: 'numeric' }).format(r);
+  const diff = dayN(r) - dayN(new Date());
+  $('aDay').textContent = weekday(r) + (diff ? ` · ${nf.format(Math.abs(diff))} ${T.days} ${diff > 0 ? T.future : T.past}` : '');
+  save();
+}
+function age() {
+  if (!$('birth').value) return;
+  const b = parse($('birth').value), now = new Date(), [y, m, d] = ymd(b, now);
+  $('age').textContent = `${y} ${T.old}`; $('ageHuman').textContent = [pl(m, T.m), pl(d, T.d)].join(', ');
+  let next = new Date(now.getFullYear(), b.getMonth(), b.getDate()); if (dayN(next) < dayN(now)) next = new Date(now.getFullYear() + 1, b.getMonth(), b.getDate());
+  const left = dayN(next) - dayN(now), lived = dayN(now) - dayN(b);
+  $('ageFacts').innerHTML = [[T.next, left === 0 ? '🎂 ' + T.today : `${T.in} ${nf.format(left)} ${T.days}`], [T.born, weekday(b)], [T.lived, nf.format(lived)], [T.heart, nf.format(Math.round(lived * 1440 * 75 / 1e6)) + ' M']].map(([k, v]) => `<div><small>${k}</small><b>${v}</b></div>`).join('');
+  save();
+}
+function save() { try { localStorage.setItem('dc', JSON.stringify({ from: $('from').value, to: $('to').value, incl: $('incl').checked, start: $('start').value, amount: $('amount').value, sign, unit, work: $('work').checked, birth: $('birth').value })); } catch (e) {} }
+['from', 'to', 'incl'].forEach(id => $(id).oninput = between);
+['start', 'amount', 'work'].forEach(id => $(id).oninput = add);
+$('birth').oninput = age;
+$('startToday').onclick = () => { $('start').value = iso(new Date()); add(); };
+(() => {
+  const today = new Date(), xmas = new Date(today.getFullYear(), 11, 25); if (xmas < today) xmas.setFullYear(xmas.getFullYear() + 1);
+  let s = {}; try { s = JSON.parse(localStorage.getItem('dc') || '{}'); } catch (e) {}
+  $('from').value = s.from || iso(today); $('to').value = s.to || iso(xmas); $('incl').checked = !!s.incl;
+  $('start').value = s.start || iso(today); $('amount').value = s.amount || 90; sign = s.sign || 1; unit = s.unit || 0; $('work').checked = !!s.work;
+  $('birth').value = s.birth || '1990-06-15';
+  paint(); between(); add(); age();
+  try { tab(+(localStorage.getItem('tab') || 0)); } catch (e) { tab(0); }
+})();
+</script>
+</body>
+</html>

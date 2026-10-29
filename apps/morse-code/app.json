@@ -1,0 +1,14 @@
+{
+  "id": "morse-code",
+  "name": "Morse Code",
+  "emoji": "📡",
+  "category": "reference",
+  "description": "Translate text to Morse and back, play it as sound, flashlight or vibration, and tap your own code on a straight key.",
+  "prompt": "A Morse code app: translate text to Morse and Morse to text, play it as a beep, with the flashlight or with vibration at an adjustable speed, a big straight key that decodes what you tap, and a chart of every letter and number.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

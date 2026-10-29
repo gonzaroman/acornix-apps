@@ -2,6 +2,33 @@
   "version": 1,
   "apps": [
     {
+      "id": "what-is-this-ai",
+      "name": "What Is This?",
+      "emoji": "🔎",
+      "category": "reference",
+      "description": "Point your camera at a plant, animal, object, dish or landmark and your AI tells you what it is, with fun facts and a useful tip.",
+      "prompt": "A camera app that identifies whatever you point it at using the AI: name, kind, confidence, a short description, surprising facts, a practical tip and a warning when something is toxic or dangerous. It can read the answer aloud, tell you more, and keeps a gallery of your discoveries.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "ai",
+        "phone",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 14096,
+      "sha256": "0b73d2a39be22947aa6ee009753b627c967cb5eca22f7eba4ca9b89027233ae0",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "snap-ideas-ai",
       "name": "What Can I Do?",
       "emoji": "📸",
@@ -124,6 +151,29 @@
       "trending": 0
     },
     {
+      "id": "first-aid",
+      "name": "First Aid",
+      "emoji": "🩹",
+      "category": "reference",
+      "description": "What to do in an emergency, step by step and offline: CPR with a rhythm guide, choking, bleeding, burns, stroke and more.",
+      "prompt": "An offline first aid guide with a big emergency call button and the number for your region, step-by-step cards for CPR with a 110 bpm metronome, choking, heavy bleeding, stroke, severe allergy, seizures, burns, fainting, heatstroke, nosebleeds, sprains and poisoning, each with what not to do.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 20100,
+      "sha256": "fd0d318845e294d4e656b7b600f4a949be9f5ec24e8f2371b1a3a90a89784827",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "castle-siege-3d",
       "name": "Castle Siege 3D",
       "emoji": "🏰",
@@ -191,6 +241,29 @@
       ],
       "size": 12602,
       "sha256": "dfc26f914308d97c3f489be7b5942c80c5ce741797b4f9b575de6a53c922a8b2",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "world-clock",
+      "name": "World Clock",
+      "emoji": "🕰️",
+      "category": "reference",
+      "description": "Your cities at a glance with day and night icons, a slider to shift the time, and a planner that finds hours that work for everyone.",
+      "prompt": "A world clock: add cities from a list, see their time, day and difference from mine with a sun or moon icon, a slider to move the time forward or back, and a meeting planner grid that highlights the hours that are working hours everywhere.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 13946,
+      "sha256": "75ff3c0177021f1d8f96851caf3deaf642944d3a78ee963a7d66eab004e9b808",
       "downloads": 0,
       "trending": 0
     },
@@ -504,6 +577,29 @@
       ],
       "size": 9729,
       "sha256": "bcb3001077f60d0640c51628dc7244322823bf385767570c21fd9036ffff8e9d",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "symbols",
+      "name": "Symbols",
+      "emoji": "✳️",
+      "category": "reference",
+      "description": "Arrows, maths, currencies, accents, Greek letters, ticks and more. Tap to build a string, long-press to copy one.",
+      "prompt": "A special characters picker with categories for arrows, maths, money, punctuation, accented letters, Greek, legal and tech, shapes, ticks, music and zodiac, box drawing and superscripts, search by name in English or Spanish, recent symbols and a tray to build and copy text.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10143,
+      "sha256": "a0c8a042c518b8c7a88c9feb954133e81e544bb61fcd34f0f46c8ff81f1c0aaf",
       "downloads": 0,
       "trending": 0
     },
@@ -868,6 +964,29 @@
       "trending": 0
     },
     {
+      "id": "roman-numerals",
+      "name": "Roman Numerals",
+      "emoji": "🏛️",
+      "category": "reference",
+      "description": "Convert numbers to Roman numerals and back, see how each one is built, and learn the three rules to read them.",
+      "prompt": "A Roman numerals converter that works both ways for 1 to 3999, shows how the number breaks down symbol by symbol, warns about invalid numerals, and has the seven symbols, examples to try and the rules for reading them.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7708,
+      "sha256": "d543b09a71f6f95947e8aed6c9d17d595c1f4dc4bb0a8d7c5b7cadec1b5f6c5c",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "receipt-scanner-ai",
       "name": "Receipt Scanner",
       "emoji": "🧾",
@@ -965,6 +1084,32 @@
       "trending": 0
     },
     {
+      "id": "pocket-dictionary-ai",
+      "name": "Pocket Dictionary",
+      "emoji": "📖",
+      "category": "reference",
+      "description": "Look up any word in English or Spanish with your AI: meanings, examples, pronunciation, synonyms, a translation and where it comes from.",
+      "prompt": "A dictionary powered by the AI: look up a word in English, Spanish or translate between them, with IPA pronunciation, parts of speech, definitions with examples, synonyms and opposites you can tap, translation and origin, a speak button, a word of the day and recent words.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9327,
+      "sha256": "7a747b1f06ed167243ddfe83ef875463971b4464e4fb9fc612caaeb32a92c2f8",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pitch-writer-ai",
       "name": "Pitch Writer",
       "emoji": "🎤",
@@ -987,6 +1132,29 @@
       ],
       "size": 10494,
       "sha256": "4a27b7cc7d6007284ecc8099cc1d29d7c0a6cdbb4fe935571662f78d7af2bb6f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "number-bases",
+      "name": "Number Bases",
+      "emoji": "🔢",
+      "category": "reference",
+      "description": "Convert between decimal, binary, hexadecimal and octal as you type, and flip bits with a tap to see what changes.",
+      "prompt": "A number base converter: decimal, binary, hexadecimal and octal fields that update each other as you type, tappable bits, shift, NOT and +1 buttons, and the number shown as a character, a colour and a signed 16-bit value.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 6741,
+      "sha256": "7bed01909db50a38dd066e960c9d145785c725f07cc6ee478d30172758cf9315",
       "downloads": 0,
       "trending": 0
     },
@@ -1058,6 +1226,31 @@
       ],
       "size": 13125,
       "sha256": "054196f4842d27207bb3f854fe1849435bc80c37f5e5493fe8de9aeb4cb769e6",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "morse-code",
+      "name": "Morse Code",
+      "emoji": "📡",
+      "category": "reference",
+      "description": "Translate text to Morse and back, play it as sound, flashlight or vibration, and tap your own code on a straight key.",
+      "prompt": "A Morse code app: translate text to Morse and Morse to text, play it as a beep, with the flashlight or with vibration at an adjustable speed, a big straight key that decodes what you tap, and a chart of every letter and number.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13106,
+      "sha256": "98624820bc3e899f1031d3f216f4c751ca882d93a741bb184d1e28f9ff69290e",
       "downloads": 0,
       "trending": 0
     },
@@ -1579,6 +1772,29 @@
       "trending": 0
     },
     {
+      "id": "date-calculator",
+      "name": "Date Calculator",
+      "emoji": "📅",
+      "category": "reference",
+      "description": "Days between two dates, adding days, weeks or working days to a date, and your exact age with your next birthday.",
+      "prompt": "A date calculator with three tabs: the days, weeks, working days and weekends between two dates; adding or subtracting days, weeks, months, years or working days from a date; and your exact age with the day you were born and your next birthday.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12227,
+      "sha256": "5363835e32971cf09bc5dd6673012efa2eb24e71912c088f96b707337729e00b",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "daily-journal",
       "name": "Daily Journal",
       "emoji": "📓",
@@ -1623,6 +1839,31 @@
       ],
       "size": 7205,
       "sha256": "ac9a25bc786f7d2b76a7b4000bd26740cd747a26301aecc6d95c6363147a4b52",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "country-facts",
+      "name": "Country Facts",
+      "emoji": "🌐",
+      "category": "reference",
+      "description": "73 countries with their flags and capitals, a summary of each from Wikipedia, and your own list of places visited and to visit.",
+      "prompt": "A country explorer with flags and capitals by continent, search, a random country button, a detail page with a Wikipedia summary, and buttons to mark countries as visited or want to go with counters.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13386,
+      "sha256": "bd1304af10fbd5aa050dd2ef7fb896f807006757a805e7bbabb18f7bfec9efbf",
       "downloads": 0,
       "trending": 0
     },

@@ -459,6 +459,56 @@
       "asset": 689038460,
       "base": 0,
       "count": 0
+    },
+    "country-facts": {
+      "asset": 689379179,
+      "base": 0,
+      "count": 0
+    },
+    "date-calculator": {
+      "asset": 689379107,
+      "base": 0,
+      "count": 0
+    },
+    "first-aid": {
+      "asset": 689378979,
+      "base": 0,
+      "count": 0
+    },
+    "morse-code": {
+      "asset": 689378860,
+      "base": 0,
+      "count": 0
+    },
+    "number-bases": {
+      "asset": 689379143,
+      "base": 0,
+      "count": 0
+    },
+    "pocket-dictionary-ai": {
+      "asset": 689379273,
+      "base": 0,
+      "count": 0
+    },
+    "roman-numerals": {
+      "asset": 689379014,
+      "base": 0,
+      "count": 0
+    },
+    "symbols": {
+      "asset": 689379225,
+      "base": 0,
+      "count": 0
+    },
+    "what-is-this-ai": {
+      "asset": 689379056,
+      "base": 0,
+      "count": 0
+    },
+    "world-clock": {
+      "asset": 689378911,
+      "base": 0,
+      "count": 0
     }
   },
   "history": {

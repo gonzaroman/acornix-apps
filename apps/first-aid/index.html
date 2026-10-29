@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>First Aid</title>
+<style>
+  :root { --bg:#fff5f5; --card:#fff; --ink:#2b0f12; --muted:#8a5a60; --a:#e03131; --line:#ffe0e0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button, a { font:inherit; color:inherit; border:0; cursor:pointer; text-decoration:none; }
+  h1 { margin:4px 0 2px; font-size:28px; }
+  .sub { margin:0 0 12px; color:var(--muted); font-weight:600; font-size:14px; }
+  .call { display:flex; align-items:center; justify-content:center; gap:10px; padding:18px; border-radius:22px; background:var(--a); color:#fff; font-weight:900; font-size:22px; box-shadow:0 8px 22px #e0313155; }
+  .call small { font-size:14px; opacity:.85; font-weight:700; }
+  .nums { display:flex; gap:6px; margin:8px 0 14px; }
+  .nums button { flex:1; padding:8px 4px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); }
+  .nums button.on { background:#2b0f12; color:#fff; }
+  .search { width:100%; padding:13px 14px; border-radius:16px; border:2px solid var(--line); font:inherit; font-size:16px; outline:none; margin-bottom:10px; background:#fff; }
+  .search:focus { border-color:var(--a); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .topic { padding:16px 12px; border-radius:20px; background:var(--card); text-align:left; box-shadow:0 3px 12px #e0313112; }
+  .topic span { display:block; font-size:30px; margin-bottom:6px; }
+  .topic b { font-size:15px; line-height:1.25; display:block; }
+  .topic.urgent { background:#2b0f12; color:#fff; }
+  .page { position:fixed; inset:0; background:var(--bg); overflow-y:auto; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); display:none; }
+  .page.on { display:block; }
+  .back { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; }
+  .page h2 { font-size:28px; margin:12px 0 4px; }
+  .when { color:var(--muted); font-weight:600; margin:0 0 12px; line-height:1.45; }
+  .alert { padding:12px 14px; border-radius:16px; background:#ffe3e3; color:#a51d1d; font-weight:800; margin-bottom:12px; line-height:1.4; }
+  ol { list-style:none; padding:0; margin:0; counter-reset:s; }
+  ol li { counter-increment:s; display:flex; gap:12px; padding:14px; border-radius:18px; background:var(--card); margin-bottom:8px; line-height:1.45; font-size:16px; }
+  ol li::before { content:counter(s); width:30px; height:30px; flex:none; border-radius:50%; background:var(--a); color:#fff; font-weight:900; display:grid; place-items:center; }
+  .dont { padding:12px 14px; border-radius:16px; background:#fff; border:2px dashed #ffc9c9; line-height:1.5; margin-top:4px; }
+  .dont b { color:var(--a); }
+  .metro { margin:12px 0; padding:16px; border-radius:22px; background:#2b0f12; color:#fff; text-align:center; }
+  .metro .beat { width:110px; height:110px; margin:6px auto 10px; border-radius:50%; background:var(--a); display:grid; place-items:center; font-size:40px; font-weight:900; transition:transform .06s; }
+  .metro .beat.hit { transform:scale(1.15); background:#ff6b6b; }
+  .metro button { padding:12px 20px; border-radius:14px; background:#fff; color:#2b0f12; font-weight:900; }
+  .metro small { display:block; opacity:.75; margin-top:8px; font-weight:600; }
+  .disc { color:var(--muted); font-size:12px; line-height:1.5; margin-top:16px; }
+</style>
+</head>
+<body>
+<h1>🩹 <span id="ttl"></span></h1>
+<p class="sub" id="sub"></p>
+<a class="call" id="call"></a>
+<div class="nums" id="nums"></div>
+<input class="search" id="search">
+<div class="grid" id="grid"></div>
+<p class="disc" id="disc"></p>
+<div class="page" id="page"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const NUMS = [['112', ES ? 'Europa' : 'Europe'], ['911', ES ? 'América' : 'Americas'], ['999', 'UK'], ['000', 'Australia']];
+const T = ES ? { title:'Primeros auxilios', sub:'Qué hacer en una emergencia, paso a paso. Funciona sin internet.', call:'Llamar al', search:'Buscar: quemadura, atragantamiento…', back:'← Volver', dont:'No hagas', start:'▶ Empezar ritmo', stop:'■ Parar', metro:'Comprime al ritmo: 110 por minuto', disc:'Esta guía no sustituye a un curso de primeros auxilios ni a los servicios de emergencia. Si tienes dudas, llama siempre.' }
+ : { title:'First Aid', sub:'What to do in an emergency, step by step. Works offline.', call:'Call', search:'Search: burn, choking…', back:'← Back', dont:'Don\'t', start:'▶ Start rhythm', stop:'■ Stop', metro:'Push to the beat: 110 per minute', disc:'This guide doesn\'t replace a first aid course or the emergency services. If in doubt, always call.' };
+// id, emoji, urgent, {en:[title, when, alert, steps[], dont], es:[...]}
+const G = [
+ ['cpr','❤️',1,{ en:['Not breathing (CPR)','Unresponsive and not breathing normally, or only gasping.','Call the emergency number now and put it on speaker. Ask someone to bring a defibrillator (AED).',['Lay the person on their back on a firm surface.','Place the heel of one hand in the centre of the chest, the other hand on top, arms straight.','Push hard and fast: 5–6 cm deep, 100–120 times a minute. Let the chest come back up each time.','If you are trained, give 2 rescue breaths after every 30 compressions. If not, just keep pushing.','As soon as the AED arrives, switch it on and follow its voice.','Don\'t stop until help takes over or the person starts breathing normally.'],'stop compressions to check for a pulse, or leave the person alone.'],
+   es:['No respira (RCP)','No responde y no respira con normalidad, o solo boquea.','Llama ya al número de emergencias y pon el altavoz. Pide que traigan un desfibrilador (DEA).',['Tumba a la persona boca arriba sobre una superficie dura.','Pon el talón de una mano en el centro del pecho, la otra encima, brazos rectos.','Aprieta fuerte y rápido: 5–6 cm de profundidad, 100–120 veces por minuto. Deja que el pecho suba del todo.','Si tienes formación, da 2 insuflaciones cada 30 compresiones. Si no, sigue solo con compresiones.','En cuanto llegue el DEA, enciéndelo y sigue sus instrucciones de voz.','No pares hasta que llegue ayuda o la persona respire con normalidad.'],'dejes de comprimir para buscar el pulso ni dejes sola a la persona.'] }],
+ ['choking','😮‍💨',1,{ en:['Choking','Can\'t speak, cough or breathe, often holding the throat.','If they can cough, encourage them to keep coughing.',['Stand behind them and lean them forward.','Give up to 5 firm back blows between the shoulder blades with the heel of your hand.','If that fails, give up to 5 abdominal thrusts: fist above the belly button, pull sharply inwards and upwards.','Keep alternating 5 back blows and 5 thrusts.','If they become unresponsive, call the emergency number and start CPR.'],'put your fingers in their mouth blindly. Babies under 1: back blows and chest thrusts, never abdominal thrusts.'],
+   es:['Atragantamiento','No puede hablar, toser ni respirar; a menudo se lleva las manos al cuello.','Si puede toser, anímale a seguir tosiendo.',['Colócate detrás y haz que se incline hacia delante.','Da hasta 5 golpes fuertes en la espalda, entre los omóplatos, con el talón de la mano.','Si no sale, haz hasta 5 compresiones abdominales: puño sobre el ombligo, tira fuerte hacia dentro y arriba.','Sigue alternando 5 golpes y 5 compresiones.','Si pierde el conocimiento, llama a emergencias y empieza la RCP.'],'metas los dedos en la boca a ciegas. Bebés menores de 1 año: golpes en la espalda y compresiones en el pecho, nunca abdominales.'] }],
+ ['bleeding','🩸',1,{ en:['Heavy bleeding','Blood is spurting or soaking through fast.','Call the emergency number if bleeding is heavy or won\'t stop.',['Press firmly on the wound with a clean cloth or your hand.','Keep pressing without lifting to look, for at least 10 minutes.','If blood soaks through, add more cloth on top and keep pressing.','Raise the injured part if you can, and keep the person lying down and warm.'],'remove objects stuck in the wound; press around them instead.'],
+   es:['Hemorragia','La sangre sale a chorro o empapa muy rápido.','Llama a emergencias si sangra mucho o no para.',['Aprieta con fuerza sobre la herida con un paño limpio o con la mano.','Mantén la presión sin levantar para mirar, al menos 10 minutos.','Si se empapa, pon más tela encima y sigue apretando.','Eleva la zona si puedes y mantén a la persona tumbada y abrigada.'],'saques objetos clavados; aprieta alrededor de ellos.'] }],
+ ['stroke','🧠',1,{ en:['Stroke (FAST)','Sudden face drooping, arm weakness or slurred speech.','Time matters: call the emergency number straight away and note the time it started.',['Face: ask them to smile. Does one side droop?','Arms: can they raise both arms and keep them up?','Speech: is it slurred or strange?','Time: if any of these, call now. Stay with them and keep them comfortable.'],'give them food, drink or medicine.'],
+   es:['Ictus','De repente se le tuerce la cara, pierde fuerza en un brazo o habla raro.','El tiempo es clave: llama a emergencias enseguida y apunta la hora de inicio.',['Cara: pídele que sonría. ¿Se le tuerce un lado?','Brazos: ¿puede levantar los dos y mantenerlos?','Habla: ¿le cuesta hablar o dice cosas raras?','Tiempo: si ves algo de esto, llama ya. Quédate con la persona y tranquilízala.'],'le des comida, bebida ni medicamentos.'] }],
+ ['allergy','🐝',1,{ en:['Severe allergic reaction','Swelling of lips or tongue, trouble breathing, hives, feeling faint.','Call the emergency number.',['If they have an adrenaline auto-injector, help them use it in the outer thigh (through clothes is fine).','Let them sit up if breathing is hard, or lie down with legs raised if they feel faint.','If there\'s no improvement after 5 minutes and they have a second injector, use it.','If they become unresponsive and stop breathing, start CPR.'],'make them stand or walk.'],
+   es:['Reacción alérgica grave','Hinchazón de labios o lengua, le cuesta respirar, ronchas, se marea.','Llama a emergencias.',['Si tiene autoinyector de adrenalina, ayúdale a ponerlo en la parte externa del muslo (vale sobre la ropa).','Si le cuesta respirar, que se siente; si se marea, túmbale con las piernas en alto.','Si no mejora en 5 minutos y tiene un segundo autoinyector, úsalo.','Si deja de responder y de respirar, empieza la RCP.'],'le hagas ponerse de pie ni caminar.'] }],
+ ['seizure','⚡',0,{ en:['Seizure','Sudden stiffening and jerking, may fall and not respond.','Call the emergency number if it lasts more than 5 minutes, it\'s their first one, or they are hurt.',['Note the time it starts.','Clear the area and cushion their head.','Loosen anything tight around the neck.','When the jerking stops, roll them onto their side (recovery position) and stay with them.'],'hold them down or put anything in their mouth.'],
+   es:['Convulsiones','Se pone rígido y tiene sacudidas; puede caer y no responder.','Llama a emergencias si dura más de 5 minutos, es la primera vez o se ha hecho daño.',['Apunta la hora de inicio.','Aparta lo que haya alrededor y protégele la cabeza.','Afloja lo que apriete el cuello.','Cuando paren las sacudidas, ponle de lado (posición lateral de seguridad) y quédate con él.'],'le sujetes ni le metas nada en la boca.'] }],
+ ['burns','🔥',0,{ en:['Burns','Skin burnt by heat, a hot liquid or a chemical.','Call for help if the burn is large, deep, on the face, hands or genitals, or on a child.',['Cool it under cool running water for 20 minutes.','Remove rings, watches or clothing near the burn, unless stuck to the skin.','Cover loosely with cling film or a clean plastic bag.','Take pain relief if needed and keep the person warm.'],'use ice, butter, toothpaste or creams, or burst blisters.'],
+   es:['Quemaduras','Piel quemada por calor, un líquido caliente o un producto químico.','Pide ayuda si es grande, profunda, en cara, manos o genitales, o en un niño.',['Enfría con agua corriente fresca durante 20 minutos.','Quita anillos, relojes o ropa cerca de la quemadura, salvo que esté pegada.','Cubre sin apretar con film transparente o una bolsa de plástico limpia.','Toma un analgésico si hace falta y mantén a la persona abrigada.'],'pongas hielo, mantequilla, pasta de dientes ni cremas, ni revientes ampollas.'] }],
+ ['faint','😵',0,{ en:['Fainting','Brief loss of consciousness, often after standing or heat.','Call the emergency number if they don\'t wake up within a minute or aren\'t breathing normally.',['Lay them on their back and raise their legs.','Loosen tight clothing and give them fresh air.','When they come round, let them rest lying down and sit up slowly.','If they stay unresponsive but breathe, place them on their side.'],'sit them up suddenly or give them anything to drink while drowsy.'],
+   es:['Desmayo','Pérdida breve del conocimiento, a menudo al levantarse o con calor.','Llama a emergencias si no despierta en un minuto o no respira con normalidad.',['Túmbale boca arriba y levántale las piernas.','Afloja la ropa ajustada y que le dé el aire.','Cuando se recupere, que descanse tumbado y se incorpore despacio.','Si sigue sin responder pero respira, ponle de lado.'],'le sientes de golpe ni le des de beber mientras está aturdido.'] }],
+ ['heat','🥵',0,{ en:['Heatstroke','Hot, confused, headache, no longer sweating after heat or exercise.','Heatstroke is an emergency: call for help.',['Move them somewhere cool and shaded.','Remove extra clothing.','Cool them fast: wet the skin and fan, or put cold packs on neck, armpits and groin.','If they are awake, give sips of cool water.'],'give them alcohol or caffeine.'],
+   es:['Golpe de calor','Muy caliente, confuso, dolor de cabeza, deja de sudar tras calor o ejercicio.','El golpe de calor es una emergencia: pide ayuda.',['Llévale a un sitio fresco y a la sombra.','Quítale ropa.','Enfríale rápido: moja la piel y abanica, o pon frío en cuello, axilas e ingles.','Si está consciente, dale sorbos de agua fresca.'],'le des alcohol ni cafeína.'] }],
+ ['nose','👃',0,{ en:['Nosebleed','Blood from one or both nostrils.','Get help if it lasts more than 20 minutes or follows a blow to the head.',['Sit down and lean forward.','Pinch the soft part of the nose, just below the bone.','Keep pinching for 10–15 minutes, breathing through the mouth.','Avoid blowing the nose for a few hours.'],'tip the head back.'],
+   es:['Sangrado de nariz','Sangre por uno o los dos orificios.','Pide ayuda si dura más de 20 minutos o tras un golpe en la cabeza.',['Siéntate e inclínate hacia delante.','Aprieta la parte blanda de la nariz, justo debajo del hueso.','Mantén la presión 10–15 minutos respirando por la boca.','No te suenes la nariz en unas horas.'],'eches la cabeza hacia atrás.'] }],
+ ['sprain','🦶',0,{ en:['Sprains and strains','Pain and swelling after twisting a joint.','Get it checked if they can\'t put weight on it or it looks deformed.',['Rest: stop and protect the injured part.','Ice: a cold pack wrapped in a cloth, 20 minutes every 2–3 hours.','Compression: a firm, not tight, bandage.','Elevation: keep it raised above the heart when possible.'],'put ice directly on the skin.'],
+   es:['Esguinces','Dolor e hinchazón tras torcerse una articulación.','Que lo vea un médico si no puede apoyar o se ve deformado.',['Reposo: para y protege la zona.','Frío: hielo envuelto en un paño, 20 minutos cada 2–3 horas.','Compresión: venda firme pero sin apretar.','Elevación: mantenla por encima del corazón cuando puedas.'],'pongas el hielo directamente sobre la piel.'] }],
+ ['poison','☠️',0,{ en:['Poisoning','Swallowed something harmful: medicines, cleaning products, plants.','Call the emergency number or your poison centre and have the packaging ready.',['Find out what, how much and when.','If they are awake, rinse the mouth with water.','If they become unresponsive, place them on their side; start CPR if they stop breathing.'],'make them vomit or give them milk.'],
+   es:['Intoxicación','Ha tragado algo dañino: medicamentos, productos de limpieza, plantas.','Llama a emergencias o al servicio de toxicología y ten el envase a mano.',['Averigua qué, cuánto y cuándo.','Si está consciente, que se enjuague la boca con agua.','Si deja de responder, ponle de lado; si deja de respirar, empieza la RCP.'],'le provoques el vómito ni le des leche.'] }],
+];
+const lang = ES ? 'es' : 'en', $ = id => document.getElementById(id);
+let num = 0;
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('search').placeholder = T.search; $('disc').textContent = T.disc;
+function nums() {
+  $('nums').innerHTML = NUMS.map(([n, r], i) => `<button data-i="${i}" class="${i === num ? 'on' : ''}">${n} · ${r}</button>`).join('');
+  $('nums').querySelectorAll('button').forEach(b => b.onclick = () => { num = +b.dataset.i; try { localStorage.setItem('num', num); } catch (e) {} nums(); });
+  $('call').href = 'tel:' + NUMS[num][0]; $('call').innerHTML = `📞 ${T.call} ${NUMS[num][0]}`;
+}
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+function grid() {
+  const q = norm($('search').value);
+  $('grid').innerHTML = G.filter(g => !q || norm(g[3][lang].flat().join(' ')).includes(q)).map(g => `<button class="topic ${g[2] ? 'urgent' : ''}" data-id="${g[0]}"><span>${g[1]}</span><b>${g[3][lang][0]}</b></button>`).join('');
+  $('grid').querySelectorAll('.topic').forEach(b => b.onclick = () => open(b.dataset.id));
+}
+let metroT = null, ac;
+function open(id) {
+  const g = G.find(x => x[0] === id), [title, when, alert, steps, dont] = g[3][lang];
+  $('page').innerHTML = `<button class="back" id="back">${T.back}</button><h2>${g[1]} ${title}</h2><p class="when">${when}</p><div class="alert">📞 ${alert}</div>` +
+    (id === 'cpr' ? `<div class="metro"><div class="beat" id="beat">♥</div><button id="metroBtn">${T.start}</button><small>${T.metro}</small></div>` : '') +
+    `<ol>${steps.map(s => `<li>${s}</li>`).join('')}</ol><div class="dont">🚫 <b>${T.dont}:</b> ${dont}</div><a class="call" style="margin-top:14px" href="tel:${NUMS[num][0]}">📞 ${T.call} ${NUMS[num][0]}</a>`;
+  $('page').classList.add('on'); $('page').scrollTop = 0;
+  $('back').onclick = () => { stopMetro(); $('page').classList.remove('on'); history.replaceState(null, '', '#'); };
+  if (id === 'cpr') $('metroBtn').onclick = () => metroT ? stopMetro() : startMetro();
+  history.pushState(null, '', '#' + id);
+}
+function startMetro() {
+  $('metroBtn').textContent = T.stop; let n = 0;
+  metroT = setInterval(() => {
+    n++; $('beat').textContent = ((n - 1) % 30) + 1; $('beat').classList.add('hit'); setTimeout(() => $('beat') && $('beat').classList.remove('hit'), 90);
+    try { ac = ac || new AudioContext(); const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = (n - 1) % 30 === 29 ? 1200 : 880; gn.gain.value = .15; o.connect(gn); gn.connect(ac.destination); gn.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .07); o.start(); o.stop(ac.currentTime + .07); } catch (e) {}
+    try { if (window.Acornix) Acornix.vibrate(30); } catch (e) {}
+  }, 60000 / 110);
+}
+function stopMetro() { clearInterval(metroT); metroT = null; const b = $('metroBtn'); if (b) b.textContent = T.start; }
+addEventListener('popstate', () => { stopMetro(); $('page').classList.remove('on'); });
+$('search').oninput = grid;
+try { const n = localStorage.getItem('num'); if (n != null) num = +n; else if (!/^(en-US|es-(MX|US|CO|PE|VE|EC|GT|CU|BO|DO|HN|PY|SV|NI|CR|PA|UY|AR|CL|PR))/.test(navigator.language)) num = navigator.language === 'en-GB' ? 2 : navigator.language === 'en-AU' ? 3 : 0; else num = 1; } catch (e) {}
+nums(); grid();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "what-is-this-ai",
+  "name": "What Is This?",
+  "emoji": "🔎",
+  "category": "reference",
+  "description": "Point your camera at a plant, animal, object, dish or landmark and your AI tells you what it is, with fun facts and a useful tip.",
+  "prompt": "A camera app that identifies whatever you point it at using the AI: name, kind, confidence, a short description, surprising facts, a practical tip and a warning when something is toxic or dangerous. It can read the answer aloud, tell you more, and keeps a gallery of your discoveries.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

@@ -1,0 +1,14 @@
+{
+  "id": "symbols",
+  "name": "Symbols",
+  "emoji": "✳️",
+  "category": "reference",
+  "description": "Arrows, maths, currencies, accents, Greek letters, ticks and more. Tap to build a string, long-press to copy one.",
+  "prompt": "A special characters picker with categories for arrows, maths, money, punctuation, accented letters, Greek, legal and tech, shapes, ticks, music and zodiac, box drawing and superscripts, search by name in English or Spanish, recent symbols and a tray to build and copy text.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

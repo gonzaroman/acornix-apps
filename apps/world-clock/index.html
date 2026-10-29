@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>World Clock</title>
+<style>
+  :root { --bg:#f3f5fa; --card:#fff; --ink:#141b2d; --muted:#6b7590; --a:#3b5bdb; --line:#e3e7f1; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; align-items:center; justify-content:space-between; }
+  h1 { margin:4px 0; font-size:28px; }
+  .here { margin:6px 0 14px; padding:18px; border-radius:24px; background:linear-gradient(135deg,#3b5bdb,#7048e8); color:#fff; }
+  .here small { opacity:.8; font-weight:700; }
+  .here .t { font-size:54px; font-weight:800; letter-spacing:-2px; font-variant-numeric:tabular-nums; line-height:1.05; }
+  .here .t span { font-size:22px; opacity:.8; letter-spacing:0; }
+  .shift { margin:0 0 12px; padding:12px 14px; border-radius:18px; background:var(--card); }
+  .shift .lbl { display:flex; justify-content:space-between; font-weight:800; font-size:14px; color:var(--muted); }
+  .shift .lbl b { color:var(--a); }
+  .shift input { width:100%; accent-color:var(--a); margin-top:6px; }
+  .city { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:20px; background:var(--card); margin-bottom:8px; position:relative; overflow:hidden; }
+  .city .sky { width:46px; height:46px; border-radius:14px; display:grid; place-items:center; font-size:22px; flex:none; }
+  .city .n { flex:1; min-width:0; }
+  .city .n b { display:block; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .city .n small { color:var(--muted); font-weight:600; }
+  .city .tm { text-align:right; font-variant-numeric:tabular-nums; }
+  .city .tm b { display:block; font-size:26px; font-weight:800; letter-spacing:-.5px; }
+  .city .tm small { color:var(--muted); font-weight:700; font-size:12px; }
+  .city .del { position:absolute; right:0; top:0; bottom:0; width:70px; background:#e03131; color:#fff; font-weight:800; transform:translateX(100%); transition:transform .2s; }
+  .city.edit .del { transform:none; }
+  .meet { margin-top:16px; }
+  .meet h3 { margin:0 4px 8px; font-size:15px; color:var(--muted); }
+  .grid { background:var(--card); border-radius:20px; padding:10px; overflow-x:auto; }
+  .grid table { border-collapse:separate; border-spacing:2px; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .grid td { width:26px; height:26px; text-align:center; border-radius:6px; }
+  .grid td.name { width:auto; text-align:left; padding-right:8px; white-space:nowrap; color:var(--muted); }
+  .grid .w { background:#d3f9d8; color:#2b8a3e; } .grid .e { background:#fff3bf; color:#946c00; } .grid .s { background:#edf0f7; color:#9aa3b8; }
+  .grid .all { outline:2px solid #2b8a3e; }
+  .fab { position:fixed; right:16px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:16px 22px; border-radius:20px; background:var(--a); color:#fff; font-weight:800; box-shadow:0 8px 24px #3b5bdb55; }
+  .edit-btn { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; color:var(--a); }
+  .sheet { position:fixed; inset:0; background:#0006; display:none; align-items:flex-end; z-index:5; }
+  .sheet.on { display:flex; }
+  .sheet > div { width:100%; max-height:80vh; background:var(--bg); border-radius:24px 24px 0 0; padding:16px 16px calc(env(safe-area-inset-bottom) + 16px); display:flex; flex-direction:column; }
+  .sheet input { width:100%; padding:14px; border-radius:16px; border:2px solid var(--line); font:inherit; font-size:17px; outline:none; }
+  .sheet input:focus { border-color:var(--a); }
+  .results { overflow-y:auto; margin-top:10px; }
+  .results button { display:flex; justify-content:space-between; width:100%; padding:13px 12px; border-radius:14px; background:var(--card); margin-bottom:6px; text-align:left; font-weight:700; }
+  .results small { color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="head"><h1>🕰️ <span id="ttl"></span></h1><button class="edit-btn" id="editBtn"></button></div>
+<div class="here"><small id="hereLbl"></small><div class="t" id="hereT"></div><small id="hereD"></small></div>
+<div class="shift"><div class="lbl"><span id="shiftLbl"></span><b id="shiftV"></b></div><input type="range" id="shift" min="-12" max="12" step="0.5" value="0"></div>
+<div id="list"></div>
+<div class="meet"><h3 id="meetLbl"></h3><div class="grid" id="grid"></div></div>
+<button class="fab" id="add"></button>
+<div class="sheet" id="sheet"><div><input id="search"><div class="results" id="results"></div></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Reloj mundial', here:'Aquí', shift:'Mover la hora', now:'Ahora', add:'＋ Añadir ciudad', edit:'Editar', done:'Listo', del:'Quitar', search:'Busca una ciudad o país', meet:'¿Cuándo quedar? Verde = horario laboral en todas', today:'Hoy', tomorrow:'Mañana', yesterday:'Ayer', ahead:'más', behind:'menos', same:'Misma hora', h:'h' }
+ : { title:'World Clock', here:'Here', shift:'Shift the time', now:'Now', add:'＋ Add city', edit:'Edit', done:'Done', del:'Remove', search:'Search a city or country', meet:'When to meet? Green = working hours everywhere', today:'Today', tomorrow:'Tomorrow', yesterday:'Yesterday', ahead:'ahead', behind:'behind', same:'Same time', h:'h' };
+// [name EN, name ES, IANA zone, country flag]
+const CITIES = [
+  ['London','Londres','Europe/London','🇬🇧'],['Madrid','Madrid','Europe/Madrid','🇪🇸'],['Paris','París','Europe/Paris','🇫🇷'],['Berlin','Berlín','Europe/Berlin','🇩🇪'],['Rome','Roma','Europe/Rome','🇮🇹'],['Lisbon','Lisboa','Europe/Lisbon','🇵🇹'],['Athens','Atenas','Europe/Athens','🇬🇷'],['Moscow','Moscú','Europe/Moscow','🇷🇺'],['Istanbul','Estambul','Europe/Istanbul','🇹🇷'],['Canary Islands','Canarias','Atlantic/Canary','🇪🇸'],
+  ['New York','Nueva York','America/New_York','🇺🇸'],['Los Angeles','Los Ángeles','America/Los_Angeles','🇺🇸'],['Chicago','Chicago','America/Chicago','🇺🇸'],['Denver','Denver','America/Denver','🇺🇸'],['Miami','Miami','America/New_York','🇺🇸'],['Toronto','Toronto','America/Toronto','🇨🇦'],['Vancouver','Vancouver','America/Vancouver','🇨🇦'],['Mexico City','Ciudad de México','America/Mexico_City','🇲🇽'],['Bogotá','Bogotá','America/Bogota','🇨🇴'],['Lima','Lima','America/Lima','🇵🇪'],['Santiago','Santiago de Chile','America/Santiago','🇨🇱'],['Buenos Aires','Buenos Aires','America/Argentina/Buenos_Aires','🇦🇷'],['São Paulo','São Paulo','America/Sao_Paulo','🇧🇷'],['Caracas','Caracas','America/Caracas','🇻🇪'],['Havana','La Habana','America/Havana','🇨🇺'],['Montevideo','Montevideo','America/Montevideo','🇺🇾'],['Quito','Quito','America/Guayaquil','🇪🇨'],['La Paz','La Paz','America/La_Paz','🇧🇴'],['Asunción','Asunción','America/Asuncion','🇵🇾'],['Panama','Panamá','America/Panama','🇵🇦'],['San José','San José','America/Costa_Rica','🇨🇷'],['Santo Domingo','Santo Domingo','America/Santo_Domingo','🇩🇴'],['Honolulu','Honolulu','Pacific/Honolulu','🇺🇸'],
+  ['Tokyo','Tokio','Asia/Tokyo','🇯🇵'],['Seoul','Seúl','Asia/Seoul','🇰🇷'],['Beijing','Pekín','Asia/Shanghai','🇨🇳'],['Hong Kong','Hong Kong','Asia/Hong_Kong','🇭🇰'],['Singapore','Singapur','Asia/Singapore','🇸🇬'],['Bangkok','Bangkok','Asia/Bangkok','🇹🇭'],['Delhi','Delhi','Asia/Kolkata','🇮🇳'],['Dubai','Dubái','Asia/Dubai','🇦🇪'],['Manila','Manila','Asia/Manila','🇵🇭'],['Jakarta','Yakarta','Asia/Jakarta','🇮🇩'],['Tel Aviv','Tel Aviv','Asia/Jerusalem','🇮🇱'],['Kathmandu','Katmandú','Asia/Kathmandu','🇳🇵'],
+  ['Cairo','El Cairo','Africa/Cairo','🇪🇬'],['Lagos','Lagos','Africa/Lagos','🇳🇬'],['Nairobi','Nairobi','Africa/Nairobi','🇰🇪'],['Johannesburg','Johannesburgo','Africa/Johannesburg','🇿🇦'],['Casablanca','Casablanca','Africa/Casablanca','🇲🇦'],
+  ['Sydney','Sídney','Australia/Sydney','🇦🇺'],['Perth','Perth','Australia/Perth','🇦🇺'],['Auckland','Auckland','Pacific/Auckland','🇳🇿'],['Reykjavík','Reikiavik','Atlantic/Reykjavik','🇮🇸'],['UTC','UTC','UTC','🌐']
+];
+const L = ES ? 1 : 0, $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const HERE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+let mine = [], shift = 0, editing = false;
+$('ttl').textContent = T.title; $('hereLbl').textContent = T.here + ' · ' + HERE.split('/').pop().replace(/_/g, ' '); $('shiftLbl').textContent = T.shift; $('add').textContent = T.add; $('editBtn').textContent = T.edit; $('meetLbl').textContent = T.meet; $('search').placeholder = T.search;
+const loc = ES ? 'es-ES' : 'en-GB';
+// Offset of a zone from UTC, in minutes, at a given instant.
+function offset(zone, d) { const p = new Intl.DateTimeFormat('en-US', { timeZone: zone, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }).formatToParts(d).reduce((o, x) => (o[x.type] = +x.value, o), {}); return (Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - Math.floor(d.getTime() / 6e4) * 6e4) / 6e4; }
+const fmtT = (zone, d) => new Intl.DateTimeFormat(loc, { timeZone: zone, hour: '2-digit', minute: '2-digit' }).format(d);
+function hourIn(zone, d) { return +new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', hourCycle: 'h23' }).format(d); }
+function dayDiff(zone, d) { const k = z => new Intl.DateTimeFormat('en-CA', { timeZone: z }).format(d); const a = k(zone), b = k(HERE); return a === b ? 0 : a > b ? 1 : -1; }
+function sky(h) { return h >= 7 && h < 18 ? ['☀️', '#fff4cc'] : h >= 18 && h < 21 ? ['🌇', '#ffe3d1'] : h >= 5 && h < 7 ? ['🌅', '#ffe3d1'] : ['🌙', '#e1e5f8']; }
+function render() {
+  const now = new Date(Date.now() + shift * 36e5);
+  $('hereT').innerHTML = fmtT(HERE, now).replace(/(\d+:\d+)(.*)/, '$1<span>$2</span>');
+  $('hereD').textContent = new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long' }).format(now);
+  $('shiftV').textContent = shift ? (shift > 0 ? '+' : '') + shift + ' ' + T.h : T.now;
+  const hereOff = offset(HERE, now);
+  $('list').innerHTML = mine.map((c, i) => {
+    const h = hourIn(c[2], now), [ic, bg] = sky(h), diff = (offset(c[2], now) - hereOff) / 60, dd = dayDiff(c[2], now);
+    const rel = diff === 0 ? T.same : `${Math.abs(diff)} ${T.h} ${diff > 0 ? T.ahead : T.behind}`;
+    return `<div class="city ${editing ? 'edit' : ''}"><span class="sky" style="background:${bg}">${ic}</span><div class="n"><b>${c[3]} ${c[L]}</b><small>${rel}</small></div><div class="tm"><b>${fmtT(c[2], now)}</b><small>${[T.yesterday, T.today, T.tomorrow][dd + 1]}</small></div><button class="del" data-i="${i}">${T.del}</button></div>`;
+  }).join('');
+  $('list').querySelectorAll('.del').forEach(b => b.onclick = () => { mine.splice(+b.dataset.i, 1); store.set('cities', mine.map(c => c[2] + '|' + c[0])); render(); });
+  // Meeting planner: the next 24 hours from the current hour, one row per place.
+  const base = new Date(now); base.setMinutes(0, 0, 0);
+  const rows = [[T.here, HERE], ...mine.slice(0, 5).map(c => [c[3] + ' ' + c[L], c[2]])];
+  const hours = [...Array(24)].map((_, k) => new Date(base.getTime() + k * 36e5));
+  const cls = h => h >= 9 && h < 18 ? 'w' : h >= 7 && h < 22 ? 'e' : 's';
+  const allWork = hours.map(d => rows.every(r => cls(hourIn(r[1], d)) === 'w'));
+  $('grid').innerHTML = '<table>' + rows.map(r => `<tr><td class="name">${r[0]}</td>${hours.map((d, k) => { const h = hourIn(r[1], d); return `<td class="${cls(h)} ${allWork[k] ? 'all' : ''}">${h}</td>`; }).join('')}</tr>`).join('') + '</table>';
+}
+$('shift').oninput = () => { shift = +$('shift').value; render(); };
+$('editBtn').onclick = () => { editing = !editing; $('editBtn').textContent = editing ? T.done : T.edit; render(); };
+function results() {
+  const q = $('search').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const list = CITIES.filter(c => !q || norm(c[0]).includes(q) || norm(c[1]).includes(q) || norm(c[2]).includes(q));
+  const now = new Date();
+  $('results').innerHTML = list.map((c, i) => `<button data-i="${CITIES.indexOf(c)}"><span>${c[3]} ${c[L]}</span><small>${fmtT(c[2], now)}</small></button>`).join('');
+  $('results').querySelectorAll('button').forEach(b => b.onclick = () => { const c = CITIES[+b.dataset.i]; if (!mine.includes(c)) mine.push(c); store.set('cities', mine.map(c => c[2] + '|' + c[0])); $('sheet').classList.remove('on'); render(); });
+}
+$('add').onclick = () => { $('search').value = ''; results(); $('sheet').classList.add('on'); setTimeout(() => $('search').focus(), 50); };
+$('search').oninput = results;
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').classList.remove('on'); };
+(async () => {
+  const saved = await store.get('cities', null);
+  mine = saved ? saved.map(k => CITIES.find(c => c[2] + '|' + c[0] === k)).filter(Boolean) : ['New York', 'London', 'Tokyo', 'Sydney'].map(n => CITIES.find(c => c[0] === n));
+  render(); setInterval(render, 15000);
+})();
+</script>
+</body>
+</html>

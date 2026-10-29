@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Symbols</title>
+<style>
+  :root { --bg:#f5f3ff; --card:#fff; --ink:#1e1b3a; --muted:#77729a; --a:#7c3aed; --line:#e7e3fb; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 100px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 10px; font-size:28px; }
+  .search { width:100%; padding:13px 14px; border-radius:16px; border:2px solid var(--line); font:inherit; font-size:16px; outline:none; background:#fff; }
+  .search:focus { border-color:var(--a); }
+  .chips { display:flex; gap:6px; overflow-x:auto; margin:10px 0 4px; scrollbar-width:none; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 12px; border-radius:14px; background:var(--card); font-weight:700; font-size:14px; }
+  .chip.on { background:var(--a); color:#fff; }
+  h3 { margin:14px 4px 8px; font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .s { aspect-ratio:1; border-radius:14px; background:var(--card); font-size:24px; display:grid; place-items:center; box-shadow:0 2px 6px #7c3aed10; transition:transform .1s; }
+  .s:active { transform:scale(.9); background:#ede9fe; }
+  .tray { position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 12px); display:flex; gap:8px; align-items:center; background:var(--ink); color:#fff; border-radius:20px; padding:8px 8px 8px 14px; box-shadow:0 10px 30px #1e1b3a55; }
+  .tray input { flex:1; min-width:0; background:none; border:0; outline:none; color:#fff; font:inherit; font-size:20px; }
+  .tray button { padding:10px 14px; border-radius:14px; background:#ffffff1f; font-weight:800; font-size:14px; }
+  .tray .cp { background:var(--a); }
+  .toast { position:fixed; left:50%; top:calc(env(safe-area-inset-top) + 16px); transform:translate(-50%,-160px); background:var(--ink); color:#fff; padding:10px 16px; border-radius:14px; font-weight:800; transition:transform .25s; z-index:5; }
+  .toast.on { transform:translate(-50%,0); }
+  .empty { color:var(--muted); text-align:center; padding:30px 0; font-weight:700; }
+</style>
+</head>
+<body>
+<h1>✳️ <span id="ttl"></span></h1>
+<input class="search" id="search">
+<div class="chips" id="chips"></div>
+<div id="list"></div>
+<div class="tray"><input id="tray" readonly><button id="del">⌫</button><button class="cp" id="copy"></button></div>
+<div class="toast" id="toast"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Símbolos', search:'Busca: flecha, corazón, euro, grado…', all:'Todos', recent:'Recientes', copy:'Copiar', copied:'Copiado', empty:'Nada con ese nombre.', hint:'Toca para añadir, mantén pulsado para copiar solo ese' }
+ : { title:'Symbols', search:'Search: arrow, heart, euro, degree…', all:'All', recent:'Recent', copy:'Copy', copied:'Copied', empty:'Nothing with that name.', hint:'Tap to add, long-press to copy just that one' };
+// [id, name EN, name ES, symbols, keywords "char:words|char:words"]
+const CATS = [
+  ['arrows','Arrows','Flechas','← → ↑ ↓ ↔ ↕ ⇐ ⇒ ⇑ ⇓ ⇔ ↖ ↗ ↘ ↙ ↩ ↪ ⟵ ⟶ ➜ ➔ ➤ ▶ ◀ ▲ ▼ ⤴ ⤵ ↻ ↺','←:left izquierda|→:right derecha|↑:up arriba|↓:down abajo|↻:refresh repeat'],
+  ['math','Maths','Matemáticas','± × ÷ ≠ ≈ ≤ ≥ ∞ √ ∛ ∑ ∏ ∫ ∂ ∆ ∇ π µ ° ‰ ½ ⅓ ¼ ¾ ² ³ ¹ ⁿ ∈ ∉ ∩ ∪ ⊂ ⊃ ∀ ∃ ∅ ∴ ∵ ≡','×:times por multiplicar|÷:divide dividir|≠:not equal distinto|≈:approx aproximado|≤:less menor|≥:greater mayor|∞:infinity infinito|√:root raíz|π:pi|°:degree grado|½:half medio|²:squared cuadrado|³:cubed cubo|∑:sum suma'],
+  ['money','Money','Dinero','€ $ £ ¥ ₹ ₽ ₩ ₺ ₿ ¢ ₱ ₦ ₪ ฿ ₫ ₴ ₡ ₲ ₵ ¤','€:euro|$:dollar dólar|£:pound libra|¥:yen yuan|₹:rupee rupia|₽:ruble rublo|₩:won|₿:bitcoin|¢:cent céntimo'],
+  ['punct','Punctuation','Puntuación','¿ ¡ « » “ ” ‘ ’ „ ‹ › … – — · • ¶ § † ‡ ‰ ′ ″ ‽ ⁂ ※ ¦ ‖','¿:question pregunta|¡:exclamation exclamación|«:quotes comillas|…:ellipsis puntos suspensivos|–:dash guion|—:em dash raya|•:bullet viñeta|§:section sección|¶:paragraph párrafo'],
+  ['letters','Letters','Letras','á é í ó ú ü ñ Á É Í Ó Ú Ü Ñ à è ì ò ù â ê î ô û ä ë ï ö ç ß ø å æ œ ł ğ ş ž č ř ã õ','ñ:enye eñe|ç:cedilla|ß:eszett|ø:o slash|å:a ring'],
+  ['greek','Greek','Griego','α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω Γ Δ Θ Λ Ξ Π Σ Φ Ψ Ω','α:alpha alfa|β:beta|γ:gamma|δ:delta|λ:lambda|μ:mu micro|π:pi|σ:sigma|Ω:omega ohm'],
+  ['legal','Legal & tech','Legal y técnico','© ® ™ ℗ № ℃ ℉ Ω ℮ ⌘ ⌥ ⇧ ⌃ ⎋ ⏎ ⌫ ⏻ ⚙ ⌨ ✉ ☎ ⌚ ⌛ ⏰ ⏱','©:copyright|®:registered registrado|™:trademark marca|№:number número|℃:celsius|℉:fahrenheit|⌘:command mac|⏎:enter|⌫:backspace borrar'],
+  ['shapes','Shapes','Formas','■ □ ▪ ▫ ● ○ ◆ ◇ ★ ☆ ♥ ♡ ♦ ♣ ♠ ▲ △ ◼ ◻ ⬤ ◯ ⬟ ⬢ ✦ ✧ ❖ ✱ ✳ ❋ ✿ ❀','★:star estrella|☆:star estrella|♥:heart corazón|♡:heart corazón|♦:diamond diamante|♣:club trébol|♠:spade pica|●:circle círculo|■:square cuadrado'],
+  ['marks','Ticks & marks','Marcas','✓ ✔ ✗ ✘ ☐ ☑ ☒ ⚠ ⛔ ✚ ✖ ✕ ❗ ❓ ⓘ ⓧ ⊕ ⊗ ⊘ ⦿ ◉','✓:check tick visto|✗:cross cruz|☐:checkbox casilla|☑:checked marcado|⚠:warning aviso|ⓘ:info'],
+  ['music','Music & misc','Música y varios','♪ ♫ ♩ ♬ ♭ ♮ ♯ ☀ ☁ ☂ ☃ ☄ ⚡ ❄ ☘ ⚘ ☯ ☮ ✝ ☪ ✡ ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓ ♀ ♂ ⚥','♪:note nota|♯:sharp sostenido|♭:flat bemol|☀:sun sol|☁:cloud nube|❄:snow nieve|♀:female mujer|♂:male hombre|♈:aries|♉:taurus tauro|♊:gemini géminis|♋:cancer cáncer|♌:leo|♍:virgo|♎:libra|♏:scorpio escorpio|♐:sagittarius sagitario|♑:capricorn capricornio|♒:aquarius acuario|♓:pisces piscis'],
+  ['box','Boxes & lines','Cajas y líneas','─ │ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ┼ ═ ║ ╔ ╗ ╚ ╝ ╠ ╣ ╦ ╩ ╬ ░ ▒ ▓ █ ▀ ▄ ▌ ▐','─:line línea|█:block bloque|░:shade sombra'],
+  ['super','Super & subscript','Superíndice','⁰ ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ⁺ ⁻ ⁼ ⁽ ⁾ ₀ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉ ₊ ₋ ₌ ₍ ₎','²:squared cuadrado|₂:sub two co2 h2o'],
+];
+const L = ES ? 2 : 1, $ = id => document.getElementById(id);
+let cat = 'all', recent = [];
+$('ttl').textContent = T.title; $('search').placeholder = T.search; $('copy').textContent = T.copy;
+$('chips').innerHTML = [['all', T.all, T.all], ...CATS].map(c => `<button class="chip" data-k="${c[0]}">${c[0] === 'all' ? T.all : c[L]}</button>`).join('');
+$('chips').querySelectorAll('.chip').forEach(c => c.onclick = () => { cat = c.dataset.k; render(); });
+const words = {}; CATS.forEach(c => c[4].split('|').forEach(p => { const [ch, w] = p.split(':'); words[ch] = (words[ch] || '') + ' ' + w + ' ' + c[1] + ' ' + c[2]; }));
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+function grid(chars) { return `<div class="grid">${chars.map(c => `<button class="s" data-c="${c}">${c}</button>`).join('')}</div>`; }
+function render() {
+  $('chips').querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.k === cat));
+  const q = norm($('search').value.trim());
+  let html = '';
+  if (q) {
+    const hits = [...new Set(CATS.flatMap(c => c[3].split(' ').filter(ch => norm((words[ch] || '') + ' ' + c[1] + ' ' + c[2]).includes(q) || ch === q)))];
+    html = hits.length ? grid(hits) : `<div class="empty">${T.empty}</div>`;
+  } else {
+    if (cat === 'all' && recent.length) html += `<h3>${T.recent}</h3>` + grid(recent);
+    CATS.filter(c => cat === 'all' || c[0] === cat).forEach(c => { html += `<h3>${c[L]}</h3>` + grid(c[3].split(' ')); });
+  }
+  $('list').innerHTML = html;
+  $('list').querySelectorAll('.s').forEach(b => {
+    let t, long = false;
+    b.addEventListener('pointerdown', () => { long = false; t = setTimeout(() => { long = true; copy(b.dataset.c); }, 450); });
+    b.addEventListener('pointerup', () => clearTimeout(t)); b.addEventListener('pointerleave', () => clearTimeout(t));
+    b.addEventListener('click', () => { if (long) return; $('tray').value += b.dataset.c; use(b.dataset.c); try { if (window.Acornix) Acornix.vibrate(6); } catch (e) {} });
+  });
+}
+function use(c) { recent = [c, ...recent.filter(x => x !== c)].slice(0, 18); try { localStorage.setItem('recent', JSON.stringify(recent)); } catch (e) {} }
+function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('on'); setTimeout(() => $('toast').classList.remove('on'), 1300); }
+async function copy(text) {
+  if (!text) return;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+  if (!ok) { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); }
+  [...text].forEach(use); toast(`${T.copied}: ${text.length > 12 ? text.slice(0, 12) + '…' : text}`);
+  try { if (window.Acornix) Acornix.vibrate(20); } catch (e) {}
+}
+$('copy').onclick = () => { copy($('tray').value); if (!$('search').value) render(); };
+$('del').onclick = () => { $('tray').value = [...$('tray').value].slice(0, -1).join(''); };
+$('search').oninput = render;
+try { recent = JSON.parse(localStorage.getItem('recent') || '[]'); } catch (e) {}
+render(); toast(T.hint);
+</script>
+</body>
+</html>

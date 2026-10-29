@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Roman Numerals</title>
+<style>
+  :root { --bg:#f6efe2; --card:#fffaf0; --ink:#3a2412; --muted:#8c6d4f; --a:#9c2a1a; --gold:#c49a3a; --line:#e8dcc4; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:Georgia,"Times New Roman",serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 14px; font-size:30px; letter-spacing:.5px; }
+  .tablet { padding:22px 16px; border-radius:24px; background:linear-gradient(160deg,#fffaf0,#efe2c6); border:2px solid var(--gold); box-shadow:inset 0 0 0 6px #fffaf0, 0 10px 24px #3a241220; text-align:center; }
+  .roman { font-size:clamp(34px,12vw,58px); letter-spacing:4px; color:var(--a); font-weight:700; min-height:70px; word-break:break-all; text-shadow:0 1px 0 #fff; }
+  .arabic { font-size:28px; color:var(--muted); margin-top:4px; font-variant-numeric:tabular-nums; }
+  .err { color:var(--a); font-family:system-ui,sans-serif; font-weight:700; font-size:14px; min-height:20px; margin-top:6px; }
+  input { width:100%; margin-top:14px; padding:14px; border-radius:16px; border:2px solid var(--line); background:#fff; font:inherit; font-size:22px; text-align:center; outline:none; color:var(--ink); text-transform:uppercase; }
+  input:focus { border-color:var(--gold); }
+  .hint { font-family:system-ui,sans-serif; color:var(--muted); font-size:13px; text-align:center; margin-top:6px; }
+  .parts { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:14px; }
+  .part { padding:8px 10px; border-radius:12px; background:var(--card); border:1px solid var(--line); text-align:center; min-width:52px; }
+  .part b { display:block; color:var(--a); font-size:20px; }
+  .part small { font-family:system-ui,sans-serif; color:var(--muted); font-weight:700; }
+  .plus { align-self:center; color:var(--muted); font-size:20px; }
+  h3 { margin:20px 4px 8px; font-size:17px; }
+  .quick { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .quick button { padding:12px 6px; border-radius:14px; background:var(--card); border:1px solid var(--line); }
+  .quick b { display:block; color:var(--a); font-size:16px; }
+  .quick small { font-family:system-ui,sans-serif; color:var(--muted); font-size:12px; font-weight:700; }
+  .rules { background:var(--card); border-radius:18px; padding:4px 14px; border:1px solid var(--line); font-family:system-ui,sans-serif; font-size:14px; line-height:1.6; }
+  .rules p { margin:10px 0; }
+  .sym { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:10px; }
+  .sym div { text-align:center; padding:8px 0; border-radius:12px; background:var(--card); border:1px solid var(--line); }
+  .sym b { display:block; font-size:20px; color:var(--a); }
+  .sym small { font-family:system-ui,sans-serif; font-weight:700; color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<h1>🏛️ <span id="ttl"></span></h1>
+<div class="tablet"><div class="roman" id="roman"></div><div class="arabic" id="arabic"></div><div class="err" id="err"></div></div>
+<input id="inp" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+<div class="hint" id="hint"></div>
+<div class="parts" id="parts"></div>
+<h3 id="symT"></h3>
+<div class="sym" id="sym"></div>
+<h3 id="quickT"></h3>
+<div class="quick" id="quick"></div>
+<h3 id="rulesT"></h3>
+<div class="rules" id="rules"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Números romanos', hint:'Escribe un número (1–3999) o un numeral romano', bad:'Ese numeral romano no es válido', range:'Solo de 1 a 3999', sym:'Los siete símbolos', quick:'Para probar', rules:'Cómo se leen', thisYear:'este año', born:'Año de nacimiento', rulesHtml:'<p><b>Se suman</b> los símbolos de mayor a menor: VIII = 5 + 1 + 1 + 1 = 8.</p><p><b>Se resta</b> cuando uno pequeño va delante de uno mayor: IV = 5 − 1 = 4, XC = 100 − 10 = 90. Solo restan I (antes de V y X), X (antes de L y C) y C (antes de D y M).</p><p><b>No se repite</b> un símbolo más de tres veces seguidas: 40 es XL, no XXXX. V, L y D nunca se repiten.</p>', examples:[['Super Bowl LVIII',58],['Reloj: IIII o IV',4],['Fin de la Antigua Roma',476]] }
+ : { title:'Roman Numerals', hint:'Type a number (1–3999) or a Roman numeral', bad:'That Roman numeral isn\'t valid', range:'Only from 1 to 3999', sym:'The seven symbols', quick:'Try these', rules:'How to read them', thisYear:'this year', born:'Year you were born', rulesHtml:'<p><b>Add</b> the symbols from biggest to smallest: VIII = 5 + 1 + 1 + 1 = 8.</p><p><b>Subtract</b> when a smaller one comes before a bigger one: IV = 5 − 1 = 4, XC = 100 − 10 = 90. Only I (before V and X), X (before L and C) and C (before D and M) subtract.</p><p><b>Never repeat</b> a symbol more than three times in a row: 40 is XL, not XXXX. V, L and D are never repeated.</p>', examples:[['Super Bowl LVIII',58],['Clocks: IIII or IV',4],['Fall of Rome',476]] };
+const V = [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('hint').textContent = T.hint; $('symT').textContent = T.sym; $('quickT').textContent = T.quick; $('rulesT').textContent = T.rules; $('rules').innerHTML = T.rulesHtml;
+function toRoman(n) { const parts = []; for (const [v, s] of V) while (n >= v) { parts.push([s, v]); n -= v; } return parts; }
+function fromRoman(s) {
+  if (!/^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(s) || !s) return null;
+  let n = 0, i = 0; const parts = [];
+  for (const [v, sym] of V) while (s.startsWith(sym, i)) { n += v; i += sym.length; parts.push([sym, v]); }
+  return { n, parts };
+}
+function show(r, a, parts, err) {
+  $('roman').textContent = r; $('arabic').textContent = a; $('err').textContent = err || '';
+  $('parts').innerHTML = parts.map(([s, v], i) => `${i ? '<span class="plus">+</span>' : ''}<div class="part"><b>${s}</b><small>${v}</small></div>`).join('');
+}
+function update() {
+  const v = $('inp').value.trim().toUpperCase();
+  try { localStorage.setItem('last', v); } catch (e) {}
+  if (!v) return show('', '', [], '');
+  if (/^\d+$/.test(v)) { const n = +v; if (n < 1 || n > 3999) return show('—', n, [], T.range); const p = toRoman(n); return show(p.map(x => x[0]).join(''), n, p, ''); }
+  const r = fromRoman(v.replace(/[^IVXLCDM]/g, '') === v ? v : '');
+  if (!r) return show(v, '?', [], T.bad);
+  show(v, r.n, r.parts, '');
+}
+$('inp').oninput = update;
+$('sym').innerHTML = [['I',1],['V',5],['X',10],['L',50],['C',100],['D',500],['M',1000]].map(([s, v]) => `<div><b>${s}</b><small>${v}</small></div>`).join('');
+const year = new Date().getFullYear();
+const quick = [[T.thisYear, year], ...T.examples, ['MMXXIV', 2024], ['MCMLXXXIV', 1984], ['XLII', 42]];
+$('quick').innerHTML = quick.slice(0, 6).map(([l, n]) => `<button data-n="${n}"><b>${toRoman(n).map(x => x[0]).join('')}</b><small>${l === toRoman(n).map(x => x[0]).join('') ? n : l}</small></button>`).join('');
+$('quick').querySelectorAll('button').forEach(b => b.onclick = () => { $('inp').value = b.dataset.n; update(); scrollTo({ top: 0, behavior: 'smooth' }); });
+try { $('inp').value = localStorage.getItem('last') || String(year); } catch (e) { $('inp').value = year; }
+update();
+</script>
+</body>
+</html>

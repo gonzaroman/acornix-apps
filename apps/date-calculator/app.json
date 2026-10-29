@@ -1,0 +1,14 @@
+{
+  "id": "date-calculator",
+  "name": "Date Calculator",
+  "emoji": "📅",
+  "category": "reference",
+  "description": "Days between two dates, adding days, weeks or working days to a date, and your exact age with your next birthday.",
+  "prompt": "A date calculator with three tabs: the days, weeks, working days and weekends between two dates; adding or subtracting days, weeks, months, years or working days from a date; and your exact age with the day you were born and your next birthday.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

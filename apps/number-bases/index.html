@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Number Bases</title>
+<style>
+  :root { --bg:#0b1020; --card:#141b33; --ink:#e6ebff; --muted:#8892b8; --a:#4dd0e1; --b:#ff8a65; --line:#232c4d; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 14px; font-size:28px; }
+  .f { background:var(--card); border-radius:18px; padding:10px 14px 12px; margin-bottom:8px; border:2px solid transparent; }
+  .f:focus-within { border-color:var(--a); }
+  .f label { display:flex; justify-content:space-between; color:var(--muted); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.6px; }
+  .f label span:last-child { color:var(--a); }
+  .f input { width:100%; background:none; border:0; outline:none; color:var(--ink); font-family:ui-monospace,Menlo,monospace; font-size:24px; margin-top:4px; padding:0; }
+  .f.bad input { color:var(--b); }
+  .bits { margin-top:14px; background:var(--card); border-radius:18px; padding:12px; }
+  .bits h3 { margin:0 0 8px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; display:flex; justify-content:space-between; }
+  .row { display:grid; grid-template-columns:repeat(8,1fr); gap:4px; margin-bottom:8px; }
+  .bit { aspect-ratio:1; border-radius:10px; background:#0b1020; border:1px solid var(--line); font-family:ui-monospace,Menlo,monospace; font-weight:800; font-size:18px; color:var(--muted); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .bit small { font-size:9px; font-weight:600; opacity:.7; }
+  .bit.on { background:var(--a); color:#0b1020; border-color:var(--a); box-shadow:0 0 12px #4dd0e155; }
+  .ops { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:4px; }
+  .ops button { padding:10px 0; border-radius:12px; background:#0b1020; border:1px solid var(--line); font-family:ui-monospace,Menlo,monospace; font-weight:800; }
+  .extra { margin-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .extra div { background:var(--card); border-radius:16px; padding:10px 12px; }
+  .extra small { display:block; color:var(--muted); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
+  .extra b { font-family:ui-monospace,Menlo,monospace; font-size:17px; word-break:break-all; }
+</style>
+</head>
+<body>
+<h1>🔢 <span id="ttl"></span></h1>
+<div id="fields"></div>
+<div class="bits"><h3><span id="bitsT"></span><span id="bitsN"></span></h3><div id="bitRows"></div><div class="ops" id="ops"></div></div>
+<div class="extra" id="extra"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Bases numéricas', bases:{2:'Binario',8:'Octal',10:'Decimal',16:'Hexadecimal'}, base:'base', bits:'Toca los bits', ascii:'Carácter', color:'Color', bitsUsed:'bits', signed:'Con signo (16 bits)' }
+ : { title:'Number Bases', bases:{2:'Binary',8:'Octal',10:'Decimal',16:'Hexadecimal'}, base:'base', bits:'Tap the bits', ascii:'Character', color:'Colour', bitsUsed:'bits', signed:'Signed (16-bit)' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('bitsT').textContent = T.bits;
+const BASES = [10, 2, 16, 8], RE = { 2: /^[01]*$/, 8: /^[0-7]*$/, 10: /^\d*$/, 16: /^[0-9a-f]*$/i };
+let value = 42n;
+$('fields').innerHTML = BASES.map(b => `<div class="f" id="f${b}"><label><span>${T.bases[b]}</span><span>${T.base} ${b}</span></label><input id="i${b}" inputmode="${b === 16 ? 'text' : 'numeric'}" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>`).join('');
+const group = (s, n, sep) => s.replace(new RegExp(`\\B(?=(.{${n}})+(?!.))`, 'g'), sep);
+function fmt(b) { const s = value.toString(b).toUpperCase(); return b === 2 ? group(s, 4, ' ') : b === 16 ? group(s, 2, ' ') : b === 10 ? s : s; }
+function render(except) {
+  BASES.forEach(b => { if (b !== except) $('i' + b).value = fmt(b); $('f' + b).classList.remove('bad'); });
+  const width = Math.max(8, Math.ceil(value.toString(2).length / 8) * 8), rows = Math.min(4, width / 8);
+  $('bitsN').textContent = `${value.toString(2).length} ${T.bitsUsed}`;
+  let html = '';
+  for (let r = rows - 1; r >= 0; r--) { html += '<div class="row">'; for (let c = 7; c >= 0; c--) { const i = r * 8 + c, on = (value >> BigInt(i)) & 1n; html += `<button class="bit ${on ? 'on' : ''}" data-i="${i}">${on}<small>2${String(i).replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d])}</small></button>`; } html += '</div>'; }
+  $('bitRows').innerHTML = html;
+  $('bitRows').querySelectorAll('.bit').forEach(b => b.onclick = () => { value ^= 1n << BigInt(+b.dataset.i); render(); buzz(); });
+  const n = Number(value & 0xFFFFFFn), ch = value >= 32n && value < 0x110000n ? String.fromCodePoint(Number(value)) : '—';
+  const signed = Number(BigInt.asIntN(16, value));
+  $('extra').innerHTML = `<div><small>${T.ascii}</small><b>${ch === ' ' ? '␣' : ch}</b></div><div><small>${T.color}</small><b style="display:flex;align-items:center;gap:8px"><i style="width:18px;height:18px;border-radius:5px;background:#${n.toString(16).padStart(6, '0')};display:inline-block;border:1px solid #fff3"></i>#${n.toString(16).padStart(6, '0').toUpperCase()}</b></div><div style="grid-column:1/-1"><small>${T.signed}</small><b>${signed}</b></div>`;
+  try { localStorage.setItem('v', value.toString()); } catch (e) {}
+}
+BASES.forEach(b => $('i' + b).oninput = () => {
+  const raw = $('i' + b).value.replace(/[\s_]/g, '').replace(/^0x/i, '');
+  if (!RE[b].test(raw) || raw.length > 40) { $('f' + b).classList.add('bad'); return; }
+  value = raw ? BigInt(b === 10 ? raw : (b === 2 ? '0b' : b === 8 ? '0o' : '0x') + raw) : 0n; render(b);
+});
+$('ops').innerHTML = ['<< 1', '>> 1', 'NOT', '+1'].map(o => `<button>${o}</button>`).join('');
+const OPS = [v => v << 1n, v => v >> 1n, v => { const w = BigInt(Math.max(8, Math.ceil(v.toString(2).length / 8) * 8)); return ~v & ((1n << w) - 1n); }, v => v + 1n];
+$('ops').querySelectorAll('button').forEach((b, i) => b.onclick = () => { value = OPS[i](value); if (value > (1n << 32n) - 1n) value &= (1n << 32n) - 1n; render(); buzz(); });
+function buzz() { try { if (window.Acornix) Acornix.vibrate(8); } catch (e) {} }
+try { const v = localStorage.getItem('v'); if (v) value = BigInt(v); } catch (e) {}
+render();
+</script>
+</body>
+</html>

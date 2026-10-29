@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>What Is This?</title>
+<style>
+  :root { --ink:#fff; --card:#ffffff; --dark:#101418; --muted:#66707a; --a:#ffcd38; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:#000; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  video, #still { position:fixed; inset:0; width:100%; height:100%; object-fit:cover; }
+  #still { display:none; }
+  .top { position:fixed; left:0; right:0; top:0; padding:calc(env(safe-area-inset-top) + 12px) 16px 30px; background:linear-gradient(#000a,#0000); display:flex; align-items:center; gap:10px; }
+  .top h1 { margin:0; font-size:21px; flex:1; }
+  .top button { width:42px; height:42px; border-radius:50%; background:#0006; backdrop-filter:blur(8px); font-size:19px; }
+  .frame { position:fixed; left:12%; right:12%; top:26%; bottom:34%; border-radius:28px; pointer-events:none; }
+  .frame::before, .frame::after { content:''; position:absolute; inset:0; border-radius:28px; border:3px solid var(--a); clip-path:polygon(0 0,22% 0,22% 3px,3px 3px,3px 22%,0 22%,0 78%,3px 78%,3px calc(100% - 3px),22% calc(100% - 3px),22% 100%,78% 100%,78% calc(100% - 3px),calc(100% - 3px) calc(100% - 3px),calc(100% - 3px) 78%,100% 78%,100% 22%,calc(100% - 3px) 22%,calc(100% - 3px) 3px,78% 3px,78% 0,100% 0,100% 100%,0 100%); }
+  .frame.scan::after { border:0; background:linear-gradient(transparent 45%, #ffcd3866 50%, transparent 55%); background-size:100% 200%; animation:scan 1.4s linear infinite; clip-path:none; }
+  @keyframes scan { from { background-position:0 100%; } to { background-position:0 -100%; } }
+  .hint { position:fixed; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 132px); text-align:center; font-weight:700; text-shadow:0 1px 6px #000; padding:0 20px; }
+  .bottom { position:fixed; left:0; right:0; bottom:0; padding:20px 30px calc(env(safe-area-inset-bottom) + 24px); display:flex; align-items:center; justify-content:space-between; background:linear-gradient(#0000,#000a); }
+  .shutter { width:78px; height:78px; border-radius:50%; background:#fff; box-shadow:0 0 0 5px #ffffff55; font-size:30px; }
+  .shutter:active { transform:scale(.93); }
+  .side { width:52px; height:52px; border-radius:16px; background:#0006; backdrop-filter:blur(8px); font-size:22px; display:grid; place-items:center; }
+  .side input { display:none; }
+  .sheet { position:fixed; left:0; right:0; bottom:0; max-height:78vh; overflow-y:auto; background:var(--card); color:var(--dark); border-radius:28px 28px 0 0; padding:10px 18px calc(env(safe-area-inset-bottom) + 20px); transform:translateY(105%); transition:transform .35s cubic-bezier(.2,.9,.3,1); }
+  .sheet.on { transform:none; }
+  .grab { width:44px; height:5px; border-radius:3px; background:#d5d9de; margin:0 auto 12px; }
+  .name { display:flex; align-items:center; gap:12px; }
+  .name .em { font-size:46px; }
+  .name h2 { margin:0; font-size:26px; line-height:1.15; }
+  .name small { color:var(--muted); font-weight:700; }
+  .conf { height:6px; border-radius:3px; background:#eef0f3; margin:10px 0 4px; overflow:hidden; }
+  .conf i { display:block; height:100%; background:linear-gradient(90deg,#ffb020,#2ec27e); }
+  .confL { color:var(--muted); font-size:12px; font-weight:700; }
+  .desc { line-height:1.55; margin:12px 0; font-size:16px; }
+  .sec { margin-top:12px; }
+  .sec h3 { margin:0 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); }
+  .fact { display:flex; gap:10px; padding:10px 12px; border-radius:14px; background:#fff8e1; margin-bottom:6px; line-height:1.45; }
+  .tip { padding:10px 12px; border-radius:14px; background:#eef6ff; line-height:1.45; }
+  .warn { padding:10px 12px; border-radius:14px; background:#ffecec; color:#a32020; font-weight:700; line-height:1.45; margin-top:8px; }
+  .acts { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px; }
+  .acts button { padding:12px 4px; border-radius:14px; background:#f1f3f5; font-weight:800; font-size:14px; }
+  .acts .main { background:var(--dark); color:#fff; }
+  .loading { text-align:center; padding:26px 0; font-weight:800; color:var(--muted); }
+  .loading .em { font-size:44px; display:block; animation:bob 1s ease-in-out infinite alternate; }
+  @keyframes bob { to { transform:translateY(-8px); } }
+  .hist { position:fixed; inset:0; background:#f6f7f9; color:var(--dark); overflow-y:auto; padding:calc(env(safe-area-inset-top) + 14px) 16px 24px; display:none; }
+  .hist.on { display:block; }
+  .hist h2 { margin:0 0 12px; display:flex; justify-content:space-between; align-items:center; }
+  .hist h2 button { width:40px; height:40px; border-radius:50%; background:#fff; color:var(--dark); }
+  .hgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .hi { background:#fff; border-radius:18px; overflow:hidden; text-align:left; color:var(--dark); }
+  .hi img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+  .hi b { display:block; padding:8px 10px 10px; font-size:14px; }
+  .empty { color:var(--muted); text-align:center; padding:40px 0; font-weight:700; }
+</style>
+</head>
+<body>
+<video id="video" playsinline muted autoplay></video>
+<img id="still" alt="">
+<div class="frame" id="frame"></div>
+<div class="top"><h1>🔎 <span id="ttl"></span></h1><button id="histBtn">🕘</button></div>
+<div class="hint" id="hint"></div>
+<div class="bottom"><label class="side">🖼️<input type="file" id="file" accept="image/*"></label><button class="shutter" id="shutter">🔎</button><button class="side" id="flip">🔄</button></div>
+<div class="sheet" id="sheet"><div class="grab"></div><div id="result"></div></div>
+<div class="hist" id="hist"><h2><span id="histT"></span><button id="histClose">✕</button></h2><div class="hgrid" id="hgrid"></div></div>
+<canvas id="canvas" hidden></canvas>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'¿Qué es esto?', hint:'Apunta a una planta, un animal, un objeto, un monumento o un plato y pulsa la lupa', noCam:'No hay cámara: elige una foto de la galería 🖼️', thinking:'Mirando con atención', sure:'Seguridad', facts:'Curiosidades', tip:'Útil saber', listen:'🔊 Escuchar', more:'🤔 Cuéntame más', again:'📷 Otra', history:'Lo que has descubierto', none:'Aún no has descubierto nada.', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No he podido verlo bien. Prueba otra vez con más luz.', lang:'Spanish', moreTitle:'Más sobre esto' }
+ : { title:'What Is This?', hint:'Point at a plant, animal, object, landmark or dish and tap the magnifier', noCam:'No camera: pick a photo from your gallery 🖼️', thinking:'Taking a close look', sure:'Confidence', facts:'Fun facts', tip:'Good to know', listen:'🔊 Listen', more:'🤔 Tell me more', again:'📷 Another', history:'Your discoveries', none:'You haven\'t discovered anything yet.', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'I couldn\'t see it clearly. Try again with more light.', lang:'English', moreTitle:'More about it' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const video = $('video'), still = $('still'), canvas = $('canvas');
+let facing = 'environment', stream = null, photo = null, current = null;
+$('ttl').textContent = T.title; $('hint').textContent = T.hint; $('histT').textContent = T.history;
+async function startCamera() {
+  try { if (stream) stream.getTracks().forEach(t => t.stop()); stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 1280 } }, audio: false }); video.srcObject = stream; }
+  catch (e) { $('hint').textContent = T.noCam; }
+}
+function frame(source, w, h, max = 1024, q = .85) { const s = Math.min(1, max / Math.max(w, h)); canvas.width = Math.round(w * s); canvas.height = Math.round(h * s); canvas.getContext('2d').drawImage(source, 0, 0, canvas.width, canvas.height); return canvas.toDataURL('image/jpeg', q); }
+function snap() {
+  if (!video.videoWidth) { $('file').click(); return; }
+  try { if (window.Acornix) Acornix.vibrate(25); } catch (e) {}
+  use(frame(video, video.videoWidth, video.videoHeight));
+}
+function use(data) { photo = data; still.src = data; still.style.display = 'block'; $('hint').style.display = 'none'; identify(); }
+$('file').onchange = e => { const f = e.target.files[0]; if (!f) return; const img = new Image(); img.onload = () => { use(frame(img, img.width, img.height)); URL.revokeObjectURL(img.src); }; img.src = URL.createObjectURL(f); e.target.value = ''; };
+function sheet(html) { $('result').innerHTML = html; $('sheet').classList.add('on'); }
+function reset() { $('sheet').classList.remove('on'); still.style.display = 'none'; $('hint').style.display = ''; $('frame').classList.remove('scan'); photo = null; }
+async function identify() {
+  $('frame').classList.add('scan');
+  sheet(`<div class="loading"><span class="em">🔎</span>${T.thinking}…</div>`);
+  if (!window.Acornix) { $('frame').classList.remove('scan'); sheet(`<div class="loading"><span class="em">🧠</span>${T.noAi}</div><div class="acts"><button class="main" style="grid-column:1/-1" id="again">${T.again}</button></div>`); $('again').onclick = reset; return; }
+  try {
+    const r = await Acornix.askAI('Identify the main thing in this photo as precisely as you can (species, model, dish, landmark, style…).', {
+      images: [photo], json: true,
+      system: `You are a friendly expert naturalist, curator and guide. Answer in ${T.lang}. Reply only with JSON: {"emoji":"one emoji","name":"specific name","kind":"category, e.g. Plant · Succulent","confidence":0-100,"description":"2-3 sentences: what it is and how to recognise it","facts":["3 surprising, true facts"],"tip":"one practical tip: care, use, where it's from, how to eat it…","warning":"only if relevant: toxic, dangerous, allergen; otherwise empty"}. If you're not sure, say what it most likely is and lower the confidence.`
+    });
+    current = { ...r, at: Date.now() };
+    show(current);
+    const img = new Image();
+    img.onload = async () => { current.thumb = frame(img, img.width, img.height, 320, .7); const list = await store.get('history', []); list.unshift(current); store.set('history', list.slice(0, 40)); };
+    img.src = photo;
+  } catch (e) { sheet(`<div class="loading"><span class="em">😕</span>${T.failed}</div><div class="acts"><button class="main" style="grid-column:1/-1" id="again">${T.again}</button></div>`); $('again').onclick = reset; }
+  $('frame').classList.remove('scan');
+}
+function show(r, more) {
+  const c = Math.max(0, Math.min(100, +r.confidence || 0));
+  sheet(`<div class="name"><span class="em">${esc(r.emoji || '🔎')}</span><div><h2>${esc(r.name)}</h2><small>${esc(r.kind)}</small></div></div>
+    <div class="conf"><i style="width:${c}%"></i></div><div class="confL">${T.sure}: ${c}%</div>
+    <p class="desc">${esc(r.description)}</p>
+    ${(r.facts || []).length ? `<div class="sec"><h3>${T.facts}</h3>${r.facts.map(f => `<div class="fact">✨<span>${esc(f)}</span></div>`).join('')}</div>` : ''}
+    ${r.tip ? `<div class="sec"><h3>${T.tip}</h3><div class="tip">💡 ${esc(r.tip)}</div></div>` : ''}
+    ${r.warning ? `<div class="warn">⚠️ ${esc(r.warning)}</div>` : ''}
+    ${more ? `<div class="sec"><h3>${T.moreTitle}</h3><p class="desc" style="margin-top:0">${esc(more)}</p></div>` : ''}
+    <div class="acts"><button id="listen">${T.listen}</button><button id="more">${T.more}</button><button class="main" id="again">${T.again}</button></div>`);
+  $('again').onclick = reset;
+  $('listen').onclick = () => { const txt = `${r.name}. ${r.description} ${(r.facts || []).join(' ')}`; try { if (window.Acornix) Acornix.speak(txt, ES ? 'es-ES' : 'en-US'); else { const u = new SpeechSynthesisUtterance(txt); u.lang = ES ? 'es-ES' : 'en-US'; speechSynthesis.speak(u); } } catch (e) {} };
+  $('more').onclick = async () => {
+    if (!window.Acornix) return; $('more').disabled = true; $('more').textContent = '…';
+    try { const t = await Acornix.askAI(`Tell me more about ${r.name} (${r.kind}) in one friendly paragraph of 4-5 sentences: history or origin, where it's found, and something most people don't know. Answer in ${T.lang}. Plain text.`); show(r, String(t)); }
+    catch (e) { $('more').disabled = false; $('more').textContent = T.more; }
+  };
+}
+async function openHistory() {
+  const list = await store.get('history', []);
+  $('hgrid').innerHTML = list.length ? list.map((h, i) => `<button class="hi" data-i="${i}">${h.thumb ? `<img src="${h.thumb}" alt="">` : ''}<b>${esc(h.emoji || '')} ${esc(h.name)}</b></button>`).join('') : `<div class="empty" style="grid-column:1/-1">${T.none}</div>`;
+  $('hgrid').querySelectorAll('.hi').forEach(b => b.onclick = () => { const h = list[+b.dataset.i]; $('hist').classList.remove('on'); if (h.thumb) { still.src = h.thumb; still.style.display = 'block'; $('hint').style.display = 'none'; } show(h); });
+  $('hist').classList.add('on');
+}
+$('shutter').onclick = () => { if ($('sheet').classList.contains('on')) reset(); else snap(); };
+$('flip').onclick = () => { facing = facing === 'environment' ? 'user' : 'environment'; startCamera(); };
+$('histBtn').onclick = openHistory; $('histClose').onclick = () => $('hist').classList.remove('on');
+startCamera();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "world-clock",
+  "name": "World Clock",
+  "emoji": "🕰️",
+  "category": "reference",
+  "description": "Your cities at a glance with day and night icons, a slider to shift the time, and a planner that finds hours that work for everyone.",
+  "prompt": "A world clock: add cities from a list, see their time, day and difference from mine with a sun or moon icon, a slider to move the time forward or back, and a meeting planner grid that highlights the hours that are working hours everywhere.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

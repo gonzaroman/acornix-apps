@@ -1,0 +1,14 @@
+{
+  "id": "first-aid",
+  "name": "First Aid",
+  "emoji": "🩹",
+  "category": "reference",
+  "description": "What to do in an emergency, step by step and offline: CPR with a rhythm guide, choking, bleeding, burns, stroke and more.",
+  "prompt": "An offline first aid guide with a big emergency call button and the number for your region, step-by-step cards for CPR with a 110 bpm metronome, choking, heavy bleeding, stroke, severe allergy, seizures, burns, fainting, heatstroke, nosebleeds, sprains and poisoning, each with what not to do.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

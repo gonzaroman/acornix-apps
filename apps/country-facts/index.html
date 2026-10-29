@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Country Facts</title>
+<style>
+  :root { --bg:#eef3f8; --card:#fff; --ink:#132235; --muted:#667892; --a:#1c7ed6; --g:#2b8a3e; --line:#dde5ef; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; align-items:center; gap:10px; }
+  h1 { margin:4px 0; font-size:28px; flex:1; }
+  .dice { width:46px; height:46px; border-radius:14px; background:var(--card); font-size:22px; box-shadow:0 3px 10px #1c7ed614; }
+  .stats { display:flex; gap:8px; margin:10px 0; }
+  .stats div { flex:1; background:var(--card); border-radius:16px; padding:10px; text-align:center; }
+  .stats b { display:block; font-size:22px; } .stats small { color:var(--muted); font-weight:700; font-size:12px; }
+  .search { width:100%; padding:13px 14px; border-radius:16px; border:2px solid var(--line); font:inherit; font-size:16px; outline:none; background:#fff; }
+  .search:focus { border-color:var(--a); }
+  .chips { display:flex; gap:6px; overflow-x:auto; margin:10px 0; scrollbar-width:none; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 13px; border-radius:14px; background:var(--card); font-weight:700; font-size:14px; }
+  .chip.on { background:var(--ink); color:#fff; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .c { position:relative; background:var(--card); border-radius:18px; padding:12px 6px 10px; text-align:center; }
+  .c .f { font-size:40px; line-height:1; }
+  .c b { display:block; font-size:13px; margin-top:6px; line-height:1.2; }
+  .c small { color:var(--muted); font-size:11px; font-weight:600; }
+  .c .mark { position:absolute; top:6px; right:8px; font-size:13px; }
+  .page { position:fixed; inset:0; background:var(--bg); overflow-y:auto; display:none; padding:0 0 calc(env(safe-area-inset-bottom) + 24px); }
+  .page.on { display:block; }
+  .hero { position:relative; padding:calc(env(safe-area-inset-top) + 60px) 16px 18px; background:linear-gradient(160deg,#1c7ed6,#5f3dc4); color:#fff; text-align:center; }
+  .hero .f { font-size:96px; line-height:1; filter:drop-shadow(0 8px 16px #0004); }
+  .hero h2 { margin:8px 0 2px; font-size:30px; }
+  .hero small { opacity:.85; font-weight:700; }
+  .back { position:absolute; left:16px; top:calc(env(safe-area-inset-top) + 12px); width:42px; height:42px; border-radius:50%; background:#fff3; color:#fff; font-size:18px; }
+  .body { padding:14px 16px; }
+  .facts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .facts div { background:var(--card); border-radius:16px; padding:10px 12px; }
+  .facts small { display:block; color:var(--muted); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+  .facts b { font-size:16px; }
+  .wiki { background:var(--card); border-radius:18px; padding:14px; margin-top:10px; line-height:1.6; }
+  .wiki .src { display:block; margin-top:8px; color:var(--a); font-weight:800; font-size:14px; background:none; padding:0; }
+  .skel { height:12px; border-radius:6px; background:linear-gradient(90deg,#eef2f7,#f8fafc,#eef2f7); background-size:200% 100%; animation:sk 1.2s infinite; margin:8px 0; }
+  @keyframes sk { to { background-position:-200% 0; } }
+  .acts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+  .acts button { padding:14px; border-radius:16px; background:var(--card); font-weight:800; }
+  .acts button.on { background:var(--g); color:#fff; }
+  .acts button.on2 { background:#f08c00; color:#fff; }
+</style>
+</head>
+<body>
+<div class="head"><h1>🌐 <span id="ttl"></span></h1><button class="dice" id="dice">🎲</button></div>
+<div class="stats" id="stats"></div>
+<input class="search" id="search">
+<div class="chips" id="chips"></div>
+<div class="grid" id="grid"></div>
+<div class="page" id="page"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Países del mundo', search:'Busca un país o una capital', all:'Todos', regions:{ eu:'Europa', am:'América', as:'Asia', af:'África', oc:'Oceanía' }, capital:'Capital', continent:'Continente', localTime:'Hora local aquí', count:'países', visited:'Visitados', want:'Quiero ir', been:'✅ He estado', notBeen:'He estado', wish:'⭐ Quiero ir', noWish:'Quiero ir', read:'Leer más en Wikipedia →', offline:'Sin conexión: la descripción necesita internet.', wikiLang:'es' }
+ : { title:'Country Facts', search:'Search a country or capital', all:'All', regions:{ eu:'Europe', am:'Americas', as:'Asia', af:'Africa', oc:'Oceania' }, capital:'Capital', continent:'Continent', localTime:'Local time here', count:'countries', visited:'Visited', want:'Want to go', been:'✅ I\'ve been', notBeen:'I\'ve been', wish:'⭐ Want to go', noWish:'Want to go', read:'Read more on Wikipedia →', offline:'Offline: the description needs internet.', wikiLang:'en' };
+const L = ES ? 1 : 0;
+const DATA = `🇪🇸|Spain|España|Madrid|Madrid|eu
+🇫🇷|France|Francia|Paris|París|eu
+🇩🇪|Germany|Alemania|Berlin|Berlín|eu
+🇮🇹|Italy|Italia|Rome|Roma|eu
+🇵🇹|Portugal|Portugal|Lisbon|Lisboa|eu
+🇬🇧|United Kingdom|Reino Unido|London|Londres|eu
+🇮🇪|Ireland|Irlanda|Dublin|Dublín|eu
+🇳🇱|Netherlands|Países Bajos|Amsterdam|Ámsterdam|eu
+🇧🇪|Belgium|Bélgica|Brussels|Bruselas|eu
+🇨🇭|Switzerland|Suiza|Bern|Berna|eu
+🇦🇹|Austria|Austria|Vienna|Viena|eu
+🇵🇱|Poland|Polonia|Warsaw|Varsovia|eu
+🇨🇿|Czechia|Chequia|Prague|Praga|eu
+🇸🇪|Sweden|Suecia|Stockholm|Estocolmo|eu
+🇳🇴|Norway|Noruega|Oslo|Oslo|eu
+🇫🇮|Finland|Finlandia|Helsinki|Helsinki|eu
+🇩🇰|Denmark|Dinamarca|Copenhagen|Copenhague|eu
+🇬🇷|Greece|Grecia|Athens|Atenas|eu
+🇭🇺|Hungary|Hungría|Budapest|Budapest|eu
+🇷🇴|Romania|Rumanía|Bucharest|Bucarest|eu
+🇺🇦|Ukraine|Ucrania|Kyiv|Kiev|eu
+🇮🇸|Iceland|Islandia|Reykjavik|Reikiavik|eu
+🇭🇷|Croatia|Croacia|Zagreb|Zagreb|eu
+🇺🇸|United States|Estados Unidos|Washington, D.C.|Washington D. C.|am
+🇨🇦|Canada|Canadá|Ottawa|Ottawa|am
+🇲🇽|Mexico|México|Mexico City|Ciudad de México|am
+🇨🇺|Cuba|Cuba|Havana|La Habana|am
+🇬🇹|Guatemala|Guatemala|Guatemala City|Ciudad de Guatemala|am
+🇨🇷|Costa Rica|Costa Rica|San José|San José|am
+🇵🇦|Panama|Panamá|Panama City|Ciudad de Panamá|am
+🇨🇴|Colombia|Colombia|Bogotá|Bogotá|am
+🇻🇪|Venezuela|Venezuela|Caracas|Caracas|am
+🇪🇨|Ecuador|Ecuador|Quito|Quito|am
+🇵🇪|Peru|Perú|Lima|Lima|am
+🇧🇴|Bolivia|Bolivia|Sucre|Sucre|am
+🇨🇱|Chile|Chile|Santiago|Santiago|am
+🇦🇷|Argentina|Argentina|Buenos Aires|Buenos Aires|am
+🇺🇾|Uruguay|Uruguay|Montevideo|Montevideo|am
+🇵🇾|Paraguay|Paraguay|Asunción|Asunción|am
+🇧🇷|Brazil|Brasil|Brasília|Brasilia|am
+🇯🇲|Jamaica|Jamaica|Kingston|Kingston|am
+🇩🇴|Dominican Republic|República Dominicana|Santo Domingo|Santo Domingo|am
+🇨🇳|China|China|Beijing|Pekín|as
+🇯🇵|Japan|Japón|Tokyo|Tokio|as
+🇰🇷|South Korea|Corea del Sur|Seoul|Seúl|as
+🇮🇳|India|India|New Delhi|Nueva Delhi|as
+🇹🇭|Thailand|Tailandia|Bangkok|Bangkok|as
+🇻🇳|Vietnam|Vietnam|Hanoi|Hanói|as
+🇮🇩|Indonesia|Indonesia|Jakarta|Yakarta|as
+🇵🇭|Philippines|Filipinas|Manila|Manila|as
+🇸🇦|Saudi Arabia|Arabia Saudí|Riyadh|Riad|as
+🇹🇷|Turkey|Turquía|Ankara|Ankara|as
+🇮🇱|Israel|Israel|Jerusalem|Jerusalén|as
+🇮🇷|Iran|Irán|Tehran|Teherán|as
+🇵🇰|Pakistan|Pakistán|Islamabad|Islamabad|as
+🇳🇵|Nepal|Nepal|Kathmandu|Katmandú|as
+🇲🇳|Mongolia|Mongolia|Ulaanbaatar|Ulán Bator|as
+🇪🇬|Egypt|Egipto|Cairo|El Cairo|af
+🇲🇦|Morocco|Marruecos|Rabat|Rabat|af
+🇳🇬|Nigeria|Nigeria|Abuja|Abuya|af
+🇰🇪|Kenya|Kenia|Nairobi|Nairobi|af
+🇪🇹|Ethiopia|Etiopía|Addis Ababa|Adís Abeba|af
+🇿🇦|South Africa|Sudáfrica|Pretoria|Pretoria|af
+🇬🇭|Ghana|Ghana|Accra|Acra|af
+🇸🇳|Senegal|Senegal|Dakar|Dakar|af
+🇹🇿|Tanzania|Tanzania|Dodoma|Dodoma|af
+🇲🇬|Madagascar|Madagascar|Antananarivo|Antananarivo|af
+🇦🇺|Australia|Australia|Canberra|Canberra|oc
+🇳🇿|New Zealand|Nueva Zelanda|Wellington|Wellington|oc
+🇫🇯|Fiji|Fiyi|Suva|Suva|oc
+🇵🇬|Papua New Guinea|Papúa Nueva Guinea|Port Moresby|Port Moresby|oc
+🇼🇸|Samoa|Samoa|Apia|Apia|oc
+🇹🇴|Tonga|Tonga|Nuku'alofa|Nukualofa|oc`.trim().split('\n').map(l => { const [f, en, es, cen, ces, r] = l.split('|'); return { f, name: [en, es], cap: [cen, ces], r, id: en }; });
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+let region = 'all', marks = {}, cache = {};
+$('ttl').textContent = T.title; $('search').placeholder = T.search;
+$('chips').innerHTML = [['all', T.all], ...Object.entries(T.regions)].map(([k, n]) => `<button class="chip" data-k="${k}">${n}</button>`).join('');
+$('chips').querySelectorAll('.chip').forEach(c => c.onclick = () => { region = c.dataset.k; render(); });
+function render() {
+  $('chips').querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.k === region));
+  const q = norm($('search').value);
+  const list = DATA.filter(d => (region === 'all' || d.r === region) && (!q || norm(d.name[L] + ' ' + d.cap[L] + ' ' + d.name[0]).includes(q))).sort((a, b) => a.name[L].localeCompare(b.name[L], ES ? 'es' : 'en'));
+  $('grid').innerHTML = list.map(d => `<button class="c" data-id="${d.id}">${marks[d.id] ? `<span class="mark">${marks[d.id] === 'been' ? '✅' : '⭐'}</span>` : ''}<span class="f">${d.f}</span><b>${d.name[L]}</b><small>${d.cap[L]}</small></button>`).join('');
+  $('grid').querySelectorAll('.c').forEach(b => b.onclick = () => open(b.dataset.id));
+  const been = Object.values(marks).filter(v => v === 'been').length, want = Object.values(marks).filter(v => v === 'want').length;
+  $('stats').innerHTML = `<div><b>${DATA.length}</b><small>${T.count}</small></div><div><b>${been}</b><small>${T.visited}</small></div><div><b>${want}</b><small>${T.want}</small></div>`;
+}
+async function wiki(d) {
+  const key = T.wikiLang + d.id;
+  if (cache[key]) return cache[key];
+  const title = encodeURIComponent(d.name[L].replace(/ /g, '_'));
+  const r = await fetch(`https://${T.wikiLang}.wikipedia.org/api/rest_v1/page/summary/${title}`);
+  if (!r.ok) throw new Error('http');
+  const j = await r.json(); if (j.type === 'disambiguation') throw new Error('ambiguous');
+  return cache[key] = { text: j.extract || '', url: j.content_urls && j.content_urls.mobile && j.content_urls.mobile.page };
+}
+function open(id) {
+  const d = DATA.find(x => x.id === id);
+  $('page').innerHTML = `<div class="hero"><button class="back" id="back">←</button><div class="f">${d.f}</div><h2>${d.name[L]}</h2><small>${T.regions[d.r]}</small></div>
+    <div class="body"><div class="facts"><div><small>${T.capital}</small><b>${d.cap[L]}</b></div><div><small>${T.continent}</small><b>${T.regions[d.r]}</b></div></div>
+    <div class="wiki" id="wiki"><div class="skel"></div><div class="skel" style="width:90%"></div><div class="skel" style="width:70%"></div></div>
+    <div class="acts"><button id="been"></button><button id="want"></button></div></div>`;
+  const paint = () => { const m = marks[id]; $('been').className = m === 'been' ? 'on' : ''; $('been').textContent = m === 'been' ? T.been : T.notBeen; $('want').className = m === 'want' ? 'on2' : ''; $('want').textContent = m === 'want' ? T.wish : T.noWish; };
+  const toggle = v => { if (marks[id] === v) delete marks[id]; else marks[id] = v; store.set('marks', marks); paint(); render(); try { if (window.Acornix) Acornix.vibrate(12); } catch (e) {} };
+  $('been').onclick = () => toggle('been'); $('want').onclick = () => toggle('want'); paint();
+  $('back').onclick = close; $('page').classList.add('on'); $('page').scrollTop = 0; history.pushState(null, '', '#' + id);
+  wiki(d).then(w => {
+    if (!$('wiki')) return;
+    $('wiki').textContent = w.text;
+    if (w.url) { const a = document.createElement('button'); a.className = 'src'; a.textContent = T.read; a.onclick = () => { try { if (window.Acornix) Acornix.openUrl(w.url); else open_(w.url); } catch (e) {} }; $('wiki').appendChild(a); }
+  }).catch(() => { if ($('wiki')) $('wiki').textContent = T.offline; });
+}
+function open_(u) { window.open(u, '_blank'); }
+function close() { $('page').classList.remove('on'); }
+addEventListener('popstate', close);
+$('search').oninput = render;
+$('dice').onclick = () => { const d = DATA[Math.floor(Math.random() * DATA.length)]; open(d.id); };
+(async () => { marks = await store.get('marks', {}); render(); })();
+</script>
+</body>
+</html>

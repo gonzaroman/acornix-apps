@@ -1,0 +1,14 @@
+{
+  "id": "roman-numerals",
+  "name": "Roman Numerals",
+  "emoji": "🏛️",
+  "category": "reference",
+  "description": "Convert numbers to Roman numerals and back, see how each one is built, and learn the three rules to read them.",
+  "prompt": "A Roman numerals converter that works both ways for 1 to 3999, shows how the number breaks down symbol by symbol, warns about invalid numerals, and has the seven symbols, examples to try and the rules for reading them.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

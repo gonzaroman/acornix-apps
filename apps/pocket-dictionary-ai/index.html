@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pocket Dictionary</title>
+<style>
+  :root { --bg:#fbf8f3; --card:#fff; --ink:#22201c; --muted:#857d70; --a:#b5541c; --line:#ece5d8; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 12px; font-family:Georgia,serif; font-size:30px; }
+  .bar { display:flex; gap:8px; }
+  .bar input { flex:1; min-width:0; padding:14px 16px; border-radius:18px; border:2px solid var(--line); font:inherit; font-size:18px; outline:none; background:#fff; }
+  .bar input:focus { border-color:var(--a); }
+  .bar button { padding:0 18px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:18px; }
+  .langs { display:flex; gap:6px; margin:10px 0; }
+  .langs button { flex:1; padding:9px 4px; border-radius:12px; background:#f1ebe0; font-weight:800; font-size:13px; color:var(--muted); }
+  .langs button.on { background:var(--ink); color:#fff; }
+  .entry { background:var(--card); border-radius:22px; padding:18px; box-shadow:0 6px 18px #b5541c12; margin-top:6px; }
+  .word { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .word h2 { margin:0; font-family:Georgia,serif; font-size:34px; }
+  .word .ipa { color:var(--muted); font-size:16px; }
+  .word button { margin-left:auto; width:42px; height:42px; border-radius:50%; background:#f1ebe0; font-size:18px; }
+  .sense { margin-top:14px; padding-top:12px; border-top:1px solid var(--line); }
+  .pos { display:inline-block; font-style:italic; color:var(--a); font-weight:700; font-family:Georgia,serif; }
+  .sense ol { margin:6px 0 0; padding-left:22px; }
+  .sense li { margin-bottom:8px; line-height:1.5; }
+  .ex { display:block; color:var(--muted); font-style:italic; margin-top:2px; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .tags button { padding:6px 10px; border-radius:10px; background:#f7f2ea; font-weight:600; font-size:14px; }
+  .lbl { margin:14px 0 4px; font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .tr { padding:12px 14px; border-radius:14px; background:#fff4e8; font-weight:700; }
+  .origin { line-height:1.5; color:#4a443b; }
+  .recent { margin-top:16px; }
+  .recent .tags button { background:#fff; }
+  .wotd { margin-top:12px; width:100%; padding:14px; border-radius:18px; background:#fff; text-align:left; font-weight:700; display:flex; gap:10px; align-items:center; }
+  .err { color:#b42318; font-weight:700; margin-top:10px; }
+  .loading { margin-top:14px; color:var(--muted); font-weight:700; }
+  .dots::after { content:'…'; animation:d 1s steps(3) infinite; }
+</style>
+</head>
+<body>
+<h1>📖 <span id="ttl"></span></h1>
+<form class="bar" id="form"><input id="q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><button>→</button></form>
+<div class="langs" id="langs"></div>
+<div id="out"></div>
+<div class="err" id="err"></div>
+<button class="wotd" id="wotd"></button>
+<div class="recent" id="recent"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Diccionario', ph:'Escribe una palabra o expresión', modes:['🇪🇸 Español','🇬🇧 Inglés','🇪🇸↔🇬🇧 Traducir'], syn:'Sinónimos', ant:'Antónimos', tr:'Traducción', origin:'Origen', recent:'Buscadas', wotd:'✨ Palabra del día', looking:'Buscando', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No ha salido bien: ', lang:'Spanish', other:'English' }
+ : { title:'Pocket Dictionary', ph:'Type a word or phrase', modes:['🇬🇧 English','🇪🇸 Spanish','🇬🇧↔🇪🇸 Translate'], syn:'Synonyms', ant:'Opposites', tr:'Translation', origin:'Origin', recent:'Looked up', wotd:'✨ Word of the day', looking:'Looking it up', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'That didn\'t work: ', lang:'English', other:'Spanish' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let mode = 0, recent = [], cache = {};
+$('ttl').textContent = T.title; $('q').placeholder = T.ph; $('wotd').textContent = T.wotd;
+$('langs').innerHTML = T.modes.map((m, i) => `<button data-i="${i}">${m}</button>`).join('');
+const paint = () => $('langs').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.i === mode));
+$('langs').querySelectorAll('button').forEach(b => b.onclick = () => { mode = +b.dataset.i; paint(); store.set('mode', mode); if ($('q').value.trim()) look($('q').value.trim()); }); paint();
+const dictLang = () => [T.lang, T.other, null][mode];
+async function look(word, wotd) {
+  $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  const key = mode + ':' + (wotd ? '*' + new Date().toDateString() : word.toLowerCase());
+  if (cache[key]) return render(cache[key]);
+  $('out').innerHTML = `<div class="loading dots">${T.looking}</div>`;
+  const target = mode === 2 ? `Detect whether "${word}" is English or Spanish and translate it into the other language, then define it in the ORIGINAL language.` : `Define it as a ${dictLang()} dictionary would, in ${dictLang()}.`;
+  const ask = wotd ? `Pick an interesting, useful but not too common ${dictLang() || T.lang} word for today's "word of the day" and define it as a ${dictLang() || T.lang} dictionary would.` : `The entry is: "${word}". ${target} If it's misspelt, use the most likely intended word.`;
+  try {
+    const r = await Acornix.askAI(ask, { json: true, system: `You are a precise, friendly dictionary. Explanations in ${T.lang} when the dictionary language isn't stated. Reply only with JSON: {"word":"headword","ipa":"IPA pronunciation","speakLang":"BCP-47 code of the headword language, e.g. en-GB or es-ES","senses":[{"pos":"part of speech","defs":[{"def":"definition","ex":"short example sentence"}]}],"synonyms":["up to 6"],"antonyms":["up to 4"],"translation":"translation into ${mode === 1 ? T.lang : T.other} (one or two words)","origin":"one sentence on the etymology"}. Up to 3 senses, up to 3 definitions each.` });
+    if (!r || !r.word) throw new Error('?');
+    cache[key] = r; render(r);
+    recent = [r.word, ...recent.filter(w => w.toLowerCase() !== r.word.toLowerCase())].slice(0, 16); store.set('recent', recent); renderRecent();
+  } catch (e) { $('out').innerHTML = ''; $('err').textContent = T.failed + (e.message || ''); }
+}
+function render(r) {
+  $('out').innerHTML = `<div class="entry"><div class="word"><h2>${esc(r.word)}</h2><span class="ipa">${esc(r.ipa ? '/' + r.ipa.replace(/^\/|\/$/g, '') + '/' : '')}</span><button id="say">🔊</button></div>
+    ${(r.senses || []).map(s => `<div class="sense"><span class="pos">${esc(s.pos)}</span><ol>${(s.defs || []).map(d => `<li>${esc(d.def)}${d.ex ? `<span class="ex">“${esc(d.ex)}”</span>` : ''}</li>`).join('')}</ol></div>`).join('')}
+    ${r.translation ? `<div class="lbl">${T.tr}</div><div class="tr">${esc(r.translation)}</div>` : ''}
+    ${(r.synonyms || []).length ? `<div class="lbl">${T.syn}</div><div class="tags">${r.synonyms.map(w => `<button data-w="${esc(w)}">${esc(w)}</button>`).join('')}</div>` : ''}
+    ${(r.antonyms || []).length ? `<div class="lbl">${T.ant}</div><div class="tags">${r.antonyms.map(w => `<button data-w="${esc(w)}">${esc(w)}</button>`).join('')}</div>` : ''}
+    ${r.origin ? `<div class="lbl">${T.origin}</div><div class="origin">${esc(r.origin)}</div>` : ''}</div>`;
+  $('say').onclick = () => { try { if (window.Acornix) Acornix.speak(r.word, r.speakLang || (ES ? 'es-ES' : 'en-GB')); } catch (e) {} };
+  $('out').querySelectorAll('[data-w]').forEach(b => b.onclick = () => { $('q').value = b.dataset.w; look(b.dataset.w); scrollTo({ top: 0, behavior: 'smooth' }); });
+}
+function renderRecent() {
+  $('recent').innerHTML = recent.length ? `<div class="lbl">${T.recent}</div><div class="tags">${recent.map(w => `<button data-w="${esc(w)}">${esc(w)}</button>`).join('')}</div>` : '';
+  $('recent').querySelectorAll('[data-w]').forEach(b => b.onclick = () => { $('q').value = b.dataset.w; look(b.dataset.w); scrollTo({ top: 0, behavior: 'smooth' }); });
+}
+$('form').onsubmit = e => { e.preventDefault(); const w = $('q').value.trim(); if (w) { $('q').blur(); look(w); } };
+$('wotd').onclick = () => look('', true);
+(async () => { mode = await store.get('mode', 0); paint(); recent = await store.get('recent', []); renderRecent(); })();
+</script>
+</body>
+</html>

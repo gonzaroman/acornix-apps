@@ -1,0 +1,14 @@
+{
+  "id": "number-bases",
+  "name": "Number Bases",
+  "emoji": "🔢",
+  "category": "reference",
+  "description": "Convert between decimal, binary, hexadecimal and octal as you type, and flip bits with a tap to see what changes.",
+  "prompt": "A number base converter: decimal, binary, hexadecimal and octal fields that update each other as you type, tappable bits, shift, NOT and +1 buttons, and the number shown as a character, a colour and a signed 16-bit value.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

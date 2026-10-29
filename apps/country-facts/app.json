@@ -1,0 +1,14 @@
+{
+  "id": "country-facts",
+  "name": "Country Facts",
+  "emoji": "🌐",
+  "category": "reference",
+  "description": "73 countries with their flags and capitals, a summary of each from Wikipedia, and your own list of places visited and to visit.",
+  "prompt": "A country explorer with flags and capitals by continent, search, a random country button, a detail page with a Wikipedia summary, and buttons to mark countries as visited or want to go with counters.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

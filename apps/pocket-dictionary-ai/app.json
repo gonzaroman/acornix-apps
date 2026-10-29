@@ -1,0 +1,14 @@
+{
+  "id": "pocket-dictionary-ai",
+  "name": "Pocket Dictionary",
+  "emoji": "📖",
+  "category": "reference",
+  "description": "Look up any word in English or Spanish with your AI: meanings, examples, pronunciation, synonyms, a translation and where it comes from.",
+  "prompt": "A dictionary powered by the AI: look up a word in English, Spanish or translate between them, with IPA pronunciation, parts of speech, definitions with examples, synonyms and opposites you can tap, translation and origin, a speak button, a word of the day and recent words.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}
