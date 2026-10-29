@@ -1,0 +1,15 @@
+{
+  "id": "photo-coach",
+  "name": "Photo Coach",
+  "emoji": "📷",
+  "category": "photo-video",
+  "description": "Your AI scores each photo for composition, light, colour, focus and story, and gives you practical tips to take a better one.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 16
+}

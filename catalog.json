@@ -1713,6 +1713,32 @@
       "trending": 0
     },
     {
+      "id": "photo-coach",
+      "name": "Photo Coach",
+      "emoji": "📷",
+      "category": "photo-video",
+      "description": "Your AI scores each photo for composition, light, colour, focus and story, and gives you practical tips to take a better one.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9270,
+      "sha256": "10851f5f426f495d5d64226789a8e3b54b04af9939bc974a838a6ec833eab557",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pace-calculator",
       "name": "Pace Calculator",
       "emoji": "🏃",
