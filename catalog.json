@@ -3058,6 +3058,29 @@
       "trending": 1
     },
     {
+      "id": "before-and-after",
+      "name": "Before And After",
+      "emoji": "🌰",
+      "category": "photo-video",
+      "description": "Compare two photos with a slider you drag, side by side or stacked, with your own labels. Great for makeovers, workouts and renovations.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8268,
+      "sha256": "764a700afa6cb054ebd63fe132cead371f86520f9a75a675591b7dd5c0acc33a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "battery-info",
       "name": "Battery & Device",
       "emoji": "🔋",

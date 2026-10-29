@@ -1,0 +1,15 @@
+{
+  "id": "before-and-after",
+  "name": "Before And After",
+  "emoji": "🌰",
+  "category": "photo-video",
+  "description": "Compare two photos with a slider you drag, side by side or stacked, with your own labels. Great for makeovers, workouts and renovations.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 19
+}

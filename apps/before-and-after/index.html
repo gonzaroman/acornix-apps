@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Before & After</title>
+<style>
+  :root { --bg:#eef2f6; --card:#fff; --ink:#1b2430; --muted:#6b7787; --a:#0ca678; --b:#f76707; --line:#dde3ea; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 14px); gap:10px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:21px; flex:1; }
+  .save { padding:10px 16px; border-radius:14px; background:var(--ink); color:#fff; font-weight:900; }
+  .stage { flex:1; min-height:0; display:grid; place-items:center; }
+  canvas { max-width:100%; max-height:100%; border-radius:14px; touch-action:none; box-shadow:0 10px 30px #1b243022; background:#fff; }
+  .picks { display:flex; gap:10px; }
+  .pick { flex:1; display:flex; align-items:center; gap:10px; padding:10px; border-radius:16px; background:var(--card); border:2px solid var(--line); font-weight:900; font-size:14px; }
+  .pick .th { width:44px; height:44px; border-radius:10px; background:#e9edf2 center/cover; display:grid; place-items:center; font-size:20px; flex:none; }
+  .pick.b { color:var(--b); } .pick.a { color:var(--a); }
+  input[type=file] { display:none; }
+  .row { display:flex; gap:8px; }
+  .chip { flex:1; padding:9px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); border:2px solid var(--line); }
+  .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .labels { display:flex; gap:8px; }
+  .labels input { flex:1; min-width:0; padding:10px 12px; border-radius:12px; border:2px solid var(--line); background:var(--card); font:inherit; font-weight:700; color:var(--ink); outline:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>↔️ <span id="ttl"></span></h1><button class="save" id="save"></button></div>
+  <div class="stage"><canvas id="c"></canvas></div>
+  <div class="picks"><label class="pick b"><input type="file" id="fB" accept="image/*"><span class="th" id="thB">📷</span><span id="lB"></span></label><label class="pick a"><input type="file" id="fA" accept="image/*"><span class="th" id="thA">📷</span><span id="lA"></span></label></div>
+  <div class="labels"><input id="nB" maxlength="20"><input id="nA" maxlength="20"></div>
+  <div class="row" id="modes"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Antes y Después', save:'Guardar', before:'Antes', after:'Después', pickB:'Foto de antes', pickA:'Foto de después', modes:['Deslizador', 'Lado a lado', 'Arriba y abajo'], saved:'Guardada en esta app', drag:'Elige dos fotos y arrastra la línea' }
+ : { title:'Before & After', save:'Save', before:'Before', after:'After', pickB:'Before photo', pickA:'After photo', modes:['Slider', 'Side by side', 'Stacked'], saved:'Saved in this app', drag:'Pick two photos and drag the line' };
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+['ttl', 'save', 'lB', 'lA'].forEach((id, i) => $(id).textContent = [T.title, T.save, T.pickB, T.pickA][i]);
+$('nB').value = T.before; $('nA').value = T.after;
+let imgB = null, imgA = null, mode = 0, split = .5;
+// Draws an image covering the box (like object-fit: cover).
+function cover(im, x, y, w, h) { const k = Math.max(w / im.width, h / im.height), iw = im.width * k, ih = im.height * k; cx.save(); cx.beginPath(); cx.rect(x, y, w, h); cx.clip(); cx.drawImage(im, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih); cx.restore(); }
+function placeholder(x, y, w, h, color, label) { cx.fillStyle = color + '22'; cx.fillRect(x, y, w, h); cx.fillStyle = color; cx.font = `800 ${Math.min(w, h) / 9}px system-ui`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('📷 ' + label, x + w / 2, y + h / 2); }
+function tag(text, x, y, color, align) {
+  if (!text) return; const fs = cv.width / 22; cx.font = `900 ${fs}px system-ui`; const w = cx.measureText(text).width + fs * 1.2, h = fs * 1.8, bx = align === 'right' ? x - w : x;
+  cx.fillStyle = color; cx.beginPath(); cx.roundRect ? cx.roundRect(bx, y, w, h, h / 2) : cx.rect(bx, y, w, h); cx.fill();
+  cx.fillStyle = '#fff'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(text, bx + w / 2, y + h / 2 + 1);
+}
+function size() { const ref = imgB || imgA, r = ref ? ref.width / ref.height : 3 / 4; if (mode === 1) { cv.width = 1600; cv.height = Math.round(800 / r); } else if (mode === 2) { cv.width = 900; cv.height = Math.round(900 / r) * 2; } else { cv.width = 1200; cv.height = Math.round(1200 / r); } }
+function draw() {
+  const W = cv.width, H = cv.height, m = W / 40, nB = $('nB').value, nA = $('nA').value;
+  cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H);
+  if (mode === 0) {
+    imgA ? cover(imgA, 0, 0, W, H) : placeholder(0, 0, W, H, '#0ca678', T.after);
+    const sx = W * split; cx.save(); cx.beginPath(); cx.rect(0, 0, sx, H); cx.clip(); imgB ? cover(imgB, 0, 0, W, H) : placeholder(0, 0, W, H, '#f76707', T.before); cx.restore();
+    cx.fillStyle = '#fff'; cx.fillRect(sx - W / 300, 0, W / 150, H);
+    const r = W / 22; cx.beginPath(); cx.arc(sx, H / 2, r, 0, 7); cx.fill(); cx.fillStyle = '#1b2430'; cx.font = `900 ${r}px system-ui`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('◀ ▶', sx, H / 2 + 1);
+    tag(nB, m, m, '#f76707'); tag(nA, W - m, m, '#0ca678', 'right');
+  } else if (mode === 1) {
+    const w = W / 2; imgB ? cover(imgB, 0, 0, w - 4, H) : placeholder(0, 0, w - 4, H, '#f76707', T.before); imgA ? cover(imgA, w + 4, 0, w - 4, H) : placeholder(w + 4, 0, w - 4, H, '#0ca678', T.after);
+    tag(nB, m, m, '#f76707'); tag(nA, w + 4 + m, m, '#0ca678');
+  } else {
+    const h = H / 2; imgB ? cover(imgB, 0, 0, W, h - 4) : placeholder(0, 0, W, h - 4, '#f76707', T.before); imgA ? cover(imgA, 0, h + 4, W, h - 4) : placeholder(0, h + 4, W, h - 4, '#0ca678', T.after);
+    tag(nB, m, m, '#f76707'); tag(nA, m, h + 4 + m, '#0ca678');
+  }
+}
+function modes() {
+  $('modes').innerHTML = T.modes.map((n, i) => `<button class="chip ${i === mode ? 'on' : ''}" data-i="${i}">${n}</button>`).join('');
+  $('modes').querySelectorAll('.chip').forEach(b => b.onclick = () => { mode = +b.dataset.i; modes(); size(); draw(); });
+}
+function load(f, which) {
+  if (!f) return; const im = new Image();
+  im.onload = () => { const s = Math.min(1, 1600 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    if (which === 'B') imgB = c; else imgA = c; $('th' + which).style.backgroundImage = `url(${c.toDataURL('image/jpeg', .5)})`; $('th' + which).textContent = ''; size(); draw(); URL.revokeObjectURL(im.src); };
+  im.src = URL.createObjectURL(f);
+}
+$('fB').onchange = e => { load(e.target.files[0], 'B'); e.target.value = ''; };
+$('fA').onchange = e => { load(e.target.files[0], 'A'); e.target.value = ''; };
+$('nB').oninput = draw; $('nA').oninput = draw;
+let dragging = false;
+const setSplit = e => { const b = cv.getBoundingClientRect(); split = Math.max(.02, Math.min(.98, (e.clientX - b.left) / b.width)); draw(); };
+cv.addEventListener('pointerdown', e => { if (mode) return; dragging = true; cv.setPointerCapture(e.pointerId); setSplit(e); });
+cv.addEventListener('pointermove', e => { if (dragging) setSplit(e); });
+cv.addEventListener('pointerup', () => { dragging = false; });
+$('save').onclick = async () => {
+  const url = cv.toDataURL('image/jpeg', .92), name = `before-after-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+modes(); size(); draw();
+</script>
+</body>
+</html>
