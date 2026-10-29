@@ -1,0 +1,14 @@
+{
+  "id": "compound-interest",
+  "name": "Compound Interest",
+  "emoji": "📈",
+  "category": "finance",
+  "description": "See how your savings grow over the years with compound interest and monthly contributions.",
+  "prompt": "A compound interest calculator with an initial amount, monthly contributions, annual return, years and compounding frequency, showing the final amount, what I paid in and the interest, a stacked chart and milestones.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

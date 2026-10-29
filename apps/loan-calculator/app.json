@@ -1,0 +1,14 @@
+{
+  "id": "loan-calculator",
+  "name": "Loan Calculator",
+  "emoji": "🏦",
+  "category": "finance",
+  "description": "Work out the monthly payment of a mortgage, car or personal loan, with the full amortisation table.",
+  "prompt": "A loan calculator for mortgages, car loans and personal loans with sliders for amount, interest and years, the monthly payment, total interest, a chart of principal and interest per year and the amortisation table.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

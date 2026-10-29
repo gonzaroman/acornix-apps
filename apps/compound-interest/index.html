@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Compound Interest</title>
+<style>
+  :root { --bg:#0b1220; --card:#121b2e; --line:#22304d; --ink:#eaf1ff; --muted:#8fa0c2; --a:#4ade80; --b:#60a5fa; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  input, select { font:inherit; color:inherit; border:0; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); margin:0 0 12px; }
+  .hero { background:linear-gradient(135deg,#14532d,#1e3a8a); border-radius:24px; padding:18px; }
+  .hero small { opacity:.8; font-weight:700; }
+  .hero .big { font-size:40px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .hero .row { display:flex; gap:16px; margin-top:6px; font-size:14px; flex-wrap:wrap; }
+  .hero .row b { font-variant-numeric:tabular-nums; }
+  canvas { width:100%; height:200px; margin-top:12px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .f { background:var(--card); border-radius:16px; padding:12px; }
+  .f label { display:block; color:var(--muted); font-size:12px; font-weight:700; margin-bottom:4px; }
+  .f input, .f select { width:100%; background:transparent; font-size:20px; font-weight:800; outline:none; }
+  .f select option { color:#000; }
+  .f input[type=range] { accent-color:var(--a); }
+  .legend { display:flex; gap:14px; font-size:12px; color:var(--muted); font-weight:700; margin-top:6px; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; }
+  .note { color:var(--muted); font-size:12px; margin-top:12px; line-height:1.5; }
+  .milestones { margin-top:12px; background:var(--card); border-radius:18px; padding:12px 14px; font-size:14px; line-height:1.8; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>📈 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="hero"><small id="lFinal"></small><div class="big" id="final"></div><div class="row"><span id="lIn"></span><b id="inv"></b><span id="lGain"></span><b id="gain" style="color:#86efac"></b></div></div>
+  <canvas id="chart"></canvas>
+  <div class="legend"><span><i style="background:var(--b)"></i><span id="lgIn"></span></span><span><i style="background:var(--a)"></i><span id="lgGain"></span></span></div>
+  <div class="grid">
+    <div class="f"><label id="lStart"></label><input id="start" inputmode="decimal"></div>
+    <div class="f"><label id="lMonthly"></label><input id="monthly" inputmode="decimal"></div>
+    <div class="f"><label id="lRate"></label><input id="rate" inputmode="decimal"></div>
+    <div class="f"><label id="lYears"></label><input id="years" inputmode="numeric"></div>
+    <div class="f"><label id="lFreq"></label><select id="freq"></select></div>
+    <div class="f"><label id="lCur"></label><select id="cur"></select></div>
+  </div>
+  <div class="milestones" id="miles"></div>
+  <div class="note" id="note"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Interés compuesto', sub:'Mira cómo crece tu dinero cuando los intereses también generan intereses.', final:'Tendrás', inv:'Aportado:', gain:'Intereses:', start:'Inicial', monthly:'Al mes', rate:'Rentab. anual %', years:'Años', freq:'Capitalización', cur:'Moneda', freqs:[['12','Mensual'],['4','Trimestral'],['1','Anual']], lgIn:'Lo que aportas', lgGain:'Intereses ganados', miles:'Hitos', reach:'Superas', inYear:'en el año', note:'Cálculo orientativo: no incluye impuestos, comisiones ni inflación. La rentabilidad pasada no garantiza la futura.', x2:'Tu aportación se duplica en el año' }
+ : { title:'Compound Interest', sub:'Watch your money grow when the interest earns interest too.', final:'You\'ll have', inv:'Paid in:', gain:'Interest:', start:'Initial', monthly:'Monthly', rate:'Annual return %', years:'Years', freq:'Compounding', cur:'Currency', freqs:[['12','Monthly'],['4','Quarterly'],['1','Yearly']], lgIn:'What you pay in', lgGain:'Interest earned', miles:'Milestones', reach:'You pass', inYear:'in year', note:'An estimate: no taxes, fees or inflation. Past returns don\'t guarantee future ones.', x2:'Your money doubles in year' };
+const $ = id => document.getElementById(id);
+[['ttl', 'title'], ['sub', 'sub'], ['lFinal', 'final'], ['lIn', 'inv'], ['lGain', 'gain'], ['lStart', 'start'], ['lMonthly', 'monthly'], ['lRate', 'rate'], ['lYears', 'years'], ['lFreq', 'freq'], ['lCur', 'cur'], ['lgIn', 'lgIn'], ['lgGain', 'lgGain'], ['note', 'note']].forEach(([i, k]) => $(i).textContent = T[k]);
+$('freq').innerHTML = T.freqs.map(([v, n]) => `<option value="${v}">${n}</option>`).join('');
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL'].map(c => `<option>${c}</option>`).join('');
+const st = (() => { try { return JSON.parse(localStorage.getItem('ci')); } catch (e) { return null; } })() || { start: 1000, monthly: 150, rate: 6, years: 20, freq: '12', cur: ES ? 'EUR' : 'USD' };
+['start', 'monthly', 'rate', 'years', 'freq', 'cur'].forEach(k => { $(k).value = st[k]; $(k).oninput = $(k).onchange = () => { st[k] = ['freq', 'cur'].includes(k) ? $(k).value : parseFloat($(k).value.replace(',', '.')) || 0; calc(); }; });
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: st.cur, maximumFractionDigits: 0 }).format(v);
+function calc() {
+  const years = Math.min(80, Math.max(1, Math.round(st.years))), n = +st.freq, r = st.rate / 100;
+  let bal = st.start, inv = st.start; const pts = [[0, inv, bal]];
+  for (let m = 1; m <= years * 12; m++) {
+    bal += st.monthly; inv += st.monthly;
+    if (m % (12 / n) === 0) bal *= 1 + r / n;
+    if (m % 12 === 0) pts.push([m / 12, inv, bal]);
+  }
+  $('final').textContent = money(bal); $('inv').textContent = money(inv); $('gain').textContent = money(bal - inv);
+  const marks = []; let next = Math.pow(10, Math.ceil(Math.log10(Math.max(1000, st.start + 1))));
+  for (const [y, , b] of pts) { while (b >= next && marks.length < 4) { marks.push(`🏁 ${T.reach} ${money(next)} ${T.inYear} ${y}`); next *= next >= 1e5 ? 2 : 10; } }
+  const dbl = pts.find(([y, i, b]) => y && b >= i * 2); if (dbl) marks.push(`✨ ${T.x2} ${dbl[0]}`);
+  $('miles').innerHTML = `<b>${T.miles}</b><br>` + (marks.join('<br>') || '—');
+  const c = $('chart'), d = devicePixelRatio || 1; c.width = c.clientWidth * d; c.height = c.clientHeight * d; const g = c.getContext('2d'), w = c.width, h = c.height, max = bal * 1.05 || 1;
+  g.clearRect(0, 0, w, h);
+  const x = y => y / years * (w - 4) + 2, yv = v => h - v / max * (h - 6);
+  const area = (k, color) => { g.beginPath(); g.moveTo(x(0), h); pts.forEach(p => g.lineTo(x(p[0]), yv(p[k]))); g.lineTo(x(years), h); g.closePath(); g.fillStyle = color; g.fill(); };
+  area(2, '#4ade80cc'); area(1, '#60a5facc');
+  g.fillStyle = '#8fa0c2'; g.font = `${11 * d}px system-ui`; g.fillText(money(bal), 6 * d, 14 * d);
+  try { localStorage.setItem('ci', JSON.stringify(st)); } catch (e) {}
+}
+addEventListener('resize', calc); calc();
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Savings Goals</title>
+<style>
+  :root { --bg:#fdf2f8; --card:#fff; --ink:#3b1530; --muted:#a07a92; --line:#f8dcec; --a:#ec4899; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 96px); }
+  h1 { margin:0; font-size:26px; }
+  .total { color:var(--muted); font-weight:700; margin:4px 0 14px; }
+  .goal { background:var(--card); border-radius:24px; padding:16px; margin-bottom:12px; box-shadow:0 6px 18px #ec489914; }
+  .goal .top { display:flex; gap:14px; align-items:center; }
+  .jar { position:relative; width:64px; height:80px; flex:none; border:3px solid #e9c3d8; border-top:0; border-radius:8px 8px 18px 18px; overflow:hidden; background:#fff7fb; }
+  .jar::before { content:''; position:absolute; left:-3px; right:-3px; top:0; height:8px; background:#e9c3d8; border-radius:4px; z-index:2; }
+  .jar i { position:absolute; left:0; right:0; bottom:0; background:linear-gradient(#fbcfe8,#ec4899); transition:height .8s cubic-bezier(.3,1.4,.5,1); }
+  .jar span { position:absolute; inset:0; display:grid; place-items:center; font-size:26px; z-index:1; }
+  .goal h2 { margin:0; font-size:18px; word-break:break-word; }
+  .goal .amt { font-weight:800; font-variant-numeric:tabular-nums; margin-top:2px; }
+  .goal small { color:var(--muted); font-weight:600; }
+  .goal .x { margin-left:auto; align-self:flex-start; color:var(--muted); }
+  .bar { height:10px; border-radius:5px; background:var(--line); margin:12px 0 8px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:linear-gradient(90deg,#f472b6,#ec4899); transition:width .6s; }
+  .actions { display:flex; gap:8px; }
+  .actions input { flex:1; min-width:0; padding:11px; border-radius:12px; background:var(--bg); outline:none; font-weight:700; }
+  .actions button { padding:0 14px; border-radius:12px; font-weight:800; }
+  .actions .plus { background:var(--a); color:#fff; } .actions .minus { background:var(--bg); }
+  .quick { display:flex; gap:6px; margin-top:8px; }
+  .quick button { flex:1; padding:7px; border-radius:10px; background:var(--bg); font-weight:700; font-size:13px; }
+  .done { text-align:center; font-weight:900; color:var(--a); margin-top:8px; }
+  .fab { position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:16px 20px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; box-shadow:0 10px 24px #ec489955; }
+  #sheet { position:fixed; inset:0; background:#3b153088; display:none; align-items:flex-end; z-index:5; }
+  #sheet.on { display:flex; }
+  .form { width:100%; max-width:560px; margin:0 auto; background:var(--card); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); display:flex; flex-direction:column; gap:10px; }
+  .form input, .form select { padding:13px; border-radius:14px; background:var(--bg); outline:none; }
+  .pick { display:flex; gap:8px; flex-wrap:wrap; } .pick button { width:42px; height:42px; border-radius:12px; background:var(--bg); font-size:20px; } .pick button.on { outline:3px solid var(--a); }
+  .row { display:flex; gap:10px; } .row button { flex:1; padding:14px; border-radius:14px; background:var(--bg); font-weight:800; } .row .save { background:var(--a); color:#fff; }
+  #confetti { position:fixed; inset:0; pointer-events:none; z-index:9; }
+</style>
+</head>
+<body>
+<div id="app"><h1>🐷 <span id="ttl"></span></h1><div class="total" id="total"></div><div id="list"></div></div>
+<button class="fab" id="add"></button>
+<div id="sheet"><form class="form" id="form"><b id="formT"></b><input id="name" maxlength="40" required><input id="target" inputmode="decimal" required><input id="date" type="date"><select id="cur"></select><div class="pick" id="emojis"></div><div class="row"><button type="button" id="cancel"></button><button class="save" id="save"></button></div></form></div>
+<canvas id="confetti"></canvas>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Huchas', total:'Ahorrado en total', add:'＋ Hucha', new:'Nueva hucha', name:'¿Para qué ahorras?', target:'Objetivo', cancel:'Cancelar', save:'Crear', of:'de', left:'faltan', perMonth:'al mes para llegar', perWeek:'a la semana', reached:'🎉 ¡Objetivo conseguido!', amount:'Cantidad',
+  sample:['Viaje a Japón','✈️',3000,1240] }
+ : { title:'Savings Goals', total:'Saved in total', add:'＋ Goal', new:'New goal', name:'What are you saving for?', target:'Target', cancel:'Cancel', save:'Create', of:'of', left:'to go', perMonth:'a month to make it', perWeek:'a week', reached:'🎉 Goal reached!', amount:'Amount',
+  sample:['Trip to Japan','✈️',3000,1240] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('add').textContent = T.add; $('formT').textContent = T.new; $('name').placeholder = T.name; $('target').placeholder = T.target; $('cancel').textContent = T.cancel; $('save').textContent = T.save;
+const EMOJIS = ['✈️','🏖️','🚗','🏠','💻','📱','🎸','💍','🎓','🎁','🛟','🐶'], CURS = ['EUR','USD','GBP','MXN','ARS','COP','CLP','BRL'];
+$('cur').innerHTML = CURS.map(c => `<option>${c}</option>`).join('');
+let goals = [], pickE = '✈️';
+const money = (v, c) => new Intl.NumberFormat(undefined, { style: 'currency', currency: c, maximumFractionDigits: v % 1 ? 2 : 0 }).format(v);
+const num = s => parseFloat(String(s).replace(',', '.')) || 0;
+function save() { store.set('goals', goals); }
+function render() {
+  const byCur = {}; goals.forEach(g => byCur[g.cur] = (byCur[g.cur] || 0) + g.saved);
+  $('total').textContent = T.total + ': ' + (Object.entries(byCur).map(([c, v]) => money(v, c)).join(' · ') || '—');
+  $('list').innerHTML = '';
+  goals.forEach((g, gi) => {
+    const pct = Math.min(1, g.saved / g.target), left = Math.max(0, g.target - g.saved);
+    let plan = '';
+    if (g.date && left > 0) { const months = Math.max(.25, (new Date(g.date) - Date.now()) / (30.44 * 864e5)); plan = `${money(left / months, g.cur)} ${T.perMonth} · ${money(left / (months * 4.345), g.cur)} ${T.perWeek}`; }
+    const el = document.createElement('div'); el.className = 'goal';
+    el.innerHTML = `<div class="top"><div class="jar"><i style="height:${pct * 100}%"></i><span>${g.e}</span></div><div style="min-width:0"><h2></h2><div class="amt">${money(g.saved, g.cur)} <small>${T.of} ${money(g.target, g.cur)}</small></div><small>${left > 0 ? money(left, g.cur) + ' ' + T.left : ''}${g.date ? ' · 📅 ' + new Date(g.date).toLocaleDateString([], { month: 'short', year: 'numeric' }) : ''}</small></div><button class="x">✕</button></div>
+      <div class="bar"><i style="width:${pct * 100}%"></i></div>${plan ? `<small>💡 ${plan}</small>` : ''}${pct >= 1 ? `<div class="done">${T.reached}</div>` : `
+      <div class="actions" style="margin-top:10px"><input inputmode="decimal" placeholder="${T.amount}"><button class="minus">−</button><button class="plus">＋</button></div><div class="quick">${[5, 10, 20, 50].map(v => `<button>+${v}</button>`).join('')}</div>`}`;
+    el.querySelector('h2').textContent = g.name;
+    el.querySelector('.x').onclick = () => { goals.splice(gi, 1); save(); render(); };
+    const inp = el.querySelector('.actions input');
+    const addAmt = v => { const was = g.saved < g.target; g.saved = Math.max(0, Math.round((g.saved + v) * 100) / 100); save(); render(); if (was && g.saved >= g.target) confetti(); else buzz(15); };
+    if (inp) { el.querySelector('.plus').onclick = () => addAmt(num(inp.value)); el.querySelector('.minus').onclick = () => addAmt(-num(inp.value)); el.querySelectorAll('.quick button').forEach(b => b.onclick = () => addAmt(+b.textContent.slice(1))); }
+    $('list').appendChild(el);
+  });
+}
+function confetti() {
+  buzz([40, 40, 40, 40, 120]);
+  const cv = $('confetti'), g = cv.getContext('2d'); cv.width = innerWidth; cv.height = innerHeight;
+  const ps = Array.from({ length: 140 }, () => ({ x: innerWidth / 2, y: innerHeight / 3, vx: (Math.random() - .5) * 14, vy: -Math.random() * 14, r: Math.random() * 6, c: `hsl(${Math.random() * 360},90%,60%)` })); let f = 0;
+  (function step() { g.clearRect(0, 0, cv.width, cv.height); ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .4; p.r += .2; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-4, -2, 8, 4); g.restore(); }); if (f++ < 120) requestAnimationFrame(step); else g.clearRect(0, 0, cv.width, cv.height); })();
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+function marks() { $('emojis').innerHTML = EMOJIS.map(e => `<button type="button" class="${e === pickE ? 'on' : ''}">${e}</button>`).join(''); $('emojis').querySelectorAll('button').forEach(b => b.onclick = () => { pickE = b.textContent; marks(); }); }
+$('add').onclick = () => { $('form').reset(); $('cur').value = goals[0] ? goals[0].cur : (ES ? 'EUR' : 'USD'); pickE = EMOJIS[goals.length % EMOJIS.length]; marks(); $('sheet').classList.add('on'); };
+$('cancel').onclick = () => $('sheet').classList.remove('on');
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); };
+$('form').onsubmit = e => { e.preventDefault(); const target = num($('target').value); if (!(target > 0)) return; goals.push({ name: $('name').value.trim(), target, saved: 0, cur: $('cur').value, date: $('date').value || null, e: pickE }); save(); $('sheet').classList.remove('on'); render(); };
+(async () => { goals = await store.get('goals', null); if (!goals) { const [name, e, target, saved] = T.sample, d = new Date(); d.setMonth(d.getMonth() + 10); goals = [{ name, e, target, saved, cur: ES ? 'EUR' : 'USD', date: d.toISOString().slice(0, 10) }]; save(); } render(); })();
+</script>
+</body>
+</html>

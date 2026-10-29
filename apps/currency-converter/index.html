@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Currency Converter</title>
+<style>
+  :root { --bg:#eef6f3; --card:#fff; --ink:#0f2b22; --muted:#6c8a80; --line:#dcebe5; --a:#0e9f6e; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .upd { color:var(--muted); font-size:13px; font-weight:600; margin-bottom:12px; display:flex; gap:8px; align-items:center; }
+  .upd button { color:var(--a); font-weight:800; }
+  .box { background:var(--card); border-radius:22px; padding:6px 16px; box-shadow:0 8px 24px #0f2b2212; }
+  .line { display:flex; align-items:center; gap:10px; padding:12px 0; }
+  .line + .line { border-top:1px solid var(--line); }
+  .flag { font-size:30px; }
+  .line select { font-weight:800; font-size:16px; background:transparent; max-width:96px; }
+  .line input, .line .out { flex:1; min-width:0; text-align:right; font-size:30px; font-weight:800; outline:none; background:transparent; font-variant-numeric:tabular-nums; }
+  .line .out { color:var(--a); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .swap { display:flex; justify-content:center; margin:-14px 0; position:relative; z-index:2; }
+  .swap button { width:44px; height:44px; border-radius:50%; background:var(--a); color:#fff; font-size:20px; box-shadow:0 4px 12px #0e9f6e55; }
+  .rate { text-align:center; color:var(--muted); font-weight:700; margin:16px 0; font-size:14px; }
+  h3 { font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin:16px 4px 8px; }
+  .fav { display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:12px 14px; margin-bottom:6px; width:100%; text-align:left; }
+  .fav .c { font-weight:800; width:46px; } .fav .n { flex:1; color:var(--muted); font-size:13px; } .fav b { font-variant-numeric:tabular-nums; }
+  .err { background:#fff4e5; color:#8a5300; border-radius:14px; padding:10px 12px; margin-bottom:10px; font-size:14px; display:none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>💱 <span id="ttl"></span></h1>
+  <div class="upd"><span id="upd"></span><button id="refresh">↻</button></div>
+  <div class="err" id="err"></div>
+  <div class="box">
+    <div class="line"><span class="flag" id="f1"></span><select id="from"></select><input id="amt" inputmode="decimal" value="100"></div>
+    <div class="swap"><button id="swap">⇅</button></div>
+    <div class="line"><span class="flag" id="f2"></span><select id="to"></select><div class="out" id="out"></div></div>
+  </div>
+  <div class="rate" id="rate"></div>
+  <h3 id="lOthers"></h3><div id="others"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Divisas', updated:'Tipos del BCE del', loading:'Cargando tipos…', offline:'Sin conexión: uso los últimos tipos guardados.', none:'Necesito internet la primera vez para descargar los tipos de cambio.', others:'En otras monedas' }
+ : { title:'Currency Converter', updated:'ECB rates from', loading:'Loading rates…', offline:'Offline: using the last saved rates.', none:'I need the internet the first time to download the exchange rates.', others:'In other currencies' };
+const FLAGS = { EUR:'🇪🇺', USD:'🇺🇸', GBP:'🇬🇧', JPY:'🇯🇵', CHF:'🇨🇭', CAD:'🇨🇦', AUD:'🇦🇺', NZD:'🇳🇿', CNY:'🇨🇳', HKD:'🇭🇰', SGD:'🇸🇬', KRW:'🇰🇷', INR:'🇮🇳', MXN:'🇲🇽', BRL:'🇧🇷', SEK:'🇸🇪', NOK:'🇳🇴', DKK:'🇩🇰', PLN:'🇵🇱', CZK:'🇨🇿', HUF:'🇭🇺', RON:'🇷🇴', TRY:'🇹🇷', ZAR:'🇿🇦', THB:'🇹🇭', IDR:'🇮🇩', MYR:'🇲🇾', PHP:'🇵🇭', ILS:'🇮🇱', ISK:'🇮🇸', BGN:'🇧🇬' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('lOthers').textContent = T.others;
+const st = (() => { try { return JSON.parse(localStorage.getItem('fx')); } catch (e) { return null; } })() || { from: ES ? 'EUR' : 'USD', to: ES ? 'USD' : 'EUR', amt: '100', rates: null, date: null, names: null };
+const save = () => { try { localStorage.setItem('fx', JSON.stringify(st)); } catch (e) {} };
+// Rates are stored against EUR, so any pair can be converted offline.
+async function load() {
+  $('upd').textContent = T.loading; $('err').style.display = 'none';
+  try {
+    const [r, n] = await Promise.all([fetch(`https://api.frankfurter.dev/v1/latest?base=EUR`).then(x => x.json()), st.names ? null : fetch(`https://api.frankfurter.dev/v1/currencies`).then(x => x.json())]);
+    st.rates = { EUR: 1, ...r.rates }; st.date = r.date; if (n) st.names = n; save();
+  } catch (e) { $('err').textContent = st.rates ? T.offline : T.none; $('err').style.display = 'block'; }
+  setup();
+}
+function setup() {
+  if (!st.rates) { $('upd').textContent = ''; return; }
+  const codes = Object.keys(st.rates).sort();
+  [$('from'), $('to')].forEach((s, i) => { s.innerHTML = codes.map(c => `<option>${c}</option>`).join(''); s.value = i ? st.to : st.from; });
+  $('upd').textContent = `${T.updated} ${new Date(st.date).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' })}`;
+  $('amt').value = st.amt; calc();
+}
+const fmt = (v, c) => { try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: c, maximumFractionDigits: v < 1 ? 4 : 2 }).format(v); } catch (e) { return v.toFixed(2) + ' ' + c; } };
+function conv(v, a, b) { return v / st.rates[a] * st.rates[b]; }
+function calc() {
+  if (!st.rates) return;
+  st.from = $('from').value; st.to = $('to').value; st.amt = $('amt').value; save();
+  const v = parseFloat(String(st.amt).replace(/\s/g, '').replace(',', '.')) || 0;
+  $('f1').textContent = FLAGS[st.from] || '🏳️'; $('f2').textContent = FLAGS[st.to] || '🏳️';
+  $('out').textContent = fmt(conv(v, st.from, st.to), st.to);
+  $('rate').textContent = `1 ${st.from} = ${fmt(conv(1, st.from, st.to), st.to)} · 1 ${st.to} = ${fmt(conv(1, st.to, st.from), st.from)}`;
+  const favs = ['EUR', 'USD', 'GBP', 'JPY', 'CHF', 'MXN', 'BRL', 'CAD', 'AUD', 'CNY'].filter(c => c !== st.from && c !== st.to && st.rates[c]);
+  $('others').innerHTML = favs.map(c => `<button class="fav" data-c="${c}"><span>${FLAGS[c] || ''}</span><span class="c">${c}</span><span class="n">${st.names && st.names[c] || ''}</span><b>${fmt(conv(v, st.from, c), c)}</b></button>`).join('');
+  $('others').querySelectorAll('.fav').forEach(b => b.onclick = () => { $('to').value = b.dataset.c; calc(); });
+}
+$('amt').oninput = calc; $('from').onchange = calc; $('to').onchange = calc;
+$('swap').onclick = () => { const a = $('from').value; $('from').value = $('to').value; $('to').value = a; calc(); };
+$('refresh').onclick = load;
+setup(); load();
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Debt Payoff</title>
+<style>
+  :root { --bg:#eef4fb; --card:#fff; --ink:#132238; --muted:#71819a; --line:#dde6f2; --a:#2563eb; --s:#0ea5e9; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); margin:0 0 12px; line-height:1.4; }
+  .debt { background:var(--card); border-radius:16px; padding:12px; margin-bottom:8px; display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:6px; align-items:end; }
+  .debt .n { grid-column:1/-1; display:flex; gap:8px; align-items:center; }
+  .debt .n input { flex:1; font-weight:800; font-size:16px; outline:none; background:transparent; }
+  .debt label { font-size:11px; color:var(--muted); font-weight:700; display:block; }
+  .debt label input { width:100%; padding:7px; border-radius:8px; background:var(--bg); outline:none; font-weight:700; font-size:15px; color:var(--ink); margin-top:2px; }
+  .debt .x { color:var(--muted); padding:8px; }
+  .add { width:100%; padding:12px; border-radius:14px; background:var(--card); font-weight:800; color:var(--a); }
+  .extra { background:var(--card); border-radius:16px; padding:14px; margin:12px 0; }
+  .extra .row { display:flex; justify-content:space-between; align-items:center; font-weight:700; }
+  .extra input[type=text] { width:110px; text-align:right; font-size:20px; font-weight:900; outline:none; background:var(--bg); border-radius:10px; padding:6px 8px; }
+  .extra input[type=range] { width:100%; accent-color:var(--a); }
+  .methods { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .m { background:var(--card); border-radius:20px; padding:14px; border:2px solid transparent; text-align:left; }
+  .m.best { border-color:#22c55e; }
+  .m h3 { margin:0; font-size:16px; } .m p { margin:2px 0 8px; font-size:12px; color:var(--muted); line-height:1.3; }
+  .m .when { font-size:22px; font-weight:900; } .m small { display:block; color:var(--muted); font-weight:700; font-size:12px; }
+  .m .badge { display:inline-block; margin-top:6px; font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; background:#dcfce7; color:#166534; }
+  .order { margin-top:12px; background:var(--card); border-radius:18px; padding:12px 14px; }
+  .order h3 { margin:0 0 8px; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+  .order div { display:flex; justify-content:space-between; padding:7px 0; border-top:1px solid var(--line); font-weight:600; }
+  .order div:first-of-type { border:0; }
+  .cur { display:flex; justify-content:flex-end; gap:6px; align-items:center; color:var(--muted); font-size:13px; margin-top:12px; }
+  .cur select { background:var(--card); padding:5px; border-radius:8px; }
+  .warn { background:#fef2f2; color:#991b1b; border-radius:14px; padding:12px; font-weight:600; display:none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>❄️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div id="debts"></div><button class="add" id="add"></button>
+  <div class="extra"><div class="row"><span id="lExtra"></span><input type="text" id="extra" inputmode="decimal"></div><input type="range" id="extraR" min="0" max="1000" step="10"></div>
+  <div class="warn" id="warn"></div>
+  <div class="methods"><button class="m" id="mS"></button><button class="m" id="mA"></button></div>
+  <div class="order" id="order"></div>
+  <div class="cur"><span id="lCur"></span><select id="cur"></select></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Salir de deudas', sub:'Paga el mínimo de todas y el dinero extra a una sola. Compara los dos métodos más usados.', add:'＋ Añadir deuda', bal:'Debes', rate:'Interés %', min:'Mínimo/mes', extra:'Extra al mes', snow:'❄️ Bola de nieve', snowD:'Primero la más pequeña: victorias rápidas.', aval:'🏔️ Avalancha', avalD:'Primero la de más interés: pagas menos.', free:'Libre de deudas', interest:'intereses', months:'meses', best:'Ahorra más', order:'Orden de pago', paidBy:'pagada en', cur:'Moneda', never:'Con estos pagos la deuda no baja: sube el mínimo o el extra.', name:'Deuda',
+  sample:[['Tarjeta',1200,22,40],['Préstamo coche',6500,7,180],['Préstamo personal',3000,11,90]] }
+ : { title:'Debt Payoff', sub:'Pay the minimum on every debt and the extra on just one. Compare the two most popular methods.', add:'＋ Add debt', bal:'Balance', rate:'Interest %', min:'Min/month', extra:'Extra per month', snow:'❄️ Snowball', snowD:'Smallest first: quick wins.', aval:'🏔️ Avalanche', avalD:'Highest interest first: pay less.', free:'Debt-free', interest:'interest', months:'months', best:'Saves most', order:'Payoff order', paidBy:'paid off in', cur:'Currency', never:'With these payments the debt never goes down: raise the minimum or the extra.', name:'Debt',
+  sample:[['Credit card',1200,22,40],['Car loan',6500,7,180],['Personal loan',3000,11,90]] };
+const $ = id => document.getElementById(id);
+[['ttl', 'title'], ['sub', 'sub'], ['add', 'add'], ['lExtra', 'extra'], ['lCur', 'cur']].forEach(([i, k]) => $(i).textContent = T[k]);
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL'].map(c => `<option>${c}</option>`).join('');
+const st = (() => { try { return JSON.parse(localStorage.getItem('debts')); } catch (e) { return null; } })() || { cur: ES ? 'EUR' : 'USD', extra: 150, method: 'aval', debts: T.sample.map(([n, b, r, m]) => ({ n, b, r, m })) };
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: st.cur, maximumFractionDigits: 0 }).format(v);
+const save = () => { try { localStorage.setItem('debts', JSON.stringify(st)); } catch (e) {} };
+// Month by month: interest, minimums, then everything left over goes to the target debt.
+function simulate(order) {
+  const ds = st.debts.map(d => ({ ...d, b: +d.b || 0 })).filter(d => d.b > 0); let month = 0, interest = 0; const done = {};
+  const budget = ds.reduce((a, d) => a + (+d.m || 0), 0) + (+st.extra || 0);
+  while (ds.some(d => d.b > .01) && month < 600) {
+    month++; let money = budget;
+    ds.forEach(d => { if (d.b <= .01) return; const i = d.b * (+d.r || 0) / 1200; d.b += i; interest += i; });
+    ds.forEach(d => { if (d.b <= .01) return; const p = Math.min(d.b, +d.m || 0, money); d.b -= p; money -= p; });
+    for (const d of order(ds.filter(x => x.b > .01))) { const p = Math.min(d.b, money); d.b -= p; money -= p; if (money <= 0) break; }
+    ds.forEach(d => { if (d.b <= .01 && !done[d.n]) done[d.n] = month; });
+  }
+  return { month, interest, done, never: month >= 600 };
+}
+const snow = l => l.slice().sort((a, b) => a.b - b.b), aval = l => l.slice().sort((a, b) => b.r - a.r);
+function render() {
+  $('debts').innerHTML = '';
+  st.debts.forEach((d, i) => {
+    const el = document.createElement('div'); el.className = 'debt';
+    el.innerHTML = `<div class="n">💳<input maxlength="24"></div><label>${T.bal}<input inputmode="decimal" data-k="b"></label><label>${T.rate}<input inputmode="decimal" data-k="r"></label><label>${T.min}<input inputmode="decimal" data-k="m"></label><button class="x">✕</button>`;
+    const name = el.querySelector('.n input'); name.value = d.n; name.oninput = () => { d.n = name.value; save(); calc(); };
+    el.querySelectorAll('label input').forEach(inp => { inp.value = d[inp.dataset.k]; inp.oninput = () => { d[inp.dataset.k] = parseFloat(inp.value.replace(',', '.')) || 0; save(); calc(); }; });
+    el.querySelector('.x').onclick = () => { st.debts.splice(i, 1); save(); render(); };
+    $('debts').appendChild(el);
+  });
+  $('extra').value = st.extra; $('extraR').value = st.extra; $('cur').value = st.cur; calc();
+}
+function calc() {
+  const s = simulate(snow), a = simulate(aval);
+  $('warn').textContent = T.never; $('warn').style.display = s.never ? 'block' : 'none';
+  const when = m => { const d = new Date(); d.setMonth(d.getMonth() + m); return d.toLocaleDateString([], { month: 'short', year: 'numeric' }); };
+  const card = (el, r, title, desc, key) => { el.innerHTML = `<h3>${title}</h3><p>${desc}</p><small>${T.free}</small><div class="when">${r.never ? '∞' : when(r.month)}</div><small>${r.never ? '' : r.month + ' ' + T.months + ' · ' + money(r.interest) + ' ' + T.interest}</small>${!r.never && r === (a.interest <= s.interest ? a : s) && Math.abs(a.interest - s.interest) > 1 ? `<span class="badge">${T.best}: ${money(Math.abs(a.interest - s.interest))}</span>` : ''}`; el.classList.toggle('best', st.method === key); el.onclick = () => { st.method = key; save(); calc(); }; };
+  card($('mS'), s, T.snow, T.snowD, 'snow'); card($('mA'), a, T.aval, T.avalD, 'aval');
+  const r = st.method === 'snow' ? s : a;
+  $('order').innerHTML = `<h3>${T.order} · ${st.method === 'snow' ? T.snow : T.aval}</h3>` + Object.entries(r.done).sort((x, y) => x[1] - y[1]).map(([n, m], i) => `<div><span>${i + 1}. ${n.replace(/</g, '&lt;') || T.name}</span><span>${T.paidBy} ${when(m)}</span></div>`).join('');
+}
+$('extra').oninput = () => { st.extra = parseFloat($('extra').value.replace(',', '.')) || 0; $('extraR').value = st.extra; save(); calc(); };
+$('extraR').oninput = () => { st.extra = +$('extraR').value; $('extra').value = st.extra; save(); calc(); };
+$('add').onclick = () => { st.debts.push({ n: T.name + ' ' + (st.debts.length + 1), b: 1000, r: 10, m: 50 }); save(); render(); };
+$('cur').onchange = () => { st.cur = $('cur').value; save(); calc(); };
+render();
+</script>
+</body>
+</html>

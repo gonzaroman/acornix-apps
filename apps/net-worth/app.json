@@ -1,0 +1,14 @@
+{
+  "id": "net-worth",
+  "name": "Net Worth",
+  "emoji": "💰",
+  "category": "finance",
+  "description": "Add up what you own and what you owe, and save a monthly snapshot to see your net worth grow.",
+  "prompt": "A net worth tracker with a list of assets and a list of debts I can edit, my net worth, and a monthly snapshot button that draws a line chart and keeps a history.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "savings-goals",
+  "name": "Savings Goals",
+  "emoji": "🐷",
+  "category": "finance",
+  "description": "Fill piggy bank jars for each goal and see how much to save each month to get there in time.",
+  "prompt": "A savings goals app with a jar that fills up for each goal, target and deadline, quick buttons to add money, how much to save per month and per week to reach it, and confetti when a goal is reached.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

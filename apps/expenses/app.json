@@ -1,0 +1,14 @@
+{
+  "id": "expenses",
+  "name": "Expenses",
+  "emoji": "💸",
+  "category": "finance",
+  "description": "Track what you spend by category, with a monthly budget, a donut chart and the last six months.",
+  "prompt": "An expense tracker where I add expenses with a category and note, see the month total with a donut by category, a monthly budget bar, comparison with last month, a six month chart and expenses grouped by day.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

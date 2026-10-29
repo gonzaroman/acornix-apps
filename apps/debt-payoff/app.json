@@ -1,0 +1,14 @@
+{
+  "id": "debt-payoff",
+  "name": "Debt Payoff",
+  "emoji": "❄️",
+  "category": "finance",
+  "description": "Plan how to get out of debt: compare the snowball and avalanche methods and see your debt-free date.",
+  "prompt": "A debt payoff planner where I list debts with balance, interest and minimum payment, add an extra monthly amount, and it compares the snowball and avalanche methods with the debt-free date, interest paid and payoff order.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

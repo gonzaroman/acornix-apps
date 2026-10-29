@@ -316,6 +316,29 @@
       "trending": 0
     },
     {
+      "id": "subscriptions",
+      "name": "Subscriptions",
+      "emoji": "🔁",
+      "category": "finance",
+      "description": "All your subscriptions in one place: what they cost per month and year, and when the next payment is.",
+      "prompt": "A subscriptions tracker with quick buttons for Netflix, Spotify and others, price and billing cycle, the total per month, year and day, upcoming payments with warnings for the next days and a tip on what you'd save.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10137,
+      "sha256": "3ad8f9c09fae64d574ed42f136bc8e9fc18d6dd303eadf314239d6900a54c372",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "dragon-quest-ai",
       "name": "Story Adventure",
       "emoji": "🐉",
@@ -360,6 +383,29 @@
       ],
       "size": 14360,
       "sha256": "f10d1cbb14ef5334b87dd09240c204546a8b50d5b786007f2d2894e158245c43",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "split-bill",
+      "name": "Split the Bill",
+      "emoji": "🍽️",
+      "category": "finance",
+      "description": "Split a bill evenly with tip and rounding, or work out who owes whom after a trip.",
+      "prompt": "A bill splitter with two modes: split evenly with people, tip and rounding up, or enter how much each person paid and it tells who pays whom to settle up, with a share button.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10081,
+      "sha256": "db90df65f0f6ce75d8162926630417401bad87987f57c42f07a091a6114372ae",
       "downloads": 0,
       "trending": 0
     },
@@ -437,6 +483,29 @@
       "trending": 0
     },
     {
+      "id": "savings-goals",
+      "name": "Savings Goals",
+      "emoji": "🐷",
+      "category": "finance",
+      "description": "Fill piggy bank jars for each goal and see how much to save each month to get there in time.",
+      "prompt": "A savings goals app with a jar that fills up for each goal, target and deadline, quick buttons to add money, how much to save per month and per week to reach it, and confetti when a goal is reached.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10643,
+      "sha256": "f03bbfe2b73db80aa59b64676e346439ff21fd414523623822dd126cc252235a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "routine-runner",
       "name": "Routine Runner",
       "emoji": "🌅",
@@ -458,6 +527,32 @@
       ],
       "size": 8802,
       "sha256": "27e222cf69766ac8e6213bf84ddac3df61e4169eccd96dfad9cb14780f702698",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "receipt-scanner-ai",
+      "name": "Receipt Scanner",
+      "emoji": "🧾",
+      "category": "finance",
+      "description": "Snap a receipt and your AI notes the shop, the items, the total and the category.",
+      "prompt": "A receipt scanner: I take a photo of a shopping receipt and my AI reads the shop, date, every item with its price, the total and a category, saves it, adds up the month and exports everything to CSV.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9560,
+      "sha256": "57c973e9fbace5f920eec15e6d80228bd8733928cf75f13d0c17ac4c281ebb8e",
       "downloads": 0,
       "trending": 0
     },
@@ -529,6 +624,29 @@
       ],
       "size": 6777,
       "sha256": "57168949a21c183895ab4ff1dfd8930a28e71f9b549834625e7a0cc53c5b132b",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "net-worth",
+      "name": "Net Worth",
+      "emoji": "💰",
+      "category": "finance",
+      "description": "Add up what you own and what you owe, and save a monthly snapshot to see your net worth grow.",
+      "prompt": "A net worth tracker with a list of assets and a list of debts I can edit, my net worth, and a monthly snapshot button that draws a line chart and keeps a history.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8180,
+      "sha256": "f162d071880b7fe4584ac5dc885b08a3b86772c01b38a3ad1ddb195ba4f77366",
       "downloads": 0,
       "trending": 0
     },
@@ -646,6 +764,29 @@
       ],
       "size": 5866,
       "sha256": "ecedbe79ef1196979347618f786a8ede871de20f32cdd91fb03cf9ff59e6d5c4",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "loan-calculator",
+      "name": "Loan Calculator",
+      "emoji": "🏦",
+      "category": "finance",
+      "description": "Work out the monthly payment of a mortgage, car or personal loan, with the full amortisation table.",
+      "prompt": "A loan calculator for mortgages, car loans and personal loans with sliders for amount, interest and years, the monthly payment, total interest, a chart of principal and interest per year and the amortisation table.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8547,
+      "sha256": "02bd53e53571ef002e885de5704d02dd7c95eef6bd7b718cefce47d86206d3de",
       "downloads": 0,
       "trending": 0
     },
@@ -792,6 +933,29 @@
       "trending": 0
     },
     {
+      "id": "expenses",
+      "name": "Expenses",
+      "emoji": "💸",
+      "category": "finance",
+      "description": "Track what you spend by category, with a monthly budget, a donut chart and the last six months.",
+      "prompt": "An expense tracker where I add expenses with a category and note, see the month total with a donut by category, a monthly budget bar, comparison with last month, a six month chart and expenses grouped by day.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 13833,
+      "sha256": "90b307b93509ddb0958ca10a8d89b173f46d60db0818e4ea2e8359aff10fd5b2",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "emoji-movies",
       "name": "Emoji Movies",
       "emoji": "🎬",
@@ -863,6 +1027,29 @@
       "trending": 0
     },
     {
+      "id": "debt-payoff",
+      "name": "Debt Payoff",
+      "emoji": "❄️",
+      "category": "finance",
+      "description": "Plan how to get out of debt: compare the snowball and avalanche methods and see your debt-free date.",
+      "prompt": "A debt payoff planner where I list debts with balance, interest and minimum payment, add an extra monthly amount, and it compares the snowball and avalanche methods with the debt-free date, interest paid and payoff order.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9989,
+      "sha256": "f0a4df2dc54d449e3b90bb915e21fde6b959f7d06a5d00bc14ea121c1b8f8e27",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "daily-journal",
       "name": "Daily Journal",
       "emoji": "📓",
@@ -886,6 +1073,31 @@
       "trending": 0
     },
     {
+      "id": "currency-converter",
+      "name": "Currency Converter",
+      "emoji": "💱",
+      "category": "finance",
+      "description": "Convert between 30 currencies with today's European Central Bank rates, even offline.",
+      "prompt": "A currency converter using today's European Central Bank rates from Frankfurter, with flags, swap, the rate both ways, the amount in other common currencies and the last rates saved for when there's no internet.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 7205,
+      "sha256": "ac9a25bc786f7d2b76a7b4000bd26740cd747a26301aecc6d95c6363147a4b52",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "event-countdown",
       "name": "Countdowns",
       "emoji": "⏳",
@@ -905,6 +1117,29 @@
       ],
       "size": 8855,
       "sha256": "fcd814d02e21fddc627beac43bd4015cef61ad716c9253585d06139038ffccac",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "compound-interest",
+      "name": "Compound Interest",
+      "emoji": "📈",
+      "category": "finance",
+      "description": "See how your savings grow over the years with compound interest and monthly contributions.",
+      "prompt": "A compound interest calculator with an initial amount, monthly contributions, annual return, years and compounding frequency, showing the final amount, what I paid in and the interest, a stacked chart and milestones.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7363,
+      "sha256": "f82ead495bcdee0e7800a7b7a59ae9b0bef7c150d792f93200cbf623f8e29dce",
       "downloads": 0,
       "trending": 0
     },

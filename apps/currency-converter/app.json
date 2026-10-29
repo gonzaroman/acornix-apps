@@ -1,0 +1,14 @@
+{
+  "id": "currency-converter",
+  "name": "Currency Converter",
+  "emoji": "💱",
+  "category": "finance",
+  "description": "Convert between 30 currencies with today's European Central Bank rates, even offline.",
+  "prompt": "A currency converter using today's European Central Bank rates from Frankfurter, with flags, swap, the rate both ways, the amount in other common currencies and the last rates saved for when there's no internet.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

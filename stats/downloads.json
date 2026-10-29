@@ -50,8 +50,23 @@
       "base": 0,
       "count": 0
     },
+    "compound-interest": {
+      "asset": 689202169,
+      "base": 0,
+      "count": 0
+    },
+    "currency-converter": {
+      "asset": 689202358,
+      "base": 0,
+      "count": 0
+    },
     "daily-journal": {
       "asset": 689166836,
+      "base": 0,
+      "count": 0
+    },
+    "debt-payoff": {
+      "asset": 689202462,
       "base": 0,
       "count": 0
     },
@@ -90,6 +105,11 @@
       "base": 0,
       "count": 0
     },
+    "expenses": {
+      "asset": 689201995,
+      "base": 0,
+      "count": 0
+    },
     "focus-timer": {
       "asset": 689166657,
       "base": 0,
@@ -117,6 +137,11 @@
     },
     "kanban": {
       "asset": 689166735,
+      "base": 0,
+      "count": 0
+    },
+    "loan-calculator": {
+      "asset": 689202106,
       "base": 0,
       "count": 0
     },
@@ -165,6 +190,11 @@
       "base": 0,
       "count": 0
     },
+    "net-worth": {
+      "asset": 689202407,
+      "base": 0,
+      "count": 0
+    },
     "noise-meter": {
       "asset": 689141839,
       "base": 0,
@@ -195,6 +225,11 @@
       "base": 0,
       "count": 0
     },
+    "receipt-scanner-ai": {
+      "asset": 689202058,
+      "base": 0,
+      "count": 0
+    },
     "reef-aquarium": {
       "asset": 688547079,
       "base": 0,
@@ -202,6 +237,11 @@
     },
     "routine-runner": {
       "asset": 689166958,
+      "base": 0,
+      "count": 0
+    },
+    "savings-goals": {
+      "asset": 689202258,
       "base": 0,
       "count": 0
     },
@@ -225,6 +265,11 @@
       "base": 0,
       "count": 0
     },
+    "split-bill": {
+      "asset": 689202208,
+      "base": 0,
+      "count": 0
+    },
     "stack-tower-3d": {
       "asset": 689103786,
       "base": 0,
@@ -232,6 +277,11 @@
     },
     "star-defender": {
       "asset": 688999087,
+      "base": 0,
+      "count": 0
+    },
+    "subscriptions": {
+      "asset": 689202312,
       "base": 0,
       "count": 0
     },

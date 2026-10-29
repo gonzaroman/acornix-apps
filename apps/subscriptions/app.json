@@ -1,0 +1,14 @@
+{
+  "id": "subscriptions",
+  "name": "Subscriptions",
+  "emoji": "🔁",
+  "category": "finance",
+  "description": "All your subscriptions in one place: what they cost per month and year, and when the next payment is.",
+  "prompt": "A subscriptions tracker with quick buttons for Netflix, Spotify and others, price and billing cycle, the total per month, year and day, upcoming payments with warnings for the next days and a tip on what you'd save.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

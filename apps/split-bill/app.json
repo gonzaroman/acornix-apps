@@ -1,0 +1,14 @@
+{
+  "id": "split-bill",
+  "name": "Split the Bill",
+  "emoji": "🍽️",
+  "category": "finance",
+  "description": "Split a bill evenly with tip and rounding, or work out who owes whom after a trip.",
+  "prompt": "A bill splitter with two modes: split evenly with people, tip and rounding up, or enter how much each person paid and it tells who pays whom to settle up, with a share button.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

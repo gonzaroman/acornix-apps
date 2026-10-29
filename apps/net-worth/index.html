@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Net Worth</title>
+<style>
+  :root { --bg:#f6f7f2; --card:#fff; --ink:#1d2416; --muted:#7f8a73; --line:#e6eadf; --g:#65a30d; --r:#dc2626; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .hero { background:linear-gradient(135deg,#365314,#65a30d); color:#fff; border-radius:24px; padding:18px; }
+  .hero small { opacity:.85; font-weight:700; }
+  .hero .big { font-size:40px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .hero .ch { font-size:14px; font-weight:700; opacity:.95; }
+  canvas { width:100%; height:110px; margin-top:10px; }
+  .cols { display:grid; grid-template-columns:1fr; gap:10px; margin-top:12px; }
+  @media (min-width:520px) { .cols { grid-template-columns:1fr 1fr; } }
+  .col { background:var(--card); border-radius:20px; padding:12px; }
+  .col h2 { margin:0 0 4px; font-size:14px; color:var(--muted); display:flex; justify-content:space-between; }
+  .col .sum { font-size:20px; font-weight:900; font-variant-numeric:tabular-nums; margin-bottom:8px; }
+  .it { display:flex; align-items:center; gap:6px; padding:7px 0; border-top:1px solid var(--line); font-size:14px; }
+  .it span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .it input { width:110px; text-align:right; font-weight:700; background:var(--bg); border-radius:8px; padding:4px 6px; outline:none; font-variant-numeric:tabular-nums; }
+  .it button { color:var(--muted); font-size:13px; }
+  .addi { display:flex; gap:4px; margin-top:6px; }
+  .addi input { flex:1; min-width:0; padding:7px; border-radius:8px; background:var(--bg); outline:none; font-size:13px; }
+  .addi button { padding:0 10px; border-radius:8px; background:var(--bg); font-weight:800; }
+  .snap { width:100%; margin-top:12px; padding:15px; border-radius:16px; background:var(--ink); color:#fff; font-weight:900; }
+  .hist { margin-top:12px; background:var(--card); border-radius:18px; padding:10px 14px; font-size:14px; }
+  .hist div { display:flex; justify-content:space-between; padding:6px 0; border-top:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  .hist div:first-child { border:0; }
+  .cur { display:flex; justify-content:flex-end; gap:6px; align-items:center; color:var(--muted); font-size:13px; margin-top:12px; }
+  .cur select { background:var(--card); padding:5px; border-radius:8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>💰 <span id="ttl"></span></h1>
+  <div class="hero"><small id="lNet"></small><div class="big" id="net"></div><div class="ch" id="ch"></div><canvas id="chart"></canvas></div>
+  <div class="cols"><div class="col" id="assets"></div><div class="col" id="debts"></div></div>
+  <button class="snap" id="snap"></button>
+  <div class="hist" id="hist"></div>
+  <div class="cur"><span id="lCur"></span><select id="cur"></select></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Patrimonio', net:'Tu patrimonio neto', assets:'💚 Tengo', debts:'❤️ Debo', add:'Añadir…', snap:'📸 Guardar foto del mes', since:'desde la primera foto', cur:'Moneda', saved:'✓ Guardado',
+  a:[['Cuenta corriente',2500],['Ahorros',8000],['Inversiones',4500]], d:[['Tarjeta de crédito',600],['Préstamo coche',7200]] }
+ : { title:'Net Worth', net:'Your net worth', assets:'💚 Assets', debts:'❤️ Debts', add:'Add…', snap:'📸 Save this month\'s snapshot', since:'since your first snapshot', cur:'Currency', saved:'✓ Saved',
+  a:[['Current account',2500],['Savings',8000],['Investments',4500]], d:[['Credit card',600],['Car loan',7200]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('lNet').textContent = T.net; $('snap').textContent = T.snap; $('lCur').textContent = T.cur;
+$('cur').innerHTML = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'BRL', 'CHF'].map(c => `<option>${c}</option>`).join('');
+let st = null;
+const money = v => new Intl.NumberFormat(undefined, { style: 'currency', currency: st.cur, maximumFractionDigits: 0 }).format(v);
+const sum = l => l.reduce((a, x) => a + (+x.v || 0), 0);
+function save() { store.set('nw', st); }
+function col(box, key, title) {
+  box.innerHTML = `<h2>${title}</h2><div class="sum">${money(sum(st[key]))}</div>`;
+  st[key].forEach((x, i) => {
+    const d = document.createElement('div'); d.className = 'it'; d.innerHTML = `<span></span><input inputmode="decimal"><button>✕</button>`;
+    d.querySelector('span').textContent = x.n; const inp = d.querySelector('input'); inp.value = x.v;
+    inp.onchange = () => { x.v = parseFloat(inp.value.replace(',', '.')) || 0; save(); render(); };
+    d.querySelector('button').onclick = () => { st[key].splice(i, 1); save(); render(); };
+    box.appendChild(d);
+  });
+  const f = document.createElement('form'); f.className = 'addi'; f.innerHTML = `<input maxlength="24" placeholder="${T.add}"><button>+</button>`;
+  f.onsubmit = e => { e.preventDefault(); const n = f.querySelector('input').value.trim(); if (!n) return; st[key].push({ n, v: 0 }); save(); render(); setTimeout(() => { const ins = box.querySelectorAll('.it input'); ins[ins.length - 1].focus(); }, 30); };
+  box.appendChild(f);
+}
+function render() {
+  const net = sum(st.assets) - sum(st.debts);
+  $('net').textContent = money(net); $('cur').value = st.cur;
+  col($('assets'), 'assets', T.assets); col($('debts'), 'debts', T.debts);
+  const h = st.history;
+  $('ch').textContent = h.length ? `${net >= h[0].v ? '▲' : '▼'} ${money(Math.abs(net - h[0].v))} ${T.since}` : '';
+  $('hist').innerHTML = h.slice().reverse().slice(0, 12).map(x => `<div><span>${new Date(x.at).toLocaleDateString([], { month: 'long', year: 'numeric' })}</span><b>${money(x.v)}</b></div>`).join('');
+  $('hist').style.display = h.length ? 'block' : 'none';
+  const pts = [...h.map(x => x.v), net], c = $('chart'), d = devicePixelRatio || 1; c.width = c.clientWidth * d; c.height = c.clientHeight * d;
+  const g = c.getContext('2d'), w = c.width, ht = c.height, mn = Math.min(...pts), mx = Math.max(...pts), span = mx - mn || 1;
+  g.clearRect(0, 0, w, ht); if (pts.length < 2) return;
+  g.strokeStyle = '#fff'; g.lineWidth = 3 * d; g.beginPath();
+  pts.forEach((v, i) => { const x = i / (pts.length - 1) * (w - 10 * d) + 5 * d, y = ht - 8 * d - (v - mn) / span * (ht - 16 * d); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
+}
+$('snap').onclick = () => {
+  const net = sum(st.assets) - sum(st.debts), now = new Date(), last = st.history[st.history.length - 1];
+  if (last && new Date(last.at).getMonth() === now.getMonth() && new Date(last.at).getFullYear() === now.getFullYear()) last.v = net, last.at = now.getTime(); else st.history.push({ at: now.getTime(), v: net });
+  save(); render(); $('snap').textContent = T.saved; setTimeout(() => $('snap').textContent = T.snap, 1500);
+  try { if (window.Acornix) Acornix.vibrate(20); } catch (e) {}
+};
+$('cur').onchange = () => { st.cur = $('cur').value; save(); render(); };
+addEventListener('resize', () => st && render());
+(async () => { st = await store.get('nw', null); if (!st) { st = { cur: ES ? 'EUR' : 'USD', assets: T.a.map(([n, v]) => ({ n, v })), debts: T.d.map(([n, v]) => ({ n, v })), history: [] }; save(); } render(); })();
+</script>
+</body>
+</html>
