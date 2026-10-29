@@ -1,0 +1,14 @@
+{
+  "id": "sky-hopper",
+  "name": "Sky Hopper",
+  "emoji": "🐤",
+  "category": "games",
+  "description": "Tap to flap a little bird through the pipes, earn medals and beat your best score.",
+  "prompt": "A Flappy Bird style game with a cute bird drawn in code, tap to flap, moving pipes later on, medals, sounds, parallax clouds and hills and a saved best score.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

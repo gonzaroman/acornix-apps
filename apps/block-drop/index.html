@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Block Drop</title>
+<style>
+  :root { --bg:#0d0b1f; --panel:#17143a; --line:#2c2760; --text:#efeaff; --muted:#9a93d1; --accent:#7cf0ff; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; touch-action:none; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 10px); gap:10px;
+    background:radial-gradient(circle at 20% 0%,#2a1f6b 0,transparent 55%),radial-gradient(circle at 100% 100%,#0f3b5a 0,transparent 50%),var(--bg); }
+  header { display:flex; align-items:center; gap:8px; }
+  .stat { flex:1; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px 10px; text-align:center; }
+  .stat small { display:block; font-size:10px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; }
+  .stat b { font-size:18px; font-variant-numeric:tabular-nums; }
+  .icon { width:44px; height:44px; border-radius:14px; background:var(--panel); border:1px solid var(--line); font-size:18px; flex:none; }
+  main { flex:1; display:flex; gap:10px; min-height:0; min-width:0; justify-content:center; align-items:center; }
+  #board { flex:none; border-radius:14px; background:#0a0820; border:1px solid var(--line); box-shadow:0 0 40px #5b4cff33 inset, 0 10px 30px #0008; }
+  aside { display:flex; flex-direction:column; gap:10px; width:76px; flex:none; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px; text-align:center; }
+  .box small { font-size:10px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; }
+  .box canvas { width:100%; display:block; }
+  #controls { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+  #controls button { height:58px; border-radius:16px; background:var(--panel); border:1px solid var(--line); font-size:22px; }
+  #controls button:active { background:#2a2470; transform:scale(.96); }
+  #controls .drop { background:linear-gradient(135deg,#6d5cff,#22d3ee); border:0; }
+  #overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#06051acc; backdrop-filter:blur(6px); z-index:5; }
+  #overlay.hide { display:none; }
+  .card { width:min(86vw,340px); background:var(--panel); border:1px solid var(--line); border-radius:24px; padding:26px 22px; text-align:center; }
+  .card h1 { margin:0 0 6px; font-size:30px; letter-spacing:-.5px; background:linear-gradient(90deg,#7cf0ff,#b18cff,#ff7ad9); -webkit-background-clip:text; color:transparent; }
+  .card p { color:var(--muted); line-height:1.5; margin:6px 0 18px; font-size:14px; }
+  .card .big { font-size:42px; font-weight:800; margin:4px 0; font-variant-numeric:tabular-nums; }
+  .play { width:100%; padding:15px; border-radius:16px; background:linear-gradient(135deg,#6d5cff,#22d3ee); font-weight:800; font-size:17px; }
+  @media (orientation:landscape) {
+    #wrap { flex-direction:row; align-items:stretch; }
+    header { flex-direction:column; width:110px; }
+    header .stat { flex:none; }
+    #controls { width:220px; grid-template-columns:repeat(3,1fr); align-content:end; }
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <div class="stat"><small id="lScore"></small><b id="score">0</b></div>
+    <div class="stat"><small id="lLines"></small><b id="lines">0</b></div>
+    <div class="stat"><small id="lLevel"></small><b id="level">1</b></div>
+    <button class="icon" id="pauseBtn" aria-label="Pause">⏸</button>
+  </header>
+  <main>
+    <canvas id="board"></canvas>
+    <aside>
+      <div class="box"><small id="lHold"></small><canvas id="hold" width="80" height="60"></canvas></div>
+      <div class="box"><small id="lNext"></small><canvas id="next" width="80" height="200"></canvas></div>
+      <div class="box"><small id="lBest"></small><div><b id="best">0</b></div></div>
+    </aside>
+  </main>
+  <div id="controls">
+    <button data-a="left" aria-label="Left">◀</button>
+    <button data-a="rotate" aria-label="Rotate">⟳</button>
+    <button data-a="right" aria-label="Right">▶</button>
+    <button data-a="hold" aria-label="Hold">⇄</button>
+    <button data-a="drop" class="drop" aria-label="Drop">⤓</button>
+  </div>
+</div>
+<div id="overlay"><div class="card" id="card"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { score:'Puntos', lines:'Líneas', level:'Nivel', hold:'Guardar', next:'Siguiente', best:'Récord',
+  intro:'Desliza para mover, toca para girar y desliza hacia abajo para dejar caer. Completa líneas para subir de nivel.',
+  play:'Jugar', paused:'Pausa', resume:'Seguir', over:'Fin de la partida', again:'Otra vez', record:'¡Nuevo récord!' }
+ : { score:'Score', lines:'Lines', level:'Level', hold:'Hold', next:'Next', best:'Best',
+  intro:'Swipe to move, tap to rotate and swipe down to drop. Clear lines to level up.',
+  play:'Play', paused:'Paused', resume:'Resume', over:'Game over', again:'Play again', record:'New best!' };
+['Score','Lines','Level','Hold','Next','Best'].forEach(k => document.getElementById('l' + k).textContent = T[k.toLowerCase()]);
+
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const W = 10, H = 20;
+const SHAPES = {
+  I: [[0,1],[1,1],[2,1],[3,1]], O: [[1,0],[2,0],[1,1],[2,1]], T: [[1,0],[0,1],[1,1],[2,1]],
+  S: [[1,0],[2,0],[0,1],[1,1]], Z: [[0,0],[1,0],[1,1],[2,1]], J: [[0,0],[0,1],[1,1],[2,1]], L: [[2,0],[0,1],[1,1],[2,1]]
+};
+const COLORS = { I:'#38e8ff', O:'#ffd84a', T:'#b56cff', S:'#4cf08a', Z:'#ff5a7a', J:'#4d7bff', L:'#ff9b3d' };
+const board = document.getElementById('board'), ctx = board.getContext('2d');
+let grid, piece, queue, holdType, canHold, score, lines, level, best = 0, dropTimer, lastTime, running = false, over = false, flash = [];
+
+function resize() {
+  // The biggest 10x20 board that fits next to the side panel.
+  const m = document.querySelector('main').getBoundingClientRect(), side = document.querySelector('aside').offsetWidth + 10;
+  const cell = Math.max(8, Math.floor(Math.min((m.width - side) / W, m.height / H)));
+  board.style.width = cell * W + 'px'; board.style.height = cell * H + 'px';
+  const r = board.getBoundingClientRect(), d = devicePixelRatio || 1;
+  board.width = Math.round(r.width * d); board.height = Math.round(r.height * d);
+  draw();
+}
+function bag() { const b = Object.keys(SHAPES); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+function make(type) { return { type, cells: SHAPES[type].map(c => [...c]), x: 3, y: type === 'I' ? -1 : 0 }; }
+function nextPiece() {
+  while (queue.length < 7) queue.push(...bag());
+  piece = make(queue.shift());
+  if (collides(piece.cells, piece.x, piece.y)) gameOver();
+}
+function collides(cells, x, y) {
+  return cells.some(([cx, cy]) => { const gx = cx + x, gy = cy + y; return gx < 0 || gx >= W || gy >= H || (gy >= 0 && grid[gy][gx]); });
+}
+function rotate(dir = 1) {
+  if (piece.type === 'O') return;
+  const size = piece.type === 'I' ? 4 : 3;
+  const cells = piece.cells.map(([x, y]) => dir > 0 ? [size - 1 - y, x] : [y, size - 1 - x]);
+  for (const k of [0, -1, 1, -2, 2]) if (!collides(cells, piece.x + k, piece.y)) { piece.cells = cells; piece.x += k; buzz(8); return; }
+}
+function move(dx) { if (!collides(piece.cells, piece.x + dx, piece.y)) { piece.x += dx; return true; } return false; }
+function soft(points = true) { if (!collides(piece.cells, piece.x, piece.y + 1)) { piece.y++; if (points) score += 1; return true; } lock(); return false; }
+function hard() { let n = 0; while (!collides(piece.cells, piece.x, piece.y + 1)) { piece.y++; n++; } score += n * 2; buzz(25); lock(); }
+function ghostY() { let y = piece.y; while (!collides(piece.cells, piece.x, y + 1)) y++; return y; }
+function hold() {
+  if (!canHold) return;
+  const t = piece.type;
+  if (holdType) { piece = make(holdType); } else nextPiece();
+  holdType = t; canHold = false; drawSide();
+}
+function lock() {
+  for (const [cx, cy] of piece.cells) { const gy = cy + piece.y; if (gy < 0) return gameOver(); grid[gy][cx + piece.x] = piece.type; }
+  const full = [];
+  grid.forEach((row, y) => { if (row.every(Boolean)) full.push(y); });
+  if (full.length) {
+    flash = full.map(y => ({ y, t: 1 }));
+    full.forEach(y => { grid.splice(y, 1); grid.unshift(Array(W).fill(null)); });
+    lines += full.length;
+    score += [0, 100, 300, 500, 800][full.length] * level;
+    level = 1 + Math.floor(lines / 10);
+    buzz(full.length === 4 ? [40, 40, 80] : 40);
+  }
+  canHold = true;
+  nextPiece(); drawSide(); updateStats();
+}
+function speed() { return Math.max(70, 800 * Math.pow(0.82, level - 1)); }
+function updateStats() {
+  document.getElementById('score').textContent = score.toLocaleString();
+  document.getElementById('lines').textContent = lines;
+  document.getElementById('level').textContent = level;
+  document.getElementById('best').textContent = Math.max(best, score).toLocaleString();
+}
+function cellRect(c, x, y, s, color, alpha = 1) {
+  c.globalAlpha = alpha;
+  const g = c.createLinearGradient(x, y, x + s, y + s);
+  g.addColorStop(0, color); g.addColorStop(1, shade(color, -35));
+  c.fillStyle = g;
+  const r = s * 0.18;
+  c.beginPath(); c.roundRect(x + 1, y + 1, s - 2, s - 2, r); c.fill();
+  c.fillStyle = '#ffffff40'; c.beginPath(); c.roundRect(x + s * .18, y + s * .14, s * .64, s * .16, r); c.fill();
+  c.globalAlpha = 1;
+}
+function shade(hex, p) {
+  const n = parseInt(hex.slice(1), 16), f = v => Math.max(0, Math.min(255, v + p));
+  return '#' + ((f(n >> 16) << 16) | (f((n >> 8) & 255) << 8) | f(n & 255)).toString(16).padStart(6, '0');
+}
+function draw() {
+  const s = board.width / W;
+  ctx.clearRect(0, 0, board.width, board.height);
+  ctx.strokeStyle = '#ffffff08'; ctx.lineWidth = 1;
+  for (let x = 1; x < W; x++) { ctx.beginPath(); ctx.moveTo(x * s, 0); ctx.lineTo(x * s, board.height); ctx.stroke(); }
+  for (let y = 1; y < H; y++) { ctx.beginPath(); ctx.moveTo(0, y * s); ctx.lineTo(board.width, y * s); ctx.stroke(); }
+  if (!grid) return;
+  grid.forEach((row, y) => row.forEach((t, x) => { if (t) cellRect(ctx, x * s, y * s, s, COLORS[t]); }));
+  if (piece) {
+    const gy = ghostY();
+    ctx.strokeStyle = COLORS[piece.type] + 'aa'; ctx.lineWidth = Math.max(1, s * .07);
+    piece.cells.forEach(([cx, cy]) => { if (cy + gy >= 0) { ctx.beginPath(); ctx.roundRect((cx + piece.x) * s + 3, (cy + gy) * s + 3, s - 6, s - 6, s * .15); ctx.stroke(); } });
+    piece.cells.forEach(([cx, cy]) => { if (cy + piece.y >= 0) cellRect(ctx, (cx + piece.x) * s, (cy + piece.y) * s, s, COLORS[piece.type]); });
+  }
+  flash = flash.filter(f => (f.t -= 0.06) > 0);
+  flash.forEach(f => { ctx.fillStyle = `rgba(255,255,255,${f.t * .6})`; ctx.fillRect(0, f.y * s, board.width, s); });
+}
+function drawMini(canvas, types) {
+  const c = canvas.getContext('2d'); c.clearRect(0, 0, canvas.width, canvas.height);
+  types.forEach((t, i) => {
+    if (!t) return;
+    const cells = SHAPES[t], s = 16, w = (Math.max(...cells.map(c => c[0])) + 1) * s, h = (Math.max(...cells.map(c => c[1])) + 1) * s;
+    const ox = (canvas.width - w) / 2, oy = i * 64 + (60 - h) / 2;
+    cells.forEach(([x, y]) => cellRect(c, ox + x * s, oy + y * s, s, COLORS[t]));
+  });
+}
+function drawSide() { drawMini(document.getElementById('hold'), [holdType]); drawMini(document.getElementById('next'), queue.slice(0, 3)); }
+function loop(t) {
+  if (!running) return;
+  if (!lastTime) lastTime = t;
+  dropTimer += t - lastTime; lastTime = t;
+  if (dropTimer > speed()) { dropTimer = 0; soft(false); updateStats(); }
+  draw();
+  requestAnimationFrame(loop);
+}
+function start() {
+  grid = Array.from({ length: H }, () => Array(W).fill(null));
+  queue = []; holdType = null; canHold = true; score = 0; lines = 0; level = 1; over = false; dropTimer = 0; lastTime = 0;
+  nextPiece(); drawSide(); updateStats(); hideOverlay();
+  running = true; requestAnimationFrame(loop);
+}
+function pause() {
+  if (!running || over) return;
+  running = false;
+  showOverlay(`<h1>${T.paused}</h1><p></p><button class="play" id="go">${T.resume}</button>`, () => { running = true; lastTime = 0; requestAnimationFrame(loop); hideOverlay(); });
+}
+async function gameOver() {
+  running = false; over = true;
+  const isBest = score > best;
+  if (isBest) { best = score; await store.set('best', best); }
+  buzz([60, 60, 120]);
+  showOverlay(`<h1>${T.over}</h1><div class="big">${score.toLocaleString()}</div><p>${isBest && score ? '🏆 ' + T.record : T.best + ': ' + best.toLocaleString()}</p><button class="play" id="go">${T.again}</button>`, start);
+}
+function showOverlay(html, action) { const o = document.getElementById('overlay'); document.getElementById('card').innerHTML = html; o.classList.remove('hide'); document.getElementById('go').onclick = action; }
+function hideOverlay() { document.getElementById('overlay').classList.add('hide'); }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+function act(a) {
+  if (!running) return;
+  if (a === 'left') move(-1); else if (a === 'right') move(1); else if (a === 'rotate') rotate(1);
+  else if (a === 'drop') hard(); else if (a === 'hold') hold(); else if (a === 'down') soft();
+  updateStats(); draw();
+}
+document.querySelectorAll('#controls button').forEach(b => {
+  let rep;
+  const a = b.dataset.a;
+  b.addEventListener('pointerdown', e => { e.preventDefault(); act(a); if (a === 'left' || a === 'right') rep = setTimeout(function r() { act(a); rep = setTimeout(r, 60); }, 220); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => clearTimeout(rep)));
+});
+// Gestures on the board: drag sideways moves cell by cell, quick flick down drops, tap rotates.
+let sx, sy, moved, startT, lastCol;
+board.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; moved = false; startT = performance.now(); lastCol = 0; board.setPointerCapture(e.pointerId); });
+board.addEventListener('pointermove', e => {
+  if (sx == null || !running) return;
+  const cell = board.getBoundingClientRect().width / W, dx = e.clientX - sx, dy = e.clientY - sy;
+  const col = Math.trunc(dx / cell);
+  while (col > lastCol) { move(1); lastCol++; moved = true; }
+  while (col < lastCol) { move(-1); lastCol--; moved = true; }
+  if (dy > cell * 1.2 && Math.abs(dy) > Math.abs(dx)) { if (soft()) { sy += cell; moved = true; } updateStats(); }
+  draw();
+});
+board.addEventListener('pointerup', e => {
+  if (sx == null) return;
+  const dy = e.clientY - sy, dt = performance.now() - startT;
+  if (!moved && Math.abs(dy) < 12 && dt < 300) act('rotate');
+  else if (dy > 60 && dt < 220) act('drop');
+  sx = null;
+});
+document.addEventListener('keydown', e => {
+  const k = { ArrowLeft:'left', ArrowRight:'right', ArrowUp:'rotate', ArrowDown:'down', ' ':'drop', c:'hold', C:'hold' }[e.key];
+  if (k) { e.preventDefault(); act(k); } else if (e.key === 'p' || e.key === 'Escape') pause();
+});
+document.getElementById('pauseBtn').onclick = pause;
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+addEventListener('resize', resize);
+
+(async () => {
+  best = await store.get('best', 0);
+  document.getElementById('best').textContent = best.toLocaleString();
+  resize();
+  showOverlay(`<h1>Block Drop</h1><p>${T.intro}</p><button class="play" id="go">${T.play}</button>`, start);
+})();
+</script>
+</body>
+</html>

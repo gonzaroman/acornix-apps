@@ -1,0 +1,14 @@
+{
+  "id": "solitaire",
+  "name": "Solitaire",
+  "emoji": "♠️",
+  "category": "games",
+  "description": "Classic Klondike solitaire made for touch: tap a card and it jumps where it fits.",
+  "prompt": "Klondike solitaire for phones where tapping a card moves it to the best place, with draw one or draw three, undo, hints, auto-finish, a win animation and the game saved.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

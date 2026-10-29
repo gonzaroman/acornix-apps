@@ -1,0 +1,14 @@
+{
+  "id": "star-defender",
+  "name": "Star Defender",
+  "emoji": "🚀",
+  "category": "games",
+  "description": "A neon space shooter: drag your ship, blast waves of enemies, collect upgrades and beat the bosses.",
+  "prompt": "A vertical space shooter with a ship I drag, auto fire, enemy types that zigzag, shoot or take many hits, waves, a boss every five waves, shield and weapon upgrades and a best score.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

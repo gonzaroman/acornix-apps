@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Sky Hopper</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; background:#7dd3fc; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; touch-action:none; }
+  canvas { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  #ui { position:fixed; inset:0; pointer-events:none; display:flex; flex-direction:column; align-items:center; padding-top:calc(env(safe-area-inset-top) + 30px); }
+  #score { font-size:64px; font-weight:900; color:#fff; -webkit-text-stroke:3px #1e3a5f; paint-order:stroke; text-shadow:0 4px 0 #1e3a5f; font-variant-numeric:tabular-nums; }
+  #panel { position:fixed; left:50%; top:52%; transform:translate(-50%,-50%); width:min(84vw,320px); background:#fff8e6; border:4px solid #1e3a5f; border-radius:24px; padding:22px; text-align:center; box-shadow:0 8px 0 #1e3a5f; }
+  #panel.hide { display:none; }
+  #panel h1 { margin:0 0 4px; font-size:34px; color:#ff8a00; -webkit-text-stroke:2px #1e3a5f; paint-order:stroke; }
+  #panel p { margin:6px 0 14px; color:#1e3a5f; font-weight:600; line-height:1.4; }
+  .row { display:flex; justify-content:center; gap:22px; margin:8px 0 16px; color:#1e3a5f; }
+  .row small { display:block; font-size:12px; font-weight:800; opacity:.7; }
+  .row b { font-size:30px; }
+  .medal { font-size:44px; }
+  #go { width:100%; padding:14px; border-radius:16px; border:3px solid #1e3a5f; background:#ffd23f; color:#1e3a5f; font-weight:900; font-size:18px; box-shadow:0 5px 0 #1e3a5f; pointer-events:auto; cursor:pointer; font-family:inherit; }
+  #go:active { transform:translateY(3px); box-shadow:0 2px 0 #1e3a5f; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui"><div id="score">0</div></div>
+<div id="panel"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { tap:'Toca para volar entre las tuberías', play:'Jugar', over:'¡Ay!', score:'PUNTOS', best:'RÉCORD', again:'Otra vez' }
+ : { tap:'Tap to fly through the pipes', play:'Play', over:'Ouch!', score:'SCORE', best:'BEST', again:'Play again' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const c = document.getElementById('c'), g = c.getContext('2d');
+let W, H, S, bird, pipes, clouds, hills, score, best = 0, state = 'menu', groundX = 0, last = 0, flash = 0;
+let audio;
+function resize() { const d = devicePixelRatio || 1; W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); S = Math.min(W / 400, H / 700); }
+function tone(f, t = .08, type = 'square', v = .05) {
+  try { audio = audio || new AudioContext(); const o = audio.createOscillator(), a = audio.createGain(); o.type = type; o.frequency.value = f; a.gain.value = v; o.connect(a); a.connect(audio.destination);
+    a.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + t); o.start(); o.stop(audio.currentTime + t); } catch (e) {}
+}
+function reset() {
+  bird = { x: W * .3, y: H * .45, vy: 0, r: 17 * S, rot: 0, wing: 0 };
+  pipes = []; score = 0; groundX = 0;
+  clouds = clouds || Array.from({ length: 6 }, () => ({ x: Math.random() * W, y: Math.random() * H * .5, s: .6 + Math.random() * .8 }));
+  hills = hills || Array.from({ length: 8 }, (_, i) => ({ x: i * W / 4, h: 60 + Math.random() * 90 }));
+  document.getElementById('score').textContent = 0;
+}
+function gap() { return Math.max(150, 200 - score * 2) * S; }
+function spawn() {
+  const gh = gap(), ground = H - 90 * S, min = 80 * S, max = ground - gh - 60 * S;
+  pipes.push({ x: W + 40, top: min + Math.random() * (max - min), passed: false, w: 70 * S, move: score > 12 && Math.random() < .35 ? (Math.random() < .5 ? 1 : -1) : 0 });
+}
+function flap() {
+  if (state === 'menu' || state === 'over') return;
+  if (state === 'ready') state = 'play';
+  bird.vy = -7.8 * S; tone(620, .07, 'square', .03);
+}
+function update(dt) {
+  const k = dt / 16.67;
+  clouds.forEach(cl => { cl.x -= .3 * cl.s * k; if (cl.x < -120) { cl.x = W + 60; cl.y = Math.random() * H * .5; } });
+  if (state === 'ready') { bird.y = H * .45 + Math.sin(performance.now() / 250) * 8; bird.wing += .25 * k; return; }
+  if (state !== 'play' && state !== 'falling') return;
+  const speed = (2.6 + Math.min(score, 40) * .04) * S;
+  bird.vy += .42 * S * k; bird.y += bird.vy * k; bird.rot = Math.max(-.5, Math.min(1.3, bird.vy / (10 * S))); bird.wing += .35 * k;
+  const ground = H - 90 * S;
+  if (bird.y + bird.r > ground) { bird.y = ground - bird.r; return die(); }
+  if (bird.y < -40) bird.y = -40;
+  if (state === 'falling') return;
+  groundX = (groundX - speed * k) % (40 * S);
+  hills.forEach(h => { h.x -= speed * .25 * k; if (h.x < -W / 3) h.x += W / 4 * 8 / 2 * 2; });
+  if (!pipes.length || pipes[pipes.length - 1].x < W - 230 * S) spawn();
+  for (const p of pipes) {
+    p.x -= speed * k;
+    if (p.move) { p.top += p.move * .6 * S * k; if (p.top < 70 * S || p.top + gap() > ground - 50 * S) p.move *= -1; }
+    if (!p.passed && p.x + p.w < bird.x) { p.passed = true; score++; document.getElementById('score').textContent = score; tone(880, .1, 'triangle', .05); }
+    const hitX = bird.x + bird.r * .8 > p.x && bird.x - bird.r * .8 < p.x + p.w;
+    if (hitX && (bird.y - bird.r * .8 < p.top || bird.y + bird.r * .8 > p.top + gap())) { state = 'falling'; flash = 1; tone(160, .25, 'sawtooth', .05); buzz(60); }
+  }
+  pipes = pipes.filter(p => p.x > -p.w - 10);
+}
+async function die() {
+  if (state === 'over') return;
+  state = 'over'; flash = 1; buzz([40, 40, 100]);
+  const isBest = score > best; if (isBest) { best = score; await store.set('best', best); }
+  const medal = score >= 40 ? '🏆' : score >= 25 ? '🥇' : score >= 10 ? '🥈' : score >= 5 ? '🥉' : '🐤';
+  panel(`<h1>${T.over}</h1><div class="medal">${medal}</div><div class="row"><div><small>${T.score}</small><b>${score}</b></div><div><small>${T.best}</small><b>${best}</b></div></div><button id="go">${T.again}</button>`, () => { reset(); state = 'ready'; hidePanel(); });
+}
+function draw() {
+  const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#5ec8f7'); sky.addColorStop(1, '#c9f0ff');
+  g.fillStyle = sky; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#ffffffd0';
+  clouds.forEach(cl => { const r = 26 * cl.s * S; g.beginPath(); g.arc(cl.x, cl.y, r, 0, 7); g.arc(cl.x + r, cl.y - r * .4, r * 1.2, 0, 7); g.arc(cl.x + r * 2.1, cl.y, r, 0, 7); g.fill(); });
+  const ground = H - 90 * S;
+  g.fillStyle = '#8fd694'; hills.forEach(h => { g.beginPath(); g.ellipse(h.x, ground, 120 * S, h.h * S, 0, Math.PI, 0); g.fill(); });
+  for (const p of pipes) {
+    pipe(p.x, 0, p.w, p.top, true); pipe(p.x, p.top + gap(), p.w, ground - p.top - gap(), false);
+  }
+  g.fillStyle = '#ded895'; g.fillRect(0, ground, W, H - ground);
+  g.fillStyle = '#73bf2e'; g.fillRect(0, ground, W, 16 * S);
+  g.fillStyle = '#5a9e22'; for (let x = groundX; x < W; x += 40 * S) { g.beginPath(); g.moveTo(x, ground + 16 * S); g.lineTo(x + 20 * S, ground); g.lineTo(x + 30 * S, ground); g.lineTo(x + 10 * S, ground + 16 * S); g.fill(); }
+  drawBird();
+  if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, W, H); flash -= .06; }
+  if (state === 'ready') { g.fillStyle = '#1e3a5f'; g.font = `800 ${18 * S + 4}px system-ui`; g.textAlign = 'center'; g.fillText('👆 ' + T.tap, W / 2, H * .62); }
+}
+function pipe(x, y, w, h, top) {
+  if (h <= 0) return;
+  const gr = g.createLinearGradient(x, 0, x + w, 0); gr.addColorStop(0, '#5cc93b'); gr.addColorStop(.45, '#a6ef6e'); gr.addColorStop(1, '#3f9a25');
+  g.fillStyle = gr; g.strokeStyle = '#1e3a5f'; g.lineWidth = 3;
+  g.fillRect(x, y, w, h); g.strokeRect(x, y, w, h);
+  const capH = 26 * S, cy = top ? y + h - capH : y;
+  g.fillRect(x - 6 * S, cy, w + 12 * S, capH); g.strokeRect(x - 6 * S, cy, w + 12 * S, capH);
+}
+function drawBird() {
+  g.save(); g.translate(bird.x, bird.y); g.rotate(bird.rot);
+  const r = bird.r;
+  g.fillStyle = '#ffd23f'; g.strokeStyle = '#1e3a5f'; g.lineWidth = 3;
+  g.beginPath(); g.ellipse(0, 0, r * 1.15, r, 0, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#fff3c4'; g.beginPath(); g.ellipse(-r * .1, r * .35, r * .7, r * .45, 0, 0, 7); g.fill();
+  const flapY = Math.sin(bird.wing) * r * .45;
+  g.fillStyle = '#ffb000'; g.beginPath(); g.ellipse(-r * .45, flapY * .5, r * .6, r * .35, -.3 + flapY / r, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#fff'; g.beginPath(); g.arc(r * .45, -r * .3, r * .38, 0, 7); g.fill(); g.stroke();
+  g.fillStyle = '#1e3a5f'; g.beginPath(); g.arc(r * .55, -r * .3, r * .16, 0, 7); g.fill();
+  g.fillStyle = '#ff6b3d'; g.beginPath(); g.moveTo(r * .8, r * .05); g.lineTo(r * 1.55, r * .2); g.lineTo(r * .8, r * .45); g.closePath(); g.fill(); g.stroke();
+  g.restore();
+}
+function loop(t) { const dt = Math.min(40, t - (last || t)); last = t; update(dt); draw(); requestAnimationFrame(loop); }
+function panel(html, action) { const p = document.getElementById('panel'); p.innerHTML = html; p.classList.remove('hide'); document.getElementById('go').onclick = e => { e.stopPropagation(); action(); }; }
+function hidePanel() { document.getElementById('panel').classList.add('hide'); }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+addEventListener('pointerdown', e => { if (e.target.id !== 'go') flap(); });
+addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); flap(); } });
+addEventListener('resize', () => { resize(); if (state === 'menu') reset(); });
+(async () => {
+  best = await store.get('best', 0); resize(); reset();
+  panel(`<h1>Sky Hopper</h1><p>${T.tap}</p><div class="row"><div><small>${T.best}</small><b>${best}</b></div></div><button id="go">${T.play}</button>`, () => { state = 'ready'; hidePanel(); });
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

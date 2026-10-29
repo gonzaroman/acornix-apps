@@ -1,0 +1,14 @@
+{
+  "id": "merge-2048",
+  "name": "2048",
+  "emoji": "🔢",
+  "category": "games",
+  "description": "Swipe to slide the tiles and merge equal numbers until you reach 2048, with undo.",
+  "prompt": "The 2048 puzzle with smooth sliding tiles, swipe controls, undo, a best score and the game saved so I can continue later.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

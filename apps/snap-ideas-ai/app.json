@@ -1,0 +1,14 @@
+{
+  "id": "snap-ideas-ai",
+  "name": "What Can I Do?",
+  "emoji": "📸",
+  "category": "lifestyle",
+  "description": "Point your camera at anything and your AI suggests things to make, cook, fix or play with it.",
+  "prompt": "A camera app: I point it at anything, take a photo and my AI suggests five ideas of what to do with it, with steps, and I can choose a focus like cooking, crafts, fixing or games for kids.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

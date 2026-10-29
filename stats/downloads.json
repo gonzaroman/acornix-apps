@@ -1,5 +1,10 @@
 {
   "assets": {
+    "block-drop": {
+      "asset": 688998636,
+      "base": 0,
+      "count": 0
+    },
     "bmi": {
       "asset": 688546680,
       "base": 0,
@@ -7,6 +12,11 @@
     },
     "bowling": {
       "asset": 688546710,
+      "base": 0,
+      "count": 0
+    },
+    "brick-breaker": {
+      "asset": 688998917,
       "base": 0,
       "count": 0
     },
@@ -25,6 +35,21 @@
       "base": 0,
       "count": 0
     },
+    "memory-match": {
+      "asset": 688998975,
+      "base": 0,
+      "count": 0
+    },
+    "merge-2048": {
+      "asset": 688998694,
+      "base": 0,
+      "count": 0
+    },
+    "minesweeper": {
+      "asset": 688998748,
+      "base": 0,
+      "count": 0
+    },
     "neon-drone-race": {
       "asset": 688546887,
       "base": 0,
@@ -32,6 +57,11 @@
     },
     "neon-kaleidoscope": {
       "asset": 688546915,
+      "base": 0,
+      "count": 0
+    },
+    "neon-snake": {
+      "asset": 688998655,
       "base": 0,
       "count": 0
     },
@@ -57,6 +87,31 @@
     },
     "reef-aquarium": {
       "asset": 688547079,
+      "base": 0,
+      "count": 0
+    },
+    "sky-hopper": {
+      "asset": 688998851,
+      "base": 0,
+      "count": 0
+    },
+    "snap-ideas-ai": {
+      "asset": 688998611,
+      "base": 0,
+      "count": 0
+    },
+    "solitaire": {
+      "asset": 688999041,
+      "base": 0,
+      "count": 0
+    },
+    "star-defender": {
+      "asset": 688999087,
+      "base": 0,
+      "count": 0
+    },
+    "sudoku": {
+      "asset": 688998804,
       "base": 0,
       "count": 0
     }

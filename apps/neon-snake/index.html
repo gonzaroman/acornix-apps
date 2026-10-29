@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Neon Snake</title>
+<style>
+  :root { --bg:#05060f; --text:#e9fff6; --muted:#7fa89a; --neon:#39ff9f; --pink:#ff3fa4; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; touch-action:none; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #wrap { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 14px); gap:12px;
+    background:radial-gradient(circle at 50% 30%,#0d2a22 0,transparent 60%),var(--bg); }
+  header { width:100%; display:flex; align-items:center; justify-content:space-between; }
+  .logo { font-weight:900; font-size:22px; letter-spacing:1px; color:var(--neon); text-shadow:0 0 12px var(--neon); }
+  .scores { display:flex; gap:16px; text-align:right; }
+  .scores small { display:block; font-size:10px; letter-spacing:2px; color:var(--muted); }
+  .scores b { font-size:22px; font-variant-numeric:tabular-nums; }
+  .icon { width:42px; height:42px; border-radius:12px; background:#ffffff10; font-size:17px; }
+  #stage { flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0; }
+  canvas { border-radius:16px; background:#070b14; box-shadow:0 0 0 1px #39ff9f33, 0 0 40px #39ff9f22; }
+  #pad { display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(2,52px); gap:8px; }
+  #pad button { border-radius:16px; background:#ffffff0d; border:1px solid #39ff9f33; font-size:20px; color:var(--neon); }
+  #pad button:active { background:#39ff9f33; }
+  #pad .up { grid-column:2; }
+  #pad .left { grid-column:1; grid-row:2; } #pad .down { grid-column:2; grid-row:2; } #pad .right { grid-column:3; grid-row:2; }
+  #overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#02030acc; backdrop-filter:blur(5px); z-index:3; }
+  #overlay.hide { display:none; }
+  .card { width:min(86vw,330px); text-align:center; padding:26px 20px; border-radius:24px; background:#0b1220; border:1px solid #39ff9f44; box-shadow:0 0 50px #39ff9f22; }
+  .card h1 { margin:0; font-size:34px; color:var(--neon); text-shadow:0 0 18px var(--neon); letter-spacing:1px; }
+  .card p { color:var(--muted); line-height:1.5; font-size:14px; }
+  .big { font-size:46px; font-weight:900; color:var(--pink); text-shadow:0 0 18px var(--pink); }
+  .opts { display:flex; gap:8px; justify-content:center; margin:6px 0 16px; flex-wrap:wrap; }
+  .opt { padding:8px 12px; border-radius:999px; background:#ffffff0d; border:1px solid #ffffff1a; font-size:13px; }
+  .opt.on { border-color:var(--neon); color:var(--neon); background:#39ff9f1a; }
+  .play { width:100%; padding:15px; border-radius:16px; background:var(--neon); color:#002414; font-weight:900; font-size:17px; box-shadow:0 0 24px #39ff9f66; }
+  @media (orientation:landscape) { #wrap { flex-direction:row; } header { flex-direction:column; width:auto; gap:16px; } #pad { align-self:center; } }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <div class="logo">SNAKE</div>
+    <div class="scores">
+      <div><small id="lScore"></small><b id="score">0</b></div>
+      <div><small id="lBest"></small><b id="best">0</b></div>
+    </div>
+    <button class="icon" id="pauseBtn" aria-label="Pause">⏸</button>
+  </header>
+  <div id="stage"><canvas id="c"></canvas></div>
+  <div id="pad">
+    <button class="up" data-d="0,-1">▲</button><button class="left" data-d="-1,0">◀</button>
+    <button class="down" data-d="0,1">▼</button><button class="right" data-d="1,0">▶</button>
+  </div>
+</div>
+<div id="overlay"><div class="card" id="card"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { score:'PUNTOS', best:'RÉCORD', intro:'Desliza o usa las flechas. Come la luz, crece y no te muerdas.', play:'Jugar', walls:'Paredes', wrap:'Sin paredes',
+  slow:'Tranquilo', normal:'Normal', fast:'Rápido', over:'¡Te has mordido!', again:'Otra vez', paused:'Pausa', resume:'Seguir', record:'¡Nuevo récord!' }
+ : { score:'SCORE', best:'BEST', intro:'Swipe or use the arrows. Eat the light, grow, and don\'t bite yourself.', play:'Play', walls:'Walls', wrap:'No walls',
+  slow:'Chill', normal:'Normal', fast:'Fast', over:'You bit yourself!', again:'Play again', paused:'Paused', resume:'Resume', record:'New best!' };
+document.getElementById('lScore').textContent = T.score; document.getElementById('lBest').textContent = T.best;
+
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const N = 20, c = document.getElementById('c'), g = c.getContext('2d');
+let snake, dir, nextDirs, food, bonus, score, best = 0, running = false, step = 0, acc = 0, last = 0, particles = [];
+let opts = { walls: true, speed: 'normal' };
+const SPEEDS = { slow: 150, normal: 110, fast: 75 };
+
+function resize() {
+  const s = document.getElementById('stage').getBoundingClientRect();
+  const size = Math.floor(Math.min(s.width, s.height) / N) * N, d = devicePixelRatio || 1;
+  c.style.width = c.style.height = size + 'px'; c.width = c.height = size * d;
+  draw();
+}
+function freeCell() { let p; do { p = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N) }; } while (snake.some(s => s.x === p.x && s.y === p.y)); return p; }
+function start() {
+  snake = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
+  dir = { x: 1, y: 0 }; nextDirs = []; score = 0; food = freeCell(); bonus = null; step = 0; particles = [];
+  document.getElementById('score').textContent = 0;
+  document.getElementById('overlay').classList.add('hide');
+  running = true; last = 0; requestAnimationFrame(loop);
+}
+function turn(x, y) {
+  const ref = nextDirs.length ? nextDirs[nextDirs.length - 1] : dir;
+  if (x === -ref.x && y === -ref.y || (x === ref.x && y === ref.y)) return;
+  if (nextDirs.length < 3) nextDirs.push({ x, y });
+}
+function tick() {
+  if (nextDirs.length) dir = nextDirs.shift();
+  let h = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+  if (!opts.walls) { h.x = (h.x + N) % N; h.y = (h.y + N) % N; }
+  else if (h.x < 0 || h.y < 0 || h.x >= N || h.y >= N) return die();
+  if (snake.some((s, i) => i < snake.length - 1 && s.x === h.x && s.y === h.y)) return die();
+  snake.unshift(h);
+  if (h.x === food.x && h.y === food.y) {
+    score += 10; burst(food, '#39ff9f'); food = freeCell(); buzz(15);
+    if (!bonus && Math.random() < .25) bonus = { ...freeCell(), ttl: 60 };
+  } else if (bonus && h.x === bonus.x && h.y === bonus.y) {
+    score += 50; burst(bonus, '#ff3fa4'); bonus = null; buzz([20, 30, 20]);
+    snake.push({ ...snake[snake.length - 1] }, { ...snake[snake.length - 1] });
+  } else snake.pop();
+  if (bonus && --bonus.ttl <= 0) bonus = null;
+  document.getElementById('score').textContent = score;
+  step++;
+}
+function burst(p, color) { for (let i = 0; i < 16; i++) { const a = Math.random() * 6.28, v = .05 + Math.random() * .12; particles.push({ x: p.x + .5, y: p.y + .5, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, color }); } }
+function interval() { return Math.max(45, SPEEDS[opts.speed] - Math.floor(score / 50) * 4); }
+function loop(t) {
+  if (!running) return;
+  if (!last) last = t;
+  acc += t - last; last = t;
+  while (acc > interval() && running) { acc -= interval(); tick(); }
+  draw(acc / interval());
+  requestAnimationFrame(loop);
+}
+function draw() {
+  if (!snake) { g.clearRect(0, 0, c.width, c.height); return; }
+  const s = c.width / N;
+  g.fillStyle = '#070b14'; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = '#ffffff09';
+  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) if ((x + y) % 2) g.fillRect(x * s, y * s, s, s);
+  if (opts.walls) { g.strokeStyle = '#ff3fa455'; g.lineWidth = s * .12; g.strokeRect(0, 0, c.width, c.height); }
+  const pulse = 1 + Math.sin(performance.now() / 160) * .12;
+  glowDot(food.x, food.y, s, '#39ff9f', .32 * pulse);
+  if (bonus) glowDot(bonus.x, bonus.y, s, '#ff3fa4', .38 * pulse, bonus.ttl < 15 && bonus.ttl % 2);
+  g.lineCap = g.lineJoin = 'round';
+  g.shadowColor = '#39ff9f'; g.shadowBlur = s * .8;
+  for (let i = snake.length - 1; i > 0; i--) {
+    const a = snake[i], b = snake[i - 1];
+    if (Math.abs(a.x - b.x) > 1 || Math.abs(a.y - b.y) > 1) continue;
+    const f = 1 - i / snake.length;
+    g.strokeStyle = `hsl(${150 - f * 40},100%,${45 + f * 20}%)`; g.lineWidth = s * (.5 + f * .25);
+    g.beginPath(); g.moveTo((a.x + .5) * s, (a.y + .5) * s); g.lineTo((b.x + .5) * s, (b.y + .5) * s); g.stroke();
+  }
+  const h = snake[0];
+  g.fillStyle = '#c8ffe6'; g.beginPath(); g.arc((h.x + .5) * s, (h.y + .5) * s, s * .42, 0, 7); g.fill();
+  g.shadowBlur = 0; g.fillStyle = '#05060f';
+  const ex = dir.y * .16, ey = dir.x * .16;
+  [[ex, ey], [-ex, -ey]].forEach(([ox, oy]) => { g.beginPath(); g.arc((h.x + .5 + dir.x * .15 + ox) * s, (h.y + .5 + dir.y * .15 + oy) * s, s * .07, 0, 7); g.fill(); });
+  particles = particles.filter(p => (p.life -= .035) > 0);
+  particles.forEach(p => { p.x += p.vx; p.y += p.vy; g.globalAlpha = p.life; g.fillStyle = p.color; g.fillRect(p.x * s - 2, p.y * s - 2, 4, 4); });
+  g.globalAlpha = 1;
+}
+function glowDot(x, y, s, color, r, hide) {
+  if (hide) return;
+  g.shadowColor = color; g.shadowBlur = s; g.fillStyle = color;
+  g.beginPath(); g.arc((x + .5) * s, (y + .5) * s, s * r, 0, 7); g.fill(); g.shadowBlur = 0;
+}
+async function die() {
+  running = false; buzz([80, 60, 160]);
+  const isBest = score > best;
+  if (isBest) { best = score; document.getElementById('best').textContent = best; await store.set('best', best); }
+  show(`<h1>${T.over}</h1><div class="big">${score}</div><p>${isBest && score ? '🏆 ' + T.record : T.best + ': ' + best}</p>${optionsHtml()}<button class="play" id="go">${T.again}</button>`, start);
+}
+function optionsHtml() {
+  return `<div class="opts">${[['walls', true, T.walls], ['walls', false, T.wrap]].map(([k, v, l]) => `<button class="opt ${opts[k] === v ? 'on' : ''}" data-k="${k}" data-v="${v}">${l}</button>`).join('')}</div>
+  <div class="opts">${['slow', 'normal', 'fast'].map(v => `<button class="opt ${opts.speed === v ? 'on' : ''}" data-k="speed" data-v="${v}">${T[v]}</button>`).join('')}</div>`;
+}
+function show(html, action) {
+  document.getElementById('card').innerHTML = html;
+  document.getElementById('overlay').classList.remove('hide');
+  document.getElementById('go').onclick = action;
+  document.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const k = b.dataset.k; opts[k] = k === 'walls' ? b.dataset.v === 'true' : b.dataset.v;
+    store.set('opts', opts);
+    document.querySelectorAll(`.opt[data-k="${k}"]`).forEach(x => x.classList.toggle('on', x === b));
+  });
+}
+function pause() {
+  if (!running) return;
+  running = false;
+  show(`<h1>${T.paused}</h1><p></p><button class="play" id="go">${T.resume}</button>`, () => { document.getElementById('overlay').classList.add('hide'); running = true; last = 0; requestAnimationFrame(loop); });
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+document.querySelectorAll('#pad button').forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); const [x, y] = b.dataset.d.split(',').map(Number); turn(x, y); }));
+let sx, sy;
+addEventListener('pointerdown', e => { if (e.target.closest('button')) return; sx = e.clientX; sy = e.clientY; });
+addEventListener('pointermove', e => {
+  if (sx == null) return;
+  const dx = e.clientX - sx, dy = e.clientY - sy;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+  if (Math.abs(dx) > Math.abs(dy)) turn(Math.sign(dx), 0); else turn(0, Math.sign(dy));
+  sx = e.clientX; sy = e.clientY;
+});
+addEventListener('pointerup', () => sx = null);
+addEventListener('keydown', e => {
+  const m = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] }[e.key];
+  if (m) { e.preventDefault(); turn(...m); } else if (e.key === 'p' || e.key === ' ') pause();
+});
+document.getElementById('pauseBtn').onclick = pause;
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+addEventListener('resize', resize);
+
+(async () => {
+  best = await store.get('best', 0); opts = await store.get('opts', opts);
+  document.getElementById('best').textContent = best;
+  resize();
+  show(`<h1>NEON SNAKE</h1><p>${T.intro}</p>${optionsHtml()}<button class="play" id="go">${T.play}</button>`, start);
+})();
+</script>
+</body>
+</html>

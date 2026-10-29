@@ -1,0 +1,14 @@
+{
+  "id": "brick-breaker",
+  "name": "Brick Breaker",
+  "emoji": "🏓",
+  "category": "games",
+  "description": "Smash neon bricks with a glowing paddle, catch power-ups and clear level after level.",
+  "prompt": "A brick breaker game with a paddle you drag, neon bricks in different patterns per level, bricks that need two hits, steel bricks, power-ups for a wider paddle, multi-ball, slow motion and extra lives.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

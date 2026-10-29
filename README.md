@@ -2,7 +2,7 @@
 
 Apps and games made with [Acornix](https://github.com/gonzaroman/acornix), the free AI app builder for Android, and shared by their creators. Open **Explore** in Acornix to browse them, try them without installing, install them with one tap or remix them with your own AI.
 
-Every app here is a single web page made with AI on a phone, often from just one sentence. Each one shows the request that created it, so you can learn how to ask for your own.
+Every app here is a single web page made with AI, often from just one sentence. Each one shows the request that created it, so you can learn how to ask for your own.
 
 ## 📱 How to use these apps
 

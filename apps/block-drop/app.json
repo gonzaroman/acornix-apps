@@ -1,0 +1,14 @@
+{
+  "id": "block-drop",
+  "name": "Block Drop",
+  "emoji": "🧱",
+  "category": "games",
+  "description": "Classic falling blocks with a ghost piece, hold, next pieces and levels that speed up.",
+  "prompt": "A falling blocks puzzle game like Tetris with swipe and tap controls, ghost piece, hold, the next three pieces, levels that get faster and a saved best score.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

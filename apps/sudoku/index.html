@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Sudoku</title>
+<style>
+  :root { --bg:#f6f4ff; --ink:#1f1b3a; --muted:#7b76a3; --line:#1f1b3a; --thin:#cfc9ee; --accent:#6c4cf5; --sel:#e3dcff; --same:#efe9ff; --err:#e5484d; --given:#1f1b3a; --user:#6c4cf5; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  #wrap { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 14px); }
+  header { width:min(94vw,480px); display:flex; align-items:center; justify-content:space-between; }
+  h1 { margin:0; font-size:26px; letter-spacing:-.5px; }
+  .info { display:flex; gap:14px; color:var(--muted); font-weight:700; font-size:14px; font-variant-numeric:tabular-nums; }
+  .levels { width:min(94vw,480px); display:flex; gap:6px; }
+  .lv { flex:1; padding:8px; border-radius:12px; background:#fff; font-weight:700; font-size:13px; color:var(--muted); box-shadow:0 1px 0 #ddd8f5; }
+  .lv.on { background:var(--accent); color:#fff; }
+  #board { width:min(94vw,480px,calc(100vh - 330px)); aspect-ratio:1; display:grid; grid-template-columns:repeat(9,1fr); background:#fff; border:2.5px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 12px 30px #6c4cf522; }
+  .cell { position:relative; display:flex; align-items:center; justify-content:center; border-right:1px solid var(--thin); border-bottom:1px solid var(--thin); font-size:min(6.2vw,30px); font-weight:600; color:var(--user); }
+  .cell:nth-child(9n) { border-right:0; }
+  .cell.br { border-right:2px solid var(--line); }
+  .cell.bb { border-bottom:2px solid var(--line); }
+  .cell.given { color:var(--given); font-weight:800; }
+  .cell.peer { background:#f8f6ff; }
+  .cell.same { background:var(--same); }
+  .cell.sel { background:var(--sel); }
+  .cell.err { color:var(--err); }
+  .cell.flash { animation:fl .5s; }
+  @keyframes fl { 50% { background:#c9f7d8; } }
+  .notes { position:absolute; inset:2px; display:grid; grid-template-columns:repeat(3,1fr); font-size:min(2.4vw,11px); color:var(--muted); font-weight:600; }
+  .notes span { display:flex; align-items:center; justify-content:center; }
+  .tools { width:min(94vw,480px); display:flex; justify-content:space-around; }
+  .tool { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:12px; color:var(--muted); font-weight:700; position:relative; }
+  .tool .ic { width:46px; height:46px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:20px; box-shadow:0 1px 0 #ddd8f5; }
+  .tool.on .ic { background:var(--accent); color:#fff; }
+  .tool .badge { position:absolute; top:-2px; right:0; background:var(--accent); color:#fff; border-radius:9px; font-size:10px; padding:1px 5px; }
+  .pad { width:min(94vw,480px); display:grid; grid-template-columns:repeat(9,1fr); gap:5px; }
+  .num { aspect-ratio:.8; border-radius:12px; background:#fff; font-size:min(7vw,28px); font-weight:700; color:var(--accent); box-shadow:0 2px 0 #ddd8f5; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .num small { font-size:10px; color:var(--muted); font-weight:600; }
+  .num.done { opacity:.25; }
+  .num:active { background:var(--sel); }
+  #win { position:fixed; inset:0; background:#1f1b3acc; display:none; align-items:center; justify-content:center; z-index:4; }
+  #win.show { display:flex; }
+  .card { background:#fff; border-radius:24px; padding:26px; width:min(86vw,320px); text-align:center; }
+  .card h2 { margin:0 0 6px; font-size:28px; }
+  .card p { color:var(--muted); margin:0 0 18px; }
+  .card button { width:100%; padding:14px; border-radius:14px; background:var(--accent); color:#fff; font-weight:800; font-size:16px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header><h1>Sudoku</h1><div class="info"><span id="mist"></span><span id="time">0:00</span></div></header>
+  <div class="levels" id="levels"></div>
+  <div id="board"></div>
+  <div class="tools">
+    <button class="tool" id="undo"><span class="ic">↶</span><span id="tUndo"></span></button>
+    <button class="tool" id="erase"><span class="ic">⌫</span><span id="tErase"></span></button>
+    <button class="tool" id="notesBtn"><span class="ic">✎</span><span id="tNotes"></span></button>
+    <button class="tool" id="hint"><span class="ic">💡</span><span id="tHint"></span><span class="badge" id="hints">3</span></button>
+  </div>
+  <div class="pad" id="pad"></div>
+</div>
+<div id="win"><div class="card"><h2 id="winTitle"></h2><p id="winText"></p><button id="winBtn"></button></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { levels:['Fácil','Medio','Difícil','Experto'], undo:'Deshacer', erase:'Borrar', notes:'Notas', hint:'Pista', mist:'Errores', win:'¡Resuelto!', again:'Nuevo sudoku', in:'en' }
+ : { levels:['Easy','Medium','Hard','Expert'], undo:'Undo', erase:'Erase', notes:'Notes', hint:'Hint', mist:'Mistakes', win:'Solved!', again:'New puzzle', in:'in' };
+['Undo','Erase','Notes','Hint'].forEach(k => document.getElementById('t' + k).textContent = T[k.toLowerCase()]);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const GIVENS = [40, 33, 28, 24];
+let lv = 0, solution, puzzle, values, notes, sel = -1, noteMode = false, history = [], mistakes = 0, hints = 3, seconds = 0, timer, solved = false;
+
+// ---- Generator: random full grid, then remove cells keeping one solution.
+const peersOf = [...Array(81)].map((_, i) => { const r = Math.floor(i / 9), c = i % 9, s = new Set(); for (let k = 0; k < 9; k++) { s.add(r * 9 + k); s.add(k * 9 + c); s.add((Math.floor(r / 3) * 3 + Math.floor(k / 3)) * 9 + Math.floor(c / 3) * 3 + k % 3); } s.delete(i); return [...s]; });
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function candidates(g, i) { const used = new Set(peersOf[i].map(p => g[p])); return [1,2,3,4,5,6,7,8,9].filter(n => !used.has(n)); }
+function fill(g) {
+  let best = -1, bc;
+  for (let i = 0; i < 81; i++) if (!g[i]) { const c = candidates(g, i); if (best < 0 || c.length < bc.length) { best = i; bc = c; if (c.length <= 1) break; } }
+  if (best < 0) return true;
+  for (const n of shuffle(bc)) { g[best] = n; if (fill(g)) return true; }
+  g[best] = 0; return false;
+}
+function count(g, limit = 2) {
+  let best = -1, bc;
+  for (let i = 0; i < 81; i++) if (!g[i]) { const c = candidates(g, i); if (best < 0 || c.length < bc.length) { best = i; bc = c; if (!c.length) return 0; } }
+  if (best < 0) return 1;
+  let total = 0;
+  for (const n of bc) { g[best] = n; total += count(g, limit - total); if (total >= limit) break; }
+  g[best] = 0; return total;
+}
+function generate(givens) {
+  const full = Array(81).fill(0); fill(full);
+  const p = full.slice();
+  let filled = 81;
+  for (const i of shuffle([...Array(81).keys()])) {
+    if (filled <= givens) break;
+    const keep = p[i]; p[i] = 0;
+    if (count(p.slice()) !== 1) p[i] = keep; else filled--;
+  }
+  return { solution: full, puzzle: p };
+}
+
+// ---- UI
+const boardEl = document.getElementById('board'), padEl = document.getElementById('pad');
+T.levels.forEach((name, i) => { const b = document.createElement('button'); b.className = 'lv'; b.textContent = name; b.onclick = () => { lv = i; store.set('level', i); newGame(); }; document.getElementById('levels').appendChild(b); });
+for (let i = 0; i < 81; i++) {
+  const el = document.createElement('div'); el.className = 'cell';
+  if (i % 9 === 2 || i % 9 === 5) el.classList.add('br');
+  if (Math.floor(i / 9) === 2 || Math.floor(i / 9) === 5) el.classList.add('bb');
+  el.onpointerdown = () => { sel = i; render(); };
+  boardEl.appendChild(el);
+}
+for (let n = 1; n <= 9; n++) { const b = document.createElement('button'); b.className = 'num'; b.innerHTML = n + '<small></small>'; b.onclick = () => input(n); padEl.appendChild(b); }
+
+function newGame() {
+  const g = generate(GIVENS[lv]);
+  solution = g.solution; puzzle = g.puzzle; values = puzzle.slice(); notes = Array.from({ length: 81 }, () => []);
+  sel = -1; history = []; mistakes = 0; hints = 3; seconds = 0; solved = false;
+  startTimer(); render(); save();
+}
+function startTimer() { clearInterval(timer); timer = setInterval(() => { if (!solved && !document.hidden) { seconds++; showTime(); if (seconds % 10 === 0) save(); } }, 1000); showTime(); }
+function showTime() { document.getElementById('time').textContent = '⏱ ' + Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0'); }
+function input(n) {
+  if (sel < 0 || puzzle[sel] || solved) return;
+  history.push({ i: sel, v: values[sel], notes: notes[sel].slice() });
+  if (noteMode) {
+    if (values[sel]) return;
+    const a = notes[sel]; const k = a.indexOf(n); k >= 0 ? a.splice(k, 1) : a.push(n);
+  } else {
+    values[sel] = values[sel] === n ? 0 : n; notes[sel] = [];
+    if (values[sel] && values[sel] !== solution[sel]) { mistakes++; buzz(60); }
+    if (values[sel] === solution[sel]) { peersOf[sel].forEach(p => { const k = notes[p].indexOf(n); if (k >= 0) notes[p].splice(k, 1); }); flashUnits(sel); }
+  }
+  render(); save(); checkWin();
+}
+function flashUnits(i) {
+  const r = Math.floor(i / 9), c = i % 9, b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+  const units = [[...Array(9)].map((_, k) => r * 9 + k), [...Array(9)].map((_, k) => k * 9 + c), [...Array(9)].map((_, k) => (Math.floor(b / 3) * 3 + Math.floor(k / 3)) * 9 + (b % 3) * 3 + k % 3)];
+  units.filter(u => u.every(x => values[x] === solution[x])).flat().forEach(x => { const el = boardEl.children[x]; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); });
+}
+function render() {
+  const sv = sel >= 0 ? values[sel] : 0;
+  [...boardEl.children].forEach((el, i) => {
+    el.className = 'cell' + (i % 9 === 2 || i % 9 === 5 ? ' br' : '') + (Math.floor(i / 9) === 2 || Math.floor(i / 9) === 5 ? ' bb' : '');
+    if (puzzle[i]) el.classList.add('given');
+    if (sel >= 0 && peersOf[sel].includes(i)) el.classList.add('peer');
+    if (sv && values[i] === sv) el.classList.add('same');
+    if (i === sel) el.classList.add('sel');
+    if (values[i] && values[i] !== solution[i]) el.classList.add('err');
+    if (values[i]) el.textContent = values[i];
+    else if (notes[i].length) el.innerHTML = '<div class="notes">' + [1,2,3,4,5,6,7,8,9].map(n => `<span>${notes[i].includes(n) ? n : ''}</span>`).join('') + '</div>';
+    else el.textContent = '';
+  });
+  [...padEl.children].forEach((b, k) => { const left = 9 - values.filter((v, i) => v === k + 1 && v === solution[i]).length; b.classList.toggle('done', left === 0); b.querySelector('small').textContent = left || ''; });
+  document.getElementById('mist').textContent = T.mist + ': ' + mistakes;
+  document.getElementById('hints').textContent = hints;
+  document.getElementById('notesBtn').classList.toggle('on', noteMode);
+  document.querySelectorAll('.lv').forEach((b, i) => b.classList.toggle('on', i === lv));
+}
+async function checkWin() {
+  if (values.some((v, i) => v !== solution[i])) return;
+  solved = true; clearInterval(timer); buzz([40, 40, 40, 40, 120]);
+  document.getElementById('winTitle').textContent = '🎉 ' + T.win;
+  document.getElementById('winText').textContent = T.levels[lv] + ' · ' + T.in + ' ' + document.getElementById('time').textContent.replace('⏱ ', '');
+  document.getElementById('winBtn').textContent = T.again;
+  document.getElementById('win').classList.add('show');
+  store.set('game', null);
+}
+function save() { if (!solved) store.set('game', { lv, solution, puzzle, values, notes, mistakes, hints, seconds }); }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+document.getElementById('undo').onclick = () => { const h = history.pop(); if (!h) return; values[h.i] = h.v; notes[h.i] = h.notes; sel = h.i; render(); save(); };
+document.getElementById('erase').onclick = () => { if (sel < 0 || puzzle[sel]) return; history.push({ i: sel, v: values[sel], notes: notes[sel].slice() }); values[sel] = 0; notes[sel] = []; render(); save(); };
+document.getElementById('notesBtn').onclick = () => { noteMode = !noteMode; render(); };
+document.getElementById('hint').onclick = () => {
+  if (!hints || solved) return;
+  let i = sel >= 0 && values[sel] !== solution[sel] ? sel : values.findIndex((v, k) => v !== solution[k]);
+  if (i < 0) return;
+  history.push({ i, v: values[i], notes: notes[i].slice() });
+  values[i] = solution[i]; notes[i] = []; hints--; sel = i; flashUnits(i); render(); save(); checkWin();
+};
+document.getElementById('winBtn').onclick = () => { document.getElementById('win').classList.remove('show'); newGame(); };
+addEventListener('keydown', e => { if (e.key >= '1' && e.key <= '9') input(+e.key); else if (e.key === 'Backspace') document.getElementById('erase').click(); });
+(async () => {
+  lv = await store.get('level', 0);
+  const g = await store.get('game', null);
+  if (g && g.solution) { ({ lv, solution, puzzle, values, notes, mistakes, hints, seconds } = g); startTimer(); render(); }
+  else newGame();
+})();
+</script>
+</body>
+</html>

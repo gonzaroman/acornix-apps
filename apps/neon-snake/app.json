@@ -1,0 +1,14 @@
+{
+  "id": "neon-snake",
+  "name": "Neon Snake",
+  "emoji": "🐍",
+  "category": "games",
+  "description": "The classic snake in glowing neon: swipe to turn, eat the lights and chase bonus orbs.",
+  "prompt": "A neon snake game with swipe controls and arrow buttons, glowing food, pink bonus orbs that disappear, walls or wrap-around mode, three speeds and a saved best score.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

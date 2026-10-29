@@ -1,0 +1,14 @@
+{
+  "id": "memory-match",
+  "name": "Memory Match",
+  "emoji": "🃏",
+  "category": "games",
+  "description": "Flip the cards and find all the pairs: four board sizes, four themes and star ratings.",
+  "prompt": "A memory card game with 3D flipping cards, emoji themes like animals, food, sports and space, four board sizes, moves and time, star rating, confetti and best scores.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Memory Match</title>
+<style>
+  :root { --bg:#fff4ea; --ink:#3b2a4f; --muted:#8c7aa3; --back1:#8b5cf6; --back2:#ec4899; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  #wrap { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; gap:12px; padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 14px);
+    background:radial-gradient(circle at 0 0,#ffe0f0 0,transparent 45%),radial-gradient(circle at 100% 100%,#e6dcff 0,transparent 45%),var(--bg); }
+  header { width:100%; max-width:520px; display:flex; align-items:center; justify-content:space-between; }
+  h1 { margin:0; font-size:24px; }
+  .stats { display:flex; gap:8px; }
+  .stat { background:#fff; border-radius:14px; padding:6px 12px; text-align:center; box-shadow:0 3px 0 #f0dccb; }
+  .stat small { display:block; font-size:10px; color:var(--muted); font-weight:700; letter-spacing:1px; }
+  .stat b { font-variant-numeric:tabular-nums; }
+  .opts { width:100%; max-width:520px; display:flex; gap:6px; }
+  .opt { flex:1; padding:8px 4px; border-radius:12px; background:#fff; font-weight:700; font-size:13px; box-shadow:0 3px 0 #f0dccb; }
+  .opt.on { background:var(--ink); color:#fff; box-shadow:0 3px 0 #1d1328; }
+  #stage { flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0; }
+  #grid { display:grid; gap:8px; perspective:900px; }
+  .card { position:relative; transform-style:preserve-3d; transition:transform .38s cubic-bezier(.3,1.4,.5,1); }
+  .card.up, .card.done { transform:rotateY(180deg); }
+  .face { position:absolute; inset:0; border-radius:14px; backface-visibility:hidden; -webkit-backface-visibility:hidden; display:flex; align-items:center; justify-content:center; }
+  .back { background:linear-gradient(135deg,var(--back1),var(--back2)); box-shadow:0 4px 0 #6d3fc9; }
+  .back::after { content:''; width:44%; height:44%; border-radius:50%; border:3px dashed #ffffff66; }
+  .front { background:#fff; transform:rotateY(180deg); box-shadow:0 4px 0 #ead8c8; }
+  .card.done .front { background:#eafff1; box-shadow:0 4px 0 #b9e8c8; animation:pulse .5s; }
+  @keyframes pulse { 50% { transform:rotateY(180deg) scale(1.08); } }
+  .card.miss .front { animation:shake .4s; }
+  @keyframes shake { 25% { transform:rotateY(180deg) translateX(-5px); } 75% { transform:rotateY(180deg) translateX(5px); } }
+  #win { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:#3b2a4fbb; z-index:3; }
+  #win.show { display:flex; }
+  .panel { background:#fff; border-radius:26px; padding:26px; width:min(86vw,320px); text-align:center; }
+  .panel h2 { margin:0; font-size:30px; }
+  .stars { font-size:40px; margin:10px 0; letter-spacing:4px; }
+  .panel p { color:var(--muted); margin:0 0 16px; }
+  .panel button { width:100%; padding:14px; border-radius:16px; background:linear-gradient(135deg,var(--back1),var(--back2)); color:#fff; font-weight:800; font-size:16px; }
+  #confetti { position:fixed; inset:0; pointer-events:none; z-index:4; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header><h1>🃏 Memory</h1><div class="stats"><div class="stat"><small id="lMoves"></small><b id="moves">0</b></div><div class="stat"><small id="lTime"></small><b id="time">0:00</b></div></div></header>
+  <div class="opts" id="sizes"></div>
+  <div class="opts" id="themes"></div>
+  <div id="stage"><div id="grid"></div></div>
+</div>
+<div id="win"><div class="panel"><h2 id="winTitle"></h2><div class="stars" id="stars"></div><p id="winText"></p><button id="again"></button></div></div>
+<canvas id="confetti"></canvas>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { moves:'MOVIM.', time:'TIEMPO', win:'¡Lo lograste!', again:'Jugar otra vez', best:'Tu mejor', in:'movimientos en', themes:['🐶 Animales','🍓 Comida','⚽ Deportes','🚀 Espacio'] }
+ : { moves:'MOVES', time:'TIME', win:'You did it!', again:'Play again', best:'Your best', in:'moves in', themes:['🐶 Animals','🍓 Food','⚽ Sports','🚀 Space'] };
+document.getElementById('lMoves').textContent = T.moves; document.getElementById('lTime').textContent = T.time; document.getElementById('again').textContent = T.again;
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const EMOJI = [
+  ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🦉'],
+  ['🍓','🍕','🍔','🍩','🍪','🍉','🍇','🍒','🥑','🌮','🍣','🧁','🍦','🥨','🍋','🍍','🥕','🌽'],
+  ['⚽','🏀','🏈','⚾','🎾','🏐','🏉','🎱','🏓','🏸','🥊','⛳','🏹','🛹','🎿','🥌','🏒','🤿'],
+  ['🚀','🌍','🌙','⭐','☄️','🪐','👽','🛸','🌞','🌌','🔭','👩‍🚀','🌠','🛰️','🌑','🌈','⚡','🌋']
+];
+const SIZES = [[3, 4], [4, 4], [4, 5], [5, 6]];
+let size = 1, theme = 0, cards, first, lock, moves, seconds, timer, matched, bests = {};
+SIZES.forEach(([c, r], i) => { const b = document.createElement('button'); b.className = 'opt'; b.textContent = c + '×' + r; b.onclick = () => { size = i; save(); newGame(); }; document.getElementById('sizes').appendChild(b); });
+T.themes.forEach((name, i) => { const b = document.createElement('button'); b.className = 'opt'; b.textContent = name; b.onclick = () => { theme = i; save(); newGame(); }; document.getElementById('themes').appendChild(b); });
+function save() { store.set('opts', { size, theme }); }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function newGame() {
+  const [cols, rows] = SIZES[size], pairs = cols * rows / 2;
+  const picks = shuffle(EMOJI[theme].slice()).slice(0, pairs);
+  cards = shuffle([...picks, ...picks]).map((e, i) => ({ e, i, up: false, done: false }));
+  first = null; lock = false; moves = 0; seconds = 0; matched = 0; clearInterval(timer); timer = null;
+  document.querySelectorAll('#sizes .opt').forEach((b, i) => b.classList.toggle('on', i === size));
+  document.querySelectorAll('#themes .opt').forEach((b, i) => b.classList.toggle('on', i === theme));
+  updateStats(); layout();
+}
+function layout() {
+  const [cols, rows] = SIZES[size], st = document.getElementById('stage').getBoundingClientRect();
+  const cw = Math.min((st.width - (cols - 1) * 8) / cols, ((st.height - (rows - 1) * 8) / rows) * .8, 110);
+  const grid = document.getElementById('grid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, ${cw}px)`; grid.innerHTML = '';
+  cards.forEach(c => {
+    const el = document.createElement('button'); el.className = 'card' + (c.up ? ' up' : '') + (c.done ? ' done' : '');
+    el.style.width = cw + 'px'; el.style.height = cw * 1.25 + 'px';
+    el.innerHTML = `<div class="face back"></div><div class="face front" style="font-size:${cw * .55}px">${c.e}</div>`;
+    el.onclick = () => flip(c); c.el = el; grid.appendChild(el);
+  });
+}
+function flip(c) {
+  if (lock || c.up || c.done) return;
+  if (!timer) timer = setInterval(() => { seconds++; updateStats(); }, 1000);
+  c.up = true; c.el.classList.add('up'); buzz(8);
+  if (!first) { first = c; return; }
+  moves++; updateStats();
+  if (first.e === c.e) {
+    [first, c].forEach(x => { x.done = true; x.el.classList.add('done'); });
+    first = null; matched++; buzz(25);
+    if (matched === cards.length / 2) setTimeout(win, 450);
+  } else {
+    lock = true; const a = first; first = null;
+    setTimeout(() => { [a, c].forEach(x => { x.el.classList.add('miss'); }); }, 350);
+    setTimeout(() => { [a, c].forEach(x => { x.up = false; x.el.classList.remove('up', 'miss'); }); lock = false; }, 900);
+  }
+}
+function updateStats() { document.getElementById('moves').textContent = moves; document.getElementById('time').textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0'); }
+async function win() {
+  clearInterval(timer);
+  const pairs = cards.length / 2, ratio = moves / pairs, stars = ratio <= 1.4 ? 3 : ratio <= 2 ? 2 : 1;
+  const key = size + '', prev = bests[key];
+  if (!prev || moves < prev) { bests[key] = moves; await store.set('bests', bests); }
+  document.getElementById('winTitle').textContent = T.win;
+  document.getElementById('stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+  document.getElementById('winText').textContent = `${moves} ${T.in} ${document.getElementById('time').textContent} · ${T.best}: ${bests[key]}`;
+  document.getElementById('win').classList.add('show'); confetti(); buzz([30, 40, 30, 40, 80]);
+}
+function confetti() {
+  const cv = document.getElementById('confetti'), g = cv.getContext('2d'); cv.width = innerWidth; cv.height = innerHeight;
+  const ps = Array.from({ length: 120 }, () => ({ x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .5, v: 2 + Math.random() * 4, s: 5 + Math.random() * 6, r: Math.random() * 6, c: `hsl(${Math.random() * 360},90%,60%)` }));
+  let frames = 0;
+  (function f() { g.clearRect(0, 0, cv.width, cv.height); ps.forEach(p => { p.y += p.v; p.r += .1; g.save(); g.translate(p.x + Math.sin(p.r) * 10, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); g.restore(); }); if (frames++ < 200) requestAnimationFrame(f); else g.clearRect(0, 0, cv.width, cv.height); })();
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+document.getElementById('again').onclick = () => { document.getElementById('win').classList.remove('show'); newGame(); };
+addEventListener('resize', () => { if (cards) layout(); });
+(async () => { const o = await store.get('opts', { size: 1, theme: 0 }); size = o.size; theme = o.theme; bests = await store.get('bests', {}); newGame(); })();
+</script>
+</body>
+</html>

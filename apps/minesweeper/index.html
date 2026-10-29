@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Minesweeper</title>
+<style>
+  :root { --bg:#e9eef5; --hidden:#9cc8f2; --hidden2:#8bbdea; --open:#f7f9fc; --text:#22314a; --accent:#2f7de1; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #wrap { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; gap:12px; padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px); }
+  header { width:100%; max-width:520px; display:flex; align-items:center; gap:8px; }
+  .pill { background:#fff; border-radius:14px; padding:8px 12px; font-weight:800; font-size:18px; font-variant-numeric:tabular-nums; box-shadow:0 2px 0 #cdd7e5; display:flex; gap:6px; align-items:center; }
+  #face { margin:0 auto; width:52px; height:52px; border-radius:16px; background:#fff; font-size:28px; box-shadow:0 2px 0 #cdd7e5; }
+  .levels { display:flex; gap:6px; width:100%; max-width:520px; }
+  .lv { flex:1; padding:9px 4px; border-radius:12px; background:#fff; font-weight:700; font-size:13px; box-shadow:0 2px 0 #cdd7e5; }
+  .lv.on { background:var(--accent); color:#fff; box-shadow:0 2px 0 #1d5bb0; }
+  #stage { flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0; }
+  #grid { display:grid; gap:3px; padding:8px; background:#fff; border-radius:18px; box-shadow:0 10px 30px #2f7de122; touch-action:manipulation; }
+  .c { border-radius:6px; background:linear-gradient(145deg,var(--hidden),var(--hidden2)); display:flex; align-items:center; justify-content:center; font-weight:900; box-shadow:inset 0 -3px 0 #6fa6dc; }
+  .c.o { background:var(--open); box-shadow:none; }
+  .c.boom { background:#ff6b6b; }
+  .c.f::after { content:'🚩'; }
+  .c.m::after { content:'💣'; }
+  .c.wrong { background:#ffd6d6; }
+  .n1{color:#2f7de1}.n2{color:#2e9b55}.n3{color:#e5484d}.n4{color:#5b3fd1}.n5{color:#b5541c}.n6{color:#118a8a}.n7{color:#222}.n8{color:#777}
+  .mode { display:flex; background:#fff; border-radius:16px; padding:4px; box-shadow:0 2px 0 #cdd7e5; }
+  .mode button { padding:10px 18px; border-radius:12px; font-weight:800; font-size:15px; }
+  .mode button.on { background:var(--accent); color:#fff; }
+  .foot { display:flex; gap:10px; align-items:center; }
+  .foot small { color:#6a7a93; font-size:12px; max-width:150px; line-height:1.3; }
+  #toast { position:fixed; left:50%; top:40%; transform:translate(-50%,-50%) scale(.9); background:#22314aee; color:#fff; padding:18px 24px; border-radius:20px; text-align:center; opacity:0; pointer-events:none; transition:.25s; font-weight:800; font-size:20px; }
+  #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  #toast small { display:block; font-weight:500; font-size:14px; margin-top:4px; opacity:.85; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <div class="pill">💣 <span id="left">0</span></div>
+    <button id="face" aria-label="New game">🙂</button>
+    <div class="pill">⏱ <span id="time">0</span></div>
+  </header>
+  <div class="levels" id="levels"></div>
+  <div id="stage"><div id="grid"></div></div>
+  <div class="foot">
+    <div class="mode"><button id="mDig" class="on">⛏️</button><button id="mFlag">🚩</button></div>
+    <small id="tip"></small>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { levels:['Fácil','Medio','Difícil'], tip:'Mantén pulsado para poner bandera', win:'¡Despejado!', lose:'¡Boom!', best:'Mejor tiempo', sec:'s', newBest:'¡Nuevo récord!' }
+ : { levels:['Easy','Medium','Hard'], tip:'Long-press to place a flag', win:'Cleared!', lose:'Boom!', best:'Best time', sec:'s', newBest:'New record!' };
+document.getElementById('tip').textContent = T.tip;
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const LEVELS = [{ w: 8, h: 10, m: 10 }, { w: 10, h: 14, m: 24 }, { w: 12, h: 18, m: 45 }];
+let lv = 0, cells, w, h, mines, started, over, flagMode = false, timer, seconds, bests = {};
+const gridEl = document.getElementById('grid');
+
+T.levels.forEach((name, i) => {
+  const b = document.createElement('button'); b.className = 'lv'; b.textContent = name;
+  b.onclick = () => { lv = i; store.set('level', i); newGame(); };
+  document.getElementById('levels').appendChild(b);
+});
+function newGame() {
+  ({ w, h, m: mines } = LEVELS[lv]);
+  document.querySelectorAll('.lv').forEach((b, i) => b.classList.toggle('on', i === lv));
+  cells = Array.from({ length: w * h }, (_, i) => ({ i, x: i % w, y: Math.floor(i / w), mine: false, open: false, flag: false, n: 0 }));
+  started = over = false; seconds = 0; clearInterval(timer);
+  document.getElementById('time').textContent = 0;
+  document.getElementById('face').textContent = '🙂';
+  build(); updateLeft();
+}
+function build() {
+  const st = document.getElementById('stage').getBoundingClientRect();
+  const size = Math.floor(Math.min((st.width - 16 - (w - 1) * 3) / w, (st.height - 16 - (h - 1) * 3) / h, 44));
+  gridEl.style.gridTemplateColumns = `repeat(${w}, ${size}px)`;
+  gridEl.innerHTML = '';
+  cells.forEach(c => {
+    const el = document.createElement('div'); el.className = 'c';
+    el.style.height = size + 'px'; el.style.fontSize = size * .55 + 'px';
+    c.el = el; paint(c);
+    let press, longDone;
+    el.addEventListener('pointerdown', e => { longDone = false; press = setTimeout(() => { longDone = true; toggleFlag(c); }, 380); });
+    el.addEventListener('pointerup', () => { clearTimeout(press); if (!longDone) flagMode ? toggleFlag(c) : dig(c); });
+    el.addEventListener('pointerleave', () => clearTimeout(press));
+    el.addEventListener('contextmenu', e => e.preventDefault());
+    gridEl.appendChild(el);
+  });
+}
+function around(c) { const r = []; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const x = c.x + dx, y = c.y + dy; if ((dx || dy) && x >= 0 && y >= 0 && x < w && y < h) r.push(cells[y * w + x]); } return r; }
+function plant(safe) {
+  const forbidden = new Set([safe, ...around(safe)]);
+  const pool = cells.filter(c => !forbidden.has(c));
+  for (let k = 0; k < mines; k++) { const j = Math.floor(Math.random() * pool.length); pool.splice(j, 1)[0].mine = true; }
+  cells.forEach(c => c.n = around(c).filter(o => o.mine).length);
+}
+function dig(c) {
+  if (over || c.flag) return;
+  if (!started) { started = true; plant(c); timer = setInterval(() => { seconds++; document.getElementById('time').textContent = seconds; }, 1000); }
+  if (c.open) { // chord: open neighbours when the flags match the number
+    const ar = around(c);
+    if (c.n && ar.filter(o => o.flag).length === c.n) ar.filter(o => !o.open && !o.flag).forEach(o => open(o));
+  } else open(c);
+  check();
+}
+function open(c) {
+  if (c.open || c.flag || over) return;
+  c.open = true; paint(c);
+  if (c.mine) return lose(c);
+  if (!c.n) { const stack = [c]; while (stack.length) { const a = stack.pop(); around(a).forEach(o => { if (!o.open && !o.flag && !o.mine) { o.open = true; paint(o); if (!o.n) stack.push(o); } }); } }
+}
+function toggleFlag(c) { if (over || c.open) return; c.flag = !c.flag; paint(c); updateLeft(); buzz(15); }
+function updateLeft() { document.getElementById('left').textContent = mines - cells.filter(c => c.flag).length; }
+function paint(c) {
+  const el = c.el; el.className = 'c'; el.textContent = '';
+  if (c.open) { el.classList.add('o'); if (c.mine) el.classList.add('m'); else if (c.n) { el.textContent = c.n; el.classList.add('n' + c.n); } }
+  else if (c.flag) el.classList.add('f');
+}
+function lose(c) {
+  over = true; clearInterval(timer); document.getElementById('face').textContent = '😵';
+  c.el.classList.add('boom'); buzz([100, 50, 200]);
+  cells.forEach(o => { if (o.mine && !o.flag) { o.open = true; paint(o); } else if (o.flag && !o.mine) o.el.classList.add('wrong'); });
+  c.el.classList.add('boom');
+  toast(T.lose, '');
+}
+async function check() {
+  if (over || cells.some(c => !c.mine && !c.open)) return;
+  over = true; clearInterval(timer); document.getElementById('face').textContent = '😎';
+  cells.forEach(c => { if (c.mine && !c.flag) { c.flag = true; paint(c); } }); updateLeft();
+  const prevBest = bests[lv];
+  let sub = T.best + ': ' + (prevBest || seconds) + T.sec;
+  if (!prevBest || seconds < prevBest) { bests[lv] = seconds; await store.set('bests', bests); sub = '🏆 ' + T.newBest + ' ' + seconds + T.sec; }
+  buzz([30, 40, 30, 40, 60]); toast(T.win, sub);
+}
+function toast(title, sub) { const t = document.getElementById('toast'); t.innerHTML = title + (sub ? '<small></small>' : ''); if (sub) t.querySelector('small').textContent = sub; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+document.getElementById('face').onclick = newGame;
+document.getElementById('mDig').onclick = () => { flagMode = false; document.getElementById('mDig').classList.add('on'); document.getElementById('mFlag').classList.remove('on'); };
+document.getElementById('mFlag').onclick = () => { flagMode = true; document.getElementById('mFlag').classList.add('on'); document.getElementById('mDig').classList.remove('on'); };
+addEventListener('resize', () => { if (cells) build(); });
+(async () => { lv = await store.get('level', 0); bests = await store.get('bests', {}); newGame(); })();
+</script>
+</body>
+</html>

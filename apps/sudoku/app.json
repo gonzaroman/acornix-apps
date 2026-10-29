@@ -1,0 +1,14 @@
+{
+  "id": "sudoku",
+  "name": "Sudoku",
+  "emoji": "🧩",
+  "category": "games",
+  "description": "Endless Sudoku puzzles with one solution, four levels, notes, hints and undo.",
+  "prompt": "A Sudoku game that generates new puzzles with a single solution in four difficulty levels, with pencil notes, hints, undo, mistakes counter, timer and the game saved.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

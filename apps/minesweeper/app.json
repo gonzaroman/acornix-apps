@@ -1,0 +1,14 @@
+{
+  "id": "minesweeper",
+  "name": "Minesweeper",
+  "emoji": "💣",
+  "category": "games",
+  "description": "Clear the field without hitting a mine: three sizes, long-press to flag and best times.",
+  "prompt": "A Minesweeper game made for touch: tap to dig, long-press or a flag mode to place flags, chording on numbers, three board sizes, a timer and best times per level.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

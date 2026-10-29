@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>2048</title>
+<style>
+  :root { --bg:#faf6ef; --board:#bfae9c; --cell:#d6c8b8; --text:#5b4a3c; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; touch-action:none; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #wrap { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  header { width:min(92vw,460px); display:flex; align-items:center; gap:8px; }
+  h1 { margin:0 auto 0 0; font-size:52px; font-weight:900; letter-spacing:-2px; color:#776e65; }
+  .box { background:#bbada0; color:#fff; border-radius:12px; padding:6px 12px; text-align:center; min-width:72px; }
+  .box small { display:block; font-size:11px; font-weight:700; color:#eee4da; letter-spacing:1px; }
+  .box b { font-size:20px; font-variant-numeric:tabular-nums; }
+  .bar { width:min(92vw,460px); display:flex; gap:8px; align-items:center; }
+  .bar p { margin:0 auto 0 0; font-size:14px; color:#8f7a66; }
+  .btn { padding:10px 14px; border-radius:12px; background:#8f7a66; color:#fff; font-weight:800; font-size:14px; }
+  .btn:disabled { opacity:.4; }
+  #board { position:relative; width:min(92vw,460px,calc(100vh - 230px)); aspect-ratio:1; background:var(--board); border-radius:16px; padding:3%; }
+  .cell, .tile { position:absolute; width:21.5%; height:21.5%; border-radius:10px; }
+  .cell { background:var(--cell); }
+  .tile { display:flex; align-items:center; justify-content:center; font-weight:900; transition:transform .12s ease-in-out; z-index:1; }
+  .tile .in { width:100%; height:100%; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .tile.new .in { animation:pop .18s ease-out; }
+  .tile.merged .in { animation:bump .18s ease-out; }
+  @keyframes pop { from { transform:scale(0); } to { transform:scale(1); } }
+  @keyframes bump { 50% { transform:scale(1.18); } }
+  #msg { position:absolute; inset:0; border-radius:16px; background:#eee4dacc; display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5; text-align:center; }
+  #msg.show { display:flex; }
+  #msg h2 { margin:0; font-size:40px; color:#776e65; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <h1>2048</h1>
+    <div class="box"><small id="lScore"></small><b id="score">0</b></div>
+    <div class="box"><small id="lBest"></small><b id="best">0</b></div>
+  </header>
+  <div class="bar"><p id="hint"></p><button class="btn" id="undo"></button><button class="btn" id="new"></button></div>
+  <div id="board"><div id="msg"><h2 id="msgTitle"></h2><button class="btn" id="msgBtn"></button></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { score:'PUNTOS', best:'RÉCORD', hint:'Desliza para unir números iguales', undo:'↶ Deshacer', new:'Nueva', win:'¡2048!', keep:'Seguir jugando', over:'Sin movimientos', again:'Otra vez' }
+ : { score:'SCORE', best:'BEST', hint:'Swipe to merge equal numbers', undo:'↶ Undo', new:'New', win:'2048!', keep:'Keep going', over:'No moves left', again:'Try again' };
+for (const k of ['score', 'best']) document.getElementById('l' + k[0].toUpperCase() + k.slice(1)).textContent = T[k];
+document.getElementById('hint').textContent = T.hint;
+document.getElementById('undo').textContent = T.undo;
+document.getElementById('new').textContent = T.new;
+
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const COLORS = { 2:['#eee4da','#776e65'], 4:['#ede0c8','#776e65'], 8:['#f2b179','#fff'], 16:['#f59563','#fff'], 32:['#f67c5f','#fff'], 64:['#f65e3b','#fff'],
+  128:['#edcf72','#fff'], 256:['#edcc61','#fff'], 512:['#edc850','#fff'], 1024:['#edc53f','#fff'], 2048:['#edc22e','#fff'] };
+const boardEl = document.getElementById('board');
+let tiles = [], score = 0, best = 0, prev = null, won = false, keepGoing = false, nextId = 1;
+
+for (let i = 0; i < 16; i++) { const c = document.createElement('div'); c.className = 'cell'; place(c, i % 4, Math.floor(i / 4)); boardEl.appendChild(c); }
+function place(el, x, y) { el.style.left = (3 + x * 24) + '%'; el.style.top = (3 + y * 24) + '%'; }
+function pos(x, y) { return `translate(${x * 111.6}%, ${y * 111.6}%)`; }
+
+function render() {
+  boardEl.querySelectorAll('.tile').forEach(el => { if (!tiles.some(t => t.id == el.dataset.id)) el.remove(); });
+  for (const t of tiles) {
+    let el = boardEl.querySelector(`.tile[data-id="${t.id}"]`);
+    if (!el) {
+      el = document.createElement('div'); el.className = 'tile'; el.dataset.id = t.id;
+      el.style.left = '3%'; el.style.top = '3%';
+      el.innerHTML = '<div class="in"></div>'; boardEl.appendChild(el);
+    }
+    el.classList.toggle('new', !!t.isNew); el.classList.toggle('merged', !!t.merged);
+    el.style.transform = pos(t.x, t.y);
+    const [bg, fg] = COLORS[t.v] || ['#3c3a32', '#fff'];
+    const inner = el.firstChild;
+    inner.style.background = bg; inner.style.color = fg;
+    inner.style.boxShadow = t.v >= 128 ? `0 0 ${Math.min(30, Math.log2(t.v) * 2)}px ${bg}aa` : 'none';
+    inner.textContent = t.v;
+    const w = boardEl.clientWidth * .215;
+    inner.style.fontSize = (t.v < 100 ? w * .48 : t.v < 1000 ? w * .4 : w * .3) + 'px';
+  }
+  document.getElementById('score').textContent = score;
+  document.getElementById('best').textContent = Math.max(best, score);
+  document.getElementById('undo').disabled = !prev;
+}
+function empty() { const e = []; for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) if (!tiles.some(t => t.x === x && t.y === y)) e.push([x, y]); return e; }
+function add() { const e = empty(); if (!e.length) return; const [x, y] = e[Math.floor(Math.random() * e.length)]; tiles.push({ id: nextId++, x, y, v: Math.random() < .9 ? 2 : 4, isNew: true }); }
+function snapshot() { return { tiles: tiles.map(t => ({ id: t.id, x: t.x, y: t.y, v: t.v })), score }; }
+
+function move(dx, dy) {
+  if (document.getElementById('msg').classList.contains('show')) return;
+  const before = snapshot();
+  tiles = tiles.filter(t => !t.gone); tiles.forEach(t => { t.isNew = t.merged = false; });
+  let moved = false;
+  const order = [0, 1, 2, 3]; if (dx > 0 || dy > 0) order.reverse();
+  for (const a of order) for (const b of order) {
+    const x = dx ? a : b, y = dy ? a : b;
+    const t = tiles.find(t => t.x === x && t.y === y && !t.gone); if (!t) continue;
+    let nx = x, ny = y;
+    while (true) {
+      const tx = nx + dx, ty = ny + dy;
+      if (tx < 0 || ty < 0 || tx > 3 || ty > 3) break;
+      const o = tiles.find(o => o.x === tx && o.y === ty && !o.gone);
+      if (!o) { nx = tx; ny = ty; continue; }
+      if (o.v === t.v && !o.merged && !t.merged) { nx = tx; ny = ty; o.gone = true; t.v *= 2; t.merged = true; score += t.v; if (t.v === 2048 && !keepGoing) won = true; }
+      break;
+    }
+    if (nx !== x || ny !== y) { t.x = nx; t.y = ny; moved = true; }
+  }
+  if (!moved) return;
+  prev = before;
+  render();
+  setTimeout(() => {
+    tiles = tiles.filter(t => !t.gone); add(); render(); save();
+    if (tiles.some(t => t.merged)) buzz(10);
+    if (won && !keepGoing) show(T.win, T.keep, () => { keepGoing = true; won = false; hide(); });
+    else if (!canMove()) show(T.over, T.again, restart);
+  }, 120);
+}
+function canMove() {
+  if (empty().length) return true;
+  return tiles.some(t => tiles.some(o => (Math.abs(o.x - t.x) + Math.abs(o.y - t.y) === 1) && o.v === t.v));
+}
+async function save() {
+  if (score > best) { best = score; await store.set('best', best); }
+  store.set('game', { ...snapshot(), keepGoing });
+}
+function restart() { hide(); tiles = []; score = 0; prev = null; won = false; keepGoing = false; add(); add(); render(); save(); }
+function show(title, btn, action) { document.getElementById('msgTitle').textContent = title; const b = document.getElementById('msgBtn'); b.textContent = btn; b.onclick = action; document.getElementById('msg').classList.add('show'); }
+function hide() { document.getElementById('msg').classList.remove('show'); }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+document.getElementById('undo').onclick = () => { if (!prev) return; tiles = prev.tiles.map(t => ({ ...t })); score = prev.score; prev = null; hide(); boardEl.querySelectorAll('.tile').forEach(e => e.remove()); render(); save(); };
+document.getElementById('new').onclick = restart;
+let sx, sy;
+addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; });
+addEventListener('pointerup', e => {
+  if (sx == null) return;
+  const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 30) return;
+  if (Math.abs(dx) > Math.abs(dy)) move(Math.sign(dx), 0); else move(0, Math.sign(dy));
+});
+addEventListener('keydown', e => { const m = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] }[e.key]; if (m) { e.preventDefault(); move(...m); } });
+addEventListener('resize', render);
+
+(async () => {
+  best = await store.get('best', 0);
+  const g = await store.get('game', null);
+  if (g && g.tiles && g.tiles.length) { tiles = g.tiles; score = g.score; keepGoing = !!g.keepGoing; nextId = Math.max(...tiles.map(t => t.id)) + 1; render(); }
+  else restart();
+})();
+</script>
+</body>
+</html>
