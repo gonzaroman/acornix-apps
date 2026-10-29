@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Meme Maker</title>
+<style>
+  :root { --bg:#14141a; --card:#22222b; --ink:#f4f4f7; --muted:#9a9aa8; --a:#36d399; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:10px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:21px; flex:1; }
+  .btn { padding:9px 13px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; display:inline-block; }
+  .btn.main { background:var(--a); color:#0d2a1d; }
+  input[type=file] { display:none; }
+  .stage { flex:1; min-height:0; display:grid; place-items:center; }
+  canvas { max-width:100%; max-height:100%; border-radius:8px; touch-action:none; box-shadow:0 10px 30px #0008; }
+  .txt { display:flex; gap:8px; align-items:center; }
+  .txt input[type=text] { flex:1; min-width:0; padding:11px 12px; border-radius:12px; border:2px solid transparent; background:var(--card); color:var(--ink); font:inherit; font-weight:700; outline:none; }
+  .txt input[type=text]:focus { border-color:var(--a); }
+  .row { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; align-items:center; }
+  .row::-webkit-scrollbar { display:none; }
+  .tpl { flex:none; padding:8px 12px; border-radius:20px; background:var(--card); font-weight:800; font-size:13px; white-space:nowrap; }
+  .sw { flex:none; width:30px; height:30px; border-radius:50%; border:2px solid #fff4; }
+  .sw.on { outline:3px solid var(--a); outline-offset:1px; }
+  .sl { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:800; color:var(--muted); }
+  .sl input { flex:1; accent-color:var(--a); }
+  .hint { text-align:center; color:var(--muted); font-size:12px; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>😂 <span id="ttl"></span></h1><label class="btn"><input type="file" id="file" accept="image/*">🖼️</label><button class="btn main" id="save"></button></div>
+  <div class="stage"><canvas id="c"></canvas></div>
+  <div class="hint" id="hint"></div>
+  <div class="txt"><input type="text" id="t1" maxlength="80"></div>
+  <div class="txt"><input type="text" id="t2" maxlength="80"></div>
+  <div class="row" id="tpls"></div>
+  <div class="row" id="cols"></div>
+  <div class="sl"><span id="lSize"></span><input type="range" id="size" min="5" max="16" value="10"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Memes', save:'Guardar', top:'Texto de arriba', bottom:'Texto de abajo', hint:'Arrastra los textos para moverlos', size:'Tamaño', saved:'Meme guardado en esta app',
+  tpls:[['😎 Gafas', 'CUANDO POR FIN', 'TE FUNCIONA EL CÓDIGO'], ['😴 Lunes', 'YO EL LUNES', 'A LAS 7 DE LA MAÑANA'], ['🍕 Dieta', 'EMPIEZO LA DIETA', 'EL LUNES QUE VIENE'], ['🤔 Pensando', '¿Y SI…', '…MEJOR NO?'], ['🔥 Todo bien', 'TODO', 'BAJO CONTROL'], ['📱 Batería', '1% DE BATERÍA', 'Y SIN CARGADOR']] }
+ : { title:'Meme Maker', save:'Save', top:'Top text', bottom:'Bottom text', hint:'Drag the texts to move them', size:'Size', saved:'Meme saved in this app',
+  tpls:[['😎 Shades', 'WHEN YOUR CODE', 'FINALLY WORKS'], ['😴 Monday', 'ME ON MONDAY', 'AT 7 IN THE MORNING'], ['🍕 Diet', 'STARTING MY DIET', 'NEXT MONDAY'], ['🤔 Thinking', 'WHAT IF…', '…ACTUALLY NO'], ['🔥 This is fine', 'EVERYTHING IS', 'UNDER CONTROL'], ['📱 Battery', '1% BATTERY', 'AND NO CHARGER']] };
+// Backgrounds drawn in code, so the app works without a photo: gradient + big emoji.
+const BGS = [['#ff9a3c', '#ff4f6d', '😎'], ['#5b7cfa', '#2a2f6b', '😴'], ['#f7d046', '#f08a24', '🍕'], ['#7ad7f0', '#3a8dde', '🤔'], ['#ff6b35', '#a4161a', '🔥'], ['#43e97b', '#1b8a5a', '📱']];
+const COLS = ['#ffffff', '#ffe066', '#000000', '#ff6b6b', '#4dabf7'];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+['ttl', 'save', 'hint', 'lSize'].forEach((id, i) => $(id).textContent = [T.title, T.save, T.hint, T.size][i]);
+$('t1').placeholder = T.top; $('t2').placeholder = T.bottom;
+let photo = null, tpl = 0, col = 0;
+// Text positions as fractions of the canvas (centre of each line block).
+const pos = [{ x: .5, y: .1 }, { x: .5, y: .9 }];
+function setSize(w, h) { const s = Math.min(1, 1200 / Math.max(w, h)); cv.width = Math.round(w * s); cv.height = Math.round(h * s); }
+function wrap(text, max) {
+  const words = text.split(/\s+/).filter(Boolean), lines = []; let cur = '';
+  words.forEach(w => { const t = cur ? cur + ' ' + w : w; if (cx.measureText(t).width > max && cur) { lines.push(cur); cur = w; } else cur = t; });
+  if (cur) lines.push(cur); return lines;
+}
+let boxes = [];
+function draw() {
+  const W = cv.width, H = cv.height;
+  if (photo) cx.drawImage(photo, 0, 0, W, H);
+  else { const [a, b, e] = BGS[tpl], g = cx.createLinearGradient(0, 0, W, H); g.addColorStop(0, a); g.addColorStop(1, b); cx.fillStyle = g; cx.fillRect(0, 0, W, H); cx.font = `${W * .42}px system-ui`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(e, W / 2, H / 2); }
+  const fs = W * +$('size').value / 100, fill = COLS[col];
+  cx.font = `900 ${fs}px Impact, "Anton", "Arial Black", "Helvetica Neue", sans-serif`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.lineJoin = 'round';
+  boxes = [$('t1').value, $('t2').value].map((t, i) => {
+    const lines = wrap(t.toUpperCase(), W * .92), lh = fs * 1.08, h = lines.length * lh, p = pos[i];
+    const y0 = Math.max(lh / 2 + 4, Math.min(H - h + lh / 2 - 4, p.y * H - h / 2 + lh / 2));
+    lines.forEach((l, k) => { const y = y0 + k * lh; cx.lineWidth = fs / 7; cx.strokeStyle = fill === '#000000' ? '#fff' : '#000'; cx.strokeText(l, p.x * W, y); cx.fillStyle = fill; cx.fillText(l, p.x * W, y); });
+    return { x: p.x * W - W * .46, y: y0 - lh / 2, w: W * .92, h: Math.max(h, lh) };
+  });
+}
+function ui() {
+  $('tpls').innerHTML = T.tpls.map((t, i) => `<button class="tpl" data-i="${i}">${t[0]}</button>`).join('');
+  $('tpls').querySelectorAll('.tpl').forEach(b => b.onclick = () => { const t = T.tpls[+b.dataset.i]; tpl = +b.dataset.i; if (!photo) setSize(1080, 1080); $('t1').value = t[1]; $('t2').value = t[2]; pos[0] = { x: .5, y: .1 }; pos[1] = { x: .5, y: .9 }; draw(); });
+  $('cols').innerHTML = COLS.map((c, i) => `<button class="sw ${i === col ? 'on' : ''}" data-i="${i}" style="background:${c}"></button>`).join('');
+  $('cols').querySelectorAll('.sw').forEach(b => b.onclick = () => { col = +b.dataset.i; ui(); draw(); });
+}
+$('t1').oninput = draw; $('t2').oninput = draw; $('size').oninput = draw;
+$('file').onchange = e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  const im = new Image(); im.onload = () => { setSize(im.width, im.height); const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); photo = c; draw(); URL.revokeObjectURL(im.src); }; im.src = URL.createObjectURL(f);
+};
+const toC = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left) * cv.width / b.width, (e.clientY - b.top) * cv.height / b.height]; };
+let drag = -1, last = null;
+cv.addEventListener('pointerdown', e => { const [x, y] = toC(e); drag = boxes.findIndex(b => x >= b.x && x <= b.x + b.w && y >= b.y - 20 && y <= b.y + b.h + 20); if (drag >= 0) { cv.setPointerCapture(e.pointerId); last = [x, y]; } });
+cv.addEventListener('pointermove', e => { if (drag < 0) return; const [x, y] = toC(e); pos[drag].x = Math.max(.1, Math.min(.9, pos[drag].x + (x - last[0]) / cv.width)); pos[drag].y = Math.max(0, Math.min(1, pos[drag].y + (y - last[1]) / cv.height)); last = [x, y]; draw(); });
+cv.addEventListener('pointerup', () => { drag = -1; });
+$('save').onclick = async () => {
+  const url = cv.toDataURL('image/jpeg', .92), name = `meme-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); Acornix.vibrate(15); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (er) {}
+};
+setSize(1080, 1080); $('t1').value = T.tpls[0][1]; $('t2').value = T.tpls[0][2]; ui(); draw();
+document.fonts && document.fonts.ready.then(draw);
+</script>
+</body>
+</html>

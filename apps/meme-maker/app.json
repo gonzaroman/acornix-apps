@@ -1,0 +1,15 @@
+{
+  "id": "meme-maker",
+  "name": "Meme Maker",
+  "emoji": "🌰",
+  "category": "photo-video",
+  "description": "Classic memes with bold outlined text on your own photo or a ready made background. Drag the text, change size and colour, save it.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 14
+}

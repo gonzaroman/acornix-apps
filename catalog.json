@@ -1874,6 +1874,29 @@
       "trending": 0
     },
     {
+      "id": "meme-maker",
+      "name": "Meme Maker",
+      "emoji": "🌰",
+      "category": "photo-video",
+      "description": "Classic memes with bold outlined text on your own photo or a ready made background. Drag the text, change size and colour, save it.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8744,
+      "sha256": "5f084d736931a6040bbdc20a2574729f7613be1794f41314de2070da93580d90",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "meditation",
       "name": "Meditation",
       "emoji": "🧘",
