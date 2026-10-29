@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Tennis Scorer</title>
+<style>
+  :root { --court:#1f6f50; --court2:#185c42; --ink:#fff; --ball:#d9f99d; --card:#ffffff1a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--court); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { background:repeating-linear-gradient(90deg,var(--court) 0 60px,var(--court2) 60px 120px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 14px); }
+  .top { display:flex; justify-content:space-between; align-items:center; }
+  .top h1 { margin:0; font-size:20px; }
+  .top button { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; }
+  .table { margin-top:12px; background:#0b2a1f; border-radius:18px; padding:10px 12px; border:2px solid #ffffff30; }
+  .prow { display:flex; align-items:center; gap:8px; padding:6px 0; }
+  .prow + .prow { border-top:1px solid #ffffff18; }
+  .prow .nm { flex:1; font-weight:800; font-size:17px; display:flex; align-items:center; gap:8px; min-width:0; }
+  .prow .nm span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .srv { width:12px; height:12px; border-radius:50%; background:var(--ball); box-shadow:0 0 8px var(--ball); flex:none; visibility:hidden; }
+  .srv.on { visibility:visible; }
+  .set { width:26px; text-align:center; font-weight:800; font-size:18px; color:#ffffffaa; font-variant-numeric:tabular-nums; }
+  .set.cur { color:#fff; }
+  .set.won { color:var(--ball); }
+  .pts { width:54px; text-align:center; font-weight:900; font-size:22px; color:#0b2a1f; background:var(--ball); border-radius:10px; padding:2px 0; font-variant-numeric:tabular-nums; }
+  .info { text-align:center; font-weight:900; letter-spacing:2px; text-transform:uppercase; margin:12px 0 0; min-height:22px; color:var(--ball); }
+  .tap { flex:1; display:grid; grid-template-rows:1fr 1fr; gap:10px; margin-top:12px; }
+  .tap button { border-radius:24px; background:#ffffff16; border:2px solid #ffffff40; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+  .tap button:active { background:#ffffff30; }
+  .tap b { font-size:22px; } .tap small { opacity:.75; font-weight:700; }
+  .tap .p { font-size:64px; font-weight:900; line-height:1; font-variant-numeric:tabular-nums; }
+  .bot { display:flex; gap:8px; margin-top:10px; }
+  .bot button { flex:1; padding:14px; border-radius:16px; background:var(--card); font-weight:800; }
+  .menu { position:fixed; inset:0; background:#000a; display:none; align-items:flex-end; z-index:5; }
+  .menu.on { display:flex; }
+  .menu > div { width:100%; background:#0b2a1f; border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .menu label { display:block; font-weight:800; margin:12px 0 6px; font-size:14px; color:#ffffffbb; }
+  .menu input { width:100%; padding:12px; border-radius:12px; border:0; background:#ffffff18; color:#fff; font:inherit; font-weight:700; margin-bottom:6px; }
+  .seg { display:flex; gap:6px; }
+  .seg button { flex:1; padding:12px; border-radius:12px; background:#ffffff14; font-weight:800; }
+  .seg button.on { background:var(--ball); color:#0b2a1f; }
+  .go { width:100%; margin-top:16px; padding:15px; border-radius:16px; background:var(--ball); color:#0b2a1f; font-weight:900; font-size:17px; }
+  .win { position:fixed; inset:0; display:none; place-items:center; text-align:center; background:#0b2a1fee; z-index:6; padding:24px; }
+  .win.on { display:grid; }
+  .win .e { font-size:80px; } .win b { display:block; font-size:30px; margin:8px 0; } .win p { opacity:.8; font-weight:700; font-size:18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎾 <span id="ttl"></span></h1><button id="menuB"></button></div>
+  <div class="table" id="table"></div>
+  <div class="info" id="info"></div>
+  <div class="tap"><button id="p0"></button><button id="p1"></button></div>
+  <div class="bot"><button id="undo"></button><button id="swapSrv"></button></div>
+</div>
+<div class="menu" id="menu"><div>
+  <label id="lNames"></label><input id="n0" maxlength="16"><input id="n1" maxlength="16">
+  <label id="lBest"></label><div class="seg" id="best"><button data-b="1">1</button><button data-b="3">3</button><button data-b="5">5</button></div>
+  <label id="lAd"></label><div class="seg" id="ad"><button data-a="1"></button><button data-a="0"></button></div>
+  <button class="go" id="newM"></button>
+</div></div>
+<div class="win" id="win"><div><div class="e">🏆</div><b id="wT"></b><p id="wP"></p><button class="go" id="wB"></button></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Tenis', menu:'Partido', point:'Punto', names:'Jugadores', best:'Al mejor de… sets', ad:'Ventaja', adOn:'Con ventaja', adOff:'Punto de oro', newM:'Empezar partido', undo:'↶ Deshacer', srv:'🎾 Cambiar saque', deuce:'Iguales', adv:'Ventaja', tb:'Tie-break', setPt:'Bola de set', matchPt:'Bola de partido', breakPt:'Bola de break', wins:'gana', again:'Nuevo partido', p:['Jugador 1','Jugador 2'] }
+ : { title:'Tennis', menu:'Match', point:'Point', names:'Players', best:'Best of… sets', ad:'Advantage', adOn:'Advantage', adOff:'No-ad (golden point)', newM:'Start match', undo:'↶ Undo', srv:'🎾 Switch server', deuce:'Deuce', adv:'Advantage', tb:'Tie-break', setPt:'Set point', matchPt:'Match point', breakPt:'Break point', wins:'wins', again:'New match', p:['Player 1','Player 2'] };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let m, hist = [];
+const fresh = (names = T.p, best = 3, ad = true) => ({ names: [...names], best, ad, sets: [[0, 0]], pts: [0, 0], server: 0, tb: false, tbStart: 0, done: null });
+['ttl', 'menuB', 'lNames', 'lBest', 'lAd', 'newM', 'undo', 'swapSrv', 'wB'].forEach((id, i) => $(id).textContent = [T.title, T.menu, T.names, T.best, T.ad, T.newM, T.undo, T.srv, T.again][i]);
+$('ad').children[0].textContent = T.adOn; $('ad').children[1].textContent = T.adOff;
+function setWinner(s) { const [a, b] = s; if ((a >= 6 || b >= 6) && Math.abs(a - b) >= 2) return a > b ? 0 : 1; if (a === 7 && b === 6) return 0; if (b === 7 && a === 6) return 1; return null; }
+function label(p) {
+  const [a, b] = m.pts, me = p === 0 ? a : b, other = p === 0 ? b : a;
+  if (m.tb) return String(me);
+  if (a >= 3 && b >= 3) { if (!m.ad) return '40'; if (me === other) return '40'; return me > other ? 'AD' : '40'; }
+  return ['0', '15', '30', '40'][Math.min(me, 3)];
+}
+function point(p) {
+  if (m.done != null) return;
+  hist.push(JSON.stringify(m)); if (hist.length > 300) hist.shift();
+  m.pts[p]++;
+  const [a, b] = m.pts, cur = m.sets[m.sets.length - 1];
+  let gameWon = null;
+  if (m.tb) { if ((a >= 7 || b >= 7) && Math.abs(a - b) >= 2) gameWon = a > b ? 0 : 1; if ((a + b) % 2 === 1) m.server = 1 - m.server; }
+  else if (m.ad) { if ((a >= 4 || b >= 4) && Math.abs(a - b) >= 2) gameWon = a > b ? 0 : 1; }
+  else if (a >= 4 || b >= 4) gameWon = a > b ? 0 : 1;
+  if (gameWon != null) {
+    cur[gameWon]++; m.pts = [0, 0];
+    if (m.tb) { m.tb = false; m.server = 1 - m.tbStart; } else m.server = 1 - m.server;
+    const w = setWinner(cur);
+    if (w != null) {
+      const need = Math.ceil(m.best / 2), won = m.sets.filter(s => setWinner(s) === w).length;
+      if (won >= need) { m.done = w; showWin(); } else m.sets.push([0, 0]);
+    } else if (cur[0] === 6 && cur[1] === 6) { m.tb = true; m.tbStart = m.server; }
+    chime(); try { if (window.Acornix) Acornix.vibrate([30, 40, 30]); } catch (e) {}
+  } else { beep(); try { if (window.Acornix) Acornix.vibrate(15); } catch (e) {} }
+  store.set('match', m); render();
+}
+// What's at stake on the next point, to show "set point", "break point"...
+function stake() {
+  if (m.done != null) return '';
+  for (const p of [0, 1]) {
+    const pts = [...m.pts]; pts[p]++;
+    const [a, b] = pts, won = m.tb ? (a >= 7 || b >= 7) && Math.abs(a - b) >= 2 : m.ad ? (a >= 4 || b >= 4) && Math.abs(a - b) >= 2 : a >= 4 || b >= 4;
+    if (!won) continue;
+    const cur = [...m.sets[m.sets.length - 1]]; cur[p]++;
+    if (setWinner(cur) === p) { const sets = m.sets.slice(0, -1).filter(x => setWinner(x) === p).length + 1; return `${sets >= Math.ceil(m.best / 2) ? T.matchPt : T.setPt} · ${m.names[p]}`; }
+    if (!m.tb && p !== m.server) return `${T.breakPt} · ${m.names[p]}`;
+  }
+  if (m.tb) return T.tb;
+  if (m.pts[0] >= 3 && m.pts[1] >= 3) return m.pts[0] === m.pts[1] ? T.deuce : `${T.adv} · ${m.names[m.pts[0] > m.pts[1] ? 0 : 1]}`;
+  return '';
+}
+function render() {
+  $('table').innerHTML = [0, 1].map(p => `<div class="prow"><span class="nm"><i class="srv ${m.server === p && m.done == null ? 'on' : ''}"></i><span></span></span>${m.sets.map((s, i) => { const w = setWinner(s); return `<span class="set ${i === m.sets.length - 1 && m.done == null ? 'cur' : ''} ${w === p ? 'won' : ''}">${s[p]}</span>`; }).join('')}<span class="pts">${m.done == null ? label(p) : ''}</span></div>`).join('');
+  $('table').querySelectorAll('.nm span').forEach((s, p) => s.textContent = m.names[p]);
+  [0, 1].forEach(p => { $('p' + p).innerHTML = `<small>${T.point}</small><span class="p">${label(p)}</span><b></b>`; $('p' + p).querySelector('b').textContent = (m.server === p ? '🎾 ' : '') + m.names[p]; });
+  $('info').textContent = stake();
+}
+function showWin() { $('wT').textContent = `${m.names[m.done]} ${T.wins}`; $('wP').textContent = m.sets.map(s => `${s[0]}-${s[1]}`).join('  '); $('win').classList.add('on'); }
+$('p0').onclick = () => point(0); $('p1').onclick = () => point(1);
+$('undo').onclick = () => { if (!hist.length) return; m = JSON.parse(hist.pop()); $('win').classList.remove('on'); store.set('match', m); render(); };
+$('swapSrv').onclick = () => { hist.push(JSON.stringify(m)); m.server = 1 - m.server; store.set('match', m); render(); };
+let draft = {};
+function openMenu() { draft = { best: m.best, ad: m.ad }; $('n0').value = m.names[0]; $('n1').value = m.names[1]; paintMenu(); $('menu').classList.add('on'); }
+function paintMenu() { $('best').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.b === draft.best)); $('ad').querySelectorAll('button').forEach(b => b.classList.toggle('on', !!+b.dataset.a === draft.ad)); }
+$('best').querySelectorAll('button').forEach(b => b.onclick = () => { draft.best = +b.dataset.b; paintMenu(); });
+$('ad').querySelectorAll('button').forEach(b => b.onclick = () => { draft.ad = !!+b.dataset.a; paintMenu(); });
+$('menuB').onclick = openMenu;
+$('newM').onclick = () => { m = fresh([$('n0').value.trim() || T.p[0], $('n1').value.trim() || T.p[1]], draft.best, draft.ad); hist = []; store.set('match', m); $('menu').classList.remove('on'); render(); };
+$('menu').onclick = e => { if (e.target === $('menu')) $('menu').classList.remove('on'); };
+$('wB').onclick = () => { $('win').classList.remove('on'); openMenu(); };
+let ac; function tone(f, d, t = 0) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = .06; o.connect(g); g.connect(ac.destination); const s = ac.currentTime + t; g.gain.setValueAtTime(.06, s); g.gain.exponentialRampToValueAtTime(.0001, s + d); o.start(s); o.stop(s + d); } catch (e) {} }
+function beep() { tone(880, .07); } function chime() { tone(660, .15); tone(990, .2, .12); }
+(async () => { m = await store.get('match', null) || fresh(); render(); if (m.done != null) showWin(); })();
+</script>
+</body>
+</html>

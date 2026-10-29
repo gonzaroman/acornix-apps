@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Darts 501</title>
+<style>
+  :root { --bg:#121212; --card:#1e1e1e; --ink:#f5f5f5; --muted:#9a9a9a; --r:#e8343a; --g:#1f9d55; --cream:#f3e7c9; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 10px); gap:8px; }
+  .top { display:flex; justify-content:space-between; align-items:center; }
+  .top h1 { margin:0; font-size:20px; }
+  .top button { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; }
+  .players { display:grid; grid-template-columns:repeat(var(--n,2),1fr); gap:6px; }
+  .pl { border-radius:16px; background:var(--card); padding:10px; text-align:center; border:2px solid transparent; }
+  .pl.on { border-color:var(--r); background:#2a1415; }
+  .pl small { color:var(--muted); font-weight:800; font-size:12px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pl b { font-size:40px; font-weight:900; font-variant-numeric:tabular-nums; line-height:1.1; display:block; }
+  .pl em { font-style:normal; color:var(--muted); font-size:11px; font-weight:700; }
+  .turn { display:flex; gap:6px; align-items:center; }
+  .dart { flex:1; height:46px; border-radius:12px; background:var(--card); display:grid; place-items:center; font-weight:900; font-size:18px; border:2px dashed #333; }
+  .dart.f { border-style:solid; border-color:#444; }
+  .sum { width:70px; text-align:center; font-weight:900; font-size:22px; }
+  .hint { min-height:20px; text-align:center; font-weight:800; color:var(--cream); font-size:14px; }
+  .mods { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .mods button { padding:10px; border-radius:12px; background:var(--card); font-weight:900; }
+  .mods button.on { background:var(--r); }
+  .mods button.on.t { background:var(--g); }
+  .pad { flex:1; display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+  .pad button { border-radius:12px; background:var(--card); font-weight:900; font-size:19px; min-height:40px; }
+  .pad button:active { background:#333; }
+  .pad .bull { background:#3a1c1c; } .pad .miss { color:var(--muted); font-size:14px; } .pad .undo { color:var(--cream); font-size:14px; }
+  .menu, .win { position:fixed; inset:0; background:#000c; display:none; align-items:flex-end; z-index:5; }
+  .menu.on { display:flex; } .win.on { display:grid; place-items:center; }
+  .menu > div { width:100%; background:#1a1a1a; border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .menu label { display:block; font-weight:800; margin:12px 0 6px; font-size:14px; color:#ccc; }
+  .menu input { width:100%; padding:12px; border-radius:12px; border:0; background:#2a2a2a; color:#fff; font:inherit; font-weight:700; margin-bottom:6px; }
+  .seg { display:flex; gap:6px; }
+  .seg button { flex:1; padding:12px; border-radius:12px; background:#2a2a2a; font-weight:800; }
+  .seg button.on { background:var(--r); }
+  .go { width:100%; margin-top:16px; padding:15px; border-radius:16px; background:var(--r); font-weight:900; font-size:17px; }
+  .win > div { text-align:center; padding:24px; }
+  .win .e { font-size:80px; } .win b { display:block; font-size:30px; margin:6px 0; } .win p { color:var(--muted); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎯 <span id="ttl"></span></h1><button id="menuB"></button></div>
+  <div class="players" id="players"></div>
+  <div class="turn"><div class="dart" id="d0"></div><div class="dart" id="d1"></div><div class="dart" id="d2"></div><div class="sum" id="sum"></div></div>
+  <div class="hint" id="hint"></div>
+  <div class="mods"><button data-m="1" id="m1"></button><button data-m="2" id="m2"></button><button data-m="3" class="t" id="m3"></button></div>
+  <div class="pad" id="pad"></div>
+</div>
+<div class="menu" id="menu"><div>
+  <label id="lStart"></label><div class="seg" id="start"><button data-s="301">301</button><button data-s="501">501</button><button data-s="701">701</button></div>
+  <label id="lOut"></label><div class="seg" id="out"><button data-o="1"></button><button data-o="0"></button></div>
+  <label id="lPl"></label><input id="n0" maxlength="12"><input id="n1" maxlength="12"><input id="n2" maxlength="12"><input id="n3" maxlength="12">
+  <button class="go" id="newG"></button>
+</div></div>
+<div class="win" id="win"><div><div class="e">🎯</div><b id="wT"></b><p id="wP"></p><button class="go" id="wB"></button></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Dardos', newG:'Partida', single:'Simple', double:'Doble', triple:'Triple', miss:'Fallo', undo:'↶', bust:'¡Te has pasado!', checkout:'Cierre', avg:'media', start:'Puntos de salida', out:'Para cerrar', dOut:'Doble obligatorio', sOut:'Cualquiera', players:'Jugadores', go:'Empezar', wins:'gana', darts:'dardos', again:'Otra partida', p:['Jugador 1','Jugador 2'] }
+ : { title:'Darts', newG:'Game', single:'Single', double:'Double', triple:'Treble', miss:'Miss', undo:'↶', bust:'Bust!', checkout:'Checkout', avg:'avg', start:'Starting score', out:'Finish on', dOut:'Double out', sOut:'Any', players:'Players', go:'Start', wins:'wins', darts:'darts', again:'Play again', p:['Player 1','Player 2'] };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let g, mod = 1, hist = [];
+const fresh = (names = T.p, start = 501, dout = true) => ({ start, dout, cur: 0, players: names.map(n => ({ name: n, left: start, darts: 0, scored: 0 })), turn: [], done: null });
+['ttl', 'menuB', 'lStart', 'lOut', 'lPl', 'newG', 'wB'].forEach((id, i) => $(id).textContent = [T.title, T.newG, T.start, T.out, T.players, T.go, T.again][i]);
+$('m1').textContent = T.single; $('m2').textContent = T.double; $('m3').textContent = T.triple;
+$('out').children[0].textContent = T.dOut; $('out').children[1].textContent = T.sOut;
+$('pad').innerHTML = [...Array(20)].map((_, i) => `<button data-v="${i + 1}">${i + 1}</button>`).join('') + `<button class="bull" data-v="25">25</button><button class="bull" data-v="50">🎯 50</button><button class="miss" data-v="0">${T.miss}</button><button class="undo" id="undo" style="grid-column:span 2">${T.undo}</button>`;
+// Checkout hint: the first finish found for the darts left, trying big scores first and favourite doubles.
+const DARTS = []; for (let n = 20; n >= 1; n--) DARTS.push([n * 3, 'T' + n], [n * 2, 'D' + n], [n, 'S' + n]); DARTS.push([50, 'BULL'], [25, '25']);
+const FAV = ['D20', 'D16', 'D18', 'D12', 'D10', 'D8', 'BULL'];
+const FINISH_D = DARTS.filter(d => d[1][0] === 'D' || d[1] === 'BULL').sort((a, b) => ((FAV.indexOf(a[1]) + 1) || 99) - ((FAV.indexOf(b[1]) + 1) || 99));
+const SETUP = [...DARTS].sort((a, b) => b[0] - a[0]);
+function checkout(left, n, dout) {
+  if (left > 170 || left < 1 || (dout && left < 2)) return null;
+  const fin = dout ? FINISH_D : SETUP;
+  for (const f of fin) if (f[0] === left) return [f[1]];
+  if (n >= 2) for (const f of fin) for (const a of SETUP) if (a[0] + f[0] === left) return [a[1], f[1]];
+  if (n >= 3) for (const f of fin) for (const a of SETUP) for (const b of SETUP) if (a[0] + b[0] + f[0] === left) return [a[1], b[1], f[1]];
+  return null;
+}
+const label = d => d.v === 0 ? '✕' : d.v === 50 ? 'BULL' : d.v === 25 ? '25' : ['', '', 'D', 'T'][d.m] + d.base;
+function render() {
+  $('players').style.setProperty('--n', g.players.length);
+  $('players').innerHTML = g.players.map((p, i) => `<div class="pl ${i === g.cur && g.done == null ? 'on' : ''}"><small></small><b>${i === g.cur ? p.left - g.turn.reduce((s, d) => s + d.v, 0) : p.left}</b><em>${T.avg} ${p.darts ? (p.scored / p.darts * 3).toFixed(1) : '–'}</em></div>`).join('');
+  $('players').querySelectorAll('small').forEach((s, i) => s.textContent = g.players[i].name);
+  [0, 1, 2].forEach(i => { const d = g.turn[i]; $('d' + i).textContent = d ? label(d) : ''; $('d' + i).classList.toggle('f', !!d); });
+  $('sum').textContent = g.turn.reduce((s, d) => s + d.v, 0);
+  const p = g.players[g.cur], left = p.left - g.turn.reduce((s, d) => s + d.v, 0), co = checkout(left, 3 - g.turn.length, g.dout);
+  $('hint').textContent = co ? `${T.checkout}: ${co.join(' · ')}` : '';
+  [1, 2, 3].forEach(m => $('m' + m).classList.toggle('on', mod === m));
+}
+function throwDart(base) {
+  if (g.done != null || g.turn.length >= 3) return;
+  hist.push(JSON.stringify(g));
+  const m = base === 25 || base === 50 || base === 0 ? 1 : mod, v = base * m, d = { base, m: base === 50 ? 2 : m, v };
+  g.turn.push(d); mod = 1;
+  const p = g.players[g.cur], left = p.left - g.turn.reduce((s, x) => s + x.v, 0);
+  const isDouble = d.m === 2;
+  if (left < 0 || (g.dout && left === 1) || (left === 0 && g.dout && !isDouble)) { bust(); return; }
+  if (left === 0) { p.darts += g.turn.length; p.scored += g.turn.reduce((s, x) => s + x.v, 0); p.left = 0; g.done = g.cur; save(); render(); win(); return; }
+  tick(v); save(); render();
+  if (g.turn.length === 3) setTimeout(next, 700);
+}
+function bust() { $('hint').textContent = T.bust; const p = g.players[g.cur]; p.darts += g.turn.length; buzz([80, 60, 80]); tone(180, .3); render(); $('hint').textContent = '💥 ' + T.bust; g.turn = g.turn.map(d => ({ ...d, v: 0 })); setTimeout(() => { g.turn = []; g.cur = (g.cur + 1) % g.players.length; save(); render(); }, 1100); }
+function next() { if (g.turn.length < 3 || g.done != null) return; const p = g.players[g.cur], s = g.turn.reduce((a, d) => a + d.v, 0); p.left -= s; p.darts += 3; p.scored += s; if (s === 180) { say('One hundred and eighty!'); } g.turn = []; g.cur = (g.cur + 1) % g.players.length; save(); render(); }
+function win() { const p = g.players[g.done]; $('wT').textContent = `${p.name} ${T.wins}`; $('wP').textContent = `${p.darts} ${T.darts} · ${T.avg} ${(g.start / p.darts * 3).toFixed(1)}`; $('win').classList.add('on'); buzz([60, 60, 60, 60, 200]); tone(784, .2); setTimeout(() => tone(1046, .4), 180); }
+$('pad').querySelectorAll('[data-v]').forEach(b => b.onclick = () => throwDart(+b.dataset.v));
+$('undo').onclick = () => { if (hist.length) { g = JSON.parse(hist.pop()); $('win').classList.remove('on'); save(); render(); } };
+[1, 2, 3].forEach(m => $('m' + m).onclick = () => { mod = mod === m ? 1 : m; render(); });
+function save() { store.set('game', g); }
+let draft = { start: 501, dout: true };
+function openMenu() { draft = { start: g.start, dout: g.dout }; g.players.forEach((p, i) => $('n' + i).value = p.name); for (let i = g.players.length; i < 4; i++) $('n' + i).value = ''; paint(); $('menu').classList.add('on'); }
+function paint() { $('start').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.s === draft.start)); $('out').querySelectorAll('button').forEach(b => b.classList.toggle('on', !!+b.dataset.o === draft.dout)); }
+$('start').querySelectorAll('button').forEach(b => b.onclick = () => { draft.start = +b.dataset.s; paint(); });
+$('out').querySelectorAll('button').forEach(b => b.onclick = () => { draft.dout = !!+b.dataset.o; paint(); });
+$('menuB').onclick = openMenu;
+$('newG').onclick = () => { const names = [0, 1, 2, 3].map(i => $('n' + i).value.trim()).filter(Boolean); g = fresh(names.length ? names : T.p, draft.start, draft.dout); hist = []; save(); $('menu').classList.remove('on'); render(); };
+$('menu').onclick = e => { if (e.target === $('menu')) $('menu').classList.remove('on'); };
+$('wB').onclick = () => { $('win').classList.remove('on'); g = fresh(g.players.map(p => p.name), g.start, g.dout); hist = []; save(); render(); };
+let ac; function tone(f, d) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = f; gn.gain.value = .07; o.connect(gn); gn.connect(ac.destination); gn.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d); o.start(); o.stop(ac.currentTime + d); } catch (e) {} }
+function tick(v) { tone(v >= 40 ? 900 : 600, .06); buzz(12); }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+function say(t) { try { if (window.Acornix) Acornix.speak(t, 'en-GB'); } catch (e) {} }
+(async () => { g = await store.get('game', null) || fresh(); render(); if (g.done != null) win(); })();
+</script>
+</body>
+</html>

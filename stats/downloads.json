@@ -100,6 +100,11 @@
       "base": 0,
       "count": 0
     },
+    "darts-501": {
+      "asset": 689455034,
+      "base": 0,
+      "count": 0
+    },
     "date-calculator": {
       "asset": 689379107,
       "base": 0,
@@ -195,6 +200,11 @@
       "base": 0,
       "count": 0
     },
+    "golf-scorecard": {
+      "asset": 689454945,
+      "base": 0,
+      "count": 0
+    },
     "habit-streaks": {
       "asset": 689166708,
       "base": 0,
@@ -222,6 +232,11 @@
     },
     "kanban": {
       "asset": 689166735,
+      "base": 0,
+      "count": 0
+    },
+    "lap-timer": {
+      "asset": 689455123,
       "base": 0,
       "count": 0
     },
@@ -320,6 +335,11 @@
       "base": 0,
       "count": 0
     },
+    "pace-calculator": {
+      "asset": 689454892,
+      "base": 0,
+      "count": 0
+    },
     "periodic-table": {
       "asset": 689343842,
       "base": 0,
@@ -410,6 +430,11 @@
       "base": 0,
       "count": 0
     },
+    "scoreboard": {
+      "asset": 689454717,
+      "base": 0,
+      "count": 0
+    },
     "sky-hopper": {
       "asset": 688998851,
       "base": 0,
@@ -485,6 +510,11 @@
       "base": 0,
       "count": 0
     },
+    "tactics-board": {
+      "asset": 689454989,
+      "base": 0,
+      "count": 0
+    },
     "task-breaker-ai": {
       "asset": 689167010,
       "base": 0,
@@ -492,6 +522,16 @@
     },
     "tasks": {
       "asset": 689166620,
+      "base": 0,
+      "count": 0
+    },
+    "team-picker": {
+      "asset": 689454857,
+      "base": 0,
+      "count": 0
+    },
+    "tennis-scorer": {
+      "asset": 689454755,
       "base": 0,
       "count": 0
     },
@@ -512,6 +552,16 @@
     },
     "torch-sos": {
       "asset": 689141648,
+      "base": 0,
+      "count": 0
+    },
+    "tournament": {
+      "asset": 689454807,
+      "base": 0,
+      "count": 0
+    },
+    "training-plan-ai": {
+      "asset": 689455167,
       "base": 0,
       "count": 0
     },

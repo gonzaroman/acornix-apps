@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Tactics Board</title>
+<style>
+  :root { --ink:#fff; --bar:#0f2b1a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:#0b2214; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 8px) 10px calc(env(safe-area-inset-bottom) + 10px); gap:8px; }
+  .bar { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+  .bar::-webkit-scrollbar { display:none; }
+  .bar button { flex:none; padding:9px 12px; border-radius:12px; background:#ffffff18; font-weight:800; font-size:13px; }
+  .bar button.on { background:#fff; color:#0b2214; }
+  .pitch { flex:1; position:relative; }
+  canvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; border-radius:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar" id="forms"></div>
+  <div class="pitch"><canvas id="c"></canvas></div>
+  <div class="bar" id="tools"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { move:'✋ Mover', draw:'✏️ Flecha', run:'〰️ Carrera', undo:'↶', clear:'🧹 Borrar trazos', rival:'👥 Rival', snap:'📷 Guardar', saved:'Guardado en Archivos' }
+ : { move:'✋ Move', draw:'✏️ Arrow', run:'〰️ Run', undo:'↶', clear:'🧹 Clear lines', rival:'👥 Opponent', snap:'📷 Save', saved:'Saved to Files' };
+// Formations as rows from defence to attack (goalkeeper added automatically).
+const FORMS = { '4-4-2': [4, 4, 2], '4-3-3': [4, 3, 3], '3-5-2': [3, 5, 2], '4-2-3-1': [4, 2, 3, 1], '5-3-2': [5, 3, 2], '3-4-3': [3, 4, 3], '7 (2-3-1)': [2, 3, 1] };
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// Positions are 0..1 in pitch space: x across, y from our goal (1) to theirs (0).
+let st = { form: '4-3-3', rival: false, tokens: [], lines: [] }, tool = 'move', W, H, dpr, hist = [];
+function place(form, team) {
+  const rows = FORMS[form], out = [{ team, n: 1, x: .5, y: team ? .04 : .96 }]; let num = 2;
+  rows.forEach((cnt, r) => { const y = .87 - r * (.3 / Math.max(1, rows.length - 1)); for (let i = 0; i < cnt; i++) out.push({ team, n: num++, x: (i + 1) / (cnt + 1), y: team ? 1 - y : y }); });
+  return out;
+}
+function setForm(f) { st.form = f; st.tokens = [...place(f, 0), ...(st.rival ? place('4-4-2', 1) : []), { team: 2, x: .5, y: .5 }]; save(); draw(); paintBars(); }
+function size() { const r = cv.parentElement.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; draw(); }
+addEventListener('resize', size);
+// Pitch rectangle keeps football proportions (68 x 105) inside the canvas.
+function rect() { const ratio = 68 / 105; let w = W - 8, h = w / ratio; if (h > H - 8) { h = H - 8; w = h * ratio; } return { x: (W - w) / 2, y: (H - h) / 2, w, h }; }
+const toPx = (p, R) => [R.x + p.x * R.w, R.y + p.y * R.h];
+function draw() {
+  if (!W) return; const R = rect();
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, W, H);
+  for (let i = 0; i < 12; i++) { cx.fillStyle = i % 2 ? '#2f8f4e' : '#2a8046'; cx.fillRect(R.x, R.y + i * R.h / 12, R.w, R.h / 12 + 1); }
+  cx.strokeStyle = '#ffffffd0'; cx.lineWidth = 2; const L = (x, y, w, h) => cx.strokeRect(R.x + x * R.w, R.y + y * R.h, w * R.w, h * R.h);
+  L(0, 0, 1, 1); cx.beginPath(); cx.moveTo(R.x, R.y + R.h / 2); cx.lineTo(R.x + R.w, R.y + R.h / 2); cx.stroke();
+  cx.beginPath(); cx.arc(R.x + R.w / 2, R.y + R.h / 2, R.w * .135, 0, 7); cx.stroke();
+  [0, 1].forEach(t => { L(.2, t ? 1 - .157 : 0, .6, .157); L(.37, t ? 1 - .052 : 0, .26, .052); cx.beginPath(); cx.arc(R.x + R.w / 2, R.y + (t ? 1 - .105 : .105) * R.h, R.w * .135, t ? Math.PI * 1.2 : .2 * Math.PI, t ? Math.PI * 1.8 : .8 * Math.PI); cx.stroke(); });
+  // Lines: arrows (passes) and dashed runs.
+  st.lines.forEach(l => line(l, R)); if (cur) line(cur, R);
+  const rad = Math.max(13, R.w * .045);
+  st.tokens.forEach(t => {
+    const [x, y] = toPx(t, R);
+    if (t.team === 2) { cx.font = `${rad * 1.3}px serif`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('⚽', x, y + 1); return; }
+    cx.beginPath(); cx.arc(x, y + 2, rad, 0, 7); cx.fillStyle = '#0005'; cx.fill();
+    cx.beginPath(); cx.arc(x, y, rad, 0, 7); cx.fillStyle = t.team ? '#f03e3e' : (t.n === 1 ? '#fab005' : '#1971c2'); cx.fill(); cx.strokeStyle = '#fff'; cx.lineWidth = 2; cx.stroke();
+    cx.fillStyle = '#fff'; cx.font = `800 ${rad * .95}px system-ui`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(t.n, x, y + 1);
+  });
+}
+function line(l, R) {
+  const pts = l.pts.map(p => toPx(p, R)); if (pts.length < 2) return;
+  cx.strokeStyle = l.kind === 'run' ? '#ffe066' : '#fff'; cx.lineWidth = 3; cx.setLineDash(l.kind === 'run' ? [8, 7] : []);
+  cx.beginPath(); pts.forEach(([x, y], i) => i ? cx.lineTo(x, y) : cx.moveTo(x, y)); cx.stroke(); cx.setLineDash([]);
+  const [x2, y2] = pts[pts.length - 1], [x1, y1] = pts[Math.max(0, pts.length - 6)], a = Math.atan2(y2 - y1, x2 - x1);
+  cx.beginPath(); cx.moveTo(x2, y2); cx.lineTo(x2 - 14 * Math.cos(a - .45), y2 - 14 * Math.sin(a - .45)); cx.lineTo(x2 - 14 * Math.cos(a + .45), y2 - 14 * Math.sin(a + .45)); cx.closePath(); cx.fillStyle = cx.strokeStyle; cx.fill();
+}
+let drag = null, cur = null;
+const pos = e => { const b = cv.getBoundingClientRect(), R = rect(); return { x: (e.clientX - b.left - R.x) / R.w, y: (e.clientY - b.top - R.y) / R.h }; };
+cv.addEventListener('pointerdown', e => {
+  cv.setPointerCapture(e.pointerId); const p = pos(e), R = rect(), rad = Math.max(13, R.w * .045) * 1.4 / R.w;
+  if (tool === 'move') {
+    let best = null, bd = 1e9; st.tokens.forEach(t => { const d = Math.hypot((t.x - p.x), (t.y - p.y) * R.h / R.w); if (d < bd) { bd = d; best = t; } });
+    if (best && bd < rad) { hist.push(JSON.stringify(st)); drag = best; }
+  } else { hist.push(JSON.stringify(st)); cur = { kind: tool, pts: [p] }; }
+});
+cv.addEventListener('pointermove', e => { const p = pos(e); if (drag) { drag.x = Math.max(0, Math.min(1, p.x)); drag.y = Math.max(0, Math.min(1, p.y)); draw(); } else if (cur) { const l = cur.pts[cur.pts.length - 1]; if (Math.hypot(p.x - l.x, p.y - l.y) > .01) { cur.pts.push(p); draw(); } } });
+const up = () => { if (drag) { drag = null; save(); } if (cur) { if (cur.pts.length > 2) st.lines.push(cur); else hist.pop(); cur = null; save(); draw(); } };
+cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+function save() { store.set('board', st); }
+function paintBars() {
+  $('forms').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.f === st.form));
+  $('tools').querySelectorAll('[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === tool));
+  $('rivalB').classList.toggle('on', st.rival);
+}
+$('forms').innerHTML = Object.keys(FORMS).map(f => `<button data-f="${f}">${f}</button>`).join('');
+$('forms').querySelectorAll('button').forEach(b => b.onclick = () => { hist.push(JSON.stringify(st)); setForm(b.dataset.f); });
+$('tools').innerHTML = `<button data-t="move">${T.move}</button><button data-t="draw">${T.draw}</button><button data-t="run">${T.run}</button><button id="rivalB">${T.rival}</button><button id="undoB">${T.undo}</button><button id="clearB">${T.clear}</button><button id="snapB">${T.snap}</button>`;
+$('tools').querySelectorAll('[data-t]').forEach(b => b.onclick = () => { tool = b.dataset.t; paintBars(); });
+$('rivalB').onclick = () => { hist.push(JSON.stringify(st)); st.rival = !st.rival; st.tokens = st.tokens.filter(t => t.team !== 1); if (st.rival) st.tokens.push(...place('4-4-2', 1)); save(); draw(); paintBars(); };
+$('undoB').onclick = () => { if (hist.length) { st = JSON.parse(hist.pop()); save(); draw(); paintBars(); } };
+$('clearB').onclick = () => { hist.push(JSON.stringify(st)); st.lines = []; save(); draw(); };
+$('snapB').onclick = async () => { try { const url = cv.toDataURL('image/png'); if (window.Acornix) { await Acornix.files.save(`tactics-${st.form}-${Date.now()}.png`, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = 'tactics.png'; a.click(); } } catch (e) {} };
+(async () => { const s = await store.get('board', null); if (s && s.tokens && s.tokens.length) st = s; else st.tokens = [...place(st.form, 0), { team: 2, x: .5, y: .5 }]; paintBars(); size(); })();
+</script>
+</body>
+</html>

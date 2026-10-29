@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Training Plan</title>
+<style>
+  :root { --bg:#f5f6fa; --card:#fff; --ink:#151a2d; --muted:#6b7390; --a:#ff5a36; --b:#3b5bdb; --g:#2f9e44; --line:#e4e7f0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 2px; font-size:28px; }
+  .sub { color:var(--muted); font-weight:600; margin:0 0 12px; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; }
+  .lbl { font-weight:800; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:0 0 8px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { padding:9px 12px; border-radius:14px; background:var(--bg); font-weight:700; font-size:14px; }
+  .chip.on { background:var(--ink); color:#fff; }
+  input[type=text], textarea { width:100%; padding:12px; border-radius:14px; border:2px solid var(--line); font:inherit; font-size:16px; outline:none; }
+  textarea { min-height:60px; resize:vertical; }
+  input:focus, textarea:focus { border-color:var(--a); }
+  .days { display:flex; align-items:center; justify-content:space-between; }
+  .stp { display:flex; align-items:center; gap:10px; }
+  .stp button { width:38px; height:38px; border-radius:12px; background:var(--bg); font-size:20px; font-weight:800; }
+  .stp b { font-size:20px; min-width:24px; text-align:center; }
+  .go { width:100%; padding:16px; border-radius:18px; background:linear-gradient(90deg,var(--a),#ff8a3d); color:#fff; font-weight:900; font-size:18px; }
+  .go:disabled { opacity:.6; }
+  .err { color:#c92a2a; font-weight:700; margin-top:8px; }
+  .plan h2 { margin:6px 0 2px; font-size:22px; }
+  .plan .focus { color:var(--muted); font-weight:600; margin:0 0 10px; line-height:1.45; }
+  .week { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-weight:800; }
+  .prog { height:8px; border-radius:4px; background:var(--line); overflow:hidden; flex:1; margin-left:12px; }
+  .prog i { display:block; height:100%; background:var(--g); }
+  .day { display:flex; gap:12px; padding:12px; border-radius:18px; background:var(--card); margin-bottom:8px; align-items:flex-start; }
+  .day .d { width:46px; text-align:center; flex:none; }
+  .day .d b { display:block; font-size:12px; color:var(--muted); text-transform:uppercase; }
+  .day .d span { font-size:26px; }
+  .day .body { flex:1; min-width:0; }
+  .day .body b { display:block; }
+  .day .body small { color:var(--muted); font-weight:700; }
+  .day .body p { margin:6px 0 0; line-height:1.45; font-size:14px; white-space:pre-wrap; }
+  .day .body ul { margin:6px 0 0; padding-left:18px; font-size:14px; line-height:1.5; }
+  .day .tick { width:36px; height:36px; border-radius:50%; border:3px solid var(--line); background:#fff; color:#fff; font-size:18px; flex:none; }
+  .day.done .tick { background:var(--g); border-color:var(--g); }
+  .day.done { opacity:.7; }
+  .day.rest { background:#f0f2f8; }
+  .tips { line-height:1.5; font-size:14px; }
+  .row { display:flex; gap:8px; margin-top:8px; }
+  .row button { flex:1; padding:12px; border-radius:14px; background:var(--card); font-weight:800; }
+  .dots::after { content:'…'; animation:d 1s steps(3) infinite; }
+</style>
+</head>
+<body>
+<h1>📋 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+<div id="form">
+  <div class="card"><p class="lbl" id="lSport"></p><div class="chips" id="sports"></div><input type="text" id="other" style="margin-top:8px" hidden></div>
+  <div class="card"><p class="lbl" id="lLevel"></p><div class="chips" id="levels"></div></div>
+  <div class="card"><p class="lbl" id="lGoal"></p><textarea id="goal"></textarea></div>
+  <div class="card days"><b id="lDays"></b><div class="stp"><button id="dm">−</button><b id="dn"></b><button id="dp">+</button></div></div>
+  <button class="go" id="go"></button><div class="err" id="err"></div>
+</div>
+<div class="plan" id="plan" hidden></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Plan de entreno', sub:'Tu IA te prepara la semana según tu deporte, tu nivel y tu objetivo.', sport:'Deporte', other:'¿Cuál?', level:'Nivel', goal:'Objetivo', goalPh:'Ej.: correr 10 km en menos de 55 minutos en marzo; volver a jugar después de una lesión de tobillo…', days:'Días por semana', go:'✨ Crear mi plan', making:'Preparando tu semana', week:'Semana', done:'hechos', tips:'Consejos', newPlan:'Nuevo plan', nextWeek:'Siguiente semana', share:'Compartir', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No ha salido bien: ', rest:'Descanso', min:'min', lang:'Spanish', sports:['🏃 Correr','🚴 Bici','🏊 Natación','💪 Gimnasio','⚽ Fútbol','🎾 Tenis/pádel','🧘 Yoga','🥾 Senderismo','➕ Otro'], levels:['Empiezo','Intermedio','Avanzado'], dn:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'] }
+ : { title:'Training Plan', sub:'Your AI builds your week for your sport, level and goal.', sport:'Sport', other:'Which one?', level:'Level', goal:'Goal', goalPh:'e.g. run 10 km under 55 minutes by March; get back to playing after an ankle injury…', days:'Days per week', go:'✨ Make my plan', making:'Planning your week', week:'Week', done:'done', tips:'Tips', newPlan:'New plan', nextWeek:'Next week', share:'Share', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'That didn\'t work: ', rest:'Rest', min:'min', lang:'English', sports:['🏃 Running','🚴 Cycling','🏊 Swimming','💪 Gym','⚽ Football','🎾 Tennis/padel','🧘 Yoga','🥾 Hiking','➕ Other'], levels:['Beginner','Intermediate','Advanced'], dn:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let f = { sport: 0, level: 0, days: 3, goal: '', other: '' }, plan = null;
+['ttl', 'sub', 'lSport', 'lLevel', 'lGoal', 'lDays', 'go'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.sport, T.level, T.goal, T.days, T.go][i]);
+$('goal').placeholder = T.goalPh; $('other').placeholder = T.other;
+function chips(el, items, key) { el.innerHTML = items.map((t, i) => `<button class="chip ${f[key] === i ? 'on' : ''}" data-i="${i}">${t}</button>`).join(''); el.querySelectorAll('.chip').forEach(b => b.onclick = () => { f[key] = +b.dataset.i; paint(); }); }
+function paint() { chips($('sports'), T.sports, 'sport'); chips($('levels'), T.levels, 'level'); $('dn').textContent = f.days; $('other').hidden = f.sport !== T.sports.length - 1; }
+$('dm').onclick = () => { f.days = Math.max(1, f.days - 1); paint(); }; $('dp').onclick = () => { f.days = Math.min(7, f.days + 1); paint(); };
+async function make(next) {
+  $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  f.goal = $('goal').value.trim(); f.other = $('other').value.trim();
+  const sport = f.sport === T.sports.length - 1 ? (f.other || 'general fitness') : T.sports[f.sport].replace(/^\S+\s/, '');
+  const btn = next ? $('nextB') : $('go'); btn.disabled = true; btn.innerHTML = `<span class="dots">${T.making}</span>`;
+  const prev = next && plan ? ` This is week ${plan.week + 1}. Last week was: ${plan.days.map(d => d.title).join(', ')}. Progress sensibly from it.` : '';
+  try {
+    const r = await Acornix.askAI(`Create a one-week training plan. Sport: ${sport}. Level: ${['beginner', 'intermediate', 'advanced'][f.level]}. Training days: ${f.days} per week, the other days are rest or easy recovery. Goal: ${f.goal || 'get fitter and enjoy it'}.${prev}`, {
+      json: true, system: `You are a qualified, encouraging coach. Plans must be safe, specific and realistic, with warm-up and cool-down. Answer in ${T.lang}. Reply only with JSON: {"title":"short plan name","focus":"one sentence on this week's focus","days":[exactly 7 objects Monday to Sunday: {"emoji":"one emoji","title":"session name or Rest","minutes":number or 0,"intensity":"easy|moderate|hard|rest","details":["3 to 6 short lines: warm-up, main set with numbers, cool-down"]}],"tips":["3 short tips"]}`
+    });
+    if (!r || !Array.isArray(r.days) || r.days.length < 7) throw new Error('?');
+    plan = { ...r, week: next && plan ? plan.week + 1 : 1, done: [], form: { ...f } }; store.set('plan', plan); store.set('form', f); show();
+    try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { $('err').textContent = T.failed + (e.message || ''); if (next) alertInline(T.failed + (e.message || '')); }
+  btn.disabled = false; btn.textContent = next ? T.nextWeek : T.go;
+}
+function alertInline(msg) { const d = document.createElement('div'); d.className = 'err'; d.textContent = msg; $('plan').appendChild(d); }
+function show() {
+  $('form').hidden = !!plan; $('plan').hidden = !plan; if (!plan) return;
+  const trainDays = plan.days.filter(d => d.intensity !== 'rest').length, done = plan.done.length;
+  const col = { easy: '#2f9e44', moderate: '#f08c00', hard: '#e03131', rest: '#adb5bd' };
+  $('plan').innerHTML = `<h2>${esc(plan.title)}</h2><p class="focus">${esc(plan.focus)}</p><div class="week"><span>${T.week} ${plan.week} · ${done}/${trainDays} ${T.done}</span><div class="prog"><i style="width:${trainDays ? done / trainDays * 100 : 0}%"></i></div></div>` +
+    plan.days.map((d, i) => { const rest = d.intensity === 'rest', isDone = plan.done.includes(i); return `<div class="day ${rest ? 'rest' : ''} ${isDone ? 'done' : ''}"><div class="d"><b>${T.dn[i]}</b><span>${esc(d.emoji || (rest ? '😴' : '💪'))}</span></div><div class="body"><b>${esc(d.title || T.rest)}</b>${rest ? '' : `<small style="color:${col[d.intensity] || '#666'}">● ${esc(d.intensity)} · ${+d.minutes || 0} ${T.min}</small>`}${(d.details || []).length ? `<ul>${d.details.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>${rest ? '' : `<button class="tick" data-i="${i}">✓</button>`}</div>`; }).join('') +
+    `${(plan.tips || []).length ? `<div class="card"><p class="lbl">${T.tips}</p><div class="tips">${plan.tips.map(t => `💡 ${esc(t)}`).join('<br>')}</div></div>` : ''}<div class="row"><button id="nextB">${T.nextWeek}</button><button id="shareB">${T.share}</button><button id="newB">${T.newPlan}</button></div>`;
+  $('plan').querySelectorAll('.tick').forEach(b => b.onclick = () => { const i = +b.dataset.i; plan.done = plan.done.includes(i) ? plan.done.filter(x => x !== i) : [...plan.done, i]; store.set('plan', plan); show(); try { if (window.Acornix) Acornix.vibrate(20); } catch (e) {} });
+  $('nextB').onclick = () => make(true);
+  $('newB').onclick = () => { plan = null; store.set('plan', null); show(); paint(); };
+  $('shareB').onclick = () => { const txt = `📋 ${plan.title} · ${T.week} ${plan.week}\n` + plan.days.map((d, i) => `${T.dn[i]}: ${d.emoji || ''} ${d.title}${d.minutes ? ` (${d.minutes} ${T.min})` : ''}`).join('\n'); try { if (window.Acornix) Acornix.share(txt); else if (navigator.share) navigator.share({ text: txt }); } catch (e) {} };
+}
+$('go').onclick = () => make(false);
+(async () => { f = Object.assign(f, await store.get('form', {})); $('goal').value = f.goal || ''; $('other').value = f.other || ''; plan = await store.get('plan', null); paint(); show(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Lap Timer</title>
+<style>
+  :root { --bg:#0a0a0c; --card:#17171c; --ink:#f4f4f6; --muted:#8a8a96; --a:#ff3d00; --g:#00e676; --r:#ff5252; --line:#25252c; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 14px); }
+  .top { display:flex; justify-content:space-between; align-items:center; }
+  .top h1 { margin:0; font-size:20px; }
+  .top button { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; }
+  .main { text-align:center; margin:18px 0 6px; }
+  .main .t { font-size:min(17vw,84px); font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-2px; line-height:1; }
+  .main .t small { font-size:.5em; color:var(--muted); letter-spacing:0; }
+  .main .lap { color:var(--muted); font-weight:800; margin-top:6px; font-variant-numeric:tabular-nums; }
+  .main .lap b { color:var(--ink); }
+  .ghost { height:6px; border-radius:3px; background:var(--line); margin:10px 0; overflow:hidden; }
+  .ghost i { display:block; height:100%; background:var(--a); }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .stats div { background:var(--card); border-radius:14px; padding:8px; text-align:center; }
+  .stats small { display:block; color:var(--muted); font-size:11px; font-weight:700; }
+  .stats b { font-variant-numeric:tabular-nums; }
+  .laps { flex:1; overflow-y:auto; margin:10px 0; }
+  .row { display:grid; grid-template-columns:44px 1fr auto auto; gap:10px; align-items:center; padding:10px 6px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  .row .n { color:var(--muted); font-weight:800; }
+  .row .bar { height:8px; border-radius:4px; background:#2a2a33; overflow:hidden; }
+  .row .bar i { display:block; height:100%; background:#55556a; border-radius:4px; }
+  .row.best .bar i { background:var(--g); } .row.worst .bar i { background:var(--r); }
+  .row b { font-size:17px; }
+  .row.best b { color:var(--g); } .row.worst b { color:var(--r); }
+  .row small { color:var(--muted); font-size:12px; width:58px; text-align:right; }
+  .ctl { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ctl button { padding:22px 0; border-radius:22px; font-size:20px; font-weight:900; background:var(--card); }
+  .ctl .go { background:var(--g); color:#00391b; }
+  .ctl .stop { background:var(--a); color:#fff; }
+  .sheet { position:fixed; inset:0; background:#000c; display:none; align-items:flex-end; z-index:5; }
+  .sheet.on { display:flex; }
+  .sheet > div { width:100%; max-height:80vh; overflow-y:auto; background:#141418; border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sess { padding:12px; border-radius:14px; background:var(--card); margin-bottom:8px; display:flex; justify-content:space-between; gap:8px; }
+  .sess small { color:var(--muted); display:block; }
+  .sess button { background:none; color:var(--r); font-weight:800; }
+  .empty { color:var(--muted); text-align:center; padding:20px; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🏁 <span id="ttl"></span></h1><span><button id="shareB"></button> <button id="histB"></button></span></div>
+  <div class="main"><div class="t" id="t">0:00<small>.00</small></div><div class="lap" id="lapNow"></div></div>
+  <div class="ghost"><i id="ghost"></i></div>
+  <div class="stats" id="stats"></div>
+  <div class="laps" id="laps"></div>
+  <div class="ctl"><button id="left"></button><button class="go" id="right"></button></div>
+</div>
+<div class="sheet" id="sheet"><div><h3 id="histT" style="margin:0 0 10px"></h3><div id="sessions"></div></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Vueltas', start:'Empezar', stop:'Parar', lap:'Vuelta', reset:'Reiniciar', resume:'Seguir', save:'Guardar', best:'Mejor', avg:'Media', last:'Última', laps:'vueltas', share:'Compartir', hist:'Historial', none:'Aún no has guardado sesiones.', del:'Borrar', saved:'Sesión guardada', current:'Vuelta' }
+ : { title:'Lap Timer', start:'Start', stop:'Stop', lap:'Lap', reset:'Reset', resume:'Resume', save:'Save', best:'Best', avg:'Average', last:'Last', laps:'laps', share:'Share', hist:'History', none:'No saved sessions yet.', del:'Delete', saved:'Session saved', current:'Lap' };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// State survives closing the app: start time is an absolute timestamp.
+let s = { running: false, t0: 0, acc: 0, laps: [] }, sessions = [], raf;
+['ttl', 'shareB', 'histB', 'histT'].forEach((id, i) => $(id).textContent = [T.title, T.share, T.hist, T.hist][i]);
+const now = () => Date.now();
+const elapsed = () => s.acc + (s.running ? now() - s.t0 : 0);
+const fmt = (ms, cs = true) => { ms = Math.max(0, ms); const m = Math.floor(ms / 6e4), sec = Math.floor(ms / 1000) % 60, c = Math.floor(ms / 10) % 100; return `${m}:${String(sec).padStart(2, '0')}${cs ? '.' + String(c).padStart(2, '0') : ''}`; };
+function frame() {
+  const e = elapsed(), lapStart = s.laps.reduce((a, b) => a + b, 0), cur = e - lapStart, f = fmt(e);
+  $('t').innerHTML = f.slice(0, -3) + `<small>${f.slice(-3)}</small>`;
+  $('lapNow').innerHTML = `${T.current} ${s.laps.length + 1} · <b>${fmt(cur)}</b>`;
+  const best = s.laps.length ? Math.min(...s.laps) : 0;
+  $('ghost').style.width = best ? Math.min(100, cur / best * 100) + '%' : '0%';
+  $('ghost').style.background = best && cur > best ? 'var(--r)' : 'var(--a)';
+  if (s.running) raf = requestAnimationFrame(frame);
+}
+function render() {
+  const L = s.laps, best = L.length ? Math.min(...L) : 0, worst = L.length ? Math.max(...L) : 0, avg = L.length ? L.reduce((a, b) => a + b, 0) / L.length : 0;
+  $('stats').innerHTML = [[T.best, best], [T.avg, avg], [T.last, L[L.length - 1] || 0]].map(([k, v]) => `<div><small>${k}</small><b>${v ? fmt(v) : '–'}</b></div>`).join('');
+  $('laps').innerHTML = L.map((l, i) => ({ l, i })).reverse().map(({ l, i }) => { const d = i ? l - L[i - 1] : 0, cls = L.length > 1 && l === best ? 'best' : L.length > 1 && l === worst ? 'worst' : ''; return `<div class="row ${cls}"><span class="n">#${i + 1}</span><span class="bar"><i style="width:${l / worst * 100}%"></i></span><b>${fmt(l)}</b><small>${i ? (d > 0 ? '+' : '−') + (Math.abs(d) / 1000).toFixed(2) : ''}</small></div>`; }).join('');
+  $('left').textContent = s.running ? T.lap : (elapsed() ? T.reset : T.lap);
+  $('left').disabled = !s.running && !elapsed();
+  $('right').textContent = s.running ? T.stop : (elapsed() ? T.resume : T.start);
+  $('right').className = s.running ? 'stop' : 'go';
+  frame();
+}
+function save() { store.set('state', s); }
+$('right').onclick = () => {
+  if (s.running) { s.acc = elapsed(); s.running = false; cancelAnimationFrame(raf); buzz([40, 40, 40]); }
+  else { s.t0 = now(); s.running = true; buzz(40); }
+  save(); render();
+};
+$('left').onclick = async () => {
+  if (s.running) { const lapStart = s.laps.reduce((a, b) => a + b, 0), l = elapsed() - lapStart; if (l < 300) return; s.laps.push(l); beep(s.laps.length > 1 && l <= Math.min(...s.laps) ? 1046 : 740); buzz(25); save(); render(); return; }
+  if (elapsed()) {
+    if (s.laps.length || elapsed() > 1000) { const lapStart = s.laps.reduce((a, b) => a + b, 0), rest = elapsed() - lapStart, laps = rest > 500 ? [...s.laps, rest] : s.laps; sessions.unshift({ at: Date.now(), total: elapsed(), laps }); sessions = sessions.slice(0, 50); await store.set('sessions', sessions); try { if (window.Acornix) Acornix.toast(T.saved); } catch (e) {} }
+    s = { running: false, t0: 0, acc: 0, laps: [] }; save(); render();
+  }
+};
+$('shareB').onclick = () => { const L = s.laps; if (!L.length) return; const txt = `🏁 ${fmt(elapsed())} · ${L.length} ${T.laps}\n` + L.map((l, i) => `#${i + 1}  ${fmt(l)}`).join('\n') + `\n${T.best}: ${fmt(Math.min(...L))} · ${T.avg}: ${fmt(L.reduce((a, b) => a + b, 0) / L.length)}`; try { if (window.Acornix) Acornix.share(txt); else if (navigator.share) navigator.share({ text: txt }); else navigator.clipboard.writeText(txt); } catch (e) {} };
+$('histB').onclick = () => {
+  $('sessions').innerHTML = sessions.length ? sessions.map((x, i) => `<div class="sess"><div><b>${fmt(x.total)}</b> · ${x.laps.length} ${T.laps}<small>${new Date(x.at).toLocaleString(ES ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · ${T.best} ${x.laps.length ? fmt(Math.min(...x.laps)) : '–'}</small></div><button data-i="${i}">${T.del}</button></div>`).join('') : `<div class="empty">${T.none}</div>`;
+  $('sessions').querySelectorAll('[data-i]').forEach(b => b.onclick = () => { sessions.splice(+b.dataset.i, 1); store.set('sessions', sessions); $('histB').onclick(); });
+  $('sheet').classList.add('on');
+};
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').classList.remove('on'); };
+let ac; function beep(f) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = .08; o.connect(g); g.connect(ac.destination); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .12); o.start(); o.stop(ac.currentTime + .12); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); $('left').click(); } });
+(async () => { s = Object.assign(s, await store.get('state', {})); sessions = await store.get('sessions', []); render(); })();
+</script>
+</body>
+</html>

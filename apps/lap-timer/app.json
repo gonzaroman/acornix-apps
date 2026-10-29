@@ -1,0 +1,14 @@
+{
+  "id": "lap-timer",
+  "name": "Lap Timer",
+  "emoji": "🏁",
+  "category": "sports",
+  "description": "A big stopwatch with lap times, best and worst laps in colour, a pace bar against your best lap and saved sessions.",
+  "prompt": "A lap timer: start, lap, stop and resume with big buttons, lap list with differences, best lap in green and worst in red, a bar that shows the current lap against your best, stats, saved sessions and sharing. It keeps running if you close the app.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

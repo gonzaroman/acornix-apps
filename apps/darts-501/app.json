@@ -1,0 +1,14 @@
+{
+  "id": "darts-501",
+  "name": "Darts 501",
+  "emoji": "🎯",
+  "category": "sports",
+  "description": "Score 301, 501 or 701 dart by dart for up to four players, with double out, busts, averages and checkout hints.",
+  "prompt": "A darts scorer for 301, 501 or 701: tap each dart with single, double or treble, bull and 25, automatic bust rules, double out or any out, three-dart averages, checkout suggestions, undo and a winner screen.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

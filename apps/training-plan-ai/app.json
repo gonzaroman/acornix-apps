@@ -1,0 +1,14 @@
+{
+  "id": "training-plan-ai",
+  "name": "Training Plan",
+  "emoji": "📋",
+  "category": "sports",
+  "description": "Tell your AI your sport, level, goal and days, and get a week of sessions with warm-ups, sets and tips. Tick them off as you go.",
+  "prompt": "A training planner with the AI: choose a sport, level, training days and goal, and get a seven-day plan with session names, intensity, minutes and detailed steps, rest days, tips, ticks for completed sessions, next week's plan that progresses from the last one, and sharing.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

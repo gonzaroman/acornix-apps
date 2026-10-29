@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pace Calculator</title>
+<style>
+  :root { --bg:#0f1417; --card:#192127; --ink:#eef6f9; --muted:#8aa0ab; --a:#00d68f; --b:#ff7a45; --line:#26323a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; justify-content:space-between; align-items:center; }
+  h1 { margin:4px 0; font-size:26px; }
+  .unit { display:flex; background:var(--card); border-radius:12px; padding:3px; }
+  .unit button { padding:7px 12px; border-radius:10px; font-weight:800; font-size:13px; color:var(--muted); }
+  .unit button.on { background:var(--a); color:#062; }
+  .races { display:flex; gap:6px; overflow-x:auto; margin:12px 0; scrollbar-width:none; }
+  .races::-webkit-scrollbar { display:none; }
+  .races button { flex:none; padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; }
+  .f { background:var(--card); border-radius:18px; padding:12px 14px; margin-bottom:8px; border:2px solid transparent; position:relative; }
+  .f.calc { border-color:var(--a); }
+  .f label { display:flex; justify-content:space-between; color:var(--muted); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.6px; }
+  .f label b { color:var(--a); font-size:11px; }
+  .f .in { display:flex; align-items:baseline; gap:4px; margin-top:4px; }
+  .f input { width:3.2ch; background:none; border:0; outline:none; color:var(--ink); font:inherit; font-size:34px; font-weight:800; font-variant-numeric:tabular-nums; text-align:center; padding:0; }
+  .f input.wide { width:5ch; text-align:left; }
+  .f .sep { font-size:30px; font-weight:800; color:var(--muted); }
+  .f .u { color:var(--muted); font-weight:700; margin-left:6px; }
+  .lock { position:absolute; right:12px; bottom:12px; padding:6px 10px; border-radius:10px; background:var(--line); font-size:12px; font-weight:800; color:var(--muted); }
+  .f.calc .lock { background:var(--a); color:#062; }
+  .speed { text-align:center; color:var(--muted); font-weight:700; margin:4px 0 10px; }
+  .speed b { color:var(--ink); }
+  .card { background:var(--card); border-radius:18px; padding:12px 14px; margin-top:10px; }
+  .card h3 { margin:0 0 8px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .splits { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; font-variant-numeric:tabular-nums; }
+  .splits div { background:var(--bg); border-radius:10px; padding:6px; text-align:center; font-size:13px; font-weight:700; }
+  .splits small { display:block; color:var(--muted); font-size:10px; }
+  .pred { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .pred div { background:var(--bg); border-radius:12px; padding:8px 10px; }
+  .pred small { display:block; color:var(--muted); font-weight:700; font-size:11px; }
+  .pred b { font-size:17px; font-variant-numeric:tabular-nums; }
+  .pred em { font-style:normal; color:var(--muted); font-size:12px; }
+  .note { color:var(--muted); font-size:12px; line-height:1.5; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="head"><h1>🏃 <span id="ttl"></span></h1><div class="unit" id="unit"><button data-u="km">km</button><button data-u="mi">mi</button></div></div>
+<div class="races" id="races"></div>
+<div class="f" id="fDist"><label><span id="lDist"></span><b id="cDist"></b></label><div class="in"><input class="wide" id="dist" inputmode="decimal"><span class="u" id="uDist"></span></div><button class="lock" data-k="dist"></button></div>
+<div class="f" id="fTime"><label><span id="lTime"></span><b id="cTime"></b></label><div class="in"><input id="th" inputmode="numeric" maxlength="2"><span class="sep">:</span><input id="tm" inputmode="numeric" maxlength="2"><span class="sep">:</span><input id="ts" inputmode="numeric" maxlength="2"></div><button class="lock" data-k="time"></button></div>
+<div class="f" id="fPace"><label><span id="lPace"></span><b id="cPace"></b></label><div class="in"><input id="pm" inputmode="numeric" maxlength="2"><span class="sep">:</span><input id="ps" inputmode="numeric" maxlength="2"><span class="u" id="uPace"></span></div><button class="lock" data-k="pace"></button></div>
+<div class="speed" id="speed"></div>
+<div class="card"><h3 id="lSplits"></h3><div class="splits" id="splits"></div></div>
+<div class="card"><h3 id="lPred"></h3><div class="pred" id="pred"></div><p class="note" id="note"></p></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Ritmo', dist:'Distancia', time:'Tiempo', pace:'Ritmo', calc:'calculado', calcBtn:'Calcular esto', speed:'Velocidad', splits:'Parciales', pred:'Si corres así, podrías hacer…', note:'Predicción con la fórmula de Riegel: orientativa, mejor cuanto más cerca esté la distancia de tu carrera.', half:'Media', mar:'Maratón' }
+ : { title:'Pace', dist:'Distance', time:'Time', pace:'Pace', calc:'calculated', calcBtn:'Solve this', speed:'Speed', splits:'Splits', pred:'At this level you could run…', note:'Predictions use Riegel\'s formula: a rough guide, best for distances close to your race.', half:'Half', mar:'Marathon' };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// Internally: distance in km, time in seconds, pace in seconds per km.
+let s = { unit: 'km', km: 10, sec: 3000, solve: 'pace' };
+const MI = 1.609344, uf = () => s.unit === 'mi' ? MI : 1;
+const RACES = [['5K', 5], ['10K', 10], [T.half, 21.0975], [T.mar, 42.195], ['1 mi', MI], ['15K', 15]];
+['ttl', 'lDist', 'lTime', 'lPace', 'lSplits', 'lPred', 'note'].forEach((id, i) => $(id).textContent = [T.title, T.dist, T.time, T.pace, T.splits, T.pred, T.note][i]);
+$('races').innerHTML = RACES.map(([n, k], i) => `<button data-i="${i}">${n}</button>`).join('');
+$('races').querySelectorAll('button').forEach(b => b.onclick = () => { s.km = RACES[+b.dataset.i][1]; if (s.solve === 'dist') s.solve = 'time'; solve(); });
+const two = n => String(Math.floor(n)).padStart(2, '0');
+const hms = t => { t = Math.round(t); const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), x = t % 60; return h ? `${h}:${two(m)}:${two(x)}` : `${m}:${two(x)}`; };
+// A race preset changes the distance: keep the pace and solve the time, unless the pace is what's being solved.
+function solve() {
+  if (s.solve === 'time') s.sec = s.km * s.pace; else s.pace = s.sec / s.km;
+  render(); store.set('s', s);
+}
+function render(skip) {
+  const p = s.pace * uf(), d = s.km / uf();
+  if (skip !== 'dist') $('dist').value = +d.toFixed(2);
+  if (skip !== 'time') { const t = Math.round(s.sec); $('th').value = Math.floor(t / 3600); $('tm').value = two(t % 3600 / 60); $('ts').value = two(t % 60); }
+  if (skip !== 'pace') { const pr = Math.round(p); $('pm').value = Math.floor(pr / 60); $('ps').value = two(pr % 60); }
+  $('uDist').textContent = s.unit; $('uPace').textContent = '/' + s.unit;
+  ['dist', 'time', 'pace'].forEach(k => { const f = $('f' + k[0].toUpperCase() + k.slice(1)); f.classList.toggle('calc', s.solve === k); f.querySelector('.lock').textContent = s.solve === k ? '= ' + T.calc : T.calcBtn; });
+  $('unit').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.u === s.unit));
+  $('speed').innerHTML = `${T.speed}: <b>${(3600 / p).toFixed(1)} ${s.unit}/h</b>`;
+  const step = d > 30 ? 5 : d > 12 ? 2 : 1, out = [];
+  for (let x = step; x < d - 1e-6; x += step) out.push([x, x * p]);
+  out.push([+d.toFixed(2), s.sec]);
+  $('splits').innerHTML = out.slice(0, 16).map(([x, t]) => `<div><small>${x} ${s.unit}</small>${hms(t)}</div>`).join('');
+  $('pred').innerHTML = RACES.slice(0, 4).map(([n, k]) => { const t = s.sec * Math.pow(k / s.km, 1.06); return `<div><small>${n}</small><b>${hms(t)}</b> <em>${hms(t / k * uf())}/${s.unit}</em></div>`; }).join('');
+}
+const num = id => parseFloat(String($(id).value).replace(',', '.')) || 0;
+$('dist').oninput = () => { const v = num('dist'); if (v > 0) { s.km = v * uf(); if (s.solve === 'dist') s.solve = 'pace'; if (s.solve === 'time') s.sec = s.km * s.pace; else s.pace = s.sec / s.km; render('dist'); store.set('s', s); } };
+['th', 'tm', 'ts'].forEach(id => $(id).oninput = () => { const t = num('th') * 3600 + num('tm') * 60 + num('ts'); if (t > 0) { s.sec = t; if (s.solve === 'time') s.solve = 'pace'; if (s.solve === 'dist') s.km = s.sec / s.pace; else s.pace = s.sec / s.km; render('time'); store.set('s', s); } });
+['pm', 'ps'].forEach(id => $(id).oninput = () => { const p = (num('pm') * 60 + num('ps')) / uf(); if (p > 0) { s.pace = p; if (s.solve === 'pace') s.solve = 'time'; if (s.solve === 'dist') s.km = s.sec / p; else s.sec = s.km * p; render('pace'); store.set('s', s); } });
+document.querySelectorAll('.lock').forEach(b => b.onclick = () => { s.solve = b.dataset.k; render(); store.set('s', s); });
+document.querySelectorAll('input').forEach(i => i.onfocus = () => i.select());
+$('unit').querySelectorAll('button').forEach(b => b.onclick = () => { s.unit = b.dataset.u; render(); store.set('s', s); });
+(async () => { s = Object.assign(s, await store.get('s', {})); s.pace = s.sec / s.km; render(); })();
+</script>
+</body>
+</html>

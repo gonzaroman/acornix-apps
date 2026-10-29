@@ -1,0 +1,14 @@
+{
+  "id": "tactics-board",
+  "name": "Tactics Board",
+  "emoji": "⚽",
+  "category": "sports",
+  "description": "Pick a formation, drag your players, add the opponent and draw passes and runs on a football pitch.",
+  "prompt": "A football tactics board with formations like 4-4-2, 4-3-3, 3-5-2 and 7-a-side, draggable numbered players and ball, an optional opponent, arrows for passes and dashed lines for runs, undo, and saving the board as an image.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

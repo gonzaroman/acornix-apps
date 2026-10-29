@@ -1,0 +1,14 @@
+{
+  "id": "team-picker",
+  "name": "Team Picker",
+  "emoji": "👥",
+  "category": "sports",
+  "description": "Add who's playing, mark who came today and split them into fair teams by skill with one tap.",
+  "prompt": "A team maker: save your list of players, tick who is here today, give each one 1 to 3 stars, choose 2 to 6 teams and get balanced teams with an animated reveal, then share them.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

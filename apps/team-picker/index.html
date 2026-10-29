@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Team Picker</title>
+<style>
+  :root { --bg:#f2f5f9; --card:#fff; --ink:#172033; --muted:#6c778c; --a:#5f3dc4; --line:#e2e7ef; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 100px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 2px; font-size:28px; }
+  .sub { color:var(--muted); font-weight:600; margin:0 0 12px; }
+  .add { display:flex; gap:8px; }
+  .add input { flex:1; min-width:0; padding:13px 14px; border-radius:16px; border:2px solid var(--line); font:inherit; font-size:16px; outline:none; background:#fff; }
+  .add input:focus { border-color:var(--a); }
+  .add button { padding:0 18px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; font-size:20px; }
+  .opts { display:flex; justify-content:space-between; align-items:center; margin:12px 0 8px; font-weight:800; }
+  .stp { display:flex; align-items:center; gap:8px; }
+  .stp button { width:36px; height:36px; border-radius:12px; background:var(--card); font-size:20px; font-weight:800; }
+  .stp b { min-width:24px; text-align:center; font-size:18px; }
+  .tg { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:14px; }
+  .tg input { width:20px; height:20px; accent-color:var(--a); }
+  .list { display:grid; gap:6px; }
+  .pl { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:var(--card); }
+  .pl.out { opacity:.45; }
+  .pl .in { width:26px; height:26px; border-radius:8px; border:2px solid var(--line); background:#fff; font-size:14px; color:#fff; flex:none; }
+  .pl:not(.out) .in { background:var(--a); border-color:var(--a); }
+  .pl span { flex:1; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .stars button { background:none; font-size:16px; padding:0 1px; filter:grayscale(1); opacity:.35; }
+  .stars button.on { filter:none; opacity:1; }
+  .pl .x { color:#c92a2a; background:none; font-weight:900; padding:4px; }
+  .empty { color:var(--muted); text-align:center; padding:20px; font-weight:600; }
+  .go { position:fixed; left:16px; right:16px; bottom:calc(env(safe-area-inset-bottom) + 16px); padding:18px; border-radius:20px; background:var(--a); color:#fff; font-weight:900; font-size:18px; box-shadow:0 10px 26px #5f3dc455; }
+  .teams { display:grid; gap:10px; margin-top:14px; }
+  .team { border-radius:20px; padding:12px 14px; color:#fff; }
+  .team h3 { margin:0 0 6px; display:flex; justify-content:space-between; font-size:17px; }
+  .team h3 small { opacity:.85; font-size:13px; }
+  .chip { display:inline-block; padding:6px 10px; border-radius:12px; background:#ffffff2a; margin:3px 3px 0 0; font-weight:700; animation:pop .35s both; }
+  @keyframes pop { from { opacity:0; transform:scale(.6) translateY(8px); } }
+  .row { display:flex; gap:8px; margin-top:10px; }
+  .row button { flex:1; padding:12px; border-radius:14px; background:var(--card); font-weight:800; }
+</style>
+</head>
+<body>
+<h1>👥 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+<form class="add" id="form"><input id="name" autocomplete="off" enterkeyhint="done"><button>＋</button></form>
+<div class="opts"><span id="lTeams"></span><div class="stp"><button id="tm">−</button><b id="tn"></b><button id="tp">+</button></div></div>
+<label class="tg"><input type="checkbox" id="bal"><span id="lBal"></span></label>
+<div class="teams" id="teams"></div>
+<div class="list" id="list" style="margin-top:12px"></div>
+<button class="go" id="go"></button>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Hacer equipos', sub:'Apunta quién juega y reparte en un toque', ph:'Nombre del jugador', teams:'Equipos', bal:'Equilibrar por nivel (estrellas)', go:'🎲 Hacer equipos', again:'🎲 Otra vez', share:'Compartir', players:'jugadores', level:'nivel', empty:'Añade jugadores arriba. Tócalos para marcar si hoy vienen.', need:'Faltan jugadores', names:['Rojo','Azul','Verde','Naranja','Morado','Turquesa'] }
+ : { title:'Team Picker', sub:'Add who\'s playing and split them in one tap', ph:'Player name', teams:'Teams', bal:'Balance by skill (stars)', go:'🎲 Make teams', again:'🎲 Again', share:'Share', players:'players', level:'level', empty:'Add players above. Tap them to mark who\'s here today.', need:'Not enough players', names:['Red','Blue','Green','Orange','Purple','Teal'] };
+const COLORS = ['#e03131', '#1c7ed6', '#2f9e44', '#f08c00', '#7048e8', '#0c8599'];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let roster = [], nTeams = 2, balance = true, result = null;
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('name').placeholder = T.ph; $('lTeams').textContent = T.teams; $('lBal').textContent = T.bal;
+function save() { store.set('state', { roster, nTeams, balance, result }); }
+function render() {
+  $('tn').textContent = nTeams; $('bal').checked = balance;
+  $('list').innerHTML = roster.length ? '' : `<div class="empty">${T.empty}</div>`;
+  roster.forEach((p, i) => {
+    const el = document.createElement('div'); el.className = 'pl' + (p.in ? '' : ' out');
+    el.innerHTML = `<button class="in">✓</button><span></span>${balance ? `<span class="stars" style="flex:none">${[1, 2, 3].map(s => `<button data-s="${s}" class="${p.lvl >= s ? 'on' : ''}">⭐</button>`).join('')}</span>` : ''}<button class="x">✕</button>`;
+    el.querySelector('span').textContent = p.name;
+    el.querySelector('.in').onclick = () => { p.in = !p.in; save(); render(); };
+    el.querySelector('span').onclick = () => { p.in = !p.in; save(); render(); };
+    el.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { p.lvl = +b.dataset.s; save(); render(); });
+    el.querySelector('.x').onclick = () => { roster.splice(i, 1); save(); render(); };
+    $('list').appendChild(el);
+  });
+  const here = roster.filter(p => p.in).length;
+  $('go').textContent = result ? T.again : `${T.go} · ${here} ${T.players}`;
+  $('teams').innerHTML = '';
+  if (result) {
+    result.forEach((team, t) => {
+      const el = document.createElement('div'); el.className = 'team'; el.style.background = COLORS[t];
+      const lvl = team.reduce((s, p) => s + (p.lvl || 2), 0);
+      el.innerHTML = `<h3><span>${T.names[t]}</span><small>${team.length} ${T.players}${balance ? ` · ${T.level} ${lvl}` : ''}</small></h3>`;
+      team.forEach((p, k) => { const c = document.createElement('span'); c.className = 'chip'; c.style.animationDelay = (k * result.length + t) * 70 + 'ms'; c.textContent = p.name; el.appendChild(c); });
+      $('teams').appendChild(el);
+    });
+    const row = document.createElement('div'); row.className = 'row'; row.innerHTML = `<button id="shareB">${T.share}</button><button id="clearB">✕</button>`; $('teams').appendChild(row);
+    $('shareB').onclick = () => { const txt = result.map((t, i) => `${['🔴', '🔵', '🟢', '🟠', '🟣', '🩵'][i]} ${T.names[i]}: ${t.map(p => p.name).join(', ')}`).join('\n'); try { if (window.Acornix) Acornix.share(txt); else if (navigator.share) navigator.share({ text: txt }); else navigator.clipboard.writeText(txt); } catch (e) {} };
+    $('clearB').onclick = () => { result = null; save(); render(); };
+  }
+}
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function make() {
+  const here = roster.filter(p => p.in);
+  if (here.length < nTeams) { $('go').textContent = T.need; setTimeout(render, 1200); return; }
+  const teams = Array.from({ length: nTeams }, () => []);
+  if (balance) {
+    // Shuffle, sort by level, then deal to the weakest team so far (ties broken by size).
+    shuffle(here).sort((a, b) => (b.lvl || 2) - (a.lvl || 2)).forEach(p => {
+      const sum = t => t.reduce((s, x) => s + (x.lvl || 2), 0);
+      const pick = teams.map((t, i) => i).sort((a, b) => teams[a].length - teams[b].length || sum(teams[a]) - sum(teams[b]) || Math.random() - .5)[0];
+      teams[pick].push(p);
+    });
+  } else shuffle(here).forEach((p, i) => teams[i % nTeams].push(p));
+  result = teams; save(); render();
+  try { if (window.Acornix) Acornix.vibrate([20, 40, 20, 40, 60]); } catch (e) {}
+}
+$('form').onsubmit = e => { e.preventDefault(); const n = $('name').value.trim(); if (!n) return; n.split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(name => roster.push({ name, lvl: 2, in: true })); $('name').value = ''; save(); render(); };
+$('tm').onclick = () => { nTeams = Math.max(2, nTeams - 1); result = null; save(); render(); };
+$('tp').onclick = () => { nTeams = Math.min(6, nTeams + 1); result = null; save(); render(); };
+$('bal').onchange = () => { balance = $('bal').checked; save(); render(); };
+$('go').onclick = make;
+(async () => { const s = await store.get('state', {}); roster = s.roster || []; nTeams = s.nTeams || 2; balance = s.balance ?? true; result = s.result || null; render(); })();
+</script>
+</body>
+</html>

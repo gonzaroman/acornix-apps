@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Golf Scorecard</title>
+<style>
+  :root { --bg:#eef4ec; --card:#fff; --ink:#18301c; --muted:#6a8070; --a:#2b8a3e; --line:#dbe7d8; --eagle:#f59f00; --birdie:#e03131; --bogey:#1c7ed6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; justify-content:space-between; align-items:center; }
+  h1 { margin:4px 0; font-size:26px; }
+  .head button { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; }
+  .hole { margin-top:12px; padding:16px; border-radius:24px; background:linear-gradient(160deg,#2b8a3e,#1f6b2f); color:#fff; }
+  .hole .nav { display:flex; align-items:center; justify-content:space-between; }
+  .hole .nav button { width:44px; height:44px; border-radius:14px; background:#ffffff22; font-size:20px; font-weight:900; }
+  .hole .num { text-align:center; }
+  .hole .num b { display:block; font-size:34px; line-height:1; }
+  .hole .num small { font-weight:700; opacity:.85; }
+  .par { display:flex; justify-content:center; gap:6px; margin-top:10px; }
+  .par button { padding:6px 12px; border-radius:10px; background:#ffffff1f; font-weight:800; font-size:14px; }
+  .par button.on { background:#fff; color:var(--a); }
+  .pl { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:18px; background:var(--card); margin-top:8px; }
+  .pl .nm { flex:1; min-width:0; }
+  .pl .nm b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pl .nm small { color:var(--muted); font-weight:700; }
+  .pl .tot { font-weight:900; }
+  .stp { display:flex; align-items:center; gap:8px; }
+  .stp button { width:42px; height:42px; border-radius:14px; background:var(--bg); font-size:22px; font-weight:900; }
+  .stp b { width:44px; height:44px; display:grid; place-items:center; font-size:22px; border-radius:50%; }
+  .s-eagle { background:var(--eagle); color:#fff; } .s-birdie { background:var(--birdie); color:#fff; } .s-par { background:#e9f5ea; } .s-bogey { background:#d0ebff; color:var(--bogey); } .s-double { background:var(--bogey); color:#fff; } .s-none { color:#bbb; }
+  .card { background:var(--card); border-radius:20px; padding:12px; margin-top:12px; overflow-x:auto; }
+  table { border-collapse:collapse; font-size:12px; font-variant-numeric:tabular-nums; min-width:100%; }
+  th, td { padding:5px 3px; text-align:center; min-width:22px; }
+  th { color:var(--muted); font-weight:800; }
+  td.n { text-align:left; font-weight:800; white-space:nowrap; padding-right:8px; position:sticky; left:0; background:#fff; }
+  td.cur, th.cur { background:#fff3bf; }
+  td.sum { font-weight:900; background:#f4f8f3; }
+  td span { display:inline-grid; place-items:center; width:20px; height:20px; border-radius:50%; }
+  .menu { position:fixed; inset:0; background:#0007; display:none; align-items:flex-end; z-index:5; }
+  .menu.on { display:flex; }
+  .menu > div { width:100%; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .menu label { display:block; font-weight:800; margin:12px 0 6px; font-size:14px; }
+  .menu input { width:100%; padding:12px; border-radius:12px; border:2px solid var(--line); font:inherit; font-weight:700; margin-bottom:6px; }
+  .seg { display:flex; gap:6px; }
+  .seg button { flex:1; padding:12px; border-radius:12px; background:#fff; font-weight:800; }
+  .seg button.on { background:var(--a); color:#fff; }
+  .go { width:100%; margin-top:16px; padding:15px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; font-size:17px; }
+  .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; font-size:11px; color:var(--muted); font-weight:700; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:3px; vertical-align:-1px; }
+</style>
+</head>
+<body>
+<div class="head"><h1>⛳ <span id="ttl"></span></h1><button id="menuB"></button></div>
+<div class="hole"><div class="nav"><button id="prev">‹</button><div class="num"><small id="holeL"></small><b id="holeN"></b><small id="parL"></small></div><button id="next">›</button></div><div class="par" id="par"></div></div>
+<div id="players"></div>
+<div class="card"><table id="card"></table><div class="legend" id="legend"></div></div>
+<div class="menu" id="menu"><div>
+  <label id="lCourse"></label><input id="course" maxlength="30">
+  <label id="lHoles"></label><div class="seg" id="holes"><button data-h="9">9</button><button data-h="18">18</button></div>
+  <label id="lPlayers"></label><input id="p0" maxlength="14"><input id="p1" maxlength="14"><input id="p2" maxlength="14"><input id="p3" maxlength="14">
+  <button class="go" id="start"></button>
+</div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Golf', round:'Nueva vuelta', hole:'Hoyo', par:'Par', course:'Campo', defCourse:'Mi campo', holes:'Hoyos', players:'Jugadores (hasta 4)', start:'Empezar vuelta', me:'Yo', out:'Ida', in:'Vuelta', tot:'Total', vs:'sobre par', even:'al par', under:'bajo par', names:['Eagle','Birdie','Par','Bogey','Doble+'] }
+ : { title:'Golf', round:'New round', hole:'Hole', par:'Par', course:'Course', defCourse:'My course', holes:'Holes', players:'Players (up to 4)', start:'Start round', me:'Me', out:'Out', in:'In', tot:'Total', vs:'over', even:'even', under:'under', names:['Eagle','Birdie','Par','Bogey','Double+'] };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const PAR18 = [4, 4, 3, 5, 4, 4, 3, 4, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4];
+let r, hole = 0, nHoles = 18;
+const fresh = (names = [T.me], holes = 18, course = T.defCourse) => ({ course, holes, par: PAR18.slice(0, holes), players: names.map(n => ({ name: n, s: Array(holes).fill(0) })) });
+['ttl', 'menuB', 'lCourse', 'lHoles', 'lPlayers', 'start'].forEach((id, i) => $(id).textContent = [T.title, T.round, T.course, T.holes, T.players, T.start][i]);
+$('legend').innerHTML = ['eagle', 'birdie', 'par', 'bogey', 'double'].map((c, i) => `<span><i class="s-${c}"></i>${T.names[i]}</span>`).join('');
+const cls = (s, p) => !s ? 's-none' : s - p <= -2 ? 's-eagle' : s - p === -1 ? 's-birdie' : s === p ? 's-par' : s - p === 1 ? 's-bogey' : 's-double';
+const toPar = pl => { let d = 0; pl.s.forEach((s, i) => { if (s) d += s - r.par[i]; }); return d; };
+const fmtPar = d => d === 0 ? 'E' : (d > 0 ? '+' : '') + d;
+function render() {
+  $('holeL').textContent = T.hole; $('holeN').textContent = hole + 1; $('parL').textContent = `${T.par} ${r.par[hole]}`;
+  $('par').innerHTML = [3, 4, 5].map(p => `<button data-p="${p}" class="${r.par[hole] === p ? 'on' : ''}">${T.par} ${p}</button>`).join('');
+  $('par').querySelectorAll('button').forEach(b => b.onclick = () => { r.par[hole] = +b.dataset.p; save(); render(); });
+  $('prev').style.visibility = hole ? 'visible' : 'hidden'; $('next').style.visibility = hole < r.holes - 1 ? 'visible' : 'hidden';
+  $('players').innerHTML = '';
+  r.players.forEach((pl, i) => {
+    const el = document.createElement('div'), s = pl.s[hole], d = toPar(pl), strokes = pl.s.reduce((a, b) => a + b, 0);
+    el.className = 'pl';
+    el.innerHTML = `<div class="nm"><b></b><small>${strokes} · <span class="tot">${fmtPar(d)}</span></small></div><div class="stp"><button data-d="-1">−</button><b class="${cls(s, r.par[hole])}">${s || '–'}</b><button data-d="1">+</button></div>`;
+    el.querySelector('.nm b').textContent = pl.name;
+    el.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { const cur = pl.s[hole] || (b.dataset.d === '1' ? r.par[hole] - 1 : r.par[hole] + 1); pl.s[hole] = Math.max(1, Math.min(15, cur + +b.dataset.d)); save(); render(); try { if (window.Acornix) Acornix.vibrate(10); } catch (e) {} });
+    $('players').appendChild(el);
+  });
+  // Scorecard table with Out / In / Total.
+  const idx = [...Array(r.holes).keys()], half = r.holes === 18;
+  const cols = half ? [...idx.slice(0, 9), 'out', ...idx.slice(9), 'in', 'tot'] : [...idx, 'tot'];
+  const sum = (arr, from, to) => arr.slice(from, to).reduce((a, b) => a + b, 0);
+  const cell = (arr, c, isPar) => c === 'out' ? sum(arr, 0, 9) || '' : c === 'in' ? sum(arr, 9, 18) || '' : c === 'tot' ? sum(arr, 0, r.holes) || '' : isPar ? arr[c] : arr[c] ? `<span class="${cls(arr[c], r.par[c])}">${arr[c]}</span>` : '';
+  $('card').innerHTML = `<tr><th></th>${cols.map(c => `<th class="${c === hole ? 'cur' : ''}">${typeof c === 'number' ? c + 1 : T[c]}</th>`).join('')}</tr>` +
+    `<tr><td class="n">${T.par}</td>${cols.map(c => `<td class="${typeof c === 'number' ? (c === hole ? 'cur' : '') : 'sum'}">${cell(r.par, c, true)}</td>`).join('')}</tr>` +
+    r.players.map((pl, i) => `<tr><td class="n" data-i="${i}"></td>${cols.map(c => `<td class="${typeof c === 'number' ? (c === hole ? 'cur' : '') : 'sum'}" ${typeof c === 'number' ? `data-h="${c}"` : ''}>${cell(pl.s, c)}</td>`).join('')}</tr>`).join('');
+  $('card').querySelectorAll('td.n[data-i]').forEach(td => td.textContent = r.players[+td.dataset.i].name);
+  $('card').querySelectorAll('[data-h]').forEach(td => td.onclick = () => { hole = +td.dataset.h; render(); });
+}
+function save() { store.set('round', r); store.set('hole', hole); }
+$('prev').onclick = () => { if (hole) { hole--; save(); render(); } };
+$('next').onclick = () => { if (hole < r.holes - 1) { hole++; save(); render(); } };
+function openMenu() { $('course').value = r.course; r.players.forEach((p, i) => $('p' + i).value = p.name); for (let i = r.players.length; i < 4; i++) $('p' + i).value = ''; nHoles = r.holes; paintH(); $('menu').classList.add('on'); }
+const paintH = () => $('holes').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.h === nHoles));
+$('holes').querySelectorAll('button').forEach(b => b.onclick = () => { nHoles = +b.dataset.h; paintH(); });
+$('menuB').onclick = openMenu;
+$('start').onclick = () => { const names = [0, 1, 2, 3].map(i => $('p' + i).value.trim()).filter(Boolean); r = fresh(names.length ? names : [T.me], nHoles, $('course').value.trim() || T.defCourse); hole = 0; save(); $('menu').classList.remove('on'); render(); };
+$('menu').onclick = e => { if (e.target === $('menu')) $('menu').classList.remove('on'); };
+(async () => { r = await store.get('round', null) || fresh(); hole = Math.min(await store.get('hole', 0), r.holes - 1); render(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "tennis-scorer",
+  "name": "Tennis Scorer",
+  "emoji": "🎾",
+  "category": "sports",
+  "description": "Keep score point by point: 15-30-40, deuce and advantage, tie-breaks, sets, who serves, and set or break point alerts.",
+  "prompt": "A tennis and padel scorer: tap the player who wins each point and it handles 15, 30, 40, deuce, advantage or golden point, games, sets, tie-break at 6-6 with service changes, best of 1, 3 or 5 sets, break, set and match point alerts and undo.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

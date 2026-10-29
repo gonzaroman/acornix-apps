@@ -1,0 +1,14 @@
+{
+  "id": "tournament",
+  "name": "Tournament",
+  "emoji": "🏅",
+  "category": "sports",
+  "description": "Make a knockout bracket or a league for your friends, enter results and see who goes through or tops the table.",
+  "prompt": "A tournament organiser: type the players or teams, shuffle the draw, choose knockout with automatic byes or a round-robin league with matchdays, enter scores, see the bracket advance or the table with points and goal difference, and share the results.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

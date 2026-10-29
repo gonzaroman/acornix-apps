@@ -1,0 +1,14 @@
+{
+  "id": "scoreboard",
+  "name": "Scoreboard",
+  "emoji": "🏆",
+  "category": "sports",
+  "description": "A huge two-colour scoreboard for football, basketball, volleyball, table tennis, hockey or any game, with clock, periods and fouls.",
+  "prompt": "A full-screen scoreboard: tap a team's half to score, +2 and +3 for basketball, fouls, a game clock with periods, sets that close themselves in volleyball and table tennis, team names and colours, undo, swap sides, landscape layout and saved results.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

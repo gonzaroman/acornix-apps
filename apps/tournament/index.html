@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tournament</title>
+<style>
+  :root { --bg:#f4f1ea; --card:#fff; --ink:#1f1b14; --muted:#80776a; --a:#c8102e; --gold:#d4a017; --line:#e6dfd2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 12px; font-size:28px; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; }
+  .card h3 { margin:0 0 8px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  textarea { width:100%; min-height:150px; border:2px solid var(--line); border-radius:14px; padding:12px; font:inherit; font-size:16px; resize:vertical; outline:none; }
+  textarea:focus { border-color:var(--a); }
+  .seg { display:flex; gap:6px; }
+  .seg button { flex:1; padding:12px 6px; border-radius:14px; background:var(--bg); font-weight:800; font-size:14px; }
+  .seg button.on { background:var(--ink); color:#fff; }
+  .seg button small { display:block; font-weight:600; font-size:11px; opacity:.75; }
+  .check { display:flex; align-items:center; gap:8px; margin-top:10px; font-weight:700; color:var(--muted); }
+  .check input { width:20px; height:20px; accent-color:var(--a); }
+  .go { width:100%; padding:16px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:18px; }
+  .err { color:var(--a); font-weight:700; margin-top:8px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .bar button { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; }
+  .champ { text-align:center; padding:20px; border-radius:22px; background:linear-gradient(135deg,#f6d365,#d4a017); color:#3b2a00; margin-bottom:10px; }
+  .champ .e { font-size:54px; } .champ b { display:block; font-size:26px; }
+  .rounds { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory; }
+  .round { flex:none; width:min(78vw,280px); scroll-snap-align:start; display:flex; flex-direction:column; justify-content:space-around; gap:10px; }
+  .round h4 { margin:0 0 2px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .match { background:var(--card); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px #1f1b1410; }
+  .side { display:flex; align-items:center; gap:8px; padding:10px 12px; width:100%; text-align:left; }
+  .side + .side { border-top:1px solid var(--line); }
+  .side span { flex:1; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .side.win { background:#fff6d6; } .side.win span { font-weight:900; }
+  .side.lose span { color:var(--muted); text-decoration:line-through; }
+  .side.tbd span { color:#bbb; font-style:italic; }
+  .side input { width:46px; padding:6px; border-radius:10px; border:2px solid var(--line); font:inherit; font-weight:800; text-align:center; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:right; color:var(--muted); font-size:11px; text-transform:uppercase; padding:6px 4px; }
+  th:nth-child(2) { text-align:left; }
+  td { padding:9px 4px; border-top:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; }
+  td:nth-child(2) { text-align:left; font-weight:800; }
+  tr.top td:first-child { color:var(--gold); font-weight:900; }
+  .fix { display:flex; align-items:center; gap:8px; padding:8px 0; border-top:1px solid var(--line); }
+  .fix:first-of-type { border-top:0; }
+  .fix span { flex:1; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .fix span:last-of-type { text-align:right; }
+  .fix input { width:42px; padding:6px; border-radius:10px; border:2px solid var(--line); font:inherit; font-weight:800; text-align:center; }
+  .rh { margin:12px 0 4px; font-size:12px; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.5px; }
+</style>
+</head>
+<body>
+<h1>🏅 <span id="ttl"></span></h1>
+<div id="setup">
+  <div class="card"><h3 id="lName"></h3><input id="tname" style="width:100%;padding:12px;border-radius:14px;border:2px solid var(--line);font:inherit;font-size:17px;font-weight:800"></div>
+  <div class="card"><h3 id="lPlayers"></h3><textarea id="players"></textarea><label class="check"><input type="checkbox" id="shuffle" checked><span id="lShuffle"></span></label></div>
+  <div class="card"><h3 id="lFormat"></h3><div class="seg" id="format"></div></div>
+  <button class="go" id="create"></button><div class="err" id="err"></div>
+</div>
+<div id="view" hidden></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Torneo', name:'Nombre del torneo', defName:'Torneo del barrio', players:'Participantes (uno por línea)', ph:'Ana\nLuis\nMarta\nPablo\nEquipo Rojo\n…', shuffle:'Sortear el orden', format:'Formato', ko:'Eliminatoria', koS:'Pierdes y fuera', rr:'Liga', rrS:'Todos contra todos', create:'Crear torneo', needTwo:'Hacen falta al menos 2 participantes.', tooMany:'Máximo 32 participantes.', newT:'＋ Nuevo', share:'Compartir', final:'Final', semi:'Semifinales', quarter:'Cuartos', round:'Ronda', bye:'pasa directo', tbd:'Por decidir', champ:'¡Campeón!', table:'Clasificación', fixtures:'Partidos', pts:'Pts', p:'J', w:'G', d:'E', l:'P', gd:'Dif', matchday:'Jornada', confirm:'¿Empezar un torneo nuevo? Se borrará el actual.' }
+ : { title:'Tournament', name:'Tournament name', defName:'Friday cup', players:'Players or teams (one per line)', ph:'Anna\nLuke\nMaya\nPaul\nRed Team\n…', shuffle:'Shuffle the draw', format:'Format', ko:'Knockout', koS:'Lose and you\'re out', rr:'League', rrS:'Everyone plays everyone', create:'Create tournament', needTwo:'You need at least 2 players.', tooMany:'32 players at most.', newT:'＋ New', share:'Share', final:'Final', semi:'Semi-finals', quarter:'Quarter-finals', round:'Round', bye:'gets a bye', tbd:'To be decided', champ:'Champion!', table:'Table', fixtures:'Fixtures', pts:'Pts', p:'P', w:'W', d:'D', l:'L', gd:'GD', matchday:'Matchday', confirm:'Start a new tournament? The current one will be deleted.' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let tour = null, format = 'ko';
+['ttl', 'lName', 'lPlayers', 'lShuffle', 'lFormat', 'create'].forEach((id, i) => $(id).textContent = [T.title, T.name, T.players, T.shuffle, T.format, T.create][i]);
+$('players').placeholder = T.ph; $('tname').placeholder = T.defName;
+$('format').innerHTML = `<button data-f="ko">🏆 ${T.ko}<small>${T.koS}</small></button><button data-f="rr">📋 ${T.rr}<small>${T.rrS}</small></button>`;
+const paintF = () => $('format').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.f === format));
+$('format').querySelectorAll('button').forEach(b => b.onclick = () => { format = b.dataset.f; paintF(); }); paintF();
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+$('create').onclick = () => {
+  let ps = [...new Set($('players').value.split('\n').map(s => s.trim()).filter(Boolean))];
+  if (ps.length < 2) { $('err').textContent = T.needTwo; return; } if (ps.length > 32) { $('err').textContent = T.tooMany; return; }
+  if ($('shuffle').checked) ps = shuffle(ps);
+  tour = { name: $('tname').value.trim() || T.defName, format, players: ps };
+  if (format === 'ko') {
+    // Pad to a power of two: the first players drawn get a bye into round 2.
+    let size = 2; while (size < ps.length) size *= 2;
+    const first = [], byes = size - ps.length, real = ps.slice();
+    for (let i = 0; i < size / 2; i++) first.push(i < byes ? { a: real.shift(), b: null, bye: true } : { a: real.shift(), b: real.shift() });
+    tour.rounds = [first.map(m => ({ ...m, sa: '', sb: '' }))];
+    let n = size / 4; while (n >= 1) { tour.rounds.push(Array(n).fill(0).map(() => ({ a: null, b: null, sa: '', sb: '' }))); n /= 2; }
+    advance();
+  } else {
+    // Circle method for the round-robin schedule.
+    const list = ps.length % 2 ? [...ps, null] : [...ps], n = list.length, days = [];
+    for (let r = 0; r < n - 1; r++) { const day = []; for (let i = 0; i < n / 2; i++) { const a = list[i], b = list[n - 1 - i]; if (a && b) day.push({ a, b, sa: '', sb: '' }); } days.push(day); list.splice(1, 0, list.pop()); }
+    tour.days = days;
+  }
+  store.set('tour', tour); render();
+};
+// A bye only exists in the first round; elsewhere an empty side means the opponent isn't known yet.
+const winner = m => m.bye ? m.a : !m.a || !m.b ? null : (m.sa !== '' && m.sb !== '' && +m.sa !== +m.sb ? (+m.sa > +m.sb ? m.a : m.b) : null);
+function advance() {
+  for (let r = 1; r < tour.rounds.length; r++) tour.rounds[r].forEach((m, i) => {
+    const a = winner(tour.rounds[r - 1][i * 2]), b = winner(tour.rounds[r - 1][i * 2 + 1]);
+    if (m.a !== a || m.b !== b) { m.a = a; m.b = b; m.sa = ''; m.sb = ''; }
+  });
+}
+function rname(r, total) { const left = total - r; return left === 1 ? T.final : left === 2 ? T.semi : left === 3 ? T.quarter : `${T.round} ${r + 1}`; }
+function render() {
+  $('setup').hidden = !!tour; $('view').hidden = !tour; if (!tour) return;
+  let html = `<div class="bar"><b style="font-size:18px">${esc(tour.name)}</b><span><button id="shareB">${T.share}</button> <button id="newB">${T.newT}</button></span></div>`;
+  if (tour.format === 'ko') {
+    const champ = winner(tour.rounds[tour.rounds.length - 1][0]);
+    if (champ) html += `<div class="champ"><div class="e">🏆</div><small>${T.champ}</small><b>${esc(champ)}</b></div>`;
+    html += `<div class="rounds">${tour.rounds.map((rd, r) => `<div class="round"><h4>${rname(r, tour.rounds.length)}</h4>${rd.map((m, i) => { const w = winner(m), bye = !!m.bye; return `<div class="match">${['a', 'b'].map(k => { const name = m[k], cls = !name ? 'tbd' : w ? (w === name ? 'win' : 'lose') : ''; return `<div class="side ${cls}"><span>${name ? esc(name) : (bye && k === 'b' ? '— ' + T.bye : T.tbd)}</span>${m.a && m.b ? `<input inputmode="numeric" data-r="${r}" data-i="${i}" data-k="s${k}" value="${esc(m['s' + k])}">` : ''}</div>`; }).join('')}</div>`; }).join('')}</div>`).join('')}</div>`;
+  } else {
+    const st = {}; tour.players.forEach(p => st[p] = { p: 0, w: 0, d: 0, l: 0, f: 0, a: 0, pts: 0 });
+    tour.days.flat().forEach(m => { if (m.sa === '' || m.sb === '') return; const A = st[m.a], B = st[m.b], a = +m.sa, b = +m.sb; A.p++; B.p++; A.f += a; A.a += b; B.f += b; B.a += a; if (a > b) { A.w++; B.l++; A.pts += 3; } else if (b > a) { B.w++; A.l++; B.pts += 3; } else { A.d++; B.d++; A.pts++; B.pts++; } });
+    const rows = Object.entries(st).sort((x, y) => y[1].pts - x[1].pts || (y[1].f - y[1].a) - (x[1].f - x[1].a) || y[1].f - x[1].f);
+    html += `<div class="card"><h3>${T.table}</h3><table><tr><th>#</th><th></th><th>${T.p}</th><th>${T.w}</th><th>${T.d}</th><th>${T.l}</th><th>${T.gd}</th><th>${T.pts}</th></tr>${rows.map(([n, s], i) => `<tr class="${i === 0 && s.p ? 'top' : ''}"><td>${i === 0 && s.p ? '🏆' : i + 1}</td><td>${esc(n)}</td><td>${s.p}</td><td>${s.w}</td><td>${s.d}</td><td>${s.l}</td><td>${s.f - s.a > 0 ? '+' : ''}${s.f - s.a}</td><td><b>${s.pts}</b></td></tr>`).join('')}</table></div>`;
+    html += `<div class="card"><h3>${T.fixtures}</h3>${tour.days.map((d, di) => `<div class="rh">${T.matchday} ${di + 1}</div>${d.map((m, i) => `<div class="fix"><span>${esc(m.a)}</span><input inputmode="numeric" data-d="${di}" data-i="${i}" data-k="sa" value="${esc(m.sa)}">–<input inputmode="numeric" data-d="${di}" data-i="${i}" data-k="sb" value="${esc(m.sb)}"><span>${esc(m.b)}</span></div>`).join('')}`).join('')}</div>`;
+  }
+  $('view').innerHTML = html;
+  $('view').querySelectorAll('input').forEach(inp => inp.onchange = () => {
+    const v = inp.value.replace(/\D/g, '').slice(0, 3), m = inp.dataset.d != null ? tour.days[+inp.dataset.d][+inp.dataset.i] : tour.rounds[+inp.dataset.r][+inp.dataset.i];
+    m[inp.dataset.k] = v; if (tour.format === 'ko') advance(); store.set('tour', tour); render();
+  });
+  $('newB').onclick = () => { if (!$('newB').dataset.sure) { $('newB').dataset.sure = 1; $('newB').textContent = '✓ ' + T.newT.replace('＋ ', ''); setTimeout(() => { if ($('newB')) { delete $('newB').dataset.sure; $('newB').textContent = T.newT; } }, 2500); return; } $('players').value = tour.players.join('\n'); $('tname').value = tour.name; tour = null; store.set('tour', null); render(); };
+  $('shareB').onclick = () => {
+    let txt = `🏅 ${tour.name}\n`;
+    if (tour.format === 'ko') tour.rounds.forEach((rd, r) => { txt += `\n${rname(r, tour.rounds.length)}\n`; rd.forEach(m => { if (m.a && m.b) txt += `${m.a} ${m.sa || '-'} – ${m.sb || '-'} ${m.b}\n`; }); });
+    else tour.days.forEach((d, i) => { txt += `\n${T.matchday} ${i + 1}\n`; d.forEach(m => txt += `${m.a} ${m.sa || '-'} – ${m.sb || '-'} ${m.b}\n`); });
+    try { if (window.Acornix) Acornix.share(txt); else if (navigator.share) navigator.share({ text: txt }); else navigator.clipboard.writeText(txt); } catch (e) {}
+  };
+}
+(async () => { tour = await store.get('tour', null); render(); })();
+</script>
+</body>
+</html>

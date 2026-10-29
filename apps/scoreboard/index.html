@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Scoreboard</title>
+<style>
+  :root { --a:#e03131; --b:#1c7ed6; --ink:#fff; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:#000; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .board { position:fixed; inset:0; display:flex; flex-direction:column; }
+  @media (orientation:landscape) { .board { flex-direction:row; } }
+  .team { flex:1; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; touch-action:manipulation; transition:filter .1s; overflow:hidden; }
+  .team.flash { filter:brightness(1.25); }
+  .team .name { font-size:20px; font-weight:800; letter-spacing:1px; text-transform:uppercase; opacity:.9; background:none; padding:6px 14px; border-radius:12px; }
+  .team .score { font-size:min(38vh,46vw); font-weight:900; line-height:.95; font-variant-numeric:tabular-nums; letter-spacing:-.04em; }
+  @media (orientation:landscape) { .team .score { font-size:min(55vh,30vw); } }
+  .team .adds { display:flex; gap:8px; }
+  .team .adds button { min-width:56px; padding:10px 12px; border-radius:14px; background:#0003; font-weight:900; font-size:18px; }
+  .team .fouls { position:absolute; top:calc(env(safe-area-inset-top) + 10px); left:12px; font-size:13px; font-weight:800; opacity:.85; }
+  .team .sets { position:absolute; top:calc(env(safe-area-inset-top) + 10px); right:12px; font-size:13px; font-weight:800; opacity:.85; }
+  .mid { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; background:#111; z-index:2; }
+  @media (orientation:landscape) { .mid { flex-direction:column; justify-content:center; padding:10px 8px; } }
+  .mid button { padding:10px 12px; border-radius:12px; background:#222; font-weight:800; font-size:14px; }
+  .clock { text-align:center; font-variant-numeric:tabular-nums; }
+  .clock b { display:block; font-size:30px; font-weight:900; letter-spacing:1px; }
+  .clock small { color:#aaa; font-weight:800; font-size:12px; }
+  .clock.run b { color:#ffd43b; }
+  .menu { position:fixed; inset:0; background:#000c; display:none; align-items:flex-end; z-index:5; }
+  .menu.on { display:flex; }
+  .menu > div { width:100%; max-height:88vh; overflow-y:auto; background:#16181d; border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .menu h3 { margin:14px 0 8px; font-size:13px; color:#999; text-transform:uppercase; letter-spacing:.6px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .grid button { padding:12px 6px; border-radius:14px; background:#23262d; font-weight:800; font-size:14px; }
+  .grid button.on { outline:2px solid #ffd43b; }
+  .grid button span { display:block; font-size:24px; }
+  .teams { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .teams input[type=text] { width:100%; padding:12px; border-radius:12px; border:0; background:#23262d; color:#fff; font:inherit; font-weight:800; }
+  .cols { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .cols button { width:30px; height:30px; border-radius:50%; }
+  .cols button.on { outline:3px solid #fff; }
+  .row2 { display:flex; gap:8px; margin-top:16px; }
+  .row2 button { flex:1; padding:14px; border-radius:14px; background:#23262d; font-weight:900; }
+  .row2 .ok { background:#ffd43b; color:#111; }
+  .hist { font-size:14px; color:#bbb; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="board" id="board">
+  <div class="team" id="t0"></div>
+  <div class="mid"><button id="menuB">☰</button><div class="clock" id="clock"><b id="time">00:00</b><small id="period"></small></div><button id="undo">↶</button></div>
+  <div class="team" id="t1"></div>
+</div>
+<div class="menu" id="menu"><div>
+  <h3 id="sportT"></h3><div class="grid" id="sports"></div>
+  <h3 id="teamsT"></h3><div class="teams" id="teamsEd"></div>
+  <h3 id="histT"></h3><div class="hist" id="hist"></div>
+  <div class="row2"><button id="reset"></button><button id="swap">⇄</button><button class="ok" id="close"></button></div>
+</div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { sport:'Deporte', teams:'Equipos', hist:'Partidos guardados', reset:'Nuevo partido', ok:'Listo', home:'Local', away:'Visitante', period:['Parte','Cuarto','Set','Periodo','Juego'], fouls:'Faltas', sets:'Sets', tapHint:'Toca un lado para sumar', none:'Aún no hay partidos.', sports:[['⚽','Fútbol'],['🏀','Baloncesto'],['🏐','Voleibol'],['🏓','Ping-pong'],['🏒','Hockey'],['🎲','Juego']] }
+ : { sport:'Sport', teams:'Teams', hist:'Saved games', reset:'New game', ok:'Done', home:'Home', away:'Away', period:['Half','Quarter','Set','Period','Game'], fouls:'Fouls', sets:'Sets', tapHint:'Tap a side to score', none:'No games yet.', sports:[['⚽','Football'],['🏀','Basketball'],['🏐','Volleyball'],['🏓','Table tennis'],['🏒','Hockey'],['🎲','Any game']] };
+// Per sport: score buttons, period label index, number of periods, minutes per period (0 = no clock), sets mode (point target)
+const SPORTS = [{ adds: [1], per: 0, n: 2, mins: 45 }, { adds: [1, 2, 3], per: 1, n: 4, mins: 10, fouls: true }, { adds: [1], per: 2, n: 5, mins: 0, sets: 25 }, { adds: [1], per: 4, n: 5, mins: 0, sets: 11 }, { adds: [1], per: 3, n: 3, mins: 20 }, { adds: [1, 5, 10], per: 4, n: 1, mins: 0 }];
+const COLORS = ['#e03131', '#1c7ed6', '#2f9e44', '#f08c00', '#7048e8', '#0c8599', '#c2255c', '#343a40'];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let g, history = [], undo = [], tick;
+const fresh = (sport = 1, teams) => ({ sport, teams: teams || [{ name: T.home, color: COLORS[0] }, { name: T.away, color: COLORS[1] }], score: [0, 0], fouls: [0, 0], sets: [0, 0], period: 1, clock: 0, running: false });
+const S = () => SPORTS[g.sport];
+function save() { store.set('game', g); }
+function render() {
+  [0, 1].forEach(i => {
+    const el = $('t' + i), t = g.teams[i];
+    el.style.background = `linear-gradient(160deg, ${t.color}, ${shade(t.color)})`;
+    el.innerHTML = `${S().fouls ? `<span class="fouls">${T.fouls}: ${g.fouls[i]}</span>` : ''}${S().sets ? `<span class="sets">${T.sets}: ${g.sets[i]}</span>` : ''}<button class="name"></button><div class="score">${g.score[i]}</div><div class="adds">${S().adds.length > 1 ? S().adds.map(a => `<button data-a="${a}">+${a}</button>`).join('') : ''}<button data-a="-1">−1</button>${S().fouls ? '<button data-f="1">F</button>' : ''}</div>`;
+    el.querySelector('.name').textContent = t.name;
+    el.querySelectorAll('[data-a]').forEach(b => b.onclick = e => { e.stopPropagation(); add(i, +b.dataset.a); });
+    el.querySelectorAll('[data-f]').forEach(b => b.onclick = e => { e.stopPropagation(); push(); g.fouls[i]++; save(); render(); });
+    el.querySelector('.name').onclick = e => { e.stopPropagation(); openMenu(); };
+  });
+  const m = Math.floor(g.clock / 60), s = Math.floor(g.clock % 60);
+  $('time').textContent = S().mins ? `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${g.score[0]} – ${g.score[1]}`;
+  $('period').textContent = `${T.period[S().per]} ${g.period}/${S().n}`;
+  $('clock').classList.toggle('run', g.running);
+}
+function shade(hex) { const n = parseInt(hex.slice(1), 16), f = .65; return `rgb(${(n >> 16) * f | 0},${(n >> 8 & 255) * f | 0},${(n & 255) * f | 0})`; }
+function push() { undo.push(JSON.stringify(g)); if (undo.length > 60) undo.shift(); }
+function add(i, v) {
+  push(); g.score[i] = Math.max(0, g.score[i] + v);
+  const sp = S();
+  if (sp.sets && v > 0) {
+    const target = g.period === sp.n ? Math.ceil(sp.sets * .6) : sp.sets, a = g.score[i], b = g.score[1 - i];
+    if (a >= target && a - b >= 2) { g.sets[i]++; history.unshift(`${g.teams[0].name} ${g.score[0]}–${g.score[1]} ${g.teams[1].name}`); g.score = [0, 0]; if (g.period < sp.n) g.period++; beep(1046, .4); }
+  }
+  const el = $('t' + i); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 120);
+  beep(v > 0 ? 700 : 300, .08); try { if (window.Acornix) Acornix.vibrate(v > 0 ? 20 : [20, 30, 20]); } catch (e) {}
+  save(); render();
+}
+[0, 1].forEach(i => $('t' + i).addEventListener('click', () => add(i, S().adds[0])));
+$('undo').onclick = () => { if (undo.length) { g = JSON.parse(undo.pop()); save(); render(); } };
+$('clock').onclick = () => { if (!S().mins) { if (g.period < S().n) { push(); g.period++; save(); render(); } return; } g.running = !g.running; save(); render(); };
+$('clock').oncontextmenu = e => { e.preventDefault(); push(); g.period = g.period % S().n + 1; g.clock = 0; g.running = false; save(); render(); };
+tick = setInterval(() => { if (!g.running || !S().mins) return; g.clock += .25; if (g.clock >= S().mins * 60) { g.clock = S().mins * 60; g.running = false; beep(523, .8); try { if (window.Acornix) Acornix.vibrate([200, 100, 200]); } catch (e) {} if (g.period < S().n) { g.period++; g.clock = 0; } save(); } render(); }, 250);
+function openMenu() {
+  $('sportT').textContent = T.sport; $('teamsT').textContent = T.teams; $('histT').textContent = T.hist; $('reset').textContent = T.reset; $('close').textContent = T.ok;
+  $('sports').innerHTML = T.sports.map(([e, n], i) => `<button data-s="${i}" class="${g.sport === i ? 'on' : ''}"><span>${e}</span>${n}</button>`).join('');
+  $('sports').querySelectorAll('button').forEach(b => b.onclick = () => { if (+b.dataset.s === g.sport) return; push(); g = fresh(+b.dataset.s, g.teams); save(); render(); openMenu(); });
+  $('teamsEd').innerHTML = [0, 1].map(i => `<div><input type="text" data-i="${i}" maxlength="18"><div class="cols">${COLORS.map(c => `<button data-i="${i}" data-c="${c}" style="background:${c}" class="${g.teams[i].color === c ? 'on' : ''}"></button>`).join('')}</div></div>`).join('');
+  $('teamsEd').querySelectorAll('input').forEach(inp => { inp.value = g.teams[+inp.dataset.i].name; inp.oninput = () => { g.teams[+inp.dataset.i].name = inp.value || '—'; save(); render(); }; });
+  $('teamsEd').querySelectorAll('[data-c]').forEach(b => b.onclick = () => { g.teams[+b.dataset.i].color = b.dataset.c; save(); render(); openMenu(); });
+  $('hist').innerHTML = '';
+  if (history.length) history.slice(0, 12).forEach(h => { const d = document.createElement('div'); d.textContent = h; $('hist').appendChild(d); }); else $('hist').textContent = T.none;
+  $('menu').classList.add('on');
+}
+$('menuB').onclick = openMenu;
+$('close').onclick = () => $('menu').classList.remove('on');
+$('menu').onclick = e => { if (e.target === $('menu')) $('menu').classList.remove('on'); };
+$('swap').onclick = () => { push(); g.teams.reverse(); g.score.reverse(); g.fouls.reverse(); g.sets.reverse(); save(); render(); openMenu(); };
+$('reset').onclick = () => {
+  if (g.score[0] || g.score[1] || g.sets[0] || g.sets[1]) { const tag = S().sets ? ` (${g.sets[0]}–${g.sets[1]} ${T.sets.toLowerCase()})` : ''; history.unshift(`${T.sports[g.sport][0]} ${g.teams[0].name} ${g.score[0]}–${g.score[1]} ${g.teams[1].name}${tag}`); history = history.slice(0, 50); store.set('history', history); }
+  push(); g = fresh(g.sport, g.teams); save(); render(); $('menu').classList.remove('on');
+};
+let ac; function beep(f, d) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = f; gn.gain.value = .07; o.connect(gn); gn.connect(ac.destination); gn.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d); o.start(); o.stop(ac.currentTime + d); } catch (e) {} }
+(async () => { g = await store.get('game', null) || fresh(); history = await store.get('history', []); render(); })();
+</script>
+</body>
+</html>
