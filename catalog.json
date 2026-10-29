@@ -1939,6 +1939,31 @@
       "trending": 0
     },
     {
+      "id": "compare-cities",
+      "name": "Compare Cities",
+      "emoji": "🌦️",
+      "category": "weather",
+      "description": "Put up to four cities side by side: today's weather, a 7-day temperature chart with one line each, and which one is warmest and driest.",
+      "prompt": "A compare cities weather app using the free Open-Meteo API with no key. Let me search and add up to four cities and show them side by side: current temperature, feels like, sky icon, rain chance, wind and humidity, plus a 7 day chart with one coloured line per city for the max temperature. Highlight which city is warmest, sunniest and least rainy this week. Save my list of cities.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 34837,
+      "sha256": "633f5bcf2a2a3c2c89986dd0a9dd1e4b929be7aa62ba63439c7b3b88e1f1270f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "charades",
       "name": "Charades",
       "emoji": "🎭",
