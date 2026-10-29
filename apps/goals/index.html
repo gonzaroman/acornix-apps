@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Goals</title>
+<style>
+  :root { --bg:#0e1424; --card:#18213a; --line:#26314f; --ink:#eef2ff; --muted:#93a0c4; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:580px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  h1 { margin:0 0 14px; font-size:28px; }
+  .goal { background:var(--card); border-radius:22px; padding:16px; margin-bottom:12px; border:1px solid var(--line); }
+  .head { display:flex; gap:12px; align-items:center; }
+  .ringw { position:relative; width:62px; height:62px; flex:none; }
+  .ringw svg { transform:rotate(-90deg); }
+  .ringw b { position:absolute; inset:0; display:grid; place-items:center; font-size:15px; }
+  .head h2 { margin:0; font-size:18px; word-break:break-word; }
+  .head small { color:var(--muted); font-weight:600; }
+  .head .x { margin-left:auto; color:var(--muted); font-size:18px; padding:6px; align-self:flex-start; }
+  .steps { margin-top:12px; display:flex; flex-direction:column; gap:6px; }
+  .step { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:12px; background:#ffffff08; }
+  .step .cb { width:24px; height:24px; border-radius:8px; border:2px solid var(--muted); flex:none; display:grid; place-items:center; font-size:13px; }
+  .step.done .cb { background:var(--c); border-color:var(--c); color:#000; }
+  .step.done span { text-decoration:line-through; color:var(--muted); }
+  .step span { flex:1; word-break:break-word; }
+  .step .rm { color:var(--muted); }
+  .addstep { display:flex; gap:8px; margin-top:6px; }
+  .addstep input { flex:1; padding:10px 12px; border-radius:12px; background:#ffffff0d; outline:none; }
+  .addstep button { padding:0 14px; border-radius:12px; background:#ffffff14; font-weight:800; }
+  .done-banner { margin-top:10px; text-align:center; font-weight:800; color:var(--c); }
+  .fab { position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:15px 20px; border-radius:18px; background:linear-gradient(135deg,#7c5cff,#2ec5ff); font-weight:900; box-shadow:0 10px 24px #0008; }
+  #sheet { position:fixed; inset:0; background:#000a; display:none; align-items:flex-end; z-index:5; }
+  #sheet.on { display:flex; }
+  .form { width:100%; max-width:580px; margin:0 auto; background:var(--card); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); display:flex; flex-direction:column; gap:10px; }
+  .form input { padding:13px; border-radius:14px; background:#ffffff0d; outline:none; }
+  .pick { display:flex; gap:8px; flex-wrap:wrap; } .pick button { width:40px; height:40px; border-radius:12px; background:#ffffff0d; font-size:20px; } .pick button.on { outline:3px solid #fff; }
+  .row { display:flex; gap:10px; } .row button { flex:1; padding:14px; border-radius:14px; background:#ffffff14; font-weight:800; } .row .save { background:#7c5cff; }
+  .empty { text-align:center; color:var(--muted); padding:40px 10px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div id="app"><h1>🎯 <span id="ttl"></span></h1><div id="list"></div></div>
+<button class="fab" id="add"></button>
+<div id="sheet"><form class="form" id="form"><b id="formTitle"></b><input id="name" maxlength="60" required><input id="when" type="date"><div class="pick" id="emojis"></div><div class="row"><button type="button" id="cancel"></button><button class="save" id="save"></button></div></form></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Metas', add:'＋ Meta', new:'Nueva meta', name:'Correr 10 km, aprender a cocinar…', cancel:'Cancelar', save:'Crear', step:'Añadir un paso…', of:'de', steps:'pasos', by:'Para el', daysLeft:n => n === 1 ? 'queda 1 día' : `quedan ${n} días`, overdue:'fecha pasada', done:'🏆 ¡Meta cumplida!', empty:'Divide un gran objetivo en pasos pequeños y ve tachándolos.',
+  sample:{ name:'Correr 10 km', e:'🏃', steps:['Comprar zapatillas','Correr 3 km sin parar','Correr 5 km','Correr 8 km','¡Carrera de 10 km!'] } }
+ : { title:'Goals', add:'＋ Goal', new:'New goal', name:'Run 10 km, learn to cook…', cancel:'Cancel', save:'Create', step:'Add a step…', of:'of', steps:'steps', by:'By', daysLeft:n => n === 1 ? '1 day left' : `${n} days left`, overdue:'past the date', done:'🏆 Goal reached!', empty:'Break a big goal into small steps and tick them off.',
+  sample:{ name:'Run 10 km', e:'🏃', steps:['Buy running shoes','Run 3 km without stopping','Run 5 km','Run 8 km','10 km race!'] } };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('add').textContent = T.add; $('formTitle').textContent = T.new; $('name').placeholder = T.name; $('cancel').textContent = T.cancel; $('save').textContent = T.save;
+const EMOJIS = ['🎯','🏃','📚','💰','🧘','🎸','🌍','💻','🏠','❤️','🥗','✈️'], COLORS = ['#7c5cff','#2ec5ff','#ffb547','#4ade80','#fb7185','#f472b6'];
+let goals = [], pickE = '🎯';
+function save() { store.set('goals', goals); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function render() {
+  const box = $('list'); box.innerHTML = '';
+  if (!goals.length) { box.innerHTML = `<div class="empty">🎯<br>${T.empty}</div>`; return; }
+  goals.forEach((g, gi) => {
+    const done = g.steps.filter(s => s.done).length, pct = g.steps.length ? done / g.steps.length : 0, c = COLORS[gi % COLORS.length];
+    let when = '';
+    if (g.when) { const n = Math.ceil((new Date(g.when + 'T23:59') - Date.now()) / 864e5); when = ' · ' + (n >= 0 ? T.daysLeft(n) : T.overdue); }
+    const el = document.createElement('div'); el.className = 'goal'; el.style.setProperty('--c', c);
+    el.innerHTML = `<div class="head"><div class="ringw"><svg width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r="26" fill="none" stroke="#ffffff14" stroke-width="6"/><circle cx="31" cy="31" r="26" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="${163.4 * (1 - pct)}" style="transition:stroke-dashoffset .5s"/></svg><b>${g.e}</b></div>
+      <div><h2>${esc(g.name)}</h2><small>${done} ${T.of} ${g.steps.length} ${T.steps}${when}</small></div><button class="x">✕</button></div>
+      <div class="steps">${g.steps.map((s, i) => `<div class="step ${s.done ? 'done' : ''}" data-i="${i}"><button class="cb">${s.done ? '✓' : ''}</button><span>${esc(s.t)}</span><button class="rm">✕</button></div>`).join('')}</div>
+      <form class="addstep"><input maxlength="80" placeholder="${T.step}"><button>+</button></form>${pct === 1 && g.steps.length ? `<div class="done-banner">${T.done}</div>` : ''}`;
+    el.querySelector('.x').onclick = () => { goals.splice(gi, 1); save(); render(); };
+    el.querySelectorAll('.step').forEach(st => { const i = +st.dataset.i; st.querySelector('.cb').onclick = () => { g.steps[i].done = !g.steps[i].done; if (g.steps.every(s => s.done)) celebrate(); else buzz(15); save(); render(); }; st.querySelector('.rm').onclick = () => { g.steps.splice(i, 1); save(); render(); }; });
+    el.querySelector('form').onsubmit = e => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!v) return; g.steps.push({ t: v, done: false }); save(); render(); };
+    box.appendChild(el);
+  });
+}
+function celebrate() { buzz([40, 40, 40, 40, 120]); try { const a = new AudioContext(); [523, 659, 784, 1046].forEach((f, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; g.gain.value = .1; o.connect(g); g.connect(a.destination); o.start(a.currentTime + i * .12); o.stop(a.currentTime + i * .12 + .25); }); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+function marks() { $('emojis').innerHTML = EMOJIS.map(e => `<button type="button" class="${e === pickE ? 'on' : ''}">${e}</button>`).join(''); $('emojis').querySelectorAll('button').forEach(b => b.onclick = () => { pickE = b.textContent; marks(); }); }
+$('add').onclick = () => { $('form').reset(); pickE = '🎯'; marks(); $('sheet').classList.add('on'); setTimeout(() => $('name').focus(), 50); };
+$('cancel').onclick = () => $('sheet').classList.remove('on');
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); };
+$('form').onsubmit = e => { e.preventDefault(); const name = $('name').value.trim(); if (!name) return; goals.unshift({ name, e: pickE, when: $('when').value || null, steps: [] }); save(); $('sheet').classList.remove('on'); render(); };
+(async () => { goals = await store.get('goals', null); if (!goals) { const s = T.sample; const d = new Date(Date.now() + 60 * 864e5); goals = [{ name: s.name, e: s.e, when: d.toISOString().slice(0, 10), steps: s.steps.map((t, i) => ({ t, done: i < 2 })) }]; save(); } render(); })();
+</script>
+</body>
+</html>

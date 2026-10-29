@@ -1,0 +1,14 @@
+{
+  "id": "routine-runner",
+  "name": "Routine Runner",
+  "emoji": "🌅",
+  "category": "productivity",
+  "description": "Run your morning and evening routines step by step with a timer and a voice that guides you.",
+  "prompt": "A routine runner with morning and evening routines made of timed steps I can edit, a full screen mode that counts down each step, says the next step out loud, vibrates and celebrates at the end.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "email-writer-ai",
+  "name": "Email Writer",
+  "emoji": "✉️",
+  "category": "productivity",
+  "description": "Write what you want to say in a few words and your AI turns it into a polished email.",
+  "prompt": "An email writing assistant: I type my idea in my own words, who it's for, the tone like professional, friendly or apologetic, and the length, and my AI writes the subject and the email, with copy, share and another version.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -245,6 +245,54 @@
       "trending": 0
     },
     {
+      "id": "tasks",
+      "name": "Tasks",
+      "emoji": "✅",
+      "category": "productivity",
+      "description": "A clear to-do list with lists, priorities, due dates and overdue tasks grouped at the top.",
+      "prompt": "A to-do app with personal, work and shopping lists, three priority colours, due dates, tasks grouped by overdue, today, upcoming and no date, a progress bar and done tasks crossed out.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9363,
+      "sha256": "f276a4dcb7e05170297ddc0dc1d087d26e0677508d73670aa3170e0455f9c54c",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "task-breaker-ai",
+      "name": "Task Breaker",
+      "emoji": "🪄",
+      "category": "productivity",
+      "description": "Overwhelmed by a big task? Your AI breaks it into small steps with time estimates.",
+      "prompt": "An app for overwhelming tasks: I write a big task and my AI breaks it into small concrete steps with minutes for each, I tick them off with a progress bar, and any step can be split again into smaller steps.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9729,
+      "sha256": "bcb3001077f60d0640c51628dc7244322823bf385767570c21fd9036ffff8e9d",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "sudoku",
       "name": "Sudoku",
       "emoji": "🧩",
@@ -389,6 +437,31 @@
       "trending": 0
     },
     {
+      "id": "routine-runner",
+      "name": "Routine Runner",
+      "emoji": "🌅",
+      "category": "productivity",
+      "description": "Run your morning and evening routines step by step with a timer and a voice that guides you.",
+      "prompt": "A routine runner with morning and evening routines made of timed steps I can edit, a full screen mode that counts down each step, says the next step out loud, vibrates and celebrates at the end.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 8802,
+      "sha256": "27e222cf69766ac8e6213bf84ddac3df61e4169eccd96dfad9cb14780f702698",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "random-picker",
       "name": "Random Picker",
       "emoji": "🎲",
@@ -408,6 +481,29 @@
       ],
       "size": 9259,
       "sha256": "2b9c9172a5b3190144f35ac975a892da9ad33914b67bbd33e64f1997174b8e78",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "eisenhower",
+      "name": "Priority Matrix",
+      "emoji": "🧭",
+      "category": "productivity",
+      "description": "Sort your tasks by urgent and important: do, schedule, delegate or drop them.",
+      "prompt": "An Eisenhower priority matrix with four coloured quadrants, do it now, schedule it, delegate it and drop it, where I add tasks to a quadrant and tap a task to complete, move or delete it.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7341,
+      "sha256": "6f0f6adc85862dded5b526cc0af39d75e42b2072f5c65bf4189f07c7805cfe87",
       "downloads": 0,
       "trending": 0
     },
@@ -554,6 +650,29 @@
       "trending": 0
     },
     {
+      "id": "kanban",
+      "name": "Kanban Board",
+      "emoji": "📋",
+      "category": "productivity",
+      "description": "Organise anything in columns: drag cards from To do to Done, with colours and quick editing.",
+      "prompt": "A Kanban board with To do, Doing, Review and Done columns, colourful cards I can drag between columns and reorder, swipe between columns, and tap a card to edit, move or delete it.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10604,
+      "sha256": "dc92223b93d0e55284f6f50dfc16b5dc0847aa1798cb1b79ff08935f344ac202",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "hoop-shot-3d",
       "name": "Hoop Shot 3D",
       "emoji": "🏀",
@@ -575,6 +694,52 @@
       ],
       "size": 15978,
       "sha256": "d6a9df0386f111d3de07c04615c2e3873946d7f547e3a7372441a2a267f29cea",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "habit-streaks",
+      "name": "Habit Streaks",
+      "emoji": "🔥",
+      "category": "productivity",
+      "description": "Tick off your habits every day, keep your streaks alive and see the last 12 weeks at a glance.",
+      "prompt": "A habit tracker where each habit has an emoji and colour, a row of the last seven days to tick, the current and best streak, and a 12 week heatmap of how many habits I completed each day.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9761,
+      "sha256": "8c5bb02099a815a96a6d0ce2b60e1dae25e58ffd87bed8af5a99db441384a2a1",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "goals",
+      "name": "Goals",
+      "emoji": "🎯",
+      "category": "productivity",
+      "description": "Break big goals into steps, tick them off and watch the progress ring fill up.",
+      "prompt": "A goals app where each goal has an emoji, an optional deadline with days left, a list of steps I add and tick off, a progress ring and a celebration when the goal is reached.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9707,
+      "sha256": "9a1314baf1945af0240fc9e06d5b60ebee0d35181b7b7df9649973735f40bb51",
       "downloads": 0,
       "trending": 0
     },
@@ -602,6 +767,31 @@
       "trending": 0
     },
     {
+      "id": "focus-timer",
+      "name": "Focus Timer",
+      "emoji": "🍅",
+      "category": "productivity",
+      "description": "A Pomodoro timer with focus blocks, short and long breaks, weekly stats and a daily streak.",
+      "prompt": "A Pomodoro focus timer with a big progress ring, focus, short and long break modes with custom minutes, what I'm focusing on, a notification and sound at the end, a weekly chart of focus minutes and a streak.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9875,
+      "sha256": "c2aca5737b3e5fbdfcc51d752347449c9adfe1fac2a1a72c64cc69fe0d4e4081",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "emoji-movies",
       "name": "Emoji Movies",
       "emoji": "🎬",
@@ -625,6 +815,31 @@
       "trending": 0
     },
     {
+      "id": "email-writer-ai",
+      "name": "Email Writer",
+      "emoji": "✉️",
+      "category": "productivity",
+      "description": "Write what you want to say in a few words and your AI turns it into a polished email.",
+      "prompt": "An email writing assistant: I type my idea in my own words, who it's for, the tone like professional, friendly or apologetic, and the length, and my AI writes the subject and the email, with copy, share and another version.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 8996,
+      "sha256": "34dde9b328c3a1de7f2233374802233e6a3adcd85e321b2881dd5c9274f14362",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "decision-wheel",
       "name": "Decision Wheel",
       "emoji": "🎡",
@@ -644,6 +859,29 @@
       ],
       "size": 11121,
       "sha256": "9a83096cc2149f484d0aef5ec51949035f98da866279bfdcf214f476e08e3387",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "daily-journal",
+      "name": "Daily Journal",
+      "emoji": "📓",
+      "category": "productivity",
+      "description": "A cosy diary with a mood for each day, a question to get you writing and a 4 week overview.",
+      "prompt": "A daily journal on lined paper with a mood picker, a different writing prompt each day, word count, autosave, and a calendar of the last four weeks showing the mood of each day.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7831,
+      "sha256": "2e0f1f3aab86faa3eb738818d188220cbc2e7070797578feed938ac7b89c176f",
       "downloads": 0,
       "trending": 0
     },

@@ -1,0 +1,14 @@
+{
+  "id": "kanban",
+  "name": "Kanban Board",
+  "emoji": "📋",
+  "category": "productivity",
+  "description": "Organise anything in columns: drag cards from To do to Done, with colours and quick editing.",
+  "prompt": "A Kanban board with To do, Doing, Review and Done columns, colourful cards I can drag between columns and reorder, swipe between columns, and tap a card to edit, move or delete it.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

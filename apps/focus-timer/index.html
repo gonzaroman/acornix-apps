@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Focus Timer</title>
+<style>
+  :root { --c1:#ff6b6b; --c2:#ff9f6b; --bg:#2a1418; }
+  body.break { --c1:#2fc4a0; --c2:#6bd9ff; --bg:#0f2626; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; transition:background .6s; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 18px); gap:14px; overflow-y:auto; }
+  .modes { display:flex; background:#ffffff14; border-radius:16px; padding:4px; }
+  .modes button { padding:9px 14px; border-radius:12px; font-weight:700; font-size:14px; opacity:.7; }
+  .modes button.on { background:#ffffff26; opacity:1; }
+  .ring { position:relative; width:min(76vw,290px); aspect-ratio:1; margin-top:6px; }
+  .ring svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .ring .in { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring .time { font-size:clamp(54px,17vw,76px); font-weight:200; font-variant-numeric:tabular-nums; }
+  .ring .what { opacity:.75; font-weight:700; letter-spacing:2px; font-size:13px; text-transform:uppercase; }
+  .dots { display:flex; gap:8px; }
+  .dots i { width:12px; height:12px; border-radius:50%; background:#ffffff33; }
+  .dots i.on { background:var(--c1); box-shadow:0 0 10px var(--c1); }
+  .ctrl { display:flex; gap:14px; align-items:center; }
+  .play { width:84px; height:84px; border-radius:50%; background:linear-gradient(135deg,var(--c1),var(--c2)); font-size:32px; box-shadow:0 10px 30px #0006; }
+  .small { width:54px; height:54px; border-radius:50%; background:#ffffff1a; font-size:20px; }
+  .task { width:100%; max-width:420px; display:flex; align-items:center; gap:10px; background:#ffffff12; border-radius:16px; padding:6px 6px 6px 14px; }
+  .task input { flex:1; background:transparent; outline:none; padding:8px 0; user-select:text; -webkit-user-select:text; }
+  .stats { width:100%; max-width:420px; background:#ffffff0f; border-radius:20px; padding:14px; }
+  .stats h3 { margin:0 0 10px; font-size:13px; letter-spacing:1px; text-transform:uppercase; opacity:.7; }
+  .bars { display:flex; align-items:flex-end; gap:6px; height:90px; }
+  .bars div { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; opacity:.85; }
+  .bars span { width:100%; border-radius:6px 6px 2px 2px; background:linear-gradient(var(--c1),var(--c2)); min-height:3px; }
+  .total { display:flex; justify-content:space-between; margin-top:10px; font-weight:700; }
+  .set { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; font-size:13px; opacity:.85; }
+  .set label { display:flex; align-items:center; gap:6px; background:#ffffff12; padding:6px 10px; border-radius:12px; }
+  .set input { width:42px; background:transparent; text-align:center; font-weight:800; outline:none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="modes" id="modes"></div>
+  <div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="#ffffff18" stroke-width="4"/><circle id="arc" cx="50" cy="50" r="45" fill="none" stroke="url(#gr)" stroke-width="4" stroke-linecap="round" stroke-dasharray="282.7" stroke-dashoffset="0"/><defs><linearGradient id="gr"><stop offset="0" style="stop-color:var(--c1)"/><stop offset="1" style="stop-color:var(--c2)"/></linearGradient></defs></svg>
+    <div class="in"><div class="time" id="time">25:00</div><div class="what" id="what"></div></div></div>
+  <div class="dots" id="dots"></div>
+  <div class="ctrl"><button class="small" id="reset">↺</button><button class="play" id="play">▶</button><button class="small" id="skip">⏭</button></div>
+  <div class="task">🎯<input id="task" maxlength="60"></div>
+  <div class="stats"><h3 id="weekTitle"></h3><div class="bars" id="bars"></div><div class="total"><span id="todayTxt"></span><span id="streakTxt"></span></div></div>
+  <div class="set" id="set"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { focus:'Enfoque', short:'Descanso', long:'Descanso largo', task:'¿En qué te vas a concentrar?', week:'Esta semana (minutos)', today:'Hoy', streak:'Racha', days:'días', set:['Enfoque','Descanso','Largo'], done:'¡Bloque terminado!', breakOver:'Se acabó el descanso', dayNames:['D','L','M','X','J','V','S'] }
+ : { focus:'Focus', short:'Short break', long:'Long break', task:'What will you focus on?', week:'This week (minutes)', today:'Today', streak:'Streak', days:'days', set:['Focus','Break','Long'], done:'Focus block done!', breakOver:'Break is over', dayNames:['S','M','T','W','T','F','S'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('task').placeholder = T.task; $('weekTitle').textContent = T.week;
+let cfg = { focus: 25, short: 5, long: 15 }, mode = 'focus', left = 25 * 60, total = 25 * 60, running = false, endAt = 0, cycle = 0, log = {}, tick;
+const MODES = [['focus', T.focus], ['short', T.short], ['long', T.long]];
+MODES.forEach(([m, n]) => { const b = document.createElement('button'); b.textContent = n; b.dataset.m = m; b.onclick = () => setMode(m); $('modes').appendChild(b); });
+[['focus', T.set[0]], ['short', T.set[1]], ['long', T.set[2]]].forEach(([k, n]) => { const l = document.createElement('label'); l.innerHTML = `${n}<input inputmode="numeric" maxlength="2" value="">min`; const inp = l.querySelector('input'); inp.value = cfg[k]; inp.onchange = () => { cfg[k] = Math.max(1, Math.min(90, parseInt(inp.value) || cfg[k])); inp.value = cfg[k]; store.set('cfg', cfg); if (!running && mode === k) setMode(k); }; l.dataset.k = k; $('set').appendChild(l); });
+function setMode(m) { mode = m; running = false; clearInterval(tick); total = left = cfg[m] * 60; document.body.classList.toggle('break', m !== 'focus'); render(); }
+function render() {
+  const m = Math.floor(left / 60), s = left % 60;
+  $('time').textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  $('what').textContent = MODES.find(x => x[0] === mode)[1];
+  $('arc').setAttribute('stroke-dashoffset', 282.7 * (1 - left / total));
+  $('play').textContent = running ? '⏸' : '▶';
+  document.querySelectorAll('.modes button').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
+  $('dots').innerHTML = [0, 1, 2, 3].map(i => `<i class="${i < cycle % 4 || (cycle && cycle % 4 === 0 && mode !== 'focus') ? 'on' : ''}"></i>`).join('');
+  document.querySelectorAll('.set label').forEach(l => l.querySelector('input').value = cfg[l.dataset.k]);
+  document.title = running ? $('time').textContent + ' · Focus' : 'Focus Timer';
+  stats();
+}
+function key(d) { const x = new Date(d); return x.getFullYear() + '-' + (x.getMonth() + 1) + '-' + x.getDate(); }
+function stats() {
+  const days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return d; });
+  const vals = days.map(d => log[key(d)] || 0), max = Math.max(25, ...vals);
+  $('bars').innerHTML = days.map((d, i) => `<div><span style="height:${vals[i] / max * 70 + 3}px"></span>${T.dayNames[d.getDay()]}</div>`).join('');
+  let streak = 0; for (let i = 0; ; i++) { const d = new Date(); d.setDate(d.getDate() - i); if (log[key(d)]) streak++; else if (i > 0) break; else continue; if (i > 365) break; }
+  $('todayTxt').textContent = `${T.today}: ${vals[6]} min`; $('streakTxt').textContent = `🔥 ${T.streak}: ${streak} ${T.days}`;
+}
+function start() { running = true; endAt = Date.now() + left * 1000; clearInterval(tick); tick = setInterval(step, 250); render(); }
+function pause() { running = false; clearInterval(tick); render(); }
+function step() { left = Math.max(0, Math.round((endAt - Date.now()) / 1000)); if (left <= 0) finish(); render(); }
+async function finish() {
+  clearInterval(tick); running = false;
+  if (mode === 'focus') { cycle++; log[key(Date.now())] = (log[key(Date.now())] || 0) + cfg.focus; await store.set('log', log); notify(T.done); setMode(cycle % 4 === 0 ? 'long' : 'short'); }
+  else { notify(T.breakOver); setMode('focus'); }
+}
+function notify(text) {
+  try { if (window.Acornix) { Acornix.notify('🍅 Focus Timer', text); Acornix.vibrate([300, 150, 300]); } else if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {}
+  try { const a = new AudioContext(); [523, 659, 784].forEach((f, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; g.gain.value = .12; o.connect(g); g.connect(a.destination); o.start(a.currentTime + i * .18); o.stop(a.currentTime + i * .18 + .3); }); } catch (e) {}
+}
+$('play').onclick = () => running ? pause() : start();
+$('reset').onclick = () => setMode(mode);
+$('skip').onclick = () => { if (mode === 'focus') { cycle++; setMode(cycle % 4 === 0 ? 'long' : 'short'); } else setMode('focus'); };
+$('task').oninput = () => store.set('task', $('task').value);
+(async () => { cfg = await store.get('cfg', cfg); log = await store.get('log', {}); $('task').value = await store.get('task', ''); setMode('focus'); })();
+</script>
+</body>
+</html>

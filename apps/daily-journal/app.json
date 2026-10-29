@@ -1,0 +1,14 @@
+{
+  "id": "daily-journal",
+  "name": "Daily Journal",
+  "emoji": "📓",
+  "category": "productivity",
+  "description": "A cosy diary with a mood for each day, a question to get you writing and a 4 week overview.",
+  "prompt": "A daily journal on lined paper with a mood picker, a different writing prompt each day, word count, autosave, and a calendar of the last four weeks showing the mood of each day.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

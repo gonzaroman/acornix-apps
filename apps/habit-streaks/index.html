@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Habit Streaks</title>
+<style>
+  :root { --bg:#121212; --card:#1d1d1d; --line:#2b2b2b; --ink:#f4f4f4; --muted:#9a9a9a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 14px calc(env(safe-area-inset-bottom) + 90px); }
+  h1 { margin:0; font-size:28px; }
+  .sub { color:var(--muted); margin:4px 0 14px; font-weight:600; }
+  .week { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; align-items:center; margin:0 0 6px; padding:0 12px; color:var(--muted); font-size:11px; font-weight:700; text-align:center; }
+  .week .today { color:var(--ink); }
+  .habit { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; align-items:center; background:var(--card); border-radius:18px; padding:12px; margin-bottom:8px; }
+  .info { grid-column:1/-1; min-width:0; display:flex; align-items:center; gap:10px; text-align:left; margin-bottom:4px; }
+  .info .e { font-size:24px; }
+  .info b { display:block; font-size:16px; word-break:break-word; }
+  .info small { color:var(--muted); font-weight:700; }
+  .day { width:100%; max-width:44px; aspect-ratio:1; justify-self:center; border-radius:12px; background:#2a2a2a; display:grid; place-items:center; font-size:15px; transition:transform .15s; }
+  .day:active { transform:scale(.88); }
+  .day.on { background:var(--c); color:#000; box-shadow:0 0 12px color-mix(in srgb,var(--c) 60%,transparent); }
+  .heat { margin-top:18px; background:var(--card); border-radius:18px; padding:14px; }
+  .heat h3 { margin:0 0 10px; font-size:13px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+  .cells { display:grid; grid-template-rows:repeat(7,1fr); grid-auto-flow:column; grid-auto-columns:1fr; gap:3px; }
+  .cells i { aspect-ratio:1; border-radius:3px; background:#262626; }
+  .fab { position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:15px 20px; border-radius:18px; background:#ffd23f; color:#221a00; font-weight:900; }
+  #sheet { position:fixed; inset:0; background:#0009; display:none; align-items:flex-end; z-index:5; }
+  #sheet.on { display:flex; }
+  .form { width:100%; max-width:560px; margin:0 auto; background:var(--card); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); display:flex; flex-direction:column; gap:10px; }
+  .form input { padding:13px; border-radius:14px; background:#2a2a2a; outline:none; }
+  .pick { display:flex; gap:8px; flex-wrap:wrap; }
+  .pick button { width:40px; height:40px; border-radius:12px; background:#2a2a2a; font-size:20px; }
+  .pick button.on { outline:3px solid #fff; }
+  .row { display:flex; gap:10px; } .row button { flex:1; padding:14px; border-radius:14px; background:#2a2a2a; font-weight:800; } .row .save { background:#ffd23f; color:#221a00; }
+  .del { color:#ff6b6b !important; }
+</style>
+</head>
+<body>
+<div id="app"><h1>🔥 <span id="ttl"></span></h1><div class="sub" id="sub"></div><div class="week" id="week"></div><div id="list"></div><div class="heat"><h3 id="heatTitle"></h3><div class="cells" id="cells"></div></div></div>
+<button class="fab" id="add"></button>
+<div id="sheet"><form class="form" id="form"><b id="formTitle"></b><input id="name" maxlength="30" required><div class="pick" id="emojis"></div><div class="pick" id="colors"></div><div class="row"><button type="button" class="del" id="delBtn"></button><button type="button" id="cancel"></button><button class="save" id="saveBtn"></button></div></form></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Hábitos', sub:(d, t) => `Hoy: ${d} de ${t} hechos`, add:'＋ Hábito', new:'Nuevo hábito', edit:'Editar hábito', name:'Leer 10 páginas, beber agua…', cancel:'Cancelar', save:'Guardar', del:'Borrar', streak:'racha', best:'mejor', heat:'Últimas 12 semanas', days:['D','L','M','X','J','V','S'],
+  samples:[['📚','Leer 10 páginas',0],['💧','Beber 2 litros de agua',1],['🧘','Meditar 5 minutos',2]] }
+ : { title:'Habits', sub:(d, t) => `Today: ${d} of ${t} done`, add:'＋ Habit', new:'New habit', edit:'Edit habit', name:'Read 10 pages, drink water…', cancel:'Cancel', save:'Save', del:'Delete', streak:'streak', best:'best', heat:'Last 12 weeks', days:['S','M','T','W','T','F','S'],
+  samples:[['📚','Read 10 pages',0],['💧','Drink 2 litres of water',1],['🧘','Meditate 5 minutes',2]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('add').textContent = T.add; $('name').placeholder = T.name; $('cancel').textContent = T.cancel; $('saveBtn').textContent = T.save; $('delBtn').textContent = T.del; $('heatTitle').textContent = T.heat;
+const COLORS = ['#ffd23f', '#4dd4ff', '#a78bfa', '#4ade80', '#fb7185', '#fb923c'], EMOJIS = ['📚','💧','🧘','🏃','🥗','💤','🎸','✍️','🧹','💊','🌱','📵'];
+let habits = [], editing = null, pick = { e: '📚', c: 0 };
+const key = d => { const x = new Date(d); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+const daysBack = n => { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - n); return d; };
+function streaks(h) {
+  let cur = 0; for (let i = 0; i < 1000; i++) { if (h.done[key(daysBack(i))]) cur++; else if (i === 0) continue; else break; }
+  let best = 0, run = 0; Object.keys(h.done).sort().forEach((k, i, arr) => { const prev = i && (new Date(k) - new Date(arr[i - 1])) / 864e5 === 1; run = prev ? run + 1 : 1; best = Math.max(best, run); });
+  return [cur, best];
+}
+function save() { store.set('habits', habits); }
+function render() {
+  const days = [...Array(7)].map((_, i) => daysBack(6 - i));
+  $('week').innerHTML = days.map((d, i) => `<span class="${i === 6 ? 'today' : ''}">${T.days[d.getDay()]}<br>${d.getDate()}</span>`).join('');
+  const todayK = key(daysBack(0));
+  $('sub').textContent = habits.length ? T.sub(habits.filter(h => h.done[todayK]).length, habits.length) : '';
+  $('list').innerHTML = '';
+  habits.forEach(h => {
+    const [cur, best] = streaks(h), row = document.createElement('div'); row.className = 'habit'; row.style.setProperty('--c', COLORS[h.c]);
+    row.innerHTML = `<button class="info"><span class="e">${h.e}</span><span style="min-width:0"><b></b><small>🔥 ${cur} ${T.streak} · ${T.best} ${best}</small></span></button>` + days.map(d => `<button class="day ${h.done[key(d)] ? 'on' : ''}" data-k="${key(d)}">${h.done[key(d)] ? '✓' : ''}</button>`).join('');
+    row.querySelector('b').textContent = h.name;
+    row.querySelector('.info').onclick = () => openForm(h);
+    row.querySelectorAll('.day').forEach(b => b.onclick = () => { const k = b.dataset.k; if (h.done[k]) delete h.done[k]; else { h.done[k] = 1; buzz(15); } save(); render(); });
+    $('list').appendChild(row);
+  });
+  // Heatmap: how many habits were done each day for 12 weeks.
+  $('cells').innerHTML = [...Array(84)].map((_, i) => { const d = daysBack(83 - i), n = habits.filter(h => h.done[key(d)]).length, f = habits.length ? n / habits.length : 0; return `<i style="background:${f ? `rgba(255,210,63,${.2 + f * .8})` : '#262626'}"></i>`; }).join('');
+}
+function openForm(h) {
+  editing = h || null; pick = h ? { e: h.e, c: h.c } : { e: EMOJIS[habits.length % EMOJIS.length], c: habits.length % COLORS.length };
+  $('formTitle').textContent = h ? T.edit : T.new; $('name').value = h ? h.name : ''; $('delBtn').style.display = h ? 'block' : 'none';
+  marks(); $('sheet').classList.add('on');
+}
+function marks() { $('emojis').innerHTML = EMOJIS.map(e => `<button type="button" class="${e === pick.e ? 'on' : ''}">${e}</button>`).join(''); $('emojis').querySelectorAll('button').forEach(b => b.onclick = () => { pick.e = b.textContent; marks(); });
+  $('colors').innerHTML = COLORS.map((c, i) => `<button type="button" class="${i === pick.c ? 'on' : ''}" style="background:${c}"></button>`).join(''); $('colors').querySelectorAll('button').forEach((b, i) => b.onclick = () => { pick.c = i; marks(); }); }
+$('form').onsubmit = e => { e.preventDefault(); const name = $('name').value.trim(); if (!name) return; if (editing) Object.assign(editing, { name, e: pick.e, c: pick.c }); else habits.push({ name, e: pick.e, c: pick.c, done: {} }); save(); $('sheet').classList.remove('on'); render(); };
+$('delBtn').onclick = () => { habits = habits.filter(h => h !== editing); save(); $('sheet').classList.remove('on'); render(); };
+$('cancel').onclick = () => $('sheet').classList.remove('on');
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); };
+$('add').onclick = () => openForm(null);
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+(async () => { habits = await store.get('habits', null); if (!habits) { habits = T.samples.map(([e, name, c]) => ({ e, name, c, done: {} })); save(); } render(); })();
+</script>
+</body>
+</html>

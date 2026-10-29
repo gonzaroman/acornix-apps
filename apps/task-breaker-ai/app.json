@@ -1,0 +1,14 @@
+{
+  "id": "task-breaker-ai",
+  "name": "Task Breaker",
+  "emoji": "🪄",
+  "category": "productivity",
+  "description": "Overwhelmed by a big task? Your AI breaks it into small steps with time estimates.",
+  "prompt": "An app for overwhelming tasks: I write a big task and my AI breaks it into small concrete steps with minutes for each, I tick them off with a progress bar, and any step can be split again into smaller steps.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

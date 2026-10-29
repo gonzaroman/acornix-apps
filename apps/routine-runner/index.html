@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Routine Runner</title>
+<style>
+  :root { --bg:#fff8f0; --card:#fff; --ink:#2b2118; --muted:#9a8a78; --line:#f0e3d2; --a:#ff8a3d; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 14px; font-size:28px; }
+  .routine { background:var(--card); border-radius:22px; padding:16px; margin-bottom:12px; border:1px solid var(--line); }
+  .routine .top { display:flex; align-items:center; gap:12px; }
+  .routine .e { font-size:34px; }
+  .routine h2 { margin:0; font-size:18px; }
+  .routine small { color:var(--muted); font-weight:600; }
+  .routine .play { margin-left:auto; padding:12px 18px; border-radius:14px; background:var(--a); color:#fff; font-weight:900; }
+  .routine ol { margin:12px 0 0; padding-left:22px; color:#5a4c3d; line-height:1.7; }
+  .routine ol li span { color:var(--muted); font-size:13px; }
+  .edit { display:flex; gap:6px; margin-top:8px; }
+  .edit input { flex:1; min-width:0; padding:9px 10px; border-radius:10px; background:var(--bg); outline:none; }
+  .edit input.min { flex:none; width:58px; text-align:center; }
+  .edit button { padding:0 12px; border-radius:10px; background:var(--bg); font-weight:800; }
+  #run { position:fixed; inset:0; background:linear-gradient(160deg,#ff8a3d,#ff5f8f); color:#fff; display:none; flex-direction:column; align-items:center; justify-content:center; padding:calc(env(safe-area-inset-top) + 20px) 22px calc(env(safe-area-inset-bottom) + 24px); text-align:center; z-index:5; }
+  #run.on { display:flex; }
+  #run .step { opacity:.85; font-weight:800; letter-spacing:2px; text-transform:uppercase; font-size:13px; }
+  #run h2 { font-size:clamp(28px,9vw,44px); margin:10px 0; line-height:1.15; }
+  #run .time { font-size:clamp(60px,22vw,110px); font-weight:200; font-variant-numeric:tabular-nums; }
+  #run .next { opacity:.85; margin-top:8px; min-height:22px; }
+  #run .bar { width:100%; max-width:420px; height:8px; border-radius:4px; background:#ffffff40; margin:22px 0; overflow:hidden; }
+  #run .bar i { display:block; height:100%; background:#fff; transition:width .3s; }
+  .rc { display:flex; gap:14px; }
+  .rc button { width:66px; height:66px; border-radius:50%; background:#ffffff33; font-size:24px; }
+  .rc .big { width:84px; height:84px; background:#fff; color:#ff5f8f; font-size:30px; }
+  .close { position:absolute; top:calc(env(safe-area-inset-top) + 14px); right:16px; width:42px; height:42px; border-radius:50%; background:#ffffff33; font-size:18px; }
+  .finish { font-size:70px; }
+</style>
+</head>
+<body>
+<div id="app"><h1>🌅 <span id="ttl"></span></h1><div id="list"></div></div>
+<div id="run"><button class="close" id="close">✕</button><div class="step" id="rStep"></div><h2 id="rName"></h2><div class="time" id="rTime"></div><div class="next" id="rNext"></div><div class="bar"><i id="rBar"></i></div><div class="rc"><button id="back">⏮</button><button class="big" id="pause">⏸</button><button id="fwd">⏭</button></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Rutinas', start:'▶ Empezar', steps:'pasos', min:'min', add:'Paso nuevo', step:'PASO', of:'DE', next:'Después:', done:'¡Rutina completada!', voice:'es-ES',
+  routines:[['☀️','Mañana con energía',[['Beber un vaso de agua',1],['Estiramientos',5],['Ducha',8],['Desayuno sin pantallas',15],['Planear las 3 tareas del día',3]]],['🌙','Noche tranquila',[['Dejar el móvil cargando lejos',1],['Preparar la ropa de mañana',4],['Leer',15],['Respiración 4-7-8',3]]]] }
+ : { title:'Routines', start:'▶ Start', steps:'steps', min:'min', add:'New step', step:'STEP', of:'OF', next:'Next:', done:'Routine complete!', voice:'en-GB',
+  routines:[['☀️','Energising morning',[['Drink a glass of water',1],['Stretching',5],['Shower',8],['Screen-free breakfast',15],['Plan your top 3 tasks',3]]],['🌙','Calm evening',[['Charge the phone far away',1],['Lay out tomorrow\'s clothes',4],['Read',15],['4-7-8 breathing',3]]]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title;
+let routines = [], run = null, timer;
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function save() { store.set('routines', routines); }
+function render() {
+  $('list').innerHTML = '';
+  routines.forEach((r, ri) => {
+    const total = r.steps.reduce((a, s) => a + s.min, 0), el = document.createElement('div'); el.className = 'routine';
+    el.innerHTML = `<div class="top"><span class="e">${r.e}</span><div><h2>${esc(r.name)}</h2><small>${r.steps.length} ${T.steps} · ${total} ${T.min}</small></div><button class="play">${T.start}</button></div>
+      <ol>${r.steps.map((s, i) => `<li>${esc(s.t)} <span>· ${s.min} ${T.min}</span> <button data-i="${i}" style="color:#c9b8a5">✕</button></li>`).join('')}</ol>
+      <form class="edit"><input maxlength="50" placeholder="${T.add}"><input class="min" inputmode="numeric" value="5"><button>+</button></form>`;
+    el.querySelector('.play').onclick = () => start(r);
+    el.querySelectorAll('li button').forEach(b => b.onclick = () => { r.steps.splice(+b.dataset.i, 1); save(); render(); });
+    el.querySelector('form').onsubmit = e => { e.preventDefault(); const [t, m] = e.target.querySelectorAll('input'); if (!t.value.trim()) return; r.steps.push({ t: t.value.trim(), min: Math.max(1, Math.min(120, parseInt(m.value) || 5)) }); save(); render(); };
+    $('list').appendChild(el);
+  });
+}
+function say(text) { try { if (window.Acornix) Acornix.speak(text, T.voice); else speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance(text), { lang: T.voice })); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+function start(r) { run = { r, i: 0, left: r.steps[0].min * 60, paused: false }; $('run').classList.add('on'); stepIn(); clearInterval(timer); timer = setInterval(tick, 1000); }
+function stepIn() { const s = run.r.steps[run.i]; run.left = s.min * 60; say(s.t); buzz([60, 60, 60]); show(); }
+function tick() { if (!run || run.paused) return; run.left--; if (run.left <= 0) { if (run.i < run.r.steps.length - 1) { run.i++; stepIn(); } else finish(); } show(); }
+function show() {
+  if (!run || run.done) return;
+  const s = run.r.steps[run.i], n = run.r.steps[run.i + 1];
+  $('rStep').textContent = `${T.step} ${run.i + 1} ${T.of} ${run.r.steps.length}`; $('rName').textContent = s.t;
+  $('rTime').textContent = Math.floor(run.left / 60) + ':' + String(run.left % 60).padStart(2, '0');
+  $('rNext').textContent = n ? T.next + ' ' + n.t : '';
+  const done = run.r.steps.slice(0, run.i).reduce((a, x) => a + x.min * 60, 0) + (s.min * 60 - run.left), total = run.r.steps.reduce((a, x) => a + x.min * 60, 0);
+  $('rBar').style.width = done / total * 100 + '%'; $('pause').textContent = run.paused ? '▶' : '⏸';
+}
+function finish() { run.done = true; clearInterval(timer); say(T.done); buzz([100, 80, 100, 80, 200]); $('rStep').textContent = ''; $('rName').innerHTML = `<div class="finish">🎉</div>${T.done}`; $('rTime').textContent = ''; $('rNext').textContent = run.r.e + ' ' + run.r.name; $('rBar').style.width = '100%'; }
+$('pause').onclick = () => { if (run && !run.done) { run.paused = !run.paused; show(); } };
+$('fwd').onclick = () => { if (!run || run.done) return; if (run.i < run.r.steps.length - 1) { run.i++; stepIn(); } else finish(); };
+$('back').onclick = () => { if (!run || run.done) return; if (run.i > 0) run.i--; stepIn(); };
+$('close').onclick = () => { clearInterval(timer); run = null; $('run').classList.remove('on'); try { speechSynthesis.cancel(); } catch (e) {} };
+(async () => { routines = await store.get('routines', null); if (!routines) { routines = T.routines.map(([e, name, steps]) => ({ e, name, steps: steps.map(([t, min]) => ({ t, min })) })); save(); } render(); })();
+</script>
+</body>
+</html>

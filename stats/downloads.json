@@ -50,6 +50,11 @@
       "base": 0,
       "count": 0
     },
+    "daily-journal": {
+      "asset": 689166836,
+      "base": 0,
+      "count": 0
+    },
     "decision-wheel": {
       "asset": 689038579,
       "base": 0,
@@ -65,6 +70,16 @@
       "base": 0,
       "count": 0
     },
+    "eisenhower": {
+      "asset": 689166926,
+      "base": 0,
+      "count": 0
+    },
+    "email-writer-ai": {
+      "asset": 689166793,
+      "base": 0,
+      "count": 0
+    },
     "emoji-movies": {
       "asset": 689038711,
       "base": 0,
@@ -75,13 +90,33 @@
       "base": 0,
       "count": 0
     },
+    "focus-timer": {
+      "asset": 689166657,
+      "base": 0,
+      "count": 0
+    },
     "fortune-cookie": {
       "asset": 689038621,
       "base": 0,
       "count": 0
     },
+    "goals": {
+      "asset": 689166882,
+      "base": 0,
+      "count": 0
+    },
+    "habit-streaks": {
+      "asset": 689166708,
+      "base": 0,
+      "count": 0
+    },
     "hoop-shot-3d": {
       "asset": 689103893,
+      "base": 0,
+      "count": 0
+    },
+    "kanban": {
+      "asset": 689166735,
       "base": 0,
       "count": 0
     },
@@ -165,6 +200,11 @@
       "base": 0,
       "count": 0
     },
+    "routine-runner": {
+      "asset": 689166958,
+      "base": 0,
+      "count": 0
+    },
     "sky-hopper": {
       "asset": 688998851,
       "base": 0,
@@ -197,6 +237,16 @@
     },
     "sudoku": {
       "asset": 688998804,
+      "base": 0,
+      "count": 0
+    },
+    "task-breaker-ai": {
+      "asset": 689167010,
+      "base": 0,
+      "count": 0
+    },
+    "tasks": {
+      "asset": 689166620,
       "base": 0,
       "count": 0
     },

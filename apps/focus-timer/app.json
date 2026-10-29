@@ -1,0 +1,14 @@
+{
+  "id": "focus-timer",
+  "name": "Focus Timer",
+  "emoji": "🍅",
+  "category": "productivity",
+  "description": "A Pomodoro timer with focus blocks, short and long breaks, weekly stats and a daily streak.",
+  "prompt": "A Pomodoro focus timer with a big progress ring, focus, short and long break modes with custom minutes, what I'm focusing on, a notification and sound at the end, a weekly chart of focus minutes and a streak.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Daily Journal</title>
+<style>
+  :root { --bg:#fbf6ee; --paper:#fffdf8; --ink:#33291f; --muted:#9a8b77; --line:#efe4d2; --a:#c2703d; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:Georgia,"Times New Roman",serif; }
+  button, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:580px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  header { display:flex; align-items:center; justify-content:space-between; }
+  header h1 { margin:0; font-size:26px; }
+  .nav { display:flex; align-items:center; gap:6px; font-family:system-ui,sans-serif; }
+  .nav button { width:36px; height:36px; border-radius:50%; background:var(--paper); border:1px solid var(--line); font-size:16px; }
+  .date { font-family:system-ui,sans-serif; font-weight:700; color:var(--muted); margin:8px 0 12px; text-transform:capitalize; }
+  .moods { display:flex; justify-content:space-between; background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:8px; }
+  .moods button { font-size:30px; width:52px; height:52px; border-radius:14px; filter:grayscale(.85); opacity:.6; transition:.15s; }
+  .moods button.on { filter:none; opacity:1; background:#fff1dc; transform:scale(1.08); }
+  .prompt { margin:16px 4px 6px; font-style:italic; color:var(--a); display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+  .prompt button { font-family:system-ui,sans-serif; font-size:12px; color:var(--muted); white-space:nowrap; }
+  textarea { width:100%; min-height:42vh; padding:18px; border-radius:18px; background:var(--paper) repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px); background-attachment:local; border:1px solid var(--line); outline:none; font-size:18px; line-height:32px; resize:vertical; }
+  .meta { display:flex; justify-content:space-between; font-family:system-ui,sans-serif; font-size:12px; color:var(--muted); margin:6px 6px 0; }
+  .strip { margin-top:18px; }
+  .strip h3 { font-family:system-ui,sans-serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin:0 4px 8px; }
+  .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .cal button { aspect-ratio:1; border-radius:10px; background:var(--paper); border:1px solid var(--line); font-family:system-ui,sans-serif; font-size:11px; color:var(--muted); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.1; }
+  .cal button span { font-size:18px; }
+  .cal button.sel { border:2px solid var(--a); }
+  .cal button.empty { opacity:.4; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header><h1>📓 <span id="ttl"></span></h1><div class="nav"><button id="prev">‹</button><button id="next">›</button></div></header>
+  <div class="date" id="date"></div>
+  <div class="moods" id="moods"></div>
+  <div class="prompt"><span id="prompt"></span><button id="newPrompt"></button></div>
+  <textarea id="text"></textarea>
+  <div class="meta"><span id="words"></span><span id="saved"></span></div>
+  <div class="strip"><h3 id="lastDays"></h3><div class="cal" id="cal"></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Diario', write:'Escribe aquí…', other:'otra pregunta ↻', words:'palabras', saved:'Guardado ✓', last:'Últimas 4 semanas',
+  prompts:['¿Qué ha sido lo mejor de hoy?','¿Qué has aprendido hoy?','¿Por qué tres cosas das las gracias?','¿Qué te preocupa y qué puedes hacer al respecto?','¿Qué harías mañana si nada pudiera salir mal?','Describe un momento de hoy con los cinco sentidos.','¿A quién te gustaría dar las gracias y por qué?','¿Qué pequeña victoria has tenido hoy?','¿Qué te ha hecho reír?','¿Qué quieres recordar de este día dentro de un año?'] }
+ : { title:'Journal', write:'Write here…', other:'another question ↻', words:'words', saved:'Saved ✓', last:'Last 4 weeks',
+  prompts:['What was the best part of today?','What did you learn today?','What are three things you\'re grateful for?','What\'s on your mind, and what can you do about it?','What would you do tomorrow if nothing could go wrong?','Describe one moment of today with all five senses.','Who would you like to thank, and why?','What small win did you have today?','What made you laugh?','What do you want to remember about today a year from now?'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('text').placeholder = T.write; $('newPrompt').textContent = T.other; $('lastDays').textContent = T.last;
+const MOODS = ['😢', '😕', '😐', '🙂', '😄'];
+let entries = {}, cur = new Date(), saveT;
+const key = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function entry() { return entries[key(cur)] || (entries[key(cur)] = { text: '', mood: null, prompt: Math.floor(Math.random() * T.prompts.length) }); }
+function render() {
+  const e = entry();
+  $('date').textContent = cur.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  $('moods').innerHTML = MOODS.map((m, i) => `<button class="${e.mood === i ? 'on' : ''}">${m}</button>`).join('');
+  $('moods').querySelectorAll('button').forEach((b, i) => b.onclick = () => { e.mood = e.mood === i ? null : i; persist(); render(); });
+  $('prompt').textContent = T.prompts[e.prompt % T.prompts.length];
+  if (document.activeElement !== $('text')) $('text').value = e.text;
+  $('words').textContent = (e.text.trim() ? e.text.trim().split(/\s+/).length : 0) + ' ' + T.words;
+  $('next').disabled = key(cur) === key(new Date()); $('next').style.opacity = $('next').disabled ? .3 : 1;
+  const days = [...Array(28)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 27 + i); return d; });
+  $('cal').innerHTML = days.map(d => { const x = entries[key(d)], has = x && (x.text.trim() || x.mood != null); return `<button class="${key(d) === key(cur) ? 'sel' : ''} ${has ? '' : 'empty'}" data-k="${key(d)}"><span>${x && x.mood != null ? MOODS[x.mood] : has ? '📝' : '·'}</span>${d.getDate()}</button>`; }).join('');
+  $('cal').querySelectorAll('button').forEach(b => b.onclick = () => { const [y, m, d] = b.dataset.k.split('-').map(Number); cur = new Date(y, m - 1, d); render(); });
+}
+function persist() { clearTimeout(saveT); $('saved').textContent = ''; saveT = setTimeout(async () => { await store.set('entries', entries); $('saved').textContent = T.saved; }, 500); }
+$('text').oninput = () => { entry().text = $('text').value; $('words').textContent = ($('text').value.trim() ? $('text').value.trim().split(/\s+/).length : 0) + ' ' + T.words; persist(); };
+$('text').onblur = render;
+$('newPrompt').onclick = () => { entry().prompt++; persist(); render(); };
+$('prev').onclick = () => { cur.setDate(cur.getDate() - 1); cur = new Date(cur); render(); };
+$('next').onclick = () => { if (key(cur) === key(new Date())) return; cur.setDate(cur.getDate() + 1); cur = new Date(cur); render(); };
+(async () => { entries = await store.get('entries', {}); render(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Task Breaker</title>
+<style>
+  :root { --bg:#f2f0ff; --card:#fff; --ink:#241f3d; --muted:#857fa6; --line:#e4e0fb; --a:#7457f5; --b:#f35fa6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:580px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0; font-size:28px; }
+  .sub { color:var(--muted); margin:4px 0 14px; line-height:1.4; }
+  .ask { background:var(--card); border-radius:22px; padding:12px; box-shadow:0 8px 24px #241f3d14; }
+  .ask textarea { width:100%; min-height:72px; resize:none; outline:none; font-size:17px; padding:6px; }
+  .ask .row { display:flex; gap:8px; align-items:center; }
+  .chips { display:flex; gap:6px; flex:1; flex-wrap:wrap; }
+  .chip { padding:7px 11px; border-radius:999px; background:var(--bg); font-size:13px; font-weight:700; }
+  .chip.on { background:var(--ink); color:#fff; }
+  .go { padding:12px 18px; border-radius:14px; background:linear-gradient(135deg,var(--a),var(--b)); color:#fff; font-weight:900; white-space:nowrap; }
+  .go:disabled { opacity:.5; }
+  .project { margin-top:16px; background:var(--card); border-radius:22px; padding:16px; border:1px solid var(--line); }
+  .project .head { display:flex; gap:10px; align-items:flex-start; }
+  .project h2 { margin:0; font-size:18px; flex:1; }
+  .project .x { color:var(--muted); }
+  .meter { height:8px; border-radius:4px; background:var(--bg); margin:10px 0 6px; overflow:hidden; }
+  .meter i { display:block; height:100%; background:linear-gradient(90deg,var(--a),var(--b)); transition:width .4s; }
+  .info { font-size:13px; color:var(--muted); font-weight:700; }
+  .step { display:flex; gap:10px; align-items:flex-start; padding:10px 4px; border-bottom:1px solid var(--line); }
+  .step:last-child { border:0; }
+  .cb { width:26px; height:26px; border-radius:50%; border:2px solid #cbc5ee; flex:none; display:grid; place-items:center; color:#fff; font-size:13px; margin-top:1px; }
+  .step.done .cb { background:var(--a); border-color:var(--a); }
+  .step .t { flex:1; }
+  .step .t b { font-weight:600; display:block; }
+  .step.done .t b { text-decoration:line-through; color:var(--muted); }
+  .step .t small { color:var(--muted); }
+  .step .split { font-size:12px; font-weight:800; color:var(--a); white-space:nowrap; padding:4px 6px; border-radius:8px; background:var(--bg); }
+  .sub2 { margin-left:36px; border-left:2px solid var(--line); padding-left:10px; }
+  .tip { margin-top:10px; padding:10px 12px; border-radius:14px; background:#fff6dd; font-size:14px; line-height:1.4; }
+  .err { color:#c0392b; margin-top:10px; }
+  .loading { margin-top:16px; text-align:center; color:var(--muted); font-weight:700; }
+  .loading::before { content:'🪄'; display:block; font-size:36px; animation:spin 1.2s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🪄 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="ask"><textarea id="task" maxlength="300"></textarea><div class="row"><div class="chips" id="sizes"></div><button class="go" id="go"></button></div></div>
+  <div class="err" id="err"></div>
+  <div id="projects"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Divide y vencerás', sub:'¿Una tarea te agobia? Escríbela y tu IA la convierte en pasos pequeños y fáciles de empezar.', ph:'ej.: mudarme de piso, preparar el examen de historia, organizar el cumple de mi hija…', sizes:['Pasos cortos','Normal','Pocos pasos'], go:'Dividir', thinking:'Dividiendo en pasos…', split:'Dividir', of:'de', steps:'pasos', min:'min', left:'quedan', noAi:'Abre esta app en Acornix y conecta tu IA para dividir tareas.', failed:'No he podido dividirla: ', lang:'Spanish', first:'Empieza por aquí 👉' }
+ : { title:'Task Breaker', sub:'Is a task overwhelming you? Write it down and your AI turns it into small steps that are easy to start.', ph:'e.g. move house, prepare for my history exam, plan my daughter\'s birthday…', sizes:['Tiny steps','Normal','Few steps'], go:'Break it down', thinking:'Breaking it into steps…', split:'Split', of:'of', steps:'steps', min:'min', left:'left', noAi:'Open this app in Acornix and connect your AI to break down tasks.', failed:'I couldn\'t break it down: ', lang:'English', first:'Start here 👉' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('task').placeholder = T.ph; $('go').textContent = T.go;
+let projects = [], size = 1, busy = false;
+T.sizes.forEach((s, i) => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = s; b.onclick = () => { size = i; marks(); }; $('sizes').appendChild(b); });
+function marks() { [...$('sizes').children].forEach((b, i) => b.classList.toggle('on', i === size)); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function save() { store.set('projects', projects); }
+async function ask(task, context) {
+  if (!window.Acornix) throw new Error(T.noAi);
+  const r = await Acornix.askAI(
+    (context ? `This is one step of the bigger task "${context}". Break this step into 3-5 smaller steps: ${task}` : `Break this task into ${['8-12 very small', '5-8', '3-5'][size]} concrete steps: ${task}`),
+    { json: true, quick: true, system: `You are a kind, practical coach for people who feel overwhelmed. Write in ${T.lang}. Each step must start with a verb, be specific and doable in one sitting. Reply only with JSON: {"title":"short name of the task","steps":[{"t":"step","min":10}],"tip":"one short encouraging tip to get started"}` });
+  if (!r || !Array.isArray(r.steps) || !r.steps.length) throw new Error('');
+  return r;
+}
+async function create() {
+  const task = $('task').value.trim(); if (!task || busy) return;
+  busy = true; $('err').textContent = ''; $('go').disabled = true;
+  $('projects').insertAdjacentHTML('afterbegin', `<div class="loading" id="loading">${T.thinking}</div>`);
+  try {
+    const r = await ask(task);
+    projects.unshift({ title: r.title || task, tip: r.tip || '', steps: r.steps.map(s => ({ t: s.t, min: +s.min || 10, done: false, sub: [] })) });
+    $('task').value = ''; save(); try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { $('err').textContent = (e.message === T.noAi ? '' : T.failed) + (e.message || ''); }
+  busy = false; $('go').disabled = false; render();
+}
+async function split(p, s) {
+  if (busy) return; busy = true; s.loading = true; render();
+  try { const r = await ask(s.t, p.title); s.sub = r.steps.map(x => ({ t: x.t, min: +x.min || 5, done: false })); save(); }
+  catch (e) { $('err').textContent = T.failed + (e.message || ''); }
+  s.loading = false; busy = false; render();
+}
+function stepEl(p, s, isSub, isFirst) {
+  const d = document.createElement('div'); d.className = 'step' + (s.done ? ' done' : '');
+  d.innerHTML = `<button class="cb">${s.done ? '✓' : ''}</button><div class="t"><b></b><small>${isFirst ? T.first + ' · ' : ''}⏱ ${s.min} ${T.min}</small></div>${!isSub && !s.done && !(s.sub && s.sub.length) ? `<button class="split">${s.loading ? '…' : '🪄 ' + T.split}</button>` : ''}`;
+  d.querySelector('b').textContent = s.t;
+  d.querySelector('.cb').onclick = () => { s.done = !s.done; if (s.sub) s.sub.forEach(x => x.done = s.done); if (s.done) try { (window.Acornix ? Acornix.vibrate(15) : navigator.vibrate && navigator.vibrate(15)); } catch (e) {} save(); render(); };
+  const sp = d.querySelector('.split'); if (sp) sp.onclick = () => split(p, s);
+  return d;
+}
+function render() {
+  const box = $('projects'); box.innerHTML = '';
+  projects.forEach((p, pi) => {
+    const all = p.steps, done = all.filter(s => s.done).length, leftMin = all.filter(s => !s.done).reduce((a, s) => a + s.min, 0);
+    const el = document.createElement('div'); el.className = 'project';
+    el.innerHTML = `<div class="head"><h2></h2><button class="x">✕</button></div><div class="meter"><i style="width:${done / all.length * 100}%"></i></div><div class="info">${done} ${T.of} ${all.length} ${T.steps} · ⏱ ${T.left} ${leftMin} ${T.min}</div><div class="list"></div>${p.tip ? `<div class="tip">💡 ${esc(p.tip)}</div>` : ''}`;
+    el.querySelector('h2').textContent = p.title;
+    el.querySelector('.x').onclick = () => { projects.splice(pi, 1); save(); render(); };
+    const firstOpen = all.find(s => !s.done);
+    all.forEach(s => { el.querySelector('.list').appendChild(stepEl(p, s, false, s === firstOpen)); if (s.sub && s.sub.length) { const w = document.createElement('div'); w.className = 'sub2'; s.sub.forEach(x => w.appendChild(stepEl(p, x, true, false))); el.querySelector('.list').appendChild(w); } });
+    box.appendChild(el);
+  });
+}
+$('go').onclick = create;
+(async () => { projects = await store.get('projects', []); marks(); render(); })();
+</script>
+</body>
+</html>

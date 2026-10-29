@@ -1,0 +1,14 @@
+{
+  "id": "eisenhower",
+  "name": "Priority Matrix",
+  "emoji": "🧭",
+  "category": "productivity",
+  "description": "Sort your tasks by urgent and important: do, schedule, delegate or drop them.",
+  "prompt": "An Eisenhower priority matrix with four coloured quadrants, do it now, schedule it, delegate it and drop it, where I add tasks to a quadrant and tap a task to complete, move or delete it.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

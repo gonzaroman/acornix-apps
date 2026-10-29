@@ -1,0 +1,14 @@
+{
+  "id": "goals",
+  "name": "Goals",
+  "emoji": "🎯",
+  "category": "productivity",
+  "description": "Break big goals into steps, tick them off and watch the progress ring fill up.",
+  "prompt": "A goals app where each goal has an emoji, an optional deadline with days left, a list of steps I add and tick off, a progress ring and a celebration when the goal is reached.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

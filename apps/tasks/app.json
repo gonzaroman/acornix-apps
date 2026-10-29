@@ -1,0 +1,14 @@
+{
+  "id": "tasks",
+  "name": "Tasks",
+  "emoji": "✅",
+  "category": "productivity",
+  "description": "A clear to-do list with lists, priorities, due dates and overdue tasks grouped at the top.",
+  "prompt": "A to-do app with personal, work and shopping lists, three priority colours, due dates, tasks grouped by overdue, today, upcoming and no date, a progress bar and done tasks crossed out.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

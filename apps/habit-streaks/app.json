@@ -1,0 +1,14 @@
+{
+  "id": "habit-streaks",
+  "name": "Habit Streaks",
+  "emoji": "🔥",
+  "category": "productivity",
+  "description": "Tick off your habits every day, keep your streaks alive and see the last 12 weeks at a glance.",
+  "prompt": "A habit tracker where each habit has an emoji and colour, a row of the last seven days to tick, the current and best streak, and a 12 week heatmap of how many habits I completed each day.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

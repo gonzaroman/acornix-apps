@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kanban Board</title>
+<style>
+  :root { --bg:#eef1f7; --col:#e1e6f0; --card:#fff; --ink:#1e2433; --muted:#7b8499; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; }
+  header { padding:calc(env(safe-area-inset-top) + 12px) 16px 8px; display:flex; align-items:center; gap:10px; }
+  header h1 { margin:0; font-size:24px; flex:1; }
+  #board { flex:1; display:flex; gap:12px; overflow-x:auto; padding:6px 16px calc(env(safe-area-inset-bottom) + 16px); scroll-snap-type:x mandatory; }
+  .column { flex:none; width:min(82vw,320px); background:var(--col); border-radius:20px; padding:10px; display:flex; flex-direction:column; scroll-snap-align:start; max-height:100%; }
+  .column h2 { margin:4px 6px 10px; font-size:15px; display:flex; align-items:center; gap:8px; }
+  .column h2 .n { margin-left:auto; background:#fff; border-radius:999px; padding:1px 8px; font-size:12px; color:var(--muted); }
+  .cards { flex:1; overflow-y:auto; min-height:60px; display:flex; flex-direction:column; gap:8px; padding:2px; border-radius:14px; transition:background .2s; }
+  .cards.over { background:#ffffff88; }
+  .card { background:var(--card); border-radius:14px; padding:12px; box-shadow:0 2px 0 #0000000d; touch-action:pan-x; border-top:4px solid var(--c,#cbd2e1); }
+  .card b { display:block; font-weight:600; word-break:break-word; }
+  .card .meta { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .tag { font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px; background:var(--bg); color:var(--muted); }
+  .card.drag { position:fixed; z-index:20; pointer-events:none; box-shadow:0 16px 30px #0003; transform:rotate(3deg); }
+  .ghost { border:2px dashed #9aa4bb; border-radius:14px; background:transparent; }
+  .addc { margin-top:8px; padding:10px; border-radius:12px; color:var(--muted); font-weight:700; text-align:left; }
+  #sheet { position:fixed; inset:0; background:#1e243388; display:none; align-items:flex-end; z-index:30; }
+  #sheet.on { display:flex; }
+  .form { width:100%; max-width:560px; margin:0 auto; background:#fff; border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); display:flex; flex-direction:column; gap:10px; }
+  .form textarea { padding:12px; border-radius:14px; background:var(--bg); outline:none; min-height:80px; resize:none; }
+  .colors { display:flex; gap:8px; } .colors button { width:32px; height:32px; border-radius:50%; } .colors button.on { outline:3px solid var(--ink); outline-offset:2px; }
+  .cols { display:flex; gap:6px; flex-wrap:wrap; } .cols button { padding:8px 12px; border-radius:999px; background:var(--bg); font-weight:700; font-size:13px; } .cols button.on { background:var(--ink); color:#fff; }
+  .row { display:flex; gap:10px; } .row button { flex:1; padding:14px; border-radius:14px; background:var(--bg); font-weight:800; } .row .save { background:var(--ink); color:#fff; } .row .del { color:#d33; }
+</style>
+</head>
+<body>
+<div id="app"><header><h1>📋 <span id="ttl"></span></h1></header><div id="board"></div></div>
+<div id="sheet"><form class="form" id="form"><textarea id="text" maxlength="200" required></textarea><div class="colors" id="colors"></div><div class="cols" id="cols"></div><div class="row"><button type="button" class="del" id="del"></button><button type="button" id="cancel"></button><button class="save" id="save"></button></div></form></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Tablero', cols:['📝 Por hacer','⚡ En curso','👀 Revisar','✅ Hecho'], add:'＋ Añadir tarjeta', text:'¿Qué hay que hacer?', save:'Guardar', cancel:'Cancelar', del:'Borrar',
+  samples:[[0,'Diseñar la portada',0],[0,'Escribir el texto de bienvenida',2],[1,'Preparar la presentación',1],[2,'Revisar presupuesto',3],[3,'Reservar la sala',4]] }
+ : { title:'Board', cols:['📝 To do','⚡ Doing','👀 Review','✅ Done'], add:'＋ Add card', text:'What needs doing?', save:'Save', cancel:'Cancel', del:'Delete',
+  samples:[[0,'Design the cover',0],[0,'Write the welcome text',2],[1,'Prepare the slides',1],[2,'Check the budget',3],[3,'Book the room',4]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('text').placeholder = T.text; $('save').textContent = T.save; $('cancel').textContent = T.cancel; $('del').textContent = T.del;
+const COLORS = ['#7c8cff', '#ff7aa8', '#ffb547', '#4fd1a5', '#a0a8bd'];
+let cards = [], editing = null, form = { col: 0, c: 0 };
+function save() { store.set('cards', cards); }
+function render() {
+  const board = $('board'), scroll = board.scrollLeft; board.innerHTML = '';
+  T.cols.forEach((name, ci) => {
+    const col = document.createElement('div'); col.className = 'column';
+    const mine = cards.filter(c => c.col === ci).sort((a, b) => a.order - b.order);
+    col.innerHTML = `<h2>${name}<span class="n">${mine.length}</span></h2><div class="cards" data-col="${ci}"></div><button class="addc">${T.add}</button>`;
+    const list = col.querySelector('.cards');
+    mine.forEach(c => {
+      const el = document.createElement('div'); el.className = 'card'; el.style.setProperty('--c', COLORS[c.c]); el.innerHTML = '<b></b>'; el.querySelector('b').textContent = c.text;
+      el.dataset.id = c.id; attachDrag(el, c); list.appendChild(el);
+    });
+    col.querySelector('.addc').onclick = () => openForm(null, ci);
+    board.appendChild(col);
+  });
+  board.scrollLeft = scroll;
+}
+// Long-press-free drag: moving a finger more than a few pixels picks the card up; a tap edits it.
+function attachDrag(el, card) {
+  let sx, sy, drag = null, ghost = null, timer;
+  el.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; el.setPointerCapture(e.pointerId); timer = setTimeout(() => begin(e), 220); });
+  el.addEventListener('pointermove', e => {
+    if (!drag) { if (Math.hypot(e.clientX - sx, e.clientY - sy) > 10) { clearTimeout(timer); if (Math.abs(e.clientY - sy) > Math.abs(e.clientX - sx) * 0.6) begin(e); } return; }
+    drag.style.left = e.clientX - drag.dx + 'px'; drag.style.top = e.clientY - drag.dy + 'px';
+    const under = document.elementsFromPoint(e.clientX, e.clientY).find(n => n.classList && n.classList.contains('cards'));
+    document.querySelectorAll('.cards').forEach(c => c.classList.toggle('over', c === under));
+    if (under) { const after = [...under.querySelectorAll('.card:not(.ghost)')].find(c => { const r = c.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; }); after ? under.insertBefore(ghost, after) : under.appendChild(ghost); }
+    const b = $('board'), r = b.getBoundingClientRect(); if (e.clientX > r.right - 40) b.scrollLeft += 12; else if (e.clientX < r.left + 40) b.scrollLeft -= 12;
+  });
+  el.addEventListener('pointerup', e => {
+    clearTimeout(timer);
+    if (!drag) { if (Math.hypot(e.clientX - sx, e.clientY - sy) < 10) openForm(card); return; }
+    const list = ghost.parentElement, col = +list.dataset.col, idx = [...list.children].indexOf(ghost);
+    drag.remove(); ghost.remove(); drag = null; document.querySelectorAll('.cards').forEach(c => c.classList.remove('over'));
+    const others = cards.filter(c => c.col === col && c !== card).sort((a, b) => a.order - b.order);
+    others.splice(idx, 0, card); card.col = col; others.forEach((c, i) => c.order = i);
+    try { if (window.Acornix) Acornix.vibrate(15); } catch (e) {}
+    save(); render();
+  });
+  el.addEventListener('pointercancel', () => { clearTimeout(timer); if (drag) { drag.remove(); ghost.remove(); drag = null; render(); } });
+  function begin(e) {
+    if (drag) return; const r = el.getBoundingClientRect();
+    drag = el.cloneNode(true); drag.classList.add('drag'); drag.style.width = r.width + 'px'; drag.dx = e.clientX - r.left; drag.dy = e.clientY - r.top;
+    drag.style.left = r.left + 'px'; drag.style.top = r.top + 'px'; document.body.appendChild(drag);
+    ghost = document.createElement('div'); ghost.className = 'card ghost'; ghost.style.height = r.height + 'px'; el.replaceWith(ghost);
+    try { if (window.Acornix) Acornix.vibrate(10); } catch (e) {}
+  }
+}
+function openForm(card, col) {
+  editing = card; form = card ? { col: card.col, c: card.c } : { col: col || 0, c: 0 };
+  $('text').value = card ? card.text : ''; $('del').style.display = card ? 'block' : 'none'; marks(); $('sheet').classList.add('on'); setTimeout(() => $('text').focus(), 50);
+}
+function marks() {
+  $('colors').innerHTML = COLORS.map((c, i) => `<button type="button" style="background:${c}" class="${i === form.c ? 'on' : ''}"></button>`).join(''); $('colors').querySelectorAll('button').forEach((b, i) => b.onclick = () => { form.c = i; marks(); });
+  $('cols').innerHTML = T.cols.map((c, i) => `<button type="button" class="${i === form.col ? 'on' : ''}">${c}</button>`).join(''); $('cols').querySelectorAll('button').forEach((b, i) => b.onclick = () => { form.col = i; marks(); });
+}
+$('form').onsubmit = e => { e.preventDefault(); const text = $('text').value.trim(); if (!text) return;
+  if (editing) Object.assign(editing, { text, c: form.c, col: form.col }); else cards.push({ id: Date.now(), text, c: form.c, col: form.col, order: cards.filter(c => c.col === form.col).length });
+  save(); $('sheet').classList.remove('on'); render(); };
+$('del').onclick = () => { cards = cards.filter(c => c !== editing); save(); $('sheet').classList.remove('on'); render(); };
+$('cancel').onclick = () => $('sheet').classList.remove('on');
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); };
+(async () => { cards = await store.get('cards', null); if (!cards) { cards = T.samples.map(([col, text, c], i) => ({ id: i + 1, col, text, c, order: i })); save(); } render(); })();
+</script>
+</body>
+</html>

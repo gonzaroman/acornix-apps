@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Email Writer</title>
+<style>
+  :root { --bg:#f5f3ee; --card:#fff; --ink:#22201c; --muted:#8a8478; --line:#e8e3d8; --a:#2f6fed; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, textarea, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:580px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); margin:0 0 14px; }
+  label { display:block; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin:14px 4px 6px; }
+  textarea, input { width:100%; padding:13px; border-radius:16px; background:var(--card); border:1px solid var(--line); outline:none; }
+  textarea { min-height:100px; resize:vertical; line-height:1.45; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { padding:9px 13px; border-radius:999px; background:var(--card); border:1px solid var(--line); font-weight:700; font-size:14px; }
+  .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .go { width:100%; margin-top:18px; padding:16px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:17px; }
+  .go:disabled { opacity:.5; }
+  .mail { margin-top:18px; background:var(--card); border-radius:20px; border:1px solid var(--line); overflow:hidden; display:none; }
+  .mail.on { display:block; }
+  .mail .subj { padding:14px 16px; border-bottom:1px solid var(--line); font-weight:800; }
+  .mail .subj small { display:block; color:var(--muted); font-weight:700; font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+  .mail .body { padding:16px; white-space:pre-wrap; line-height:1.6; min-height:80px; }
+  .acts { display:flex; gap:8px; padding:10px; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .acts button { flex:1; padding:12px 8px; border-radius:12px; background:var(--bg); font-weight:800; font-size:14px; white-space:nowrap; }
+  .err { color:#c0392b; margin-top:12px; }
+  .ideas { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
+  .ideas::-webkit-scrollbar { display:none; }
+  .idea { flex:none; padding:8px 12px; border-radius:12px; background:#fff8e6; border:1px solid #f1e3bd; font-size:13px; font-weight:600; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>✉️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="ideas" id="ideas"></div>
+  <label id="lNotes"></label><textarea id="notes" maxlength="1500"></textarea>
+  <label id="lTo"></label><input id="to" maxlength="80">
+  <label id="lTone"></label><div class="chips" id="tones"></div>
+  <label id="lLen"></label><div class="chips" id="lens"></div>
+  <button class="go" id="go"></button>
+  <div class="err" id="err"></div>
+  <div class="mail" id="mail"><div class="subj"><small id="lSubj"></small><span id="subj"></span></div><div class="body" id="body"></div>
+    <div class="acts"><button id="copy"></button><button id="share"></button><button id="again"></button></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Redactor de emails', sub:'Escribe la idea con tus palabras y tu IA la convierte en un email listo para enviar.', notes:'¿Qué quieres decir?', notesPh:'ej.: pedir a mi jefa el viernes libre, tengo médico por la mañana, recupero las horas el lunes', to:'¿Para quién?', toPh:'ej.: mi jefa, un cliente, el casero…', tone:'Tono', len:'Largo', go:'✨ Escribir email', subject:'Asunto', copy:'📋 Copiar', copied:'✓ Copiado', share:'📤 Compartir', again:'🔄 Otra versión', noAi:'Abre esta app en Acornix y conecta tu IA para escribir emails.', failed:'No he podido escribirlo: ', writing:'Escribiendo…',
+  tones:['🤝 Profesional','😊 Cercano','✂️ Directo','🙏 Disculpa','💪 Convincente','🎉 Entusiasta'], lens:['Corto','Medio','Detallado'], lang:'Spanish',
+  ideas:['Pedir un día libre','Reclamar un pedido que no llega','Agradecer una entrevista','Recordar una factura pendiente','Cancelar una reunión'] }
+ : { title:'Email Writer', sub:'Write the idea in your own words and your AI turns it into an email ready to send.', notes:'What do you want to say?', notesPh:'e.g. ask my boss for Friday off, doctor\'s appointment in the morning, I\'ll make up the hours on Monday', to:'Who is it for?', toPh:'e.g. my boss, a client, the landlord…', tone:'Tone', len:'Length', go:'✨ Write email', subject:'Subject', copy:'📋 Copy', copied:'✓ Copied', share:'📤 Share', again:'🔄 Another version', noAi:'Open this app in Acornix and connect your AI to write emails.', failed:'I couldn\'t write it: ', writing:'Writing…',
+  tones:['🤝 Professional','😊 Friendly','✂️ Direct','🙏 Apology','💪 Persuasive','🎉 Enthusiastic'], lens:['Short','Medium','Detailed'], lang:'English',
+  ideas:['Ask for a day off','Complain about a late order','Thank you after an interview','Remind about an unpaid invoice','Cancel a meeting'] };
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('lNotes').textContent = T.notes; $('notes').placeholder = T.notesPh; $('lTo').textContent = T.to; $('to').placeholder = T.toPh;
+$('lTone').textContent = T.tone; $('lLen').textContent = T.len; $('go').textContent = T.go; $('lSubj').textContent = T.subject; $('copy').textContent = T.copy; $('share').textContent = T.share; $('again').textContent = T.again;
+let tone = store.get('tone', 0), len = store.get('len', 1), last = null;
+function chips(box, items, sel, onPick) { box.innerHTML = ''; items.forEach((t, i) => { const b = document.createElement('button'); b.className = 'chip' + (i === sel ? ' on' : ''); b.textContent = t; b.onclick = () => onPick(i); box.appendChild(b); }); }
+function renderChips() { chips($('tones'), T.tones, tone, i => { tone = i; store.set('tone', i); renderChips(); }); chips($('lens'), T.lens, len, i => { len = i; store.set('len', i); renderChips(); }); }
+T.ideas.forEach(t => { const b = document.createElement('button'); b.className = 'idea'; b.textContent = t; b.onclick = () => { $('notes').value = t + ': '; $('notes').focus(); }; $('ideas').appendChild(b); });
+async function write(variant) {
+  const notes = $('notes').value.trim(); if (!notes) return $('notes').focus();
+  $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('go').disabled = true; $('go').textContent = T.writing; $('mail').classList.add('on'); $('subj').textContent = '…'; $('body').textContent = '';
+  try {
+    const r = await Acornix.askAI(
+      `Write an email. What I want to say: ${notes}\nRecipient: ${$('to').value.trim() || 'not specified'}\nTone: ${T.tones[tone].replace(/^\S+\s/, '')}\nLength: ${['short, 3-5 sentences', 'medium', 'detailed'][len]}` + (variant && last ? `\nWrite a clearly different version from this one: ${last.body.slice(0, 600)}` : ''),
+      { json: true, quick: true, system: `You are an excellent writing assistant. Write in ${T.lang} unless the notes are clearly in another language. Natural, human, no clichés, no placeholders like [Name] unless a name is unknown and needed. Reply only with JSON: {"subject":"…","body":"the email with greeting and sign-off, using line breaks"}` });
+    last = r; $('subj').textContent = r.subject || ''; $('body').textContent = r.body || '';
+    store.set('lastMail', r);
+    try { Acornix.vibrate(15); } catch (e) {}
+  } catch (e) { $('err').textContent = T.failed + (e && e.message || ''); $('mail').classList.remove('on'); }
+  $('go').disabled = false; $('go').textContent = T.go;
+}
+$('go').onclick = () => write(false);
+$('again').onclick = () => write(true);
+$('copy').onclick = async () => { if (!last) return; try { await navigator.clipboard.writeText(last.subject + '\n\n' + last.body); $('copy').textContent = T.copied; setTimeout(() => $('copy').textContent = T.copy, 1500); } catch (e) {} };
+$('share').onclick = async () => { if (!last) return; const text = last.subject + '\n\n' + last.body; try { if (window.Acornix) await Acornix.share(text); else if (navigator.share) await navigator.share({ text }); } catch (e) {} };
+renderChips();
+const prev = store.get('lastMail', null); if (prev) { last = prev; $('subj').textContent = prev.subject; $('body').textContent = prev.body; $('mail').classList.add('on'); }
+</script>
+</body>
+</html>
