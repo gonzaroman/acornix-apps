@@ -1,0 +1,14 @@
+{
+  "id": "breathing",
+  "name": "Breathe",
+  "emoji": "🌬️",
+  "category": "health-fitness",
+  "description": "Follow a glowing ball to breathe in, hold and breathe out: 4-7-8 to calm down, box breathing to focus, and more.",
+  "prompt": "A guided breathing app with a ball that grows and shrinks, four patterns (4-7-8 calm, box 4-4-4-4, coherent 5.5-5.5 and energising 4-2-4), sessions of 1 to 10 minutes, soft tones and vibration on each phase, and a session counter.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

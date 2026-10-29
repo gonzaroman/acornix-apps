@@ -1,0 +1,14 @@
+{
+  "id": "desk-stretches",
+  "name": "Desk Stretches",
+  "emoji": "🤸",
+  "category": "health-fitness",
+  "description": "Guided 1 to 4 minute stretch breaks for your neck, back, wrists and eyes, read aloud so you don't have to look.",
+  "prompt": "A desk stretching guide with three routines, each stretch with an emoji, instructions read aloud, left and right sides, a countdown ring, pause and skip, a count of breaks done and optional reminders every 30 minutes, hour or two hours.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

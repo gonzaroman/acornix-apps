@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Meditation</title>
+<style>
+  :root { --ink:#fdf8f0; --muted:#d9c7b0; --a:#f2c38b; --card:#ffffff14; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; background:#2b1d2e; }
+  body { background:linear-gradient(170deg,#3b2440 0%,#6b3f4f 45%,#c97b5c 85%,#f2b880 100%); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 18px); }
+  .head { display:flex; justify-content:space-between; align-items:center; }
+  h1 { margin:0; font-size:24px; font-weight:600; }
+  .streak { background:var(--card); padding:8px 12px; border-radius:14px; font-weight:800; font-size:14px; }
+  .stage { flex:1; display:grid; place-items:center; position:relative; }
+  .sun { position:relative; width:min(62vw,260px); aspect-ratio:1; display:grid; place-items:center; }
+  .sun svg { position:absolute; inset:0; transform:rotate(-90deg); }
+  .glow { position:absolute; inset:14%; border-radius:50%; background:radial-gradient(circle,#ffe2b8 0%,#f2c38b 45%,#f2c38b00 72%); animation:pulse 8s ease-in-out infinite; opacity:.85; }
+  @keyframes pulse { 50% { transform:scale(1.12); opacity:1; } }
+  .time { position:relative; font-size:52px; font-weight:200; font-variant-numeric:tabular-nums; text-shadow:0 2px 14px #0004; }
+  .lbl { position:relative; text-align:center; font-weight:700; color:var(--muted); margin-top:-6px; }
+  .hills { position:fixed; left:0; right:0; bottom:0; height:30vh; pointer-events:none; opacity:.55; }
+  .opts { position:relative; display:grid; gap:10px; }
+  .row { display:flex; gap:6px; background:#0002; padding:4px; border-radius:16px; }
+  .row button { flex:1; padding:10px 2px; border-radius:12px; font-weight:800; font-size:14px; color:var(--muted); background:none; }
+  .row button.on { background:#ffffff2a; color:var(--ink); }
+  .go { padding:17px; border-radius:20px; background:var(--ink); color:#5a3346; font-weight:900; font-size:18px; }
+  .quote { position:relative; text-align:center; font-style:italic; color:var(--muted); min-height:42px; margin:6px 10px 12px; line-height:1.4; font-family:Georgia,serif; }
+</style>
+</head>
+<body>
+<svg class="hills" viewBox="0 0 400 200" preserveAspectRatio="none"><path d="M0 120 Q80 70 160 110 T320 100 T400 90 V200 H0Z" fill="#2b1d2e"/><path d="M0 150 Q100 110 200 145 T400 130 V200 H0Z" fill="#1d1320"/></svg>
+<div class="wrap">
+  <div class="head"><h1>🧘 <span id="ttl"></span></h1><span class="streak" id="streak"></span></div>
+  <div class="stage"><div class="sun"><div class="glow"></div><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#ffffff22" stroke-width="2"/><circle id="arc" cx="50" cy="50" r="47" fill="none" stroke="#fdf8f0" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="295.3"/></svg><div><div class="time" id="time"></div><div class="lbl" id="lbl"></div></div></div></div>
+  <div class="quote" id="quote"></div>
+  <div class="opts">
+    <div class="row" id="mins"></div>
+    <div class="row" id="sounds"></div>
+    <div class="row" id="bells"></div>
+    <button class="go" id="go"></button>
+  </div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Medita', start:'Empezar', pause:'Pausa', resume:'Seguir', end:'Terminar', min:'min', sounds:[['🔇','Silencio'],['🌧️','Lluvia'],['🌊','Mar'],['🔥','Fuego'],['🌬️','Viento']], bells:['🔔 Solo inicio y fin','🔔 Cada minuto','🔔 Cada 5 min'], streak:'días', total:'min en total', done:'Sesión completada', quotes:['Inspira. Espira. Solo este momento.','No tienes que vaciar la mente; solo observar lo que pasa por ella.','Si te distraes, vuelve con amabilidad a la respiración.','Nota el peso de tu cuerpo y deja que se apoye.','Cada respiración es un pequeño comienzo.'] }
+ : { title:'Meditate', start:'Begin', pause:'Pause', resume:'Resume', end:'End', min:'min', sounds:[['🔇','Silence'],['🌧️','Rain'],['🌊','Ocean'],['🔥','Fire'],['🌬️','Wind']], bells:['🔔 Start and end','🔔 Every minute','🔔 Every 5 min'], streak:'days', total:'min in total', done:'Session complete', quotes:['Breathe in. Breathe out. Just this moment.','You don\'t have to empty your mind; just notice what passes through it.','If you drift away, gently come back to your breath.','Feel the weight of your body and let it rest.','Every breath is a small new beginning.'] };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let cfg = { mins: 10, sound: 1, bell: 0 }, stats = { days: [], minutes: 0 }, state = 'idle', left = 0, total = 0, timer, ac, noise = null;
+$('ttl').textContent = T.title;
+function rows() {
+  $('mins').innerHTML = [3, 5, 10, 15, 20].map(m => `<button data-v="${m}" class="${cfg.mins === m ? 'on' : ''}">${m} ${T.min}</button>`).join('');
+  $('sounds').innerHTML = T.sounds.map(([e, n], i) => `<button data-v="${i}" class="${cfg.sound === i ? 'on' : ''}" title="${n}">${e}</button>`).join('');
+  $('bells').innerHTML = T.bells.map((b, i) => `<button data-v="${i}" class="${cfg.bell === i ? 'on' : ''}" style="font-size:12px">${b.replace('🔔 ', '')}</button>`).join('');
+  [['mins', 'mins'], ['sounds', 'sound'], ['bells', 'bell']].forEach(([el, k]) => $(el).querySelectorAll('button').forEach(b => b.onclick = () => { cfg[k] = +b.dataset.v; store.set('cfg', cfg); rows(); if (k === 'sound' && state === 'run') ambient(); if (state === 'idle') idle(); }));
+}
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+function idle() { $('time').textContent = fmt(cfg.mins * 60); $('lbl').textContent = ''; $('arc').style.strokeDashoffset = 295.3; $('go').textContent = T.start; }
+function streakText() { let n = 0; const d = new Date(); const has = x => stats.days.includes(x.toDateString()); if (!has(d)) d.setDate(d.getDate() - 1); while (has(d)) { n++; d.setDate(d.getDate() - 1); } $('streak').textContent = `🔥 ${n} ${T.streak} · ${Math.round(stats.minutes)} ${T.total}`; }
+function ctx() { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); return ac; }
+function bell(strong) {
+  try {
+    const a = ctx(), t = a.currentTime;
+    [1, 2.76, 5.4].forEach((m, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 220 * m; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime((strong ? .16 : .08) / (i + 1), t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + (strong ? 6 : 3.5) / (i * .6 + 1)); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 7); });
+  } catch (e) {}
+  try { if (window.Acornix) Acornix.vibrate(strong ? 120 : 40); } catch (e) {}
+}
+// Ambient sounds are filtered noise made on the fly, so the app needs no audio files.
+function ambient() {
+  try { if (noise) { noise.forEach(n => { try { n.stop(); } catch (e) {} }); noise = null; } } catch (e) {}
+  if (!cfg.sound || state !== 'run') return;
+  const a = ctx(), len = a.sampleRate * 4, buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  let last = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = cfg.sound === 2 || cfg.sound === 4 ? (last + .02 * w) / 1.02 : w; d[i] = cfg.sound === 2 || cfg.sound === 4 ? last * 3.5 : w; }
+  const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
+  const f = a.createBiquadFilter(), g = a.createGain(); f.type = cfg.sound === 1 ? 'highpass' : 'lowpass'; f.frequency.value = { 1: 900, 2: 600, 3: 2200, 4: 400 }[cfg.sound]; g.gain.value = { 1: .05, 2: .25, 3: .025, 4: .22 }[cfg.sound];
+  src.connect(f); f.connect(g); g.connect(a.destination); src.start();
+  const parts = [src];
+  if (cfg.sound === 2 || cfg.sound === 4) { const lfo = a.createOscillator(), lg = a.createGain(); lfo.frequency.value = cfg.sound === 2 ? .09 : .05; lg.gain.value = g.gain.value * .8; lfo.connect(lg); lg.connect(g.gain); lfo.start(); parts.push(lfo); }
+  if (cfg.sound === 3) { const crackle = setInterval(() => { if (state !== 'run') return clearInterval(crackle); if (Math.random() < .4) { const o = a.createBufferSource(), b = a.createBuffer(1, 400, a.sampleRate), cd = b.getChannelData(0); for (let i = 0; i < 400; i++) cd[i] = (Math.random() * 2 - 1) * (1 - i / 400); o.buffer = b; const cg = a.createGain(); cg.gain.value = Math.random() * .25; o.connect(cg); cg.connect(a.destination); o.start(); } }, 120); parts.push({ stop: () => clearInterval(crackle) }); }
+  noise = parts;
+}
+function start() {
+  total = cfg.mins * 60; left = total; state = 'run'; bell(true); ambient(); $('go').textContent = T.pause; $('lbl').textContent = '';
+  let q = 0; $('quote').textContent = T.quotes[q];
+  clearInterval(timer);
+  timer = setInterval(() => {
+    if (state !== 'run') return;
+    left -= .25; const elapsed = total - left;
+    $('time').textContent = fmt(Math.ceil(left)); $('arc').style.strokeDashoffset = 295.3 * (1 - elapsed / total);
+    const every = [0, 60, 300][cfg.bell]; if (every && elapsed % every === 0 && left > 0) bell(false);
+    if (elapsed % 45 === 0) { q = (q + 1) % T.quotes.length; $('quote').textContent = T.quotes[q]; }
+    if (left <= 0) finish();
+  }, 250);
+}
+async function finish() {
+  clearInterval(timer); state = 'idle'; ambient(); bell(true); bell(true);
+  const done = (total - Math.max(0, left)) / 60; stats.minutes += done; const today = new Date().toDateString(); if (done >= 1 && !stats.days.includes(today)) stats.days.push(today);
+  await store.set('stats', stats); streakText();
+  $('time').textContent = '🙏'; $('lbl').textContent = T.done; $('go').textContent = T.start; $('arc').style.strokeDashoffset = 0;
+}
+$('go').onclick = () => {
+  if (state === 'idle') start();
+  else if (state === 'run') { state = 'paused'; ambient(); $('go').textContent = T.resume; $('lbl').textContent = '⏸'; }
+  else { state = 'run'; ambient(); $('go').textContent = T.pause; $('lbl').textContent = ''; }
+};
+$('time').parentElement.onclick = () => { if (state !== 'idle') finish(); };
+(async () => { cfg = Object.assign(cfg, await store.get('cfg', {})); stats = Object.assign(stats, await store.get('stats', {})); rows(); idle(); streakText(); $('quote').textContent = T.quotes[new Date().getDate() % T.quotes.length]; })();
+</script>
+</body>
+</html>

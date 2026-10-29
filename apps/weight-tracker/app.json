@@ -1,0 +1,14 @@
+{
+  "id": "weight-tracker",
+  "name": "Weight Tracker",
+  "emoji": "📉",
+  "category": "health-fitness",
+  "description": "Log your weight each day and watch the 7-day trend instead of the daily ups and downs, with your goal and BMI.",
+  "prompt": "A weight tracker in kg or lb: log once a day, see the change since you started and this week, progress to a goal, a chart with daily points and the 7-day moving average, BMI from your height and a history you can edit.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "plate-check-ai",
+  "name": "Plate Check",
+  "emoji": "🍽️",
+  "category": "health-fitness",
+  "description": "Snap a photo of your meal and your AI estimates the calories, protein, carbs and fat. Adjust portions and track your day.",
+  "prompt": "A food log powered by the AI: take a photo of a meal or type it, get each food with its portion, calories and macros, adjust portions with plus and minus, and see a daily ring with calories and protein, carbs and fat against a goal.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

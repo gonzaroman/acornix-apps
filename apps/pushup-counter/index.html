@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Push-up Counter</title>
+<style>
+  :root { --bg:#0d0f14; --card:#181c25; --ink:#f4f6fb; --muted:#8b93a7; --a:#ffcc00; --b:#ff4d6d; --line:#262b38; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:4px 0 12px; font-size:28px; font-weight:900; }
+  .today { padding:18px; border-radius:24px; background:linear-gradient(135deg,#ffcc00,#ff8a00); color:#1a1200; }
+  .today small { font-weight:800; opacity:.75; }
+  .today b { display:block; font-size:56px; font-weight:900; line-height:1; margin:4px 0; letter-spacing:-2px; }
+  .today .bar { height:10px; border-radius:5px; background:#0002; overflow:hidden; margin-top:8px; }
+  .today .bar i { display:block; height:100%; background:#1a1200; }
+  .go { margin-top:12px; padding:20px; border-radius:22px; background:var(--ink); color:var(--bg); font-weight:900; font-size:20px; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-top:12px; }
+  .card h3 { margin:0 0 10px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; display:flex; justify-content:space-between; }
+  .cal { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; }
+  .cal i { aspect-ratio:1; border-radius:6px; background:var(--line); display:grid; place-items:center; font-style:normal; font-size:10px; font-weight:800; color:var(--muted); }
+  .cal i.l1 { background:#5c4a00; color:#ffe680; } .cal i.l2 { background:#a07d00; color:#fff3bf; } .cal i.l3 { background:var(--a); color:#1a1200; }
+  .cal i.now { outline:2px solid var(--ink); }
+  .row { display:flex; justify-content:space-between; align-items:center; }
+  .stp { display:flex; align-items:center; gap:10px; }
+  .stp button { width:38px; height:38px; border-radius:12px; background:var(--line); font-size:20px; font-weight:800; }
+  .stp b { min-width:40px; text-align:center; font-size:20px; }
+  .records { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .records div { background:var(--bg); border-radius:14px; padding:10px; text-align:center; }
+  .records b { display:block; font-size:22px; } .records small { color:var(--muted); font-size:11px; font-weight:700; }
+  #pad { padding:0; }
+  .pad { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; touch-action:manipulation; transition:background .08s; }
+  .pad.hit { background:#ffcc0022; }
+  .pad .n { font-size:min(48vw,240px); font-weight:900; line-height:1; letter-spacing:-8px; font-variant-numeric:tabular-nums; }
+  .pad .hint { color:var(--muted); font-weight:700; max-width:280px; margin-top:12px; line-height:1.4; }
+  .pad .nose { font-size:46px; margin-bottom:10px; opacity:.8; }
+  .padbar { display:flex; gap:10px; padding:12px 16px calc(env(safe-area-inset-bottom) + 16px); }
+  .padbar button { flex:1; padding:16px; border-radius:18px; background:var(--card); font-weight:900; font-size:16px; }
+  .padbar .done { background:var(--a); color:#1a1200; }
+  .padtop { display:flex; justify-content:space-between; padding:calc(env(safe-area-inset-top) + 14px) 16px 0; color:var(--muted); font-weight:800; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home">
+  <h1>💪 <span id="ttl"></span></h1>
+  <div class="today" id="today"></div>
+  <button class="go" id="go"></button>
+  <div class="card"><h3><span id="calT"></span><span id="streak"></span></h3><div class="cal" id="cal"></div></div>
+  <div class="card"><div class="row"><b id="goalL"></b><div class="stp"><button id="gm">−</button><b id="goalV"></b><button id="gp">+</button></div></div></div>
+  <div class="card"><h3 id="recT"></h3><div class="records" id="records"></div></div>
+</section>
+<section class="screen" id="pad">
+  <div class="padtop"><span id="setL"></span><span id="timeL"></span></div>
+  <div class="pad" id="tap"><div class="nose">👃</div><div class="n" id="n">0</div><div class="hint" id="hint"></div></div>
+  <div class="padbar"><button id="undo">−1</button><button class="done" id="done"></button></div>
+</section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Flexiones', today:'Hoy', of:'de', start:'💪 Empezar una serie', hint:'Pon el móvil en el suelo y toca la pantalla con la nariz en cada flexión', set:'Serie', done:'Guardar serie', cal:'Últimos 30 días', streak:'días seguidos', goal:'Objetivo diario', rec:'Récords', best:'Mejor serie', bestDay:'Mejor día', total:'En total', goalHit:'¡Objetivo de hoy conseguido! 🔥' }
+ : { title:'Push-ups', today:'Today', of:'of', start:'💪 Start a set', hint:'Put your phone on the floor and touch the screen with your nose on every push-up', set:'Set', done:'Save set', cal:'Last 30 days', streak:'day streak', goal:'Daily goal', rec:'Records', best:'Best set', bestDay:'Best day', total:'All time', goalHit:'Today\'s goal done! 🔥' };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const key = d => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+let sets = {}, goal = 50, n = 0, last = 0, t0 = 0, clock;
+['ttl', 'go', 'calT', 'goalL', 'recT', 'done'].forEach((id, i) => $(id).textContent = [T.title, T.start, T.cal, T.goal, T.rec, T.done][i]);
+$('hint').textContent = T.hint;
+const sum = d => (sets[key(d)] || []).reduce((a, b) => a + b, 0);
+function home() {
+  const now = new Date(), today = sum(now);
+  $('today').innerHTML = `<small>${T.today} · ${(sets[key(now)] || []).length} ${T.set.toLowerCase()}s</small><b>${today}</b><small>${T.of} ${goal}</small><div class="bar"><i style="width:${Math.min(100, today / goal * 100)}%"></i></div>`;
+  const days = [...Array(30)].map((_, i) => { const d = new Date(now); d.setDate(d.getDate() - 29 + i); return d; });
+  $('cal').innerHTML = days.map(d => { const s = sum(d), lv = !s ? '' : s >= goal ? 'l3' : s >= goal / 2 ? 'l2' : 'l1'; return `<i class="${lv} ${key(d) === key(now) ? 'now' : ''}">${s || d.getDate()}</i>`; }).join('');
+  let st = today >= goal ? 1 : 0; for (let d = new Date(now), k = 0; k < 400; k++) { d.setDate(d.getDate() - 1); if (sum(d) >= goal) st++; else break; }
+  $('streak').textContent = st ? `🔥 ${st} ${T.streak}` : '';
+  $('goalV').textContent = goal;
+  const all = Object.values(sets), bestSet = Math.max(0, ...all.flat()), bestDay = Math.max(0, ...all.map(a => a.reduce((x, y) => x + y, 0))), total = all.flat().reduce((a, b) => a + b, 0);
+  $('records').innerHTML = [[bestSet, T.best], [bestDay, T.bestDay], [total, T.total]].map(([v, l]) => `<div><b>${v}</b><small>${l}</small></div>`).join('');
+  show('home');
+}
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function startSet() {
+  n = 0; t0 = Date.now(); $('n').textContent = 0; $('setL').textContent = `${T.set} ${(sets[key(new Date())] || []).length + 1}`;
+  clearInterval(clock); clock = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); $('timeL').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 500);
+  show('pad');
+}
+// Count on touchstart so a nose tap registers instantly; ignore double hits within 350 ms.
+$('tap').addEventListener('pointerdown', e => {
+  e.preventDefault(); const now = performance.now(); if (now - last < 350) return; last = now;
+  n++; $('n').textContent = n; $('tap').classList.add('hit'); setTimeout(() => $('tap').classList.remove('hit'), 90);
+  beep(n % 10 === 0 ? 1046 : 660); try { if (window.Acornix) Acornix.vibrate(n % 10 === 0 ? [30, 40, 30] : 25); else if (navigator.vibrate) navigator.vibrate(25); } catch (er) {}
+  if (n % 10 === 0) say(String(n));
+});
+$('undo').onclick = () => { n = Math.max(0, n - 1); $('n').textContent = n; };
+$('done').onclick = async () => {
+  clearInterval(clock);
+  if (n > 0) { const k = key(new Date()), before = sum(new Date()); (sets[k] = sets[k] || []).push(n); await store.set('sets', sets); if (before < goal && before + n >= goal) { say(T.goalHit); try { if (window.Acornix) Acornix.toast(T.goalHit); } catch (e) {} } }
+  home();
+};
+$('go').onclick = startSet;
+$('gm').onclick = () => { goal = Math.max(5, goal - 5); store.set('goal', goal); home(); };
+$('gp').onclick = () => { goal = Math.min(500, goal + 5); store.set('goal', goal); home(); };
+let ac; function beep(f) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = .08; o.connect(g); g.connect(ac.destination); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .1); o.start(); o.stop(ac.currentTime + .1); } catch (e) {} }
+function say(t) { try { if (window.Acornix) Acornix.speak(t, ES ? 'es-ES' : 'en-GB'); } catch (e) {} }
+(async () => { sets = await store.get('sets', {}); goal = await store.get('goal', 50); home(); })();
+</script>
+</body>
+</html>

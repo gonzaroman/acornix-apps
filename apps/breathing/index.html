@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Breathe</title>
+<style>
+  :root { --bg1:#0f2027; --bg2:#203a43; --ink:#eafaf7; --muted:#9cc5bd; --a:#7ee8d1; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:linear-gradient(160deg,var(--bg1),var(--bg2) 60%,#2c5364); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 18px); }
+  h1 { margin:0; font-size:24px; font-weight:700; }
+  .sub { color:var(--muted); margin:2px 0 0; font-size:14px; }
+  .stage { flex:1; display:grid; place-items:center; position:relative; }
+  .orb { position:relative; width:min(70vw,300px); aspect-ratio:1; display:grid; place-items:center; }
+  .ring { position:absolute; inset:0; border-radius:50%; border:2px solid #7ee8d133; }
+  .ball { position:absolute; inset:18%; border-radius:50%; background:radial-gradient(circle at 35% 30%,#d2fff4,#7ee8d1 45%,#2aa198); box-shadow:0 0 60px #7ee8d166, inset 0 -10px 30px #0003; transform:scale(.55); }
+  .label { position:relative; text-align:center; text-shadow:0 2px 10px #0006; }
+  .label b { display:block; font-size:28px; }
+  .label span { font-size:44px; font-weight:200; font-variant-numeric:tabular-nums; }
+  .dots { position:absolute; inset:-14px; }
+  .info { text-align:center; color:var(--muted); font-weight:600; min-height:22px; }
+  .pats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .pat { padding:12px; border-radius:16px; background:#ffffff12; text-align:left; border:1px solid #ffffff14; }
+  .pat b { display:block; font-size:15px; } .pat small { color:var(--muted); font-size:12px; }
+  .pat.on { background:#7ee8d133; border-color:var(--a); }
+  .ctl { display:flex; gap:8px; margin-top:10px; }
+  .ctl .mins { display:flex; background:#ffffff12; border-radius:16px; padding:4px; }
+  .ctl .mins button { padding:10px 12px; border-radius:12px; font-weight:800; color:var(--muted); background:none; }
+  .ctl .mins button.on { background:#ffffff22; color:var(--ink); }
+  .go { flex:1; padding:14px; border-radius:16px; background:var(--a); color:#0f2027; font-weight:900; font-size:17px; }
+  .done { position:fixed; inset:0; display:none; place-items:center; text-align:center; background:#0f2027ee; padding:30px; }
+  .done.on { display:grid; }
+  .done b { display:block; font-size:30px; margin:8px 0; }
+  .done p { color:var(--muted); }
+  .done button { margin-top:14px; padding:14px 30px; border-radius:16px; background:var(--a); color:#0f2027; font-weight:900; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🌬️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="stage"><div class="orb"><div class="ring"></div><div class="ball" id="ball"></div><div class="label"><b id="phase"></b><span id="count"></span></div></div></div>
+  <div class="info" id="info"></div>
+  <div class="pats" id="pats"></div>
+  <div class="ctl"><div class="mins" id="mins"></div><button class="go" id="go"></button></div>
+</div>
+<div class="done" id="done"><div><div style="font-size:60px">🌿</div><b id="dT"></b><p id="dP"></p><button id="dB"></button></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Respira', sub:'Sigue la bola. Tu cuerpo hará el resto.', in:'Inspira', hold:'Mantén', out:'Espira', start:'Empezar', stop:'Parar', min:'min', done:'Bien hecho', doneP:'{m} minutos respirando con calma. Llevas {t} sesiones.', again:'Cerrar', ready:'Prepárate…', pats:[['Calma','4 · 7 · 8','Para dormir o calmar los nervios'],['Caja','4 · 4 · 4 · 4','Para concentrarte'],['Coherencia','5,5 · 5,5','Equilibrio y menos estrés'],['Energía','4 · 2 · 4','Para activarte']] }
+ : { title:'Breathe', sub:'Follow the ball. Your body will do the rest.', in:'Breathe in', hold:'Hold', out:'Breathe out', start:'Start', stop:'Stop', min:'min', done:'Well done', doneP:'{m} minutes of calm breathing. That\'s {t} sessions so far.', again:'Close', ready:'Get ready…', pats:[['Calm','4 · 7 · 8','To sleep or settle nerves'],['Box','4 · 4 · 4 · 4','To focus'],['Coherent','5.5 · 5.5','Balance and less stress'],['Energy','4 · 2 · 4','To wake up']] };
+// Each pattern: [phase, seconds] where phase is in | hold | out | hold2 (hold after exhaling).
+const PATTERNS = [[['in', 4], ['hold', 7], ['out', 8]], [['in', 4], ['hold', 4], ['out', 4], ['hold2', 4]], [['in', 5.5], ['out', 5.5]], [['in', 4], ['hold', 2], ['out', 4]]];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let pat = 0, mins = 3, running = false, raf, sessions = 0;
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('dB').textContent = T.again;
+$('pats').innerHTML = T.pats.map(([n, r, d], i) => `<button class="pat" data-i="${i}"><b>${n} · ${r}</b><small>${d}</small></button>`).join('');
+$('mins').innerHTML = [1, 3, 5, 10].map(m => `<button data-m="${m}">${m}</button>`).join('');
+function paint() {
+  $('pats').querySelectorAll('.pat').forEach(b => b.classList.toggle('on', +b.dataset.i === pat));
+  $('mins').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.m === mins));
+  $('go').textContent = running ? T.stop : `${T.start} · ${mins} ${T.min}`;
+}
+$('pats').querySelectorAll('.pat').forEach(b => b.onclick = () => { if (running) return; pat = +b.dataset.i; store.set('pat', pat); paint(); });
+$('mins').querySelectorAll('button').forEach(b => b.onclick = () => { if (running) return; mins = +b.dataset.m; store.set('mins', mins); paint(); });
+const ease = t => .5 - Math.cos(Math.PI * t) / 2;
+function cue(phase) { try { const p = phase === 'in' ? 60 : phase === 'out' ? [30, 60, 30] : 15; if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} tone(phase); }
+let ac; function tone(phase) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = phase === 'in' ? 396 : phase === 'out' ? 264 : 330; g.gain.value = 0; o.connect(g); g.connect(ac.destination); const t = ac.currentTime; g.gain.linearRampToValueAtTime(.05, t + .1); g.gain.exponentialRampToValueAtTime(.0001, t + 1.2); o.start(); o.stop(t + 1.3); } catch (e) {} }
+function start() {
+  running = true; paint(); const steps = PATTERNS[pat], cycle = steps.reduce((s, x) => s + x[1], 0), end = performance.now() + 2000 + mins * 60000;
+  let lastPhase = null, t0 = performance.now() + 2000;
+  $('phase').textContent = T.ready; $('count').textContent = '';
+  (function frame(now) {
+    if (!running) return;
+    if (now < t0) { raf = requestAnimationFrame(frame); return; }
+    let t = ((now - t0) / 1000) % cycle, i = 0;
+    while (t >= steps[i][1]) { t -= steps[i][1]; i++; }
+    // Time's up: stop when the current breath ends, i.e. when a new cycle begins.
+    if (now >= end && i === 0 && lastPhase !== steps[0][0]) return finish();
+    const [phase, len] = steps[i], p = t / len;
+    const scale = phase === 'in' ? .55 + .45 * ease(p) : phase === 'out' ? 1 - .45 * ease(p) : phase === 'hold' ? 1 : .55;
+    $('ball').style.transform = `scale(${scale})`;
+    if (phase !== lastPhase) { lastPhase = phase; $('phase').textContent = T[phase === 'hold2' ? 'hold' : phase]; cue(phase); }
+    $('count').textContent = Math.ceil(len - t);
+    const left = Math.max(0, Math.ceil((end - now) / 1000));
+    $('info').textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+    raf = requestAnimationFrame(frame);
+  })(performance.now());
+}
+function stop() { running = false; cancelAnimationFrame(raf); $('ball').style.transform = 'scale(.55)'; $('phase').textContent = ''; $('count').textContent = ''; $('info').textContent = ''; paint(); }
+async function finish() {
+  stop(); sessions++; await store.set('sessions', sessions);
+  $('dT').textContent = T.done; $('dP').textContent = T.doneP.replace('{m}', mins).replace('{t}', sessions); $('done').classList.add('on');
+  try { if (window.Acornix) Acornix.vibrate([60, 80, 60]); } catch (e) {}
+}
+$('go').onclick = () => running ? stop() : start();
+$('dB').onclick = () => $('done').classList.remove('on');
+(async () => { pat = await store.get('pat', 0); mins = await store.get('mins', 3); sessions = await store.get('sessions', 0); paint(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "meditation",
+  "name": "Meditation",
+  "emoji": "🧘",
+  "category": "health-fitness",
+  "description": "A calm timer with a sunset glow, rain, ocean, fire or wind sounds made on the fly, singing bowl bells and a daily streak.",
+  "prompt": "A meditation timer from 3 to 20 minutes with a glowing sun, a progress ring, ambient sounds generated in the browser (rain, ocean, fire, wind), bells at the start, end and optional intervals, gentle quotes, and stats for streak and total minutes.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

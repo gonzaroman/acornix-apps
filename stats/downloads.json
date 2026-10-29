@@ -30,6 +30,11 @@
       "base": 0,
       "count": 0
     },
+    "breathing": {
+      "asset": 689415393,
+      "base": 0,
+      "count": 0
+    },
     "brick-breaker": {
       "asset": 688998917,
       "base": 0,
@@ -110,6 +115,11 @@
       "base": 0,
       "count": 0
     },
+    "desk-stretches": {
+      "asset": 689415663,
+      "base": 0,
+      "count": 0
+    },
     "dragon-quest-ai": {
       "asset": 689038801,
       "base": 0,
@@ -185,6 +195,11 @@
       "base": 0,
       "count": 0
     },
+    "hiit-timer": {
+      "asset": 689415440,
+      "base": 0,
+      "count": 0
+    },
     "homework-helper-ai": {
       "asset": 689344060,
       "base": 0,
@@ -232,6 +247,11 @@
     },
     "math-sprint": {
       "asset": 689343954,
+      "base": 0,
+      "count": 0
+    },
+    "meditation": {
+      "asset": 689415582,
       "base": 0,
       "count": 0
     },
@@ -305,6 +325,11 @@
       "base": 0,
       "count": 0
     },
+    "pill-tracker": {
+      "asset": 689415752,
+      "base": 0,
+      "count": 0
+    },
     "pitch-writer-ai": {
       "asset": 689236454,
       "base": 0,
@@ -315,6 +340,11 @@
       "base": 0,
       "count": 0
     },
+    "plate-check-ai": {
+      "asset": 689415628,
+      "base": 0,
+      "count": 0
+    },
     "pocket-coach": {
       "asset": 688547043,
       "base": 0,
@@ -322,6 +352,11 @@
     },
     "pocket-dictionary-ai": {
       "asset": 689379273,
+      "base": 0,
+      "count": 0
+    },
+    "pushup-counter": {
+      "asset": 689415696,
       "base": 0,
       "count": 0
     },
@@ -367,6 +402,11 @@
     },
     "sky-hopper": {
       "asset": 688998851,
+      "base": 0,
+      "count": 0
+    },
+    "sleep-log": {
+      "asset": 689415482,
       "base": 0,
       "count": 0
     },
@@ -490,8 +530,18 @@
       "base": 0,
       "count": 0
     },
+    "water-tracker": {
+      "asset": 689415334,
+      "base": 0,
+      "count": 0
+    },
     "weather-now": {
       "asset": 689299939,
+      "base": 0,
+      "count": 0
+    },
+    "weight-tracker": {
+      "asset": 689415530,
       "base": 0,
       "count": 0
     },

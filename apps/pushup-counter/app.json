@@ -1,0 +1,14 @@
+{
+  "id": "pushup-counter",
+  "name": "Push-up Counter",
+  "emoji": "💪",
+  "category": "health-fitness",
+  "description": "Put your phone on the floor and touch it with your nose on every push-up. Daily goal, a 30-day calendar and records.",
+  "prompt": "A push-up counter where you touch the screen with your nose on each rep, with beeps and vibration, counting out loud every ten, sets saved per day, an adjustable daily goal, a 30-day heat calendar, a streak and records for best set, best day and total.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

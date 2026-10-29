@@ -1,0 +1,14 @@
+{
+  "id": "pill-tracker",
+  "name": "Pill Tracker",
+  "emoji": "💊",
+  "category": "health-fitness",
+  "description": "Add your medication and times, then tick each dose. See what's due today by morning, midday, afternoon and night.",
+  "prompt": "A medication tracker: add each medicine with dose, icon, times and days of the week, see today's doses grouped by part of the day, tick them as taken, see what is late, and get a notification at each time while the app is open.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

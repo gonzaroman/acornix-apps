@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plate Check</title>
+<style>
+  :root { --bg:#f7f8f3; --card:#fff; --ink:#1d2618; --muted:#6c7765; --a:#5c940d; --p:#e8590c; --c:#1971c2; --f:#e0a800; --line:#e8ebe1; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; justify-content:space-between; align-items:center; }
+  h1 { margin:4px 0; font-size:26px; }
+  .day { display:flex; align-items:center; gap:6px; font-weight:800; }
+  .day button { width:34px; height:34px; border-radius:10px; background:var(--card); }
+  .ring { display:flex; align-items:center; gap:16px; margin:12px 0; padding:16px; border-radius:24px; background:var(--card); }
+  .ring svg { width:110px; height:110px; flex:none; transform:rotate(-90deg); }
+  .ring .big { font-size:30px; font-weight:900; } .ring small { color:var(--muted); font-weight:700; display:block; }
+  .macros { flex:1; display:grid; gap:8px; }
+  .m { font-size:13px; font-weight:800; }
+  .m div { height:7px; border-radius:4px; background:var(--line); margin-top:3px; overflow:hidden; }
+  .m i { display:block; height:100%; border-radius:4px; }
+  .snap { width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:18px; border-radius:20px; background:var(--a); color:#fff; font-weight:900; font-size:18px; box-shadow:0 8px 20px #5c940d44; cursor:pointer; }
+  .snap input { display:none; }
+  .alt { display:flex; gap:8px; margin-top:8px; }
+  .alt input { flex:1; min-width:0; padding:12px 14px; border-radius:16px; border:2px solid var(--line); font:inherit; outline:none; background:#fff; }
+  .alt input:focus { border-color:var(--a); }
+  .alt button { padding:0 16px; border-radius:16px; background:var(--card); font-weight:800; border:2px solid var(--line); }
+  .err { color:#c92a2a; font-weight:700; margin-top:8px; }
+  .meal { background:var(--card); border-radius:20px; padding:12px; margin-top:12px; }
+  .meal .top { display:flex; gap:12px; align-items:center; }
+  .meal img { width:64px; height:64px; border-radius:14px; object-fit:cover; flex:none; background:var(--line); }
+  .meal .ph { width:64px; height:64px; border-radius:14px; background:var(--line); display:grid; place-items:center; font-size:28px; flex:none; }
+  .meal .n { flex:1; min-width:0; }
+  .meal .n b { display:block; } .meal .n small { color:var(--muted); font-weight:600; }
+  .meal .kc { font-weight:900; font-size:20px; text-align:right; }
+  .meal .kc small { display:block; font-size:11px; color:var(--muted); }
+  .items { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; }
+  .it { display:flex; align-items:center; gap:8px; padding:6px 0; font-size:14px; }
+  .it span { flex:1; } .it em { color:var(--muted); font-style:normal; font-size:12px; }
+  .it .por { display:flex; align-items:center; gap:4px; }
+  .it .por button { width:26px; height:26px; border-radius:8px; background:var(--bg); font-weight:900; }
+  .it b { min-width:56px; text-align:right; }
+  .note { color:var(--muted); font-size:13px; line-height:1.45; margin-top:6px; }
+  .del { color:#c92a2a; background:none; font-weight:800; font-size:13px; margin-top:4px; }
+  .loading { text-align:center; padding:24px; color:var(--muted); font-weight:800; }
+  .loading span { font-size:40px; display:block; animation:spin 1.2s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .goal { color:var(--muted); font-size:12px; margin-top:16px; text-align:center; }
+  .goal button { color:var(--a); background:none; font-weight:800; }
+</style>
+</head>
+<body>
+<div class="head"><h1>🍽️ <span id="ttl"></span></h1><div class="day"><button id="prev">‹</button><span id="dayL"></span><button id="next">›</button></div></div>
+<div class="ring" id="ring"></div>
+<label class="snap"><input type="file" id="file" accept="image/*" capture="environment">📸 <span id="snapL"></span></label>
+<form class="alt" id="alt"><input id="txt"><button id="altB"></button></form>
+<div class="err" id="err"></div>
+<div id="meals"></div>
+<div class="goal"><span id="goalL"></span> <input id="goalIn" type="number" inputmode="numeric" hidden style="width:90px;padding:6px;border-radius:10px;border:2px solid #5c940d;font:inherit;text-align:center"> <button id="goalB"></button></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const loc = ES ? 'es-ES' : 'en-GB';
+const T = ES ? { title:'Mi plato', snap:'Foto de tu comida', ph:'O escríbelo: 2 huevos fritos y una tostada', add:'Añadir', of:'de', kcal:'kcal', left:'quedan', over:'de más', p:'Proteínas', c:'Hidratos', f:'Grasas', today:'Hoy', yesterday:'Ayer', looking:'Mirando tu plato', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No he podido analizarlo: ', del:'Quitar', goal:'Objetivo diario:', change:'Cambiar', goalAsk:'Calorías al día', empty:'Haz una foto de tu próxima comida 📸', disclaimer:'Las cifras son estimaciones de la IA; ajusta las raciones con − y +.', lang:'Spanish' }
+ : { title:'Plate Check', snap:'Photo of your meal', ph:'Or type it: 2 fried eggs and toast', add:'Add', of:'of', kcal:'kcal', left:'left', over:'over', p:'Protein', c:'Carbs', f:'Fat', today:'Today', yesterday:'Yesterday', looking:'Looking at your plate', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'I couldn\'t analyse it: ', del:'Remove', goal:'Daily goal:', change:'Change', goalAsk:'Calories per day', empty:'Snap your next meal 📸', disclaimer:'Numbers are AI estimates; adjust portions with − and +.', lang:'English' };
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+let meals = {}, goal = 2000, offset = 0;
+$('ttl').textContent = T.title; $('snapL').textContent = T.snap; $('txt').placeholder = T.ph; $('altB').textContent = T.add; $('goalL').textContent = T.goal; $('goalB').textContent = T.change;
+const day = () => { const d = new Date(); d.setDate(d.getDate() + offset); return d; };
+const mealKcal = m => m.items.reduce((s, i) => s + i.kcal * (i.x || 1), 0);
+const mealM = (m, k) => m.items.reduce((s, i) => s + (i[k] || 0) * (i.x || 1), 0);
+function render() {
+  const d = day(), list = meals[dk(d)] || [];
+  $('dayL').textContent = offset === 0 ? T.today : offset === -1 ? T.yesterday : d.toLocaleDateString(loc, { day: 'numeric', month: 'short' });
+  $('next').style.visibility = offset < 0 ? 'visible' : 'hidden';
+  const kc = list.reduce((s, m) => s + mealKcal(m), 0), p = Math.min(1, kc / goal), over = kc > goal;
+  const P = list.reduce((s, m) => s + mealM(m, 'p'), 0), C = list.reduce((s, m) => s + mealM(m, 'c'), 0), F = list.reduce((s, m) => s + mealM(m, 'f'), 0);
+  const tP = goal * .25 / 4, tC = goal * .5 / 4, tF = goal * .25 / 9;
+  $('ring').innerHTML = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#e8ebe1" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="${over ? '#e8590c' : '#5c940d'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="${263.9 * (1 - p)}"/></svg>
+    <div class="macros"><div><span class="big">${Math.round(kc)}</span> <small style="display:inline">${T.of} ${goal} ${T.kcal}</small><small>${Math.abs(Math.round(goal - kc))} ${over ? T.over : T.left}</small></div>
+    ${[[T.p, P, tP, 'var(--p)'], [T.c, C, tC, 'var(--c)'], [T.f, F, tF, 'var(--f)']].map(([n, v, t, c]) => `<div class="m">${n} · ${Math.round(v)} g<div><i style="width:${Math.min(100, v / t * 100)}%;background:${c}"></i></div></div>`).join('')}</div>`;
+  $('meals').innerHTML = list.length ? list.map((m, mi) => `<div class="meal"><div class="top">${m.thumb ? `<img src="${m.thumb}" alt="">` : `<div class="ph">${esc(m.emoji || '🍽️')}</div>`}<div class="n"><b>${esc(m.name)}</b><small>${new Date(m.t).toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' })}</small></div><div class="kc">${Math.round(mealKcal(m))}<small>${T.kcal}</small></div></div>
+    <div class="items">${m.items.map((it, ii) => `<div class="it"><span>${esc(it.name)} <em>${esc(it.portion || '')}</em></span><span class="por"><button data-m="${mi}" data-i="${ii}" data-d="-0.25">−</button>×${(it.x || 1).toFixed(2).replace(/\.?0+$/, '')}<button data-m="${mi}" data-i="${ii}" data-d="0.25">+</button></span><b>${Math.round(it.kcal * (it.x || 1))}</b></div>`).join('')}</div>
+    ${m.note ? `<div class="note">💡 ${esc(m.note)}</div>` : ''}<button class="del" data-del="${mi}">${T.del}</button></div>`).join('') + `<div class="note" style="text-align:center;margin-top:10px">${T.disclaimer}</div>` : `<div class="loading" style="font-weight:700">${T.empty}</div>`;
+  $('meals').querySelectorAll('[data-d]').forEach(b => b.onclick = () => { const it = list[+b.dataset.m].items[+b.dataset.i]; it.x = Math.max(.25, Math.min(5, (it.x || 1) + +b.dataset.d)); save(); render(); });
+  $('meals').querySelectorAll('[data-del]').forEach(b => b.onclick = () => { list.splice(+b.dataset.del, 1); save(); render(); });
+}
+function save() { store.set('meals', meals); }
+async function analyse(photo, text) {
+  $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('meals').insertAdjacentHTML('afterbegin', `<div class="meal loading" id="ld"><span>🥗</span>${T.looking}…</div>`);
+  try {
+    const r = await Acornix.askAI(photo ? 'Estimate the nutrition of this meal.' : `Estimate the nutrition of this meal: ${text}`, {
+      images: photo ? [photo] : undefined, json: true,
+      system: `You are a careful nutritionist. Identify each food and estimate a realistic portion as served. Answer in ${T.lang}. Reply only with JSON: {"name":"short meal name","emoji":"one emoji","items":[{"name":"food","portion":"e.g. 150 g or 1 cup","kcal":number,"p":grams protein,"c":grams carbs,"f":grams fat}],"note":"one short, kind, practical tip about this meal"}.`
+    });
+    if (!r || !Array.isArray(r.items) || !r.items.length) throw new Error('?');
+    const m = { t: Date.now(), name: r.name || text, emoji: r.emoji, note: r.note, items: r.items.map(i => ({ name: i.name, portion: i.portion, kcal: +i.kcal || 0, p: +i.p || 0, c: +i.c || 0, f: +i.f || 0, x: 1 })) };
+    if (photo) m.thumb = await thumb(photo);
+    offset = 0; const k = dk(new Date()); (meals[k] = meals[k] || []).unshift(m); save(); render();
+    try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { $('ld') && $('ld').remove(); $('err').textContent = T.failed + (e.message || ''); }
+}
+function thumb(file) { return new Promise(res => { const img = new Image(); img.onload = () => { const c = document.createElement('canvas'), s = 160 / Math.max(img.width, img.height); c.width = img.width * s; c.height = img.height * s; c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', .7)); URL.revokeObjectURL(img.src); }; img.onerror = () => res(null); img.src = URL.createObjectURL(file); }); }
+$('file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) analyse(f); };
+$('alt').onsubmit = e => { e.preventDefault(); const t = $('txt').value.trim(); if (t) { $('txt').value = ''; $('txt').blur(); analyse(null, t); } };
+$('prev').onclick = () => { offset--; render(); }; $('next').onclick = () => { if (offset < 0) offset++; render(); };
+const goalLabel = () => { $('goalL').textContent = `${T.goal} ${goal} ${T.kcal}`; };
+$('goalB').onclick = () => { $('goalIn').value = goal; $('goalIn').hidden = false; $('goalB').hidden = true; $('goalIn').focus(); $('goalIn').select(); };
+$('goalIn').onblur = () => { const v = +$('goalIn').value; if (v >= 800 && v <= 6000) { goal = v; store.set('goal', goal); } $('goalIn').hidden = true; $('goalB').hidden = false; goalLabel(); render(); };
+$('goalIn').onkeydown = e => { if (e.key === 'Enter') $('goalIn').blur(); };
+(async () => { meals = await store.get('meals', {}); goal = await store.get('goal', 2000); goalLabel(); render(); })();
+</script>
+</body>
+</html>

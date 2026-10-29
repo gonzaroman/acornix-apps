@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>HIIT Timer</title>
+<style>
+  :root { --bg:#111; --card:#1d1d1f; --ink:#fff; --muted:#9a9a9f; --work:#ff3b30; --rest:#30d158; --prep:#ffd60a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:4px 0 12px; font-size:28px; font-weight:900; letter-spacing:-.5px; }
+  .presets { display:flex; gap:8px; overflow-x:auto; margin-bottom:12px; scrollbar-width:none; }
+  .presets::-webkit-scrollbar { display:none; }
+  .preset { flex:none; padding:10px 14px; border-radius:14px; background:var(--card); font-weight:800; font-size:14px; }
+  .preset small { display:block; color:var(--muted); font-weight:600; font-size:11px; }
+  .preset.on { outline:2px solid var(--work); }
+  .set { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:18px; background:var(--card); margin-bottom:8px; }
+  .set .n { font-weight:800; }
+  .set .n small { display:block; color:var(--muted); font-weight:600; font-size:12px; }
+  .stp { display:flex; align-items:center; gap:10px; }
+  .stp button { width:40px; height:40px; border-radius:12px; background:#2c2c2e; font-size:22px; font-weight:700; }
+  .stp b { min-width:62px; text-align:center; font-size:22px; font-variant-numeric:tabular-nums; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+  .total { text-align:center; color:var(--muted); font-weight:700; margin:8px 0; }
+  .go { margin-top:auto; padding:20px; border-radius:22px; background:var(--work); font-weight:900; font-size:22px; }
+  #run { padding-bottom:calc(env(safe-area-inset-bottom) + 24px); transition:background .3s; }
+  .top { display:flex; justify-content:space-between; align-items:center; font-weight:800; }
+  .top button { width:44px; height:44px; border-radius:14px; background:#0003; font-size:18px; }
+  .phase { text-align:center; font-size:30px; font-weight:900; letter-spacing:2px; text-transform:uppercase; margin-top:auto; }
+  .big { text-align:center; font-size:min(42vw,200px); font-weight:900; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-6px; }
+  .bar { height:10px; border-radius:5px; background:#0003; overflow:hidden; margin:16px 0 8px; }
+  .bar i { display:block; height:100%; background:#fff; }
+  .meta { display:flex; justify-content:space-between; font-weight:800; opacity:.9; }
+  .next { text-align:center; margin:14px 0 auto; font-weight:700; opacity:.85; }
+  .ctls { display:grid; grid-template-columns:1fr 2fr 1fr; gap:10px; }
+  .ctls button { padding:18px 0; border-radius:20px; background:#0003; font-size:22px; font-weight:900; }
+  .ctls .main { background:#fff; color:#111; }
+  .fin { text-align:center; margin:auto 0; }
+  .fin .e { font-size:80px; } .fin b { display:block; font-size:32px; margin:6px 0; } .fin p { color:var(--muted); font-weight:700; }
+</style>
+</head>
+<body>
+<section class="screen on" id="setup">
+  <h1>🏋️ <span id="ttl"></span></h1>
+  <div class="presets" id="presets"></div>
+  <div id="sets"></div>
+  <div class="total" id="total"></div>
+  <button class="go" id="go"></button>
+</section>
+<section class="screen" id="run">
+  <div class="top"><button id="quit">✕</button><span id="round"></span><button id="snd">🔊</button></div>
+  <div class="phase" id="phase"></div>
+  <div class="big" id="big"></div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="meta"><span id="elapsed"></span><span id="left"></span></div>
+  <div class="next" id="next"></div>
+  <div class="ctls"><button id="back">⏮</button><button class="main" id="pause">⏸</button><button id="skip">⏭</button></div>
+</section>
+<section class="screen" id="end"><div class="fin"><div class="e">🏆</div><b id="fT"></b><p id="fP"></p><button class="go" style="width:100%;margin-top:18px" id="fB"></button></div></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'HIIT', prep:'Prepárate', work:'¡Dale!', rest:'Descansa', setRest:'Descanso entre series', set:'Serie', round:'Ronda', rounds:'Rondas', sets:'Series', w:'Trabajo', r:'Descanso', p:'Preparación', total:'Total', start:'Empezar', next:'Después', done:'¡Entrenamiento completado!', doneP:'{t} de esfuerzo · {r} rondas. Llevas {n} entrenamientos.', ok:'Volver', presets:[['Tabata','20/10 × 8'],['Clásico','40/20 × 10'],['Largo','45/15 × 12'],['Suave','30/30 × 8']], finished:'Fin' }
+ : { title:'HIIT', prep:'Get ready', work:'Go!', rest:'Rest', setRest:'Rest between sets', set:'Set', round:'Round', rounds:'Rounds', sets:'Sets', w:'Work', r:'Rest', p:'Get ready', total:'Total', start:'Start', next:'Next', done:'Workout complete!', doneP:'{t} of effort · {r} rounds. That\'s {n} workouts so far.', ok:'Back', presets:[['Tabata','20/10 × 8'],['Classic','40/20 × 10'],['Long','45/15 × 12'],['Easy','30/30 × 8']], finished:'Finish' };
+const PRESETS = [{ work: 20, rest: 10, rounds: 8, sets: 1 }, { work: 40, rest: 20, rounds: 10, sets: 1 }, { work: 45, rest: 15, rounds: 12, sets: 1 }, { work: 30, rest: 30, rounds: 8, sets: 1 }];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let cfg = { prep: 10, work: 40, rest: 20, rounds: 10, sets: 1, setRest: 60 }, plan = [], idx = 0, left = 0, paused = false, timer, sound = true, count = 0, workDone = 0;
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+const FIELDS = [['prep', T.p, 'var(--prep)', 5, 0, 60, true], ['work', T.w, 'var(--work)', 5, 5, 300, true], ['rest', T.r, 'var(--rest)', 5, 0, 300, true], ['rounds', T.rounds, '#64d2ff', 1, 1, 50], ['sets', T.sets, '#bf5af2', 1, 1, 10], ['setRest', T.setRest, 'var(--rest)', 15, 0, 600, true]];
+$('ttl').textContent = T.title;
+$('presets').innerHTML = T.presets.map(([n, d], i) => `<button class="preset" data-i="${i}">${n}<small>${d}</small></button>`).join('');
+$('presets').querySelectorAll('.preset').forEach(b => b.onclick = () => { Object.assign(cfg, PRESETS[+b.dataset.i]); save(); setup(); });
+function setup() {
+  $('sets').innerHTML = FIELDS.filter(f => f[0] !== 'setRest' || cfg.sets > 1).map(([k, n, c, step, min, max, time]) => `<div class="set"><span class="n"><span class="dot" style="background:${c}"></span>${n}</span><span class="stp"><button data-k="${k}" data-d="-1">−</button><b>${time ? fmt(cfg[k]) : cfg[k]}</b><button data-k="${k}" data-d="1">+</button></span></div>`).join('');
+  $('sets').querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const f = FIELDS.find(x => x[0] === b.dataset.k); cfg[f[0]] = Math.max(f[4], Math.min(f[5], cfg[f[0]] + f[3] * +b.dataset.d)); save(); setup(); });
+  $('presets').querySelectorAll('.preset').forEach((b, i) => { const p = PRESETS[i]; b.classList.toggle('on', p.work === cfg.work && p.rest === cfg.rest && p.rounds === cfg.rounds); });
+  build(); $('total').textContent = `${T.total}: ${fmt(plan.reduce((s, x) => s + x.len, 0))}`; $('go').textContent = `▶ ${T.start}`;
+}
+function build() {
+  plan = []; if (cfg.prep) plan.push({ kind: 'prep', len: cfg.prep });
+  for (let s = 1; s <= cfg.sets; s++) {
+    for (let r = 1; r <= cfg.rounds; r++) { plan.push({ kind: 'work', len: cfg.work, r, s }); if (cfg.rest && r < cfg.rounds) plan.push({ kind: 'rest', len: cfg.rest, r, s }); }
+    if (s < cfg.sets && cfg.setRest) plan.push({ kind: 'rest', len: cfg.setRest, r: cfg.rounds, s, long: true });
+  }
+}
+function save() { store.set('cfg', cfg); }
+const COL = { prep: '#b8860b', work: '#d70015', rest: '#1f8a3b' };
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function go() { build(); idx = 0; workDone = 0; paused = false; enter(); show('run'); clearInterval(timer); timer = setInterval(tick, 100); try { if (window.Acornix) Acornix.toast(T.prep); } catch (e) {} }
+function enter() {
+  const p = plan[idx]; left = p.len;
+  $('run').style.background = COL[p.kind];
+  $('phase').textContent = p.kind === 'prep' ? T.prep : p.kind === 'work' ? T.work : p.long ? T.setRest : T.rest;
+  $('round').textContent = p.r ? `${T.round} ${p.r}/${cfg.rounds}${cfg.sets > 1 ? ` · ${T.set} ${p.s}/${cfg.sets}` : ''}` : '';
+  const n = plan[idx + 1]; $('next').textContent = n ? `${T.next}: ${n.kind === 'work' ? T.w : T.r} ${fmt(n.len)}` : `${T.next}: ${T.finished} 🏁`;
+  beep(p.kind === 'work' ? 880 : 520, .35); buzz(p.kind === 'work' ? [80, 60, 80] : 120); paint();
+}
+function paint() {
+  const p = plan[idx]; $('big').textContent = Math.ceil(left);
+  $('bar').style.width = (1 - left / p.len) * 100 + '%';
+  const done = plan.slice(0, idx).reduce((s, x) => s + x.len, 0) + (p.len - left), all = plan.reduce((s, x) => s + x.len, 0);
+  $('elapsed').textContent = fmt(done); $('left').textContent = '−' + fmt(all - done);
+  $('pause').textContent = paused ? '▶' : '⏸';
+}
+function tick() {
+  if (paused) return;
+  const before = Math.ceil(left); left -= .1;
+  if (plan[idx].kind === 'work') workDone += .1;
+  const now = Math.ceil(left);
+  if (now !== before && now <= 3 && now > 0) beep(660, .12);
+  if (left <= 0) { if (++idx >= plan.length) return finish(); enter(); } else paint();
+}
+async function finish() {
+  clearInterval(timer); count++; await store.set('count', count);
+  beep(988, .5); buzz([100, 80, 100, 80, 300]);
+  $('fT').textContent = T.done; $('fP').textContent = T.doneP.replace('{t}', fmt(workDone)).replace('{r}', cfg.rounds * cfg.sets).replace('{n}', count); $('fB').textContent = T.ok; show('end');
+}
+let ac; function beep(f, d) { if (!sound) return; try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.type = 'square'; o.frequency.value = f; g.gain.value = .08; o.connect(g); g.connect(ac.destination); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d); o.start(); o.stop(ac.currentTime + d); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('go').onclick = go;
+$('pause').onclick = () => { paused = !paused; paint(); };
+$('skip').onclick = () => { if (++idx >= plan.length) return finish(); enter(); };
+$('back').onclick = () => { if (left < plan[idx].len - 2 || idx === 0) left = plan[idx].len; else { idx--; } enter(); };
+$('quit').onclick = () => { clearInterval(timer); show('setup'); };
+$('snd').onclick = () => { sound = !sound; $('snd').textContent = sound ? '🔊' : '🔇'; };
+$('fB').onclick = () => show('setup');
+(async () => { cfg = Object.assign(cfg, await store.get('cfg', {})); count = await store.get('count', 0); setup(); })();
+</script>
+</body>
+</html>

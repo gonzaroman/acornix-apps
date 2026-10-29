@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pill Tracker</title>
+<style>
+  :root { --bg:#f3f6fb; --card:#fff; --ink:#152036; --muted:#6a7590; --a:#4263eb; --g:#2f9e44; --r:#e03131; --line:#e3e8f2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 2px; font-size:28px; }
+  .date { color:var(--muted); font-weight:700; margin-bottom:12px; text-transform:capitalize; }
+  .sum { display:flex; align-items:center; gap:14px; padding:16px; border-radius:22px; background:var(--card); margin-bottom:12px; }
+  .sum svg { width:64px; height:64px; transform:rotate(-90deg); flex:none; }
+  .sum b { font-size:22px; display:block; } .sum small { color:var(--muted); font-weight:700; }
+  .slot h3 { margin:14px 4px 6px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .dose { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:18px; background:var(--card); margin-bottom:8px; }
+  .dose .pill { width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:22px; flex:none; }
+  .dose .n { flex:1; min-width:0; }
+  .dose .n b { display:block; } .dose .n small { color:var(--muted); font-weight:600; }
+  .dose .n small.late { color:var(--r); font-weight:800; }
+  .check { width:46px; height:46px; border-radius:50%; border:3px solid var(--line); background:#fff; font-size:22px; color:#fff; flex:none; }
+  .dose.taken .check { background:var(--g); border-color:var(--g); }
+  .dose.taken .n b { text-decoration:line-through; color:var(--muted); }
+  .dose.skipped { opacity:.55; }
+  .empty { text-align:center; color:var(--muted); font-weight:700; padding:30px 10px; line-height:1.5; }
+  .meds h3 { margin:18px 4px 6px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .med { display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:12px 14px; border-radius:16px; background:var(--card); margin-bottom:6px; }
+  .med .n { flex:1; } .med small { color:var(--muted); }
+  .fab { position:fixed; right:16px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:16px 22px; border-radius:20px; background:var(--a); color:#fff; font-weight:900; box-shadow:0 8px 24px #4263eb55; }
+  .sheet { position:fixed; inset:0; background:#0007; display:none; align-items:flex-end; z-index:5; }
+  .sheet.on { display:flex; }
+  .sheet > div { width:100%; max-height:90vh; overflow-y:auto; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sheet h2 { margin:0 0 10px; }
+  .sheet label { display:block; font-weight:800; margin:12px 0 6px; font-size:14px; }
+  .sheet input[type=text] { width:100%; padding:12px; border-radius:14px; border:2px solid var(--line); font:inherit; font-size:17px; }
+  .times { display:flex; flex-wrap:wrap; gap:6px; }
+  .times input { padding:10px; border-radius:12px; border:2px solid var(--line); font:inherit; }
+  .times button { padding:10px 14px; border-radius:12px; background:#fff; font-weight:800; color:var(--a); }
+  .times .x { color:var(--r); padding:10px; }
+  .icons { display:flex; gap:6px; flex-wrap:wrap; }
+  .icons button { width:46px; height:46px; border-radius:14px; background:#fff; font-size:22px; }
+  .icons button.on { outline:3px solid var(--a); }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .days button { padding:10px 0; border-radius:12px; background:#fff; font-weight:800; font-size:13px; }
+  .days button.on { background:var(--a); color:#fff; }
+  .save { width:100%; margin-top:16px; padding:15px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; font-size:17px; }
+  .del { width:100%; margin-top:8px; padding:12px; background:none; color:var(--r); font-weight:800; }
+  .note { color:var(--muted); font-size:12px; line-height:1.5; margin-top:12px; }
+</style>
+</head>
+<body>
+<h1>💊 <span id="ttl"></span></h1>
+<div class="date" id="date"></div>
+<div class="sum" id="sum"></div>
+<div id="today"></div>
+<div class="meds" id="meds"></div>
+<button class="fab" id="add"></button>
+<div class="sheet" id="sheet"><div>
+  <h2 id="shT"></h2>
+  <label id="lName"></label><input type="text" id="name">
+  <label id="lDose"></label><input type="text" id="dose">
+  <label id="lIcon"></label><div class="icons" id="icons"></div>
+  <label id="lTimes"></label><div class="times" id="times"></div>
+  <label id="lDays"></label><div class="days" id="days"></div>
+  <p class="note" id="note"></p>
+  <button class="save" id="save"></button><button class="del" id="del"></button>
+</div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const loc = ES ? 'es-ES' : 'en-GB';
+const T = ES ? { title:'Pastillas', of:'de', taken:'tomadas hoy', all:'¡Todo tomado hoy! 👏', add:'＋ Añadir', newM:'Nueva medicación', editM:'Editar', name:'Nombre', namePh:'Ej.: Vitamina D', dose:'Dosis', dosePh:'Ej.: 1 comprimido, 5 ml', icon:'Icono', times:'Horas', addT:'＋ Hora', days:'Días', save:'Guardar', del:'Borrar', meds:'Tu medicación', every:'todos los días', empty:'Añade tu primera medicación con el botón ＋ y aquí verás qué tomar cada día.', none:'Hoy no hay nada que tomar.', slots:['Mañana','Mediodía','Tarde','Noche'], late:'Pendiente desde las', at:'a las', takenAt:'Tomada a las', note:'Te aviso con una notificación mientras Acornix está abierto. Esta app no sustituye el consejo de tu médico.', remT:'💊 Hora de tu medicación', dn:['L','M','X','J','V','S','D'] }
+ : { title:'Pills', of:'of', taken:'taken today', all:'All taken today! 👏', add:'＋ Add', newM:'New medication', editM:'Edit', name:'Name', namePh:'e.g. Vitamin D', dose:'Dose', dosePh:'e.g. 1 tablet, 5 ml', icon:'Icon', times:'Times', addT:'＋ Time', days:'Days', save:'Save', del:'Delete', meds:'Your medication', every:'every day', empty:'Add your first medication with the ＋ button and you\'ll see what to take each day here.', none:'Nothing to take today.', slots:['Morning','Midday','Afternoon','Night'], late:'Due since', at:'at', takenAt:'Taken at', note:'You\'ll get a notification while Acornix is open. This app doesn\'t replace your doctor\'s advice.', remT:'💊 Time for your medication', dn:['M','T','W','T','F','S','S'] };
+const ICONS = ['💊', '💉', '🩹', '🧴', '💧', '🌿', '❤️', '🫁'], COLORS = ['#e7ecff', '#ffe3e3', '#fff3bf', '#d3f9d8', '#e5dbff', '#ffe8cc', '#c5f6fa', '#f1f3f5'];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const dk = d => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+let meds = [], log = {}, editing = null, draft = null, notified = {};
+['ttl', 'add', 'lName', 'lDose', 'lIcon', 'lTimes', 'lDays', 'note', 'save', 'del'].forEach((id, i) => $(id).textContent = [T.title, T.add, T.name, T.dose, T.icon, T.times, T.days, T.note, T.save, T.del][i]);
+$('name').placeholder = T.namePh; $('dose').placeholder = T.dosePh;
+const wd = d => (d.getDay() + 6) % 7; // Monday = 0
+function todayDoses() {
+  const now = new Date(), w = wd(now), out = [];
+  meds.forEach(m => { if (m.days.includes(w)) m.times.forEach(t => out.push({ m, t, id: m.id + '@' + t })); });
+  return out.sort((a, b) => a.t.localeCompare(b.t));
+}
+const slot = t => { const h = +t.slice(0, 2); return h < 11 ? 0 : h < 15 ? 1 : h < 20 ? 2 : 3; };
+function render() {
+  const now = new Date(), k = dk(now), done = log[k] || {}, list = todayDoses();
+  $('date').textContent = now.toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' });
+  const taken = list.filter(d => done[d.id]).length, p = list.length ? taken / list.length : 0;
+  $('sum').style.display = list.length ? 'flex' : 'none';
+  $('sum').innerHTML = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#e3e8f2" stroke-width="12"/><circle cx="50" cy="50" r="40" fill="none" stroke="${p === 1 ? '#2f9e44' : '#4263eb'}" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="${251.3 * (1 - p)}"/></svg><div><b>${p === 1 ? T.all : `${taken} ${T.of} ${list.length}`}</b><small>${p === 1 ? '' : T.taken}</small></div>`;
+  const hm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  if (!meds.length) $('today').innerHTML = `<div class="empty">${T.empty}</div>`;
+  else if (!list.length) $('today').innerHTML = `<div class="empty">${T.none}</div>`;
+  else $('today').innerHTML = [0, 1, 2, 3].map(s => { const ds = list.filter(d => slot(d.t) === s); return ds.length ? `<div class="slot"><h3>${T.slots[s]}</h3>${ds.map(d => { const tk = done[d.id], late = !tk && d.t < hm; return `<div class="dose ${tk ? 'taken' : ''}"><span class="pill" style="background:${d.m.color}">${d.m.icon}</span><span class="n"><b></b><small class="${late ? 'late' : ''}">${tk ? `${T.takenAt} ${new Date(tk).toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' })}` : late ? `${T.late} ${d.t}` : `${T.at} ${d.t}`}</small></span><button class="check" data-id="${d.id}">✓</button></div>`; }).join('')}</div>` : ''; }).join('');
+  // Names go in with textContent so whatever the user types stays plain text.
+  const ordered = [0, 1, 2, 3].flatMap(s => list.filter(d => slot(d.t) === s));
+  $('today').querySelectorAll('.dose').forEach((el, n) => { const d = ordered[n]; el.querySelector('b').textContent = d.m.name + (d.m.dose ? ' · ' + d.m.dose : ''); });
+  $('today').querySelectorAll('.check').forEach(b => b.onclick = () => { const day = log[k] = log[k] || {}; if (day[b.dataset.id]) delete day[b.dataset.id]; else { day[b.dataset.id] = Date.now(); try { if (window.Acornix) Acornix.vibrate(20); } catch (e) {} } store.set('log', log); render(); });
+  $('meds').innerHTML = meds.length ? `<h3>${T.meds}</h3>` + meds.map(m => `<button class="med" data-id="${m.id}"><span class="pill" style="font-size:22px">${m.icon}</span><span class="n"><b></b><br><small>${m.times.join(' · ')} · ${m.days.length === 7 ? T.every : m.days.map(d => T.dn[d]).join(' ')}</small></span>›</button>`).join('') : '';
+  $('meds').querySelectorAll('.med').forEach(b => { const m = meds.find(x => x.id === b.dataset.id); b.querySelector('b').textContent = m.name; b.onclick = () => open(m); });
+}
+function open(m) {
+  editing = m; draft = m ? JSON.parse(JSON.stringify(m)) : { id: String(Date.now()), name: '', dose: '', icon: '💊', color: COLORS[0], times: ['09:00'], days: [0, 1, 2, 3, 4, 5, 6] };
+  $('shT').textContent = m ? T.editM : T.newM; $('name').value = draft.name; $('dose').value = draft.dose; $('del').style.display = m ? 'block' : 'none';
+  paintDraft(); $('sheet').classList.add('on');
+}
+function paintDraft() {
+  $('icons').innerHTML = ICONS.map((ic, i) => `<button data-i="${i}" class="${draft.icon === ic ? 'on' : ''}" style="background:${COLORS[i]}">${ic}</button>`).join('');
+  $('icons').querySelectorAll('button').forEach(b => b.onclick = () => { draft.icon = ICONS[+b.dataset.i]; draft.color = COLORS[+b.dataset.i]; paintDraft(); });
+  $('times').innerHTML = draft.times.map((t, i) => `<input type="time" value="${t}" data-i="${i}"><button class="x" data-x="${i}">✕</button>`).join('') + `<button id="addT">${T.addT}</button>`;
+  $('times').querySelectorAll('input').forEach(inp => inp.onchange = () => { draft.times[+inp.dataset.i] = inp.value; });
+  $('times').querySelectorAll('[data-x]').forEach(b => b.onclick = () => { if (draft.times.length > 1) { draft.times.splice(+b.dataset.x, 1); paintDraft(); } });
+  $('addT').onclick = () => { draft.times.push('21:00'); paintDraft(); };
+  $('days').innerHTML = T.dn.map((d, i) => `<button data-d="${i}" class="${draft.days.includes(i) ? 'on' : ''}">${d}</button>`).join('');
+  $('days').querySelectorAll('button').forEach(b => b.onclick = () => { const d = +b.dataset.d; draft.days = draft.days.includes(d) ? draft.days.filter(x => x !== d) : [...draft.days, d].sort(); if (!draft.days.length) draft.days = [d]; paintDraft(); });
+}
+$('save').onclick = () => {
+  draft.name = $('name').value.trim(); draft.dose = $('dose').value.trim(); if (!draft.name) { $('name').focus(); return; }
+  draft.times = [...new Set(draft.times.filter(Boolean))].sort();
+  if (editing) Object.assign(editing, draft); else meds.push(draft);
+  store.set('meds', meds); $('sheet').classList.remove('on'); render();
+};
+$('del').onclick = () => { meds = meds.filter(m => m !== editing); store.set('meds', meds); $('sheet').classList.remove('on'); render(); };
+$('add').onclick = () => open(null);
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').classList.remove('on'); };
+setInterval(() => {
+  const now = new Date(), hm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`, k = dk(now), done = log[k] || {};
+  todayDoses().forEach(d => { const nk = k + d.id; if (d.t === hm && !done[d.id] && !notified[nk]) { notified[nk] = 1; try { if (window.Acornix) Acornix.notify(T.remT, `${d.m.name}${d.m.dose ? ' · ' + d.m.dose : ''}`); } catch (e) {} } });
+  render();
+}, 30000);
+(async () => { meds = await store.get('meds', []); log = await store.get('log', {}); render(); })();
+</script>
+</body>
+</html>

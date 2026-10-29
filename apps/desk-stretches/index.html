@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Desk Stretches</title>
+<style>
+  :root { --bg:#fff7ef; --card:#fff; --ink:#2d1f12; --muted:#8a755e; --a:#ff8a3d; --b:#2fb380; --line:#f3e4d3; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:4px 0 2px; font-size:28px; }
+  .sub { color:var(--muted); font-weight:600; margin:0 0 12px; }
+  .routine { display:flex; align-items:center; gap:14px; padding:16px; border-radius:22px; background:var(--card); margin-bottom:10px; text-align:left; box-shadow:0 4px 0 var(--line); }
+  .routine .e { width:56px; height:56px; border-radius:18px; display:grid; place-items:center; font-size:30px; flex:none; }
+  .routine b { display:block; font-size:18px; } .routine small { color:var(--muted); font-weight:700; }
+  .routine .go { margin-left:auto; font-size:22px; color:var(--a); }
+  .rem { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:18px; background:var(--card); margin-top:6px; font-weight:800; }
+  .rem select { padding:8px; border-radius:10px; border:2px solid var(--line); font:inherit; background:#fff; }
+  .stats { margin-top:12px; color:var(--muted); font-weight:700; text-align:center; }
+  .top { display:flex; justify-content:space-between; align-items:center; font-weight:800; }
+  .top button { width:44px; height:44px; border-radius:14px; background:var(--card); font-size:18px; }
+  .dots { display:flex; gap:4px; margin:12px 0; }
+  .dots i { flex:1; height:6px; border-radius:3px; background:var(--line); }
+  .dots i.done { background:var(--b); } .dots i.cur { background:var(--a); }
+  .fig { margin:auto 0 10px; text-align:center; }
+  .fig .em { font-size:110px; line-height:1; display:inline-block; animation:sway 3s ease-in-out infinite; }
+  @keyframes sway { 50% { transform:rotate(var(--rot,8deg)) scale(1.04); } }
+  .fig h2 { margin:12px 0 6px; font-size:26px; }
+  .fig p { margin:0 auto; max-width:340px; color:var(--muted); font-size:17px; line-height:1.5; font-weight:600; }
+  .side { display:inline-block; margin-top:10px; padding:6px 12px; border-radius:12px; background:#ffe8d6; color:#b4531a; font-weight:900; }
+  .clock { position:relative; width:120px; height:120px; margin:16px auto; }
+  .clock svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .clock b { position:absolute; inset:0; display:grid; place-items:center; font-size:38px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .ctls { display:grid; grid-template-columns:1fr 2fr 1fr; gap:10px; margin-top:auto; }
+  .ctls button { padding:16px 0; border-radius:18px; background:var(--card); font-size:20px; font-weight:900; box-shadow:0 4px 0 var(--line); }
+  .ctls .main { background:var(--a); color:#fff; box-shadow:0 4px 0 #d9661c; }
+  .fin { margin:auto 0; text-align:center; }
+  .fin .em { font-size:90px; } .fin b { display:block; font-size:30px; margin:8px 0; } .fin p { color:var(--muted); font-weight:700; }
+  .fin button { width:100%; margin-top:16px; padding:16px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:18px; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home">
+  <h1>🤸 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div id="routines"></div>
+  <div class="rem"><span id="remL"></span><select id="rem"></select></div>
+  <div class="stats" id="stats"></div>
+</section>
+<section class="screen" id="run">
+  <div class="top"><button id="quit">✕</button><span id="count"></span><button id="voice">🔊</button></div>
+  <div class="dots" id="dots"></div>
+  <div class="fig"><span class="em" id="em"></span><h2 id="name"></h2><p id="how"></p><span class="side" id="side" hidden></span></div>
+  <div class="clock"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#f3e4d3" stroke-width="9"/><circle id="arc" cx="50" cy="50" r="44" fill="none" stroke="#ff8a3d" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.5"/></svg><b id="secs"></b></div>
+  <div class="ctls"><button id="prev">⏮</button><button class="main" id="pause">⏸</button><button id="skip">⏭</button></div>
+</section>
+<section class="screen" id="end"><div class="fin"><div class="em">🌟</div><b id="fT"></b><p id="fP"></p><button id="fB"></button></div></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+// [emoji, EN name, EN how, ES name, ES how, seconds, sides]
+const S = {
+  neck: ['🙆', 'Neck tilt', 'Drop your ear towards your shoulder. Keep the other shoulder down and breathe slowly.', 'Cuello de lado', 'Lleva la oreja hacia el hombro. Mantén el otro hombro abajo y respira despacio.', 20, 2],
+  roll: ['🔄', 'Shoulder rolls', 'Roll both shoulders up, back and down in big slow circles.', 'Círculos de hombros', 'Sube los hombros, llévalos atrás y abajo, en círculos grandes y lentos.', 25, 0],
+  chin: ['😌', 'Chin tuck', 'Pull your chin straight back, making a double chin. Hold, then relax.', 'Mentón atrás', 'Lleva la barbilla hacia atrás, como haciendo papada. Mantén y relaja.', 20, 0],
+  chest: ['🙌', 'Chest opener', 'Clasp your hands behind your back, straighten your arms and lift your chest.', 'Abrir el pecho', 'Entrelaza las manos detrás, estira los brazos y saca pecho.', 25, 0],
+  twist: ['🪑', 'Seated twist', 'Sit tall, turn your chest to one side holding the back of the chair.', 'Giro en la silla', 'Siéntate recto y gira el pecho hacia un lado agarrando el respaldo.', 20, 2],
+  wrist: ['🤲', 'Wrist stretch', 'Arm out, palm up. Gently pull your fingers down with the other hand.', 'Muñecas', 'Brazo estirado, palma arriba. Tira suavemente de los dedos hacia abajo.', 20, 2],
+  side: ['🙋', 'Side reach', 'Raise one arm over your head and lean to the other side.', 'Estiramiento lateral', 'Sube un brazo por encima de la cabeza e inclínate hacia el otro lado.', 20, 2],
+  hip: ['🦵', 'Figure four', 'Cross one ankle over the other knee and lean forward with a straight back.', 'Cadera en cuatro', 'Cruza un tobillo sobre la otra rodilla e inclínate con la espalda recta.', 25, 2],
+  stand: ['🧍', 'Stand and reach', 'Stand up, reach both arms to the ceiling and rise onto your toes.', 'De pie y arriba', 'Levántate, estira los brazos hacia el techo y ponte de puntillas.', 20, 0],
+  calf: ['🚶', 'Calf stretch', 'Hands on the desk, one leg back with the heel down. Lean in gently.', 'Gemelos', 'Manos en la mesa, una pierna atrás con el talón en el suelo. Inclínate suave.', 20, 2],
+  eyes: ['👀', 'Eye break', 'Look at something at least 6 metres away and blink slowly.', 'Descanso visual', 'Mira algo a más de 6 metros y parpadea despacio.', 20, 0],
+};
+const ROUTINES = [
+  ['⚡', '#ffe8d6', ['Quick reset', 'Reinicio rápido'], ['roll', 'neck', 'chest', 'eyes']],
+  ['💻', '#dff5ea', ['Neck & shoulders', 'Cuello y hombros'], ['chin', 'neck', 'roll', 'chest', 'side', 'wrist']],
+  ['🌿', '#e6ecff', ['Full desk break', 'Pausa completa'], ['stand', 'roll', 'neck', 'chest', 'twist', 'side', 'wrist', 'hip', 'calf', 'eyes']],
+];
+const T = ES ? { title:'Estiramientos', sub:'Pausas cortas para tu espalda, cuello y ojos', min:'min', moves:'ejercicios', rem:'Recordármelo', remOpts:['Nunca','Cada 30 min','Cada hora','Cada 2 horas'], left:'Izquierda', right:'Derecha', then:'Cambia de lado', done:'¡Listo!', doneP:'Llevas {n} pausas. Tu espalda te lo agradece.', back:'Volver', remT:'🤸 Hora de estirar', remB:'Dos minutos para tu cuello y tu espalda.', stats:'Pausas hechas: {n} · hoy: {t}', go:'Vamos' }
+ : { title:'Desk Stretches', sub:'Short breaks for your back, neck and eyes', min:'min', moves:'moves', rem:'Remind me', remOpts:['Never','Every 30 min','Every hour','Every 2 hours'], left:'Left side', right:'Right side', then:'Switch sides', done:'All done!', doneP:'That\'s {n} breaks. Your back says thanks.', back:'Back', remT:'🤸 Time to stretch', remB:'Two minutes for your neck and back.', stats:'Breaks done: {n} · today: {t}', go:'Let\'s go' };
+const L = ES ? 1 : 0, $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let steps = [], i = 0, left = 0, paused = false, timer, voice = true, log = [], remEvery = 0, routine = 0;
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('remL').textContent = T.rem; $('fB').textContent = T.back;
+$('rem').innerHTML = T.remOpts.map((o, k) => `<option value="${[0, 30, 60, 120][k]}">${o}</option>`).join('');
+function expand(ids) { return ids.flatMap(id => { const s = S[id]; return s[6] ? [{ id, side: 1 }, { id, side: 2 }] : [{ id, side: 0 }]; }); }
+function home() {
+  $('routines').innerHTML = ROUTINES.map(([e, bg, n, ids], k) => { const st = expand(ids), secs = st.reduce((a, s) => a + S[s.id][5], 0); return `<button class="routine" data-k="${k}"><span class="e" style="background:${bg}">${e}</span><span><b>${n[L]}</b><small>${Math.round(secs / 60 * 2) / 2} ${T.min} · ${ids.length} ${T.moves}</small></span><span class="go">▶</span></button>`; }).join('');
+  $('routines').querySelectorAll('.routine').forEach(b => b.onclick = () => start(+b.dataset.k));
+  const today = new Date().toDateString();
+  $('stats').textContent = T.stats.replace('{n}', log.length).replace('{t}', log.filter(t => new Date(t).toDateString() === today).length);
+  show('home');
+}
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function say(t) { if (!voice) return; try { if (window.Acornix) Acornix.speak(t, ES ? 'es-ES' : 'en-GB'); else { const u = new SpeechSynthesisUtterance(t); u.lang = ES ? 'es-ES' : 'en-GB'; speechSynthesis.cancel(); speechSynthesis.speak(u); } } catch (e) {} }
+function start(k) { routine = k; steps = expand(ROUTINES[k][3]); i = 0; paused = false; show('run'); enter(); clearInterval(timer); timer = setInterval(tick, 100); }
+function enter() {
+  const st = steps[i], s = S[st.id]; left = s[5];
+  $('em').textContent = s[0]; $('em').style.setProperty('--rot', st.side === 2 ? '-8deg' : '8deg');
+  $('name').textContent = s[1 + L * 2]; $('how').textContent = s[2 + L * 2];
+  $('side').hidden = !st.side; $('side').textContent = st.side === 1 ? T.left : T.right;
+  $('count').textContent = `${i + 1} / ${steps.length}`;
+  $('dots').innerHTML = steps.map((_, k) => `<i class="${k < i ? 'done' : k === i ? 'cur' : ''}"></i>`).join('');
+  say(st.side === 2 ? T.then : s[1 + L * 2] + '. ' + s[2 + L * 2]);
+  try { if (window.Acornix) Acornix.vibrate(st.side === 2 ? [40, 40, 40] : 60); } catch (e) {}
+  paint();
+}
+function paint() { const tot = S[steps[i].id][5]; $('secs').textContent = Math.ceil(left); $('arc').style.strokeDashoffset = 276.5 * (1 - left / tot); $('pause').textContent = paused ? '▶' : '⏸'; }
+function tick() { if (paused) return; left -= .1; if (left <= 0) { if (++i >= steps.length) return finish(); enter(); } else paint(); }
+async function finish() {
+  clearInterval(timer); log.push(Date.now()); log = log.slice(-500); await store.set('log', log);
+  $('fT').textContent = T.done; $('fP').textContent = T.doneP.replace('{n}', log.length); show('end'); say(T.done);
+  try { if (window.Acornix) Acornix.vibrate([60, 60, 120]); } catch (e) {}
+}
+$('pause').onclick = () => { paused = !paused; paint(); };
+$('skip').onclick = () => { if (++i >= steps.length) return finish(); enter(); };
+$('prev').onclick = () => { if (i > 0) i--; enter(); };
+$('quit').onclick = () => { clearInterval(timer); home(); };
+$('voice').onclick = () => { voice = !voice; $('voice').textContent = voice ? '🔊' : '🔇'; store.set('voice', voice); };
+$('fB').onclick = home;
+$('rem').onchange = () => { remEvery = +$('rem').value; store.set('rem', remEvery); window.__lastRem = Date.now(); };
+// Reminders work while the app is open (for example on AcornixOS or a tablet on the desk).
+setInterval(() => { if (!remEvery || !window.Acornix) return; const last = Math.max(window.__lastRem || 0, log[log.length - 1] || 0); if (Date.now() - last >= remEvery * 6e4) { window.__lastRem = Date.now(); try { Acornix.notify(T.remT, T.remB); } catch (e) {} } }, 60000);
+(async () => { log = await store.get('log', []); voice = await store.get('voice', true); remEvery = await store.get('rem', 0); $('rem').value = remEvery; $('voice').textContent = voice ? '🔊' : '🔇'; window.__lastRem = Date.now(); home(); })();
+</script>
+</body>
+</html>

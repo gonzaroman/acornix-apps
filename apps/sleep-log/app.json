@@ -1,0 +1,14 @@
+{
+  "id": "sleep-log",
+  "name": "Sleep Log",
+  "emoji": "😴",
+  "category": "health-fitness",
+  "description": "Tap when you go to bed and when you wake up. See your hours, how you slept, your usual bedtime and a 14-night chart.",
+  "prompt": "A sleep tracker with a going to sleep and I am awake button, manual entries with bed and wake times, a quality emoji and notes, a 14-night bar chart with the goal line, the 7-day average, usual bedtime, best night and a daily sleep tip.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

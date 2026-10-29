@@ -1,0 +1,14 @@
+{
+  "id": "water-tracker",
+  "name": "Water Tracker",
+  "emoji": "💧",
+  "category": "health-fitness",
+  "description": "Tap a glass, a bottle or a litre and watch the water rise. Daily goal, a week chart, streaks and gentle reminders.",
+  "prompt": "A water intake tracker with a glass that fills with an animated wave, buttons for a small glass, glass, bottle and litre, today's log with undo, a 7-day chart, a streak, an adjustable daily goal, confetti when you reach it and optional reminders.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

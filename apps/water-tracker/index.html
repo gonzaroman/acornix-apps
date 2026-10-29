@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Water Tracker</title>
+<style>
+  :root { --bg:#eaf6ff; --card:#fff; --ink:#0b2a44; --muted:#5d7b94; --a:#1e90ff; --w1:#5ab8ff; --w2:#1e78e6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; align-items:center; justify-content:space-between; }
+  h1 { margin:4px 0; font-size:26px; }
+  .gear { width:42px; height:42px; border-radius:14px; background:var(--card); font-size:18px; }
+  .glass { position:relative; width:180px; height:250px; margin:14px auto 6px; border-radius:18px 18px 46px 46px; background:#ffffffaa; border:4px solid #fff; box-shadow:0 14px 30px #1e90ff26, inset 0 0 0 2px #cfe8ff; overflow:hidden; }
+  .water { position:absolute; left:0; right:0; bottom:0; background:linear-gradient(var(--w1),var(--w2)); transition:height .8s cubic-bezier(.2,.9,.3,1.1); }
+  .water svg { position:absolute; left:0; top:-14px; width:200%; height:16px; animation:wave 3s linear infinite; }
+  @keyframes wave { to { transform:translateX(-50%); } }
+  .pct { position:absolute; inset:0; display:grid; place-items:center; font-size:40px; font-weight:900; color:#0b2a44; text-shadow:0 1px 0 #fff8; }
+  .pct small { display:block; font-size:14px; font-weight:700; text-align:center; color:var(--muted); }
+  .amt { text-align:center; font-weight:800; color:var(--muted); }
+  .amt b { color:var(--ink); font-size:20px; }
+  .cups { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px; }
+  .cup { padding:12px 4px; border-radius:18px; background:var(--card); font-weight:800; box-shadow:0 4px 0 #cfe8ff; }
+  .cup span { display:block; font-size:26px; }
+  .cup small { color:var(--muted); font-size:12px; }
+  .cup:active { transform:translateY(2px); box-shadow:0 2px 0 #cfe8ff; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-top:12px; }
+  .card h3 { margin:0 0 10px; font-size:14px; color:var(--muted); display:flex; justify-content:space-between; }
+  .log { display:flex; flex-wrap:wrap; gap:6px; }
+  .log button { padding:6px 10px; border-radius:12px; background:#eaf6ff; font-weight:700; font-size:13px; }
+  .week { display:flex; align-items:flex-end; gap:8px; height:110px; }
+  .day { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+  .day i { width:100%; border-radius:8px 8px 4px 4px; background:#cfe8ff; display:block; min-height:4px; }
+  .day i.ok { background:var(--a); }
+  .day small { font-size:11px; color:var(--muted); font-weight:700; }
+  .streak { font-weight:900; color:var(--a); }
+  .settings { position:fixed; inset:0; background:#0007; display:none; align-items:flex-end; z-index:5; }
+  .settings.on { display:flex; }
+  .settings > div { width:100%; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .settings label { display:block; font-weight:800; margin:12px 0 6px; }
+  .settings input[type=range] { width:100%; accent-color:var(--a); }
+  .row { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .row b { color:var(--a); }
+  .done { width:100%; margin-top:16px; padding:14px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; }
+  .tg { display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-weight:800; }
+  .tg input { width:22px; height:22px; accent-color:var(--a); }
+  .confetti { position:fixed; inset:0; pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="head"><h1>💧 <span id="ttl"></span></h1><button class="gear" id="gear">⚙️</button></div>
+<div class="glass"><div class="water" id="water"><svg viewBox="0 0 200 16" preserveAspectRatio="none"><path d="M0 8 Q 12.5 0 25 8 T 50 8 T 75 8 T 100 8 T 125 8 T 150 8 T 175 8 T 200 8 V16 H0Z" fill="#5ab8ff"/></svg></div><div class="pct" id="pct"></div></div>
+<div class="amt" id="amt"></div>
+<div class="cups" id="cups"></div>
+<div class="card"><h3><span id="todayT"></span><button id="undo" style="color:var(--a);font-weight:800;background:none"></button></h3><div class="log" id="log"></div></div>
+<div class="card"><h3><span id="weekT"></span><span class="streak" id="streak"></span></h3><div class="week" id="week"></div></div>
+<div class="settings" id="settings"><div>
+  <div class="row"><b id="goalL"></b><b id="goalV"></b></div><input type="range" id="goal" min="1000" max="4000" step="100">
+  <div class="tg"><span id="remL"></span><input type="checkbox" id="rem"></div>
+  <button class="done" id="close"></button>
+</div></div>
+<canvas class="confetti" id="fx"></canvas>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Agua', of:'de', today:'Hoy', undo:'Deshacer', week:'Últimos 7 días', streak:'días seguidos', goal:'Objetivo diario', rem:'Recordatorios cada 2 horas (9–21 h)', done:'Listo', cups:[['🥃','Vaso pequeño',150],['🥛','Vaso',250],['🍶','Botella',500],['🫙','Litro',1000]], nothing:'Aún nada. ¡Empieza con un vaso!', remT:'💧 Hora de beber', remB:'Llevas {x} de {g} hoy', goalHit:'¡Objetivo cumplido! 🎉', days:['D','L','M','X','J','V','S'] }
+ : { title:'Water', of:'of', today:'Today', undo:'Undo', week:'Last 7 days', streak:'day streak', goal:'Daily goal', rem:'Reminders every 2 hours (9am–9pm)', done:'Done', cups:[['🥃','Small glass',150],['🥛','Glass',250],['🍶','Bottle',500],['🫙','Litre',1000]], nothing:'Nothing yet. Start with a glass!', remT:'💧 Time to drink', remB:'You\'ve had {x} of {g} today', goalHit:'Goal reached! 🎉', days:['S','M','T','W','T','F','S'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const ml = n => n >= 1000 ? (n / 1000).toFixed(n % 1000 ? 2 : 1).replace(/\.?0+$/, '') + ' L' : n + ' ml';
+let days = {}, goal = 2000, reminders = false;
+$('ttl').textContent = T.title; $('todayT').textContent = T.today; $('undo').textContent = T.undo; $('weekT').textContent = T.week; $('goalL').textContent = T.goal; $('remL').textContent = T.rem; $('close').textContent = T.done;
+$('cups').innerHTML = T.cups.map(([e, n, v], i) => `<button class="cup" data-i="${i}"><span>${e}</span>+${ml(v)}<br><small>${n}</small></button>`).join('');
+$('cups').querySelectorAll('.cup').forEach(b => b.onclick = () => drink(T.cups[+b.dataset.i][2]));
+const today = () => days[key(new Date())] || [];
+const total = list => list.reduce((s, x) => s + x.ml, 0);
+function drink(v) {
+  const k = key(new Date()), before = total(today());
+  days[k] = [...today(), { ml: v, t: Date.now() }]; store.set('days', days);
+  try { if (window.Acornix) Acornix.vibrate(15); } catch (e) {}
+  render();
+  if (before < goal && before + v >= goal) { confetti(); try { if (window.Acornix) Acornix.toast(T.goalHit); } catch (e) {} }
+}
+function render() {
+  const list = today(), sum = total(list), p = Math.min(100, Math.round(sum / goal * 100));
+  $('water').style.height = Math.max(4, p) + '%';
+  $('pct').innerHTML = `<div>${p}%<small>${ml(sum)}</small></div>`;
+  $('amt').innerHTML = `<b>${ml(sum)}</b> ${T.of} ${ml(goal)}`;
+  $('log').innerHTML = list.length ? list.map(x => `<button>${new Date(x.t).toLocaleTimeString(ES ? 'es-ES' : 'en-GB', { hour: '2-digit', minute: '2-digit' })} · ${ml(x.ml)}</button>`).join('') : `<span style="color:var(--muted);font-weight:600">${T.nothing}</span>`;
+  $('undo').style.visibility = list.length ? 'visible' : 'hidden';
+  const now = new Date(), week = [...Array(7)].map((_, i) => { const d = new Date(now); d.setDate(d.getDate() - 6 + i); return d; });
+  const max = Math.max(goal, ...week.map(d => total(days[key(d)] || [])));
+  $('week').innerHTML = week.map(d => { const s = total(days[key(d)] || []); return `<div class="day"><i class="${s >= goal ? 'ok' : ''}" style="height:${s / max * 85}%"></i><small>${T.days[d.getDay()]}</small></div>`; }).join('');
+  // Streak: days in a row that hit the goal, counting today only once it's reached.
+  let streak = total(today()) >= goal ? 1 : 0;
+  for (let d = new Date(now), n = 0; n < 365; n++) { d.setDate(d.getDate() - 1); if (total(days[key(d)] || []) >= goal) streak++; else break; }
+  $('streak').textContent = streak ? `🔥 ${streak} ${T.streak}` : '';
+}
+$('undo').onclick = () => { const k = key(new Date()); days[k] = today().slice(0, -1); store.set('days', days); render(); };
+$('gear').onclick = () => { $('goal').value = goal; $('goalV').textContent = ml(goal); $('rem').checked = reminders; $('settings').classList.add('on'); };
+$('goal').oninput = () => { goal = +$('goal').value; $('goalV').textContent = ml(goal); store.set('goal', goal); render(); };
+$('rem').onchange = () => { reminders = $('rem').checked; store.set('reminders', reminders); };
+$('close').onclick = () => $('settings').classList.remove('on');
+$('settings').onclick = e => { if (e.target === $('settings')) $('settings').classList.remove('on'); };
+// Reminders while the app is open: every 2 hours between 9 and 21 if you're behind.
+setInterval(() => {
+  if (!reminders || !window.Acornix) return;
+  const h = new Date().getHours(), last = today().slice(-1)[0];
+  if (h < 9 || h >= 21 || total(today()) >= goal || (last && Date.now() - last.t < 2 * 36e5)) return;
+  if (Date.now() - (window.__lastRem || 0) < 2 * 36e5) return; window.__lastRem = Date.now();
+  try { Acornix.notify(T.remT, T.remB.replace('{x}', ml(total(today()))).replace('{g}', ml(goal))); } catch (e) {}
+}, 60000);
+function confetti() {
+  const c = $('fx'), g = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight;
+  const ps = [...Array(90)].map(() => ({ x: innerWidth / 2, y: innerHeight * .35, vx: (Math.random() - .5) * 12, vy: -Math.random() * 12 - 4, s: Math.random() * 6 + 4, c: ['#1e90ff', '#5ab8ff', '#ffd43b', '#51cf66', '#ff6b6b'][Math.floor(Math.random() * 5)] }));
+  let f = 0; (function step() { g.clearRect(0, 0, c.width, c.height); ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .35; g.fillStyle = p.c; g.fillRect(p.x, p.y, p.s, p.s * .6); }); if (++f < 120) requestAnimationFrame(step); else g.clearRect(0, 0, c.width, c.height); })();
+}
+(async () => { days = await store.get('days', {}); goal = await store.get('goal', 2000); reminders = await store.get('reminders', false); render(); })();
+</script>
+</body>
+</html>

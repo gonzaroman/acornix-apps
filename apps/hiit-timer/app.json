@@ -1,0 +1,14 @@
+{
+  "id": "hiit-timer",
+  "name": "HIIT Timer",
+  "emoji": "🏋️",
+  "category": "health-fitness",
+  "description": "Interval timer with Tabata and other presets, big numbers you can read from the floor, countdown beeps and colours for work and rest.",
+  "prompt": "A HIIT interval timer: presets like Tabata 20/10, adjustable prepare, work, rest, rounds, sets and rest between sets, a full-screen countdown that turns red for work and green for rest, beeps in the last three seconds, vibration, pause, skip and a finish screen.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

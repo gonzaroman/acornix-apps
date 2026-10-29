@@ -103,6 +103,32 @@
       "trending": 0
     },
     {
+      "id": "plate-check-ai",
+      "name": "Plate Check",
+      "emoji": "🍽️",
+      "category": "health-fitness",
+      "description": "Snap a photo of your meal and your AI estimates the calories, protein, carbs and fat. Adjust portions and track your day.",
+      "prompt": "A food log powered by the AI: take a photo of a meal or type it, get each food with its portion, calories and macros, adjust portions with plus and minus, and see a daily ring with calories and protein, carbs and fat against a goal.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 12931,
+      "sha256": "6f710c0fd6a2aecff517db4a1a6ffb059da8b50ee9909b661daedf6353b5b839",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "periodic-table",
       "name": "Periodic Table",
       "emoji": "⚗️",
@@ -195,6 +221,29 @@
       ],
       "size": 24794,
       "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "breathing",
+      "name": "Breathe",
+      "emoji": "🌬️",
+      "category": "health-fitness",
+      "description": "Follow a glowing ball to breathe in, hold and breathe out: 4-7-8 to calm down, box breathing to focus, and more.",
+      "prompt": "A guided breathing app with a ball that grows and shrinks, four patterns (4-7-8 calm, box 4-4-4-4, coherent 5.5-5.5 and energising 4-2-4), sessions of 1 to 10 minutes, soft tones and vibration on each phase, and a session counter.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9066,
+      "sha256": "3c721b22d1d67c8e567694f8bd88c4fad45e289f840e90019a365bb1f85f3671",
       "downloads": 0,
       "trending": 0
     },
@@ -343,6 +392,29 @@
       "trending": 0
     },
     {
+      "id": "weight-tracker",
+      "name": "Weight Tracker",
+      "emoji": "📉",
+      "category": "health-fitness",
+      "description": "Log your weight each day and watch the 7-day trend instead of the daily ups and downs, with your goal and BMI.",
+      "prompt": "A weight tracker in kg or lb: log once a day, see the change since you started and this week, progress to a goal, a chart with daily points and the 7-day moving average, BMI from your height and a history you can edit.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 13389,
+      "sha256": "41401cd54e9d596a2ea5442eb9278d9e835dd8f408c339ccfceab62a676f48aa",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "weather-now",
       "name": "Weather Now",
       "emoji": "🌦️",
@@ -364,6 +436,31 @@
       ],
       "size": 35586,
       "sha256": "4fdd87b5c829801775367384fd34a5eff410e9f6e1c048e05574132de175b995",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "water-tracker",
+      "name": "Water Tracker",
+      "emoji": "💧",
+      "category": "health-fitness",
+      "description": "Tap a glass, a bottle or a litre and watch the water rise. Daily goal, a week chart, streaks and gentle reminders.",
+      "prompt": "A water intake tracker with a glass that fills with an animated wave, buttons for a small glass, glass, bottle and litre, today's log with undo, a 7-day chart, a streak, an adjustable daily goal, confetti when you reach it and optional reminders.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11162,
+      "sha256": "e4b05d653fd8cb16bb8d6ef468c45c28e26ba5e33dc07380a7a51451bddca88d",
       "downloads": 0,
       "trending": 0
     },
@@ -869,6 +966,29 @@
       "trending": 0
     },
     {
+      "id": "sleep-log",
+      "name": "Sleep Log",
+      "emoji": "😴",
+      "category": "health-fitness",
+      "description": "Tap when you go to bed and when you wake up. See your hours, how you slept, your usual bedtime and a 14-night chart.",
+      "prompt": "A sleep tracker with a going to sleep and I am awake button, manual entries with bed and wake times, a quality emoji and notes, a 14-night bar chart with the goal line, the 7-day average, usual bedtime, best night and a daily sleep tip.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12789,
+      "sha256": "a15dc001e514a356330ff720b396b11979df3c0cf90968adef79727f40cd6aab",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "sky-hopper",
       "name": "Sky Hopper",
       "emoji": "🐤",
@@ -1086,6 +1206,31 @@
       "trending": 0
     },
     {
+      "id": "pushup-counter",
+      "name": "Push-up Counter",
+      "emoji": "💪",
+      "category": "health-fitness",
+      "description": "Put your phone on the floor and touch it with your nose on every push-up. Daily goal, a 30-day calendar and records.",
+      "prompt": "A push-up counter where you touch the screen with your nose on each rep, with beeps and vibration, counting out loud every ten, sets saved per day, an adjustable daily goal, a 30-day heat calendar, a streak and records for best set, best day and total.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9779,
+      "sha256": "36b55349b090aec23d21950e377ab8d538773639390dbc5ef39a13a0803f0316",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "eisenhower",
       "name": "Priority Matrix",
       "emoji": "🧭",
@@ -1157,6 +1302,31 @@
       ],
       "size": 10494,
       "sha256": "4a27b7cc7d6007284ecc8099cc1d29d7c0a6cdbb4fe935571662f78d7af2bb6f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "pill-tracker",
+      "name": "Pill Tracker",
+      "emoji": "💊",
+      "category": "health-fitness",
+      "description": "Add your medication and times, then tick each dose. See what's due today by morning, midday, afternoon and night.",
+      "prompt": "A medication tracker: add each medicine with dose, icon, times and days of the week, see today's doses grouped by part of the day, tick them as taken, see what is late, and get a notification at each time while the app is open.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13924,
+      "sha256": "5cf6b940d9027444e8bbbac452d41ffcc1fc77d4a40362ded6aa9b134fdbcf63",
       "downloads": 0,
       "trending": 0
     },
@@ -1322,6 +1492,29 @@
       ],
       "size": 10613,
       "sha256": "2b27bf5f7cd2fefd118058db69e37b0f8515c2962ef810e50f3c11e04cb7d575",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "meditation",
+      "name": "Meditation",
+      "emoji": "🧘",
+      "category": "health-fitness",
+      "description": "A calm timer with a sunset glow, rain, ocean, fire or wind sounds made on the fly, singing bowl bells and a daily streak.",
+      "prompt": "A meditation timer from 3 to 20 minutes with a glowing sun, a progress ring, ambient sounds generated in the browser (rain, ocean, fire, wind), bells at the start, end and optional intervals, gentle quotes, and stats for streak and total minutes.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11091,
+      "sha256": "7b2169576cebddb0d9b3ce9067f37adee43e85ba8a5c8e421a2c09854a381bb7",
       "downloads": 0,
       "trending": 0
     },
@@ -1563,6 +1756,29 @@
       "trending": 0
     },
     {
+      "id": "hiit-timer",
+      "name": "HIIT Timer",
+      "emoji": "🏋️",
+      "category": "health-fitness",
+      "description": "Interval timer with Tabata and other presets, big numbers you can read from the floor, countdown beeps and colours for work and rest.",
+      "prompt": "A HIIT interval timer: presets like Tabata 20/10, adjustable prepare, work, rest, rounds, sets and rest between sets, a full-screen countdown that turns red for work and green for rest, beeps in the last three seconds, vibration, pause, skip and a finish screen.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11550,
+      "sha256": "e4715801fc5b4a00c35de509539ec88009ae76cb98229e8c6fce79e09b27a66d",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "goals",
       "name": "Goals",
       "emoji": "🎯",
@@ -1747,6 +1963,31 @@
       ],
       "size": 8996,
       "sha256": "34dde9b328c3a1de7f2233374802233e6a3adcd85e321b2881dd5c9274f14362",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "desk-stretches",
+      "name": "Desk Stretches",
+      "emoji": "🤸",
+      "category": "health-fitness",
+      "description": "Guided 1 to 4 minute stretch breaks for your neck, back, wrists and eyes, read aloud so you don't have to look.",
+      "prompt": "A desk stretching guide with three routines, each stretch with an emoji, instructions read aloud, left and right sides, a countdown ring, pause and skip, a count of breaks done and optional reminders every 30 minutes, hour or two hours.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13223,
+      "sha256": "c8c9539cad94fb1d552eab1aa481a06cf38c6a1559243fb1bc8b050ce8476e5e",
       "downloads": 0,
       "trending": 0
     },

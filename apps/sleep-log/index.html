@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sleep Log</title>
+<style>
+  :root { --bg:#0e1030; --card:#181b45; --ink:#eef0ff; --muted:#9aa0d6; --a:#9d8cff; --b:#ffcf6e; --line:#272b63; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:radial-gradient(circle at 80% -10%,#3b2f8a,transparent 50%),var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 12px; font-size:28px; }
+  .now { padding:18px; border-radius:24px; background:linear-gradient(135deg,#4c3fb8,#7a5cf0); box-shadow:0 12px 30px #5b4bd855; }
+  .now small { opacity:.85; font-weight:700; }
+  .now b { display:block; font-size:30px; margin:4px 0 12px; }
+  .now button { width:100%; padding:15px; border-radius:16px; background:#fff; color:#2c2280; font-weight:900; font-size:17px; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0; }
+  .stats div { background:var(--card); border-radius:16px; padding:10px; text-align:center; }
+  .stats b { display:block; font-size:20px; } .stats small { color:var(--muted); font-size:11px; font-weight:700; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; }
+  .card h3 { margin:0 0 10px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; display:flex; justify-content:space-between; }
+  .chart { display:flex; align-items:flex-end; gap:4px; height:130px; position:relative; }
+  .chart .goal { position:absolute; left:0; right:0; border-top:1px dashed #ffcf6e88; }
+  .chart .goal span { position:absolute; right:0; top:-16px; font-size:10px; color:var(--b); font-weight:700; }
+  .bar { flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; gap:3px; }
+  .bar i { width:100%; border-radius:6px 6px 3px 3px; background:linear-gradient(var(--a),#6a5ae0); display:block; }
+  .bar small { font-size:10px; color:var(--muted); }
+  .bar em { font-style:normal; font-size:11px; }
+  .entry { display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--line); }
+  .entry:first-of-type { border-top:0; }
+  .entry .q { font-size:26px; }
+  .entry .d { flex:1; }
+  .entry .d b { display:block; } .entry .d small { color:var(--muted); }
+  .entry .h { font-weight:900; font-size:18px; font-variant-numeric:tabular-nums; }
+  .add { width:100%; padding:13px; border-radius:16px; background:var(--card); font-weight:800; color:var(--a); margin-bottom:10px; }
+  .sheet { position:fixed; inset:0; background:#0009; display:none; align-items:flex-end; z-index:5; }
+  .sheet.on { display:flex; }
+  .sheet > div { width:100%; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sheet h2 { margin:0 0 12px; }
+  .times { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .times label { display:block; color:var(--muted); font-weight:800; font-size:12px; margin-bottom:4px; }
+  .times input, .sheet textarea { width:100%; padding:12px; border-radius:14px; border:2px solid var(--line); background:var(--card); color:var(--ink); font:inherit; font-size:17px; color-scheme:dark; }
+  .sheet textarea { margin-top:10px; font-size:15px; min-height:60px; resize:none; }
+  .qual { display:flex; justify-content:space-between; margin-top:12px; }
+  .qual button { width:56px; height:56px; border-radius:16px; background:var(--card); font-size:28px; opacity:.5; }
+  .qual button.on { opacity:1; outline:2px solid var(--a); }
+  .save { width:100%; margin-top:14px; padding:15px; border-radius:16px; background:var(--a); color:#1b1450; font-weight:900; font-size:17px; }
+  .del { width:100%; margin-top:8px; padding:12px; border-radius:16px; background:none; color:#ff8a8a; font-weight:800; }
+  .tip { color:var(--muted); font-size:14px; line-height:1.5; }
+</style>
+</head>
+<body>
+<h1>😴 <span id="ttl"></span></h1>
+<div class="now" id="now"></div>
+<div class="stats" id="stats"></div>
+<div class="card"><h3><span id="chartT"></span><span id="goalT"></span></h3><div class="chart" id="chart"></div></div>
+<button class="add" id="add"></button>
+<div class="card" id="list"></div>
+<div class="card"><h3 id="tipT"></h3><div class="tip" id="tip"></div></div>
+<div class="sheet" id="sheet"><div>
+  <h2 id="shT"></h2>
+  <div class="times"><div><label id="lBed"></label><input type="datetime-local" id="bed"></div><div><label id="lWake"></label><input type="datetime-local" id="wake"></div></div>
+  <div class="qual" id="qual"></div>
+  <textarea id="note"></textarea>
+  <button class="save" id="save"></button><button class="del" id="del"></button>
+</div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const loc = ES ? 'es-ES' : 'en-GB';
+const T = ES ? { title:'Sueño', bedtime:'¿Te vas a dormir?', bedBtn:'🌙 Me voy a dormir', sleeping:'Durmiendo desde las', wakeBtn:'☀️ Ya me he despertado', avg:'Media 7 días', bedAvg:'Hora de acostarte', best:'Mejor noche', chart:'Últimas 14 noches', goal:'Objetivo', add:'＋ Añadir una noche a mano', new:'Nueva noche', edit:'Editar noche', bed:'Me acosté', wake:'Me levanté', note:'Notas: café tarde, pesadillas, ejercicio…', save:'Guardar', del:'Borrar', empty:'Todavía no hay noches. Pulsa “Me voy a dormir” esta noche.', tipT:'Consejo', h:'h', tips:['Intenta acostarte a la misma hora también el fin de semana: tu reloj interno lo agradece.','Evita pantallas brillantes la última hora. Si lees, mejor con luz cálida.','La cafeína dura unas 6 horas en el cuerpo: mejor nada después de comer.','Un dormitorio fresco (unos 18 °C), oscuro y silencioso ayuda a dormir más profundo.','Si no te duermes en 20 minutos, levántate, haz algo tranquilo y vuelve cuando tengas sueño.'] }
+ : { title:'Sleep', bedtime:'Off to bed?', bedBtn:'🌙 Going to sleep', sleeping:'Sleeping since', wakeBtn:'☀️ I\'m awake', avg:'7-day average', bedAvg:'Usual bedtime', best:'Best night', chart:'Last 14 nights', goal:'Goal', add:'＋ Add a night by hand', new:'New night', edit:'Edit night', bed:'Went to bed', wake:'Woke up', note:'Notes: late coffee, bad dreams, exercise…', save:'Save', del:'Delete', empty:'No nights yet. Tap “Going to sleep” tonight.', tipT:'Tip', h:'h', tips:['Try going to bed at the same time at weekends too: your body clock will thank you.','Avoid bright screens in the last hour. If you read, use warm light.','Caffeine lasts about 6 hours in your body: none after lunch is best.','A cool (around 18 °C), dark and quiet bedroom helps you sleep deeper.','If you can\'t sleep after 20 minutes, get up, do something calm and go back when sleepy.'] };
+const Q = ['😫', '😕', '😐', '🙂', '😄'];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let nights = [], current = null, goal = 8, editing = null, qual = 3;
+const hrs = n => (n.wake - n.bed) / 36e5;
+const hm = h => `${Math.floor(h)}${T.h} ${String(Math.round(h % 1 * 60)).padStart(2, '0')}`;
+const clock = t => new Date(t).toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+const local = t => { const d = new Date(t - new Date(t).getTimezoneOffset() * 6e4); return d.toISOString().slice(0, 16); };
+['ttl', 'add', 'chartT', 'lBed', 'lWake', 'tipT'].forEach((id, i) => $(id).textContent = [T.title, T.add, T.chart, T.bed, T.wake, T.tipT][i]);
+$('note').placeholder = T.note; $('save').textContent = T.save; $('del').textContent = T.del; $('goalT').textContent = `${T.goal}: ${goal} ${T.h}`;
+$('tip').textContent = T.tips[new Date().getDate() % T.tips.length];
+$('qual').innerHTML = Q.map((q, i) => `<button data-q="${i}">${q}</button>`).join('');
+$('qual').querySelectorAll('button').forEach(b => b.onclick = () => { qual = +b.dataset.q; paintQ(); });
+const paintQ = () => $('qual').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.q === qual));
+function render() {
+  if (current) $('now').innerHTML = `<small>${T.sleeping}</small><b>${clock(current)} · ${hm((Date.now() - current) / 36e5)}</b><button id="nowBtn">${T.wakeBtn}</button>`;
+  else $('now').innerHTML = `<small>${new Date().toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' })}</small><b>${T.bedtime}</b><button id="nowBtn">${T.bedBtn}</button>`;
+  $('nowBtn').onclick = () => { if (current) { open({ bed: current, wake: Date.now(), q: 3, note: '' }, true); } else { current = Date.now(); store.set('current', current); render(); try { if (window.Acornix) Acornix.vibrate(30); } catch (e) {} } };
+  const sorted = [...nights].sort((a, b) => b.wake - a.wake), last7 = sorted.filter(n => Date.now() - n.wake < 7 * 864e5);
+  const avg = last7.length ? last7.reduce((s, n) => s + hrs(n), 0) / last7.length : 0;
+  const bedMins = last7.map(n => { const d = new Date(n.bed); let m = d.getHours() * 60 + d.getMinutes(); if (m < 12 * 60) m += 1440; return m; });
+  const bAvg = bedMins.length ? bedMins.reduce((a, b) => a + b, 0) / bedMins.length % 1440 : null;
+  const best = sorted.length ? sorted.reduce((a, b) => (b.q > a.q || (b.q === a.q && hrs(b) > hrs(a)) ? b : a)) : null;
+  $('stats').innerHTML = `<div><b>${avg ? hm(avg) : '—'}</b><small>${T.avg}</small></div><div><b>${bAvg != null ? `${String(Math.floor(bAvg / 60)).padStart(2, '0')}:${String(Math.round(bAvg % 60)).padStart(2, '0')}` : '—'}</b><small>${T.bedAvg}</small></div><div><b>${best ? Q[best.q] + ' ' + hm(hrs(best)).split(' ')[0] : '—'}</b><small>${T.best}</small></div>`;
+  const recent = sorted.slice(0, 14).reverse(), max = Math.max(10, ...recent.map(hrs));
+  $('chart').innerHTML = `<div class="goal" style="bottom:${goal / max * 100 * .8 + 14}%"><span>${goal}${T.h}</span></div>` + recent.map(n => `<div class="bar"><em>${Q[n.q]}</em><i style="height:${hrs(n) / max * 80}%;${hrs(n) < goal - 1 ? 'background:linear-gradient(#ff9a9a,#e05a7a)' : ''}"></i><small>${new Date(n.wake).toLocaleDateString(loc, { weekday: 'narrow' })}</small></div>`).join('');
+  $('list').innerHTML = sorted.length ? sorted.slice(0, 20).map((n, i) => `<div class="entry" data-i="${nights.indexOf(n)}"><span class="q">${Q[n.q]}</span><span class="d"><b>${new Date(n.wake).toLocaleDateString(loc, { weekday: 'short', day: 'numeric', month: 'short' })}</b><small>${clock(n.bed)} → ${clock(n.wake)}${n.note ? ' · ' + n.note.replace(/</g, '&lt;') : ''}</small></span><span class="h">${hm(hrs(n))}</span></div>`).join('') : `<div class="tip">${T.empty}</div>`;
+  $('list').querySelectorAll('.entry').forEach(e => e.onclick = () => open(nights[+e.dataset.i]));
+}
+function open(n, fromNow) {
+  editing = fromNow ? null : n; $('shT').textContent = editing ? T.edit : T.new;
+  const now = Date.now(), d = n || { bed: now - 8 * 36e5, wake: now, q: 3, note: '' };
+  if (!n) { const b = new Date(); b.setDate(b.getDate() - 1); b.setHours(23, 0, 0, 0); d.bed = b.getTime(); const w = new Date(); w.setHours(7, 0, 0, 0); d.wake = w.getTime(); }
+  $('bed').value = local(d.bed); $('wake').value = local(d.wake); $('note').value = d.note || ''; qual = d.q; paintQ();
+  $('del').style.display = editing ? 'block' : 'none'; $('sheet').classList.add('on');
+}
+$('add').onclick = () => open(null);
+$('save').onclick = () => {
+  const bed = new Date($('bed').value).getTime(), wake = new Date($('wake').value).getTime();
+  if (!(wake > bed) || wake - bed > 20 * 36e5) { $('wake').style.borderColor = '#ff8a8a'; return; }
+  $('wake').style.borderColor = '';
+  const n = { bed, wake, q: qual, note: $('note').value.trim() };
+  if (editing) Object.assign(editing, n); else { nights.push(n); current = null; store.set('current', null); }
+  store.set('nights', nights); $('sheet').classList.remove('on'); render();
+};
+$('del').onclick = () => { nights = nights.filter(n => n !== editing); store.set('nights', nights); $('sheet').classList.remove('on'); render(); };
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').classList.remove('on'); };
+(async () => { nights = await store.get('nights', []); current = await store.get('current', null); render(); setInterval(() => current && render(), 60000); })();
+</script>
+</body>
+</html>
