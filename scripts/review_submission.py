@@ -24,6 +24,9 @@ TRUSTED_HOSTS = {
     "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "unpkg.com", "esm.sh", "cdn.skypack.dev",
     "fonts.googleapis.com", "fonts.gstatic.com", "cdn.tailwindcss.com", "code.jquery.com",
     "threejs.org", "github.com", "gonzaroman.github.io",
+    # Free public APIs that need no key and are common in gallery apps.
+    "api.open-meteo.com", "geocoding-api.open-meteo.com", "air-quality-api.open-meteo.com", "marine-api.open-meteo.com", "open-meteo.com",
+    "api.frankfurter.dev",
 }
 URL = re.compile(r"""https?://([A-Za-z0-9.-]+\.[A-Za-z]{2,})""")
 RISKY = {

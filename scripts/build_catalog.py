@@ -37,7 +37,11 @@ TAGS = {
     "phone": re.compile(r"Acornix\.(speak|flashlight|notify|battery|deviceInfo|listApps|openApp)\b"),
     "camera": re.compile(r"getUserMedia\s*\(\s*\{[^}]*video|\bcapture\s*=|facingMode"),
     "microphone": re.compile(r"getUserMedia\s*\(\s*\{[^}]*audio|SpeechRecognition"),
-    "internet": re.compile(r"<script[^>]+src=[\"']https?://|import\s[^;]*from\s+[\"']https?://|fetch\s*\(\s*[\"'`]https?://"),
+    # Loading scripts or modules from the web, or fetching from a web address, even when the address is kept
+    # in a variable first (an http(s) string plus fetch/XMLHttpRequest/WebSocket anywhere in the code).
+    "internet": re.compile(r"<script[^>]+src=[\"']https?://|import\s[^;]*from\s+[\"']https?://|fetch\s*\(\s*[\"'`]https?://"
+                           r"|(?:\bfetch\s*\(|XMLHttpRequest|new\s+WebSocket)[\s\S]*?[\"'`]https?://(?!www\.w3\.org)"
+                           r"|[\"'`]https?://(?!www\.w3\.org)[^\"'`\s]+[\"'`][\s\S]*?(?:\bfetch\s*\(|XMLHttpRequest|new\s+WebSocket)"),
 }
 
 
