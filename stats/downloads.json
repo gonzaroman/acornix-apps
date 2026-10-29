@@ -5,6 +5,11 @@
       "base": 0,
       "count": 0
     },
+    "ambient-sounds": {
+      "asset": 689917783,
+      "base": 0,
+      "count": 0
+    },
     "battery-info": {
       "asset": 689141947,
       "base": 0,
@@ -135,6 +140,11 @@
       "base": 0,
       "count": 0
     },
+    "ear-trainer": {
+      "asset": 689917591,
+      "base": 0,
+      "count": 0
+    },
     "eisenhower": {
       "asset": 689166926,
       "base": 0,
@@ -205,6 +215,11 @@
       "base": 0,
       "count": 0
     },
+    "guitar-chords": {
+      "asset": 689917501,
+      "base": 0,
+      "count": 0
+    },
     "habit-streaks": {
       "asset": 689166708,
       "base": 0,
@@ -230,6 +245,11 @@
       "base": 0,
       "count": 0
     },
+    "kalimba": {
+      "asset": 689917563,
+      "base": 0,
+      "count": 0
+    },
     "kanban": {
       "asset": 689166735,
       "base": 0,
@@ -247,6 +267,11 @@
     },
     "loan-calculator": {
       "asset": 689202106,
+      "base": 0,
+      "count": 0
+    },
+    "lyrics-writer-ai": {
+      "asset": 689917662,
       "base": 0,
       "count": 0
     },
@@ -282,6 +307,11 @@
     },
     "merge-2048": {
       "asset": 688998694,
+      "base": 0,
+      "count": 0
+    },
+    "metronome": {
+      "asset": 689917436,
       "base": 0,
       "count": 0
     },
@@ -430,6 +460,11 @@
       "base": 0,
       "count": 0
     },
+    "scales": {
+      "asset": 689917705,
+      "base": 0,
+      "count": 0
+    },
     "scoreboard": {
       "asset": 689454717,
       "base": 0,
@@ -510,6 +545,11 @@
       "base": 0,
       "count": 0
     },
+    "synth-pad": {
+      "asset": 689917533,
+      "base": 0,
+      "count": 0
+    },
     "tactics-board": {
       "asset": 689454989,
       "base": 0,
@@ -550,6 +590,11 @@
       "base": 0,
       "count": 0
     },
+    "tone-matrix": {
+      "asset": 689917631,
+      "base": 0,
+      "count": 0
+    },
     "torch-sos": {
       "asset": 689141648,
       "base": 0,
@@ -572,6 +617,11 @@
     },
     "truth-or-dare": {
       "asset": 689038496,
+      "base": 0,
+      "count": 0
+    },
+    "tuner": {
+      "asset": 689917472,
       "base": 0,
       "count": 0
     },

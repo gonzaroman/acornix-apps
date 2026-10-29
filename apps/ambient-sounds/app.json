@@ -1,0 +1,14 @@
+{
+  "id": "ambient-sounds",
+  "name": "Ambient Sounds",
+  "emoji": "🌧️",
+  "category": "music",
+  "description": "Mix rain, thunder, waves, wind, fire, birds, a stream and brown noise to sleep, focus or relax, with a sleep timer.",
+  "prompt": "An ambient sound mixer with eight sounds made in the browser (rain, thunder, waves, wind, fire, birds, stream, brown noise), a volume slider each, presets for sleep, focus, beach, camping and storm, and a timer that fades out.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

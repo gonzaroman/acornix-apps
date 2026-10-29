@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Guitar Chords</title>
+<style>
+  :root { --bg:#fbf6ee; --card:#fff; --ink:#2b2118; --muted:#8c7b69; --a:#c2410c; --wood:#7c4a22; --line:#ecdfcc; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 12px; font-size:28px; }
+  .roots { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .roots button, .types button { padding:10px 0; border-radius:12px; background:var(--card); font-weight:800; box-shadow:0 2px 0 var(--line); }
+  .roots button.on, .types button.on { background:var(--ink); color:#fff; box-shadow:none; }
+  .types { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:8px; }
+  .types button { font-size:13px; }
+  .stage { display:flex; gap:14px; align-items:center; margin-top:14px; padding:16px; border-radius:24px; background:var(--card); box-shadow:0 8px 24px #7c4a2214; }
+  .stage svg { width:52%; flex:none; }
+  .info { flex:1; min-width:0; }
+  .info h2 { margin:0; font-size:42px; font-family:Georgia,serif; }
+  .info .notes { color:var(--muted); font-weight:700; margin:4px 0 12px; }
+  .info button { width:100%; padding:13px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; margin-top:6px; }
+  .info button.alt { background:#f3e8da; color:var(--ink); }
+  .song h3 { margin:18px 4px 8px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; display:flex; justify-content:space-between; }
+  .song h3 button { background:none; color:var(--a); font-weight:800; font-size:13px; }
+  .seq { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; min-height:84px; }
+  .chip { flex:none; width:70px; padding:6px; border-radius:14px; background:var(--card); text-align:center; font-weight:900; border:2px solid transparent; }
+  .chip svg { width:100%; display:block; }
+  .chip.now { border-color:var(--a); }
+  .empty { color:var(--muted); font-weight:600; padding:20px 4px; font-size:14px; }
+  .bar { display:flex; gap:8px; margin-top:8px; align-items:center; }
+  .bar button { padding:12px 16px; border-radius:14px; background:var(--card); font-weight:800; }
+  .bar input { flex:1; accent-color:var(--a); }
+  .bar b { min-width:56px; text-align:right; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+<h1>🎼 <span id="ttl"></span></h1>
+<div class="roots" id="roots"></div>
+<div class="types" id="types"></div>
+<div class="stage"><svg id="diagram" viewBox="0 0 120 150"></svg><div class="info"><h2 id="cname"></h2><div class="notes" id="notes"></div><button id="strum"></button><button class="alt" id="arp"></button><button class="alt" id="add"></button></div></div>
+<div class="song"><h3><span id="songT"></span><button id="clear"></button></h3><div class="seq" id="seq"></div>
+<div class="bar"><button id="playS"></button><input type="range" id="bpm" min="40" max="160" value="80"><b id="bpmV"></b></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Acordes de guitarra', strum:'🎸 Rasguear', arp:'🎶 Arpegio', add:'＋ A mi canción', song:'Mi progresión', clear:'Borrar', empty:'Añade acordes para practicar cambios: sonarán en bucle al ritmo que elijas.', play:'▶ Tocar', stop:'■ Parar' }
+ : { title:'Guitar Chords', strum:'🎸 Strum', arp:'🎶 Arpeggio', add:'＋ Add to my song', song:'My progression', clear:'Clear', empty:'Add chords to practise changes: they\'ll loop at the tempo you choose.', play:'▶ Play', stop:'■ Stop' };
+const ROOTS = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+const SOLF = ES ? ['Do', 'Do#', 'Re', 'Mib', 'Mi', 'Fa', 'Fa#', 'Sol', 'Lab', 'La', 'Sib', 'Si'] : ROOTS;
+const TYPES = [['', ES ? 'Mayor' : 'Major', [0, 4, 7]], ['m', ES ? 'Menor' : 'Minor', [0, 3, 7]], ['7', '7', [0, 4, 7, 10]], ['m7', 'm7', [0, 3, 7, 10]], ['maj7', 'maj7', [0, 4, 7, 11]], ['sus2', 'sus2', [0, 2, 7]], ['sus4', 'sus4', [0, 5, 7]], ['dim', 'dim', [0, 3, 6]], ['add9', 'add9', [0, 4, 7, 14]], ['6', '6', [0, 4, 7, 9]]];
+// Open shapes (low E → high e, -1 = muted) for the chords everyone learns first.
+const OPEN = { 'C': [-1, 3, 2, 0, 1, 0], 'C7': [-1, 3, 2, 3, 1, 0], 'Cmaj7': [-1, 3, 2, 0, 0, 0], 'Cadd9': [-1, 3, 2, 0, 3, 0], 'D': [-1, -1, 0, 2, 3, 2], 'Dm': [-1, -1, 0, 2, 3, 1], 'D7': [-1, -1, 0, 2, 1, 2], 'Dmaj7': [-1, -1, 0, 2, 2, 2], 'Dsus2': [-1, -1, 0, 2, 3, 0], 'Dsus4': [-1, -1, 0, 2, 3, 3], 'Dm7': [-1, -1, 0, 2, 1, 1], 'E': [0, 2, 2, 1, 0, 0], 'Em': [0, 2, 2, 0, 0, 0], 'E7': [0, 2, 0, 1, 0, 0], 'Em7': [0, 2, 2, 0, 3, 0], 'Emaj7': [0, 2, 1, 1, 0, 0], 'Esus4': [0, 2, 2, 2, 0, 0], 'G': [3, 2, 0, 0, 0, 3], 'G7': [3, 2, 0, 0, 0, 1], 'Gmaj7': [3, 2, 0, 0, 0, 2], 'G6': [3, 2, 0, 0, 0, 0], 'A': [-1, 0, 2, 2, 2, 0], 'Am': [-1, 0, 2, 2, 1, 0], 'A7': [-1, 0, 2, 0, 2, 0], 'Am7': [-1, 0, 2, 0, 1, 0], 'Amaj7': [-1, 0, 2, 1, 2, 0], 'Asus2': [-1, 0, 2, 2, 0, 0], 'Asus4': [-1, 0, 2, 2, 3, 0], 'A6': [-1, 0, 2, 2, 2, 2], 'B7': [-1, 2, 1, 2, 0, 2], 'Fmaj7': [-1, -1, 3, 2, 1, 0] };
+// Movable barre shapes, offsets from the barre fret: E-shape (root on 6th string) and A-shape (root on 5th).
+const ESH = { '': [0, 2, 2, 1, 0, 0], 'm': [0, 2, 2, 0, 0, 0], '7': [0, 2, 0, 1, 0, 0], 'm7': [0, 2, 0, 0, 0, 0], 'maj7': [0, -1, 1, 1, 0, -1], 'sus4': [0, 2, 2, 2, 0, 0], '6': [0, -1, 2, 1, 2, -1] };
+const ASH = { '': [-1, 0, 2, 2, 2, 0], 'm': [-1, 0, 2, 2, 1, 0], '7': [-1, 0, 2, 0, 2, 0], 'm7': [-1, 0, 2, 0, 1, 0], 'maj7': [-1, 0, 2, 1, 2, 0], 'sus2': [-1, 0, 2, 2, 0, 0], 'sus4': [-1, 0, 2, 2, 3, 0], 'dim': [-1, 0, 1, 2, 1, -1], 'add9': [-1, 0, 2, 4, 2, 0], '6': [-1, 0, 2, 2, 2, 2] };
+const TUNING = [40, 45, 50, 55, 59, 64];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let root = 0, type = 0, song = [], playing = null, now = -1;
+['ttl', 'strum', 'arp', 'add', 'songT', 'clear'].forEach((id, i) => $(id).textContent = [T.title, T.strum, T.arp, T.add, T.song, T.clear][i]);
+const nameOf = (r, t) => ROOTS[r] + TYPES[t][0];
+function shape(r, t) {
+  const key = nameOf(r, t); if (OPEN[key]) return { frets: OPEN[key], barre: 0 };
+  const sfx = TYPES[t][0], fe = (r - 4 + 12) % 12 || 12, fa = (r - 9 + 12) % 12 || 12;
+  const opts = []; if (ESH[sfx]) opts.push({ base: fe, sh: ESH[sfx] }); if (ASH[sfx]) opts.push({ base: fa, sh: ASH[sfx] });
+  const o = opts.sort((a, b) => a.base - b.base)[0];
+  return { frets: o.sh.map(x => x < 0 ? -1 : x + o.base), barre: o.base };
+}
+function svg(sh, small) {
+  const played = sh.frets.filter(f => f > 0), lo = Math.min(...played), hi = Math.max(...played), start = hi <= 4 ? 1 : lo;
+  const x = s => 18 + s * 17, y = f => 28 + (f - start + .5) * 22;
+  let g = `<rect x="18" y="28" width="85" height="110" fill="#fff8ec" rx="3"/>`;
+  for (let f = 0; f <= 5; f++) g += `<line x1="18" x2="103" y1="${28 + f * 22}" y2="${28 + f * 22}" stroke="#a88b6c" stroke-width="${f === 0 && start === 1 ? 5 : 1.4}"/>`;
+  for (let s = 0; s < 6; s++) g += `<line x1="${x(s)}" x2="${x(s)}" y1="28" y2="138" stroke="#6b5a48" stroke-width="${1 + (5 - s) * .25}"/>`;
+  if (start > 1) g += `<text x="12" y="${y(start) + 4}" font-size="12" font-weight="800" text-anchor="middle" fill="#8c7b69">${start}</text>`;
+  if (sh.barre) { const strs = sh.frets.map((f, i) => f === sh.barre ? i : -1).filter(i => i >= 0), a = Math.min(...strs), b = Math.max(...strs); if (b > a) g += `<rect x="${x(a) - 6}" y="${y(sh.barre) - 6}" width="${x(b) - x(a) + 12}" height="12" rx="6" fill="#c2410c"/>`; }
+  sh.frets.forEach((f, s) => { if (f < 0) g += `<text x="${x(s)}" y="20" font-size="13" font-weight="900" text-anchor="middle" fill="#8c7b69">×</text>`; else if (f === 0) g += `<circle cx="${x(s)}" cy="15" r="4.5" fill="none" stroke="#8c7b69" stroke-width="1.6"/>`; else if (!(sh.barre && f === sh.barre)) g += `<circle cx="${x(s)}" cy="${y(f)}" r="7" fill="#c2410c"/>`; });
+  return small ? g : g;
+}
+function render() {
+  $('roots').innerHTML = SOLF.map((n, i) => `<button data-r="${i}" class="${root === i ? 'on' : ''}">${n}</button>`).join('');
+  $('roots').querySelectorAll('button').forEach(b => b.onclick = () => { root = +b.dataset.r; render(); strum(); });
+  $('types').innerHTML = TYPES.map((t, i) => `<button data-t="${i}" class="${type === i ? 'on' : ''}">${t[1]}</button>`).join('');
+  $('types').querySelectorAll('button').forEach(b => b.onclick = () => { type = +b.dataset.t; render(); strum(); });
+  const sh = shape(root, type); $('diagram').innerHTML = svg(sh);
+  $('cname').textContent = SOLF[root] + TYPES[type][0];
+  $('notes').textContent = TYPES[type][2].map(i => SOLF[(root + i) % 12]).join(' · ');
+  $('seq').innerHTML = song.length ? song.map(([r, t], i) => `<button class="chip ${i === now ? 'now' : ''}" data-i="${i}"><svg viewBox="0 0 120 150">${svg(shape(r, t), true)}</svg>${SOLF[r]}${TYPES[t][0]}</button>`).join('') : `<div class="empty">${T.empty}</div>`;
+  $('seq').querySelectorAll('.chip').forEach(b => { b.onclick = () => { [root, type] = song[+b.dataset.i]; render(); strum(); }; b.oncontextmenu = e => { e.preventDefault(); song.splice(+b.dataset.i, 1); save(); render(); }; });
+  $('bpmV').textContent = $('bpm').value + ' bpm'; $('playS').textContent = playing ? T.stop : T.play;
+}
+function save() { store.set('song', song); }
+// Karplus-Strong plucked string, rendered once per note and cached.
+let ac; const cache = {};
+function pluckBuf(midi) {
+  if (cache[midi]) return cache[midi];
+  const sr = ac.sampleRate, f = 440 * Math.pow(2, (midi - 69) / 12), N = Math.round(sr / f), len = Math.round(sr * 2.4), out = new Float32Array(len), ring = new Float32Array(N);
+  for (let i = 0; i < N; i++) ring[i] = Math.random() * 2 - 1;
+  let p = 0; for (let i = 0; i < len; i++) { const nx = (p + 1) % N, v = (ring[p] + ring[nx]) * .4975; out[i] = ring[p]; ring[p] = v; p = nx; }
+  const b = ac.createBuffer(1, len, sr); b.copyToChannel(out, 0); return cache[midi] = b;
+}
+function play(r, t, arp) {
+  ac = ac || new AudioContext(); ac.resume();
+  const sh = shape(r, t), t0 = ac.currentTime + .02;
+  sh.frets.forEach((f, s) => { if (f < 0) return; const src = ac.createBufferSource(), g = ac.createGain(); src.buffer = pluckBuf(TUNING[s] + f); g.gain.value = .35; src.connect(g); g.connect(ac.destination); src.start(t0 + (arp ? s * .18 : s * .022)); });
+  try { if (window.Acornix) Acornix.vibrate(12); } catch (e) {}
+}
+const strum = () => play(root, type, false);
+$('strum').onclick = strum; $('arp').onclick = () => play(root, type, true);
+$('add').onclick = () => { song.push([root, type]); song = song.slice(-16); save(); render(); };
+$('clear').onclick = () => { song = []; stopSong(); save(); render(); };
+$('bpm').oninput = () => { $('bpmV').textContent = $('bpm').value + ' bpm'; store.set('bpm', +$('bpm').value); if (playing) { stopSong(); startSong(); } };
+function startSong() { if (!song.length) return; now = -1; const beat = () => { now = (now + 1) % song.length; const [r, t] = song[now]; play(r, t, false); render(); }; beat(); playing = setInterval(beat, 60000 / +$('bpm').value * 4); render(); }
+function stopSong() { clearInterval(playing); playing = null; now = -1; render(); }
+$('playS').onclick = () => playing ? stopSong() : startSong();
+(async () => { song = await store.get('song', [[0, 0], [9, 1], [5, 0], [7, 0]]); $('bpm').value = await store.get('bpm', 80); render(); })();
+</script>
+</body>
+</html>

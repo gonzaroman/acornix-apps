@@ -1,0 +1,14 @@
+{
+  "id": "synth-pad",
+  "name": "Synth Pad",
+  "emoji": "🎛️",
+  "category": "music",
+  "description": "Slide your fingers to play: left and right change the note, up and down the brightness. Glowing, multi-touch and always in tune.",
+  "prompt": "A multi-touch synth pad: horizontal position picks the note snapped to a scale (pentatonic, major, minor, blues, Japanese or free), vertical position opens the filter, with saw, square, triangle and sine waves, echo, glide, octave and glowing visuals.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

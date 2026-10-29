@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Tone Matrix</title>
+<style>
+  :root { --bg:#050510; --ink:#e8f0ff; --muted:#7f8bb0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:10px; }
+  .top { width:100%; display:flex; justify-content:space-between; align-items:center; }
+  .top h1 { margin:0; font-size:20px; }
+  canvas { touch-action:none; border-radius:14px; }
+  .bar { width:100%; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+  .bar button { padding:10px 14px; border-radius:12px; background:#ffffff14; font-weight:800; font-size:14px; }
+  .bar button.on { background:#7cf; color:#051018; }
+  .tempo { width:100%; display:flex; align-items:center; gap:10px; color:var(--muted); font-weight:800; font-size:13px; }
+  .tempo input { flex:1; accent-color:#7cf; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎵 <span id="ttl"></span></h1><button id="play" style="padding:10px 18px;border-radius:14px;background:#7cf;color:#051018;font-weight:900"></button></div>
+  <canvas id="c"></canvas>
+  <div class="tempo"><span id="lTempo"></span><input type="range" id="bpm" min="60" max="200" value="120"><span id="bpmV"></span></div>
+  <div class="bar"><button data-s="0" class="snd"></button><button data-s="1" class="snd"></button><button data-s="2" class="snd"></button><button id="rand">🎲</button><button id="clear">🧹</button><button id="share">🔗</button></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Matriz de tonos', play:'▶ Tocar', stop:'■ Parar', tempo:'Tempo', sounds:['✨ Campanas','🎹 Teclas','🌊 Suave'], copied:'Enlace copiado' }
+ : { title:'Tone Matrix', play:'▶ Play', stop:'■ Stop', tempo:'Tempo', sounds:['✨ Bells','🎹 Keys','🌊 Soft'], copied:'Link copied' };
+const N = 16, PENTA = [0, 2, 4, 7, 9];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+let grid = Array.from({ length: N }, () => Array(N).fill(0)), sound = 0, playing = false, col = -1, ac, nextT = 0, step = 0, timer, ripples = [], S, dpr;
+$('ttl').textContent = T.title; $('lTempo').textContent = T.tempo;
+document.querySelectorAll('.snd').forEach(b => b.textContent = T.sounds[+b.dataset.s]);
+// Row 0 is the top (highest note).
+const midi = r => { const k = N - 1 - r; return 57 + Math.floor(k / 5) * 12 + PENTA[k % 5]; };
+// Encode the grid as 16 hex words for the URL and storage.
+const enc = () => grid.map(row => parseInt(row.join(''), 2).toString(16).padStart(4, '0')).join('');
+const dec = s => { if (!/^[0-9a-f]{64}$/.test(s)) return null; return Array.from({ length: N }, (_, r) => parseInt(s.slice(r * 4, r * 4 + 4), 16).toString(2).padStart(N, '0').split('').map(Number)); };
+function save() { try { localStorage.setItem('grid', enc()); localStorage.setItem('snd', sound); } catch (e) {} }
+function size() { const w = Math.min(innerWidth - 24, innerHeight - 230, 560); dpr = Math.min(2, devicePixelRatio || 1); S = w / N; cv.style.width = cv.style.height = w + 'px'; cv.width = cv.height = w * dpr; }
+addEventListener('resize', size); size();
+function tone(m, t) {
+  const f = 440 * Math.pow(2, (m - 69) / 12), o = ac.createOscillator(), g = ac.createGain(), out = ac.createGain(); out.gain.value = .5; out.connect(ac.destination);
+  if (sound === 0) { o.type = 'sine'; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.16, t + .005); g.gain.exponentialRampToValueAtTime(.0001, t + 1.4); const o2 = ac.createOscillator(), g2 = ac.createGain(); o2.frequency.value = f * 3; g2.gain.setValueAtTime(.03, t); g2.gain.exponentialRampToValueAtTime(.0001, t + .4); o2.connect(g2); g2.connect(out); o2.start(t); o2.stop(t + .5); }
+  else if (sound === 1) { o.type = 'triangle'; g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.0001, t + .5); }
+  else { o.type = 'sine'; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.12, t + .08); g.gain.exponentialRampToValueAtTime(.0001, t + 1.2); }
+  o.frequency.value = f; o.connect(g); g.connect(out); o.start(t); o.stop(t + 1.5);
+}
+const queue = [];
+function schedule() { const dur = 60 / +$('bpm').value / 2; while (nextT < ac.currentTime + .1) { const c = step % N; grid.forEach((row, r) => { if (row[c]) tone(midi(r), nextT); }); queue.push({ t: nextT, c }); nextT += dur; step++; } }
+function start() { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); playing = true; step = 0; nextT = ac.currentTime + .05; timer = setInterval(schedule, 25); schedule(); $('play').textContent = T.stop; }
+function stop() { playing = false; clearInterval(timer); col = -1; queue.length = 0; $('play').textContent = T.play; }
+$('play').onclick = () => playing ? stop() : start();
+let paint = null;
+function cell(e) { const b = cv.getBoundingClientRect(); return [Math.floor((e.clientY - b.top) / S), Math.floor((e.clientX - b.left) / S)]; }
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); const [r, c] = cell(e); if (r < 0 || r >= N || c < 0 || c >= N) return; paint = grid[r][c] ? 0 : 1; grid[r][c] = paint; save(); if (!playing) { ac = ac || new AudioContext(); ac.resume(); if (paint) tone(midi(r), ac.currentTime); } });
+cv.addEventListener('pointermove', e => { if (paint == null) return; const [r, c] = cell(e); if (r >= 0 && r < N && c >= 0 && c < N && grid[r][c] !== paint) { grid[r][c] = paint; save(); } });
+['pointerup', 'pointercancel'].forEach(ev => cv.addEventListener(ev, () => paint = null));
+(function frame() {
+  if (playing) while (queue.length && queue[0].t <= ac.currentTime) { col = queue.shift().c; grid.forEach((row, r) => { if (row[col]) ripples.push({ r, c: col, life: 1 }); }); }
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, S * N, S * N); cx.fillStyle = '#0b0b1e'; cx.fillRect(0, 0, S * N, S * N);
+  // Ripples spread light to neighbouring cells.
+  const glow = Array.from({ length: N }, () => Array(N).fill(0));
+  ripples = ripples.filter(p => (p.life -= .045) > 0);
+  ripples.forEach(p => { const rad = (1 - p.life) * 4; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) { const d = Math.hypot(r - p.r, c - p.c); if (Math.abs(d - rad) < .8) glow[r][c] = Math.max(glow[r][c], p.life * .6); } });
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const on = grid[r][c], active = on && c === col, g = glow[r][c], x = c * S + 2, y = r * S + 2, w = S - 4;
+    cx.fillStyle = active ? '#ffffff' : on ? `hsl(${195 + r * 6},90%,${62}%)` : g ? `rgba(120,200,255,${g})` : c === col ? '#1d2140' : '#15152e';
+    if (active) { cx.shadowColor = '#7cf'; cx.shadowBlur = 18; }
+    cx.beginPath(); cx.roundRect ? cx.roundRect(x, y, w, w, S * .18) : cx.rect(x, y, w, w); cx.fill(); cx.shadowBlur = 0;
+  }
+  requestAnimationFrame(frame);
+})();
+$('bpm').oninput = () => { $('bpmV').textContent = $('bpm').value; try { localStorage.setItem('bpm', $('bpm').value); } catch (e) {} };
+document.querySelectorAll('.snd').forEach(b => b.onclick = () => { sound = +b.dataset.s; save(); document.querySelectorAll('.snd').forEach(x => x.classList.toggle('on', +x.dataset.s === sound)); });
+$('clear').onclick = () => { grid = grid.map(row => row.map(() => 0)); save(); };
+$('rand').onclick = () => { grid = grid.map((row, r) => row.map((_, c) => Math.random() < .09 ? 1 : 0)); save(); if (!playing) start(); };
+$('share').onclick = async () => { const url = location.href.split('#')[0] + '#' + enc(); try { if (window.Acornix) Acornix.share(url); else { await navigator.clipboard.writeText(url); } } catch (e) {} };
+(() => {
+  let g = dec(location.hash.slice(1)); try { g = g || dec(localStorage.getItem('grid') || ''); sound = +(localStorage.getItem('snd') || 0); $('bpm').value = localStorage.getItem('bpm') || 120; } catch (e) {}
+  // A small melody so the grid isn't empty the first time.
+  grid = g || grid.map((row, r) => row.map((_, c) => [[12, 0], [10, 2], [8, 4], [10, 6], [12, 8], [12, 9], [12, 10], [10, 12], [10, 13], [8, 14], [15, 0], [15, 4], [13, 8], [15, 12]].some(([rr, cc]) => rr === r && cc === c) ? 1 : 0));
+  $('play').textContent = T.play; $('bpmV').textContent = $('bpm').value;
+  document.querySelectorAll('.snd').forEach(x => x.classList.toggle('on', +x.dataset.s === sound));
+})();
+</script>
+</body>
+</html>

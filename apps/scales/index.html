@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scales</title>
+<style>
+  :root { --bg:#f1f4f9; --card:#fff; --ink:#172036; --muted:#6b7590; --a:#1971c2; --root:#e8590c; --line:#dfe5ef; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 12px; font-size:28px; }
+  .roots { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .roots button { padding:9px 0; border-radius:12px; background:var(--card); font-weight:800; }
+  .roots button.on { background:var(--root); color:#fff; }
+  .scales { display:flex; gap:6px; overflow-x:auto; margin:8px 0; padding-bottom:4px; scrollbar-width:none; }
+  .scales::-webkit-scrollbar { display:none; }
+  .scales button { flex:none; padding:9px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; }
+  .scales button.on { background:var(--ink); color:#fff; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; }
+  .card h2 { margin:0 0 4px; font-size:22px; }
+  .card .feel { color:var(--muted); font-weight:600; font-size:14px; margin-bottom:10px; }
+  .notes { display:flex; flex-wrap:wrap; gap:6px; }
+  .notes span { min-width:44px; padding:8px 6px; border-radius:12px; background:#e7f0fb; text-align:center; font-weight:900; }
+  .notes span small { display:block; font-size:10px; color:var(--muted); font-weight:700; }
+  .notes span.r { background:#ffe8d9; color:var(--root); }
+  .steps { margin-top:10px; font-family:ui-monospace,Menlo,monospace; font-weight:800; color:var(--muted); letter-spacing:2px; }
+  .piano { position:relative; height:150px; margin-top:4px; touch-action:none; }
+  .wk { position:absolute; top:0; bottom:0; border:1px solid #c8d0dd; border-radius:0 0 8px 8px; background:#fff; display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px; font-size:11px; font-weight:900; color:#fff; }
+  .bk { position:absolute; top:0; height:60%; border-radius:0 0 6px 6px; background:#222a3a; z-index:2; display:flex; align-items:flex-end; justify-content:center; padding-bottom:5px; font-size:9px; font-weight:900; color:#fff; }
+  .wk.in { background:linear-gradient(#fff 40%,#cfe3fa); } .bk.in { background:#3d79c4; }
+  .wk .dot, .bk .dot { width:18px; height:18px; border-radius:50%; background:var(--a); display:grid; place-items:center; }
+  .wk.r .dot, .bk.r .dot { background:var(--root); }
+  .wk.hit { background:#ffd8a8; } .bk.hit { background:#e8590c; }
+  .fret { overflow-x:auto; }
+  .fret svg { display:block; }
+  .ctl { display:flex; gap:8px; margin-top:10px; }
+  .ctl button { flex:1; padding:13px; border-radius:14px; background:var(--a); color:#fff; font-weight:900; }
+  .ctl button.alt { background:#e7f0fb; color:var(--a); }
+  .seg { display:flex; gap:6px; margin-bottom:8px; }
+  .seg button { flex:1; padding:9px; border-radius:12px; background:var(--bg); font-weight:800; font-size:13px; color:var(--muted); }
+  .seg button.on { background:var(--ink); color:#fff; }
+</style>
+</head>
+<body>
+<h1>🎹 <span id="ttl"></span></h1>
+<div class="roots" id="roots"></div>
+<div class="scales" id="scales"></div>
+<div class="card"><h2 id="sname"></h2><div class="feel" id="feel"></div><div class="notes" id="notes"></div><div class="steps" id="steps"></div><div class="ctl"><button id="up"></button><button class="alt" id="down"></button></div></div>
+<div class="card"><div class="seg" id="view"></div><div id="inst"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const NOTE = ES ? ['Do', 'Do♯', 'Re', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'] : ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
+const T = ES ? { title:'Escalas', up:'▶ Subir', down:'◀ Bajar', piano:'Piano', guitar:'Guitarra', W:'T', H:'S', tap:'Toca las teclas o los trastes para oírlos' }
+ : { title:'Scales', up:'▶ Up', down:'◀ Down', piano:'Piano', guitar:'Guitar', W:'W', H:'H', tap:'Tap keys or frets to hear them' };
+const DEG = ['1', '♭2', '2', '♭3', '3', '4', '♯4', '5', '♭6', '6', '♭7', '7'];
+const SCALES = [
+  [ES ? 'Mayor' : 'Major', [0, 2, 4, 5, 7, 9, 11], ES ? 'Alegre y luminosa: la base de casi todo.' : 'Bright and happy: the base of almost everything.'],
+  [ES ? 'Menor natural' : 'Natural minor', [0, 2, 3, 5, 7, 8, 10], ES ? 'Melancólica y seria.' : 'Melancholic and serious.'],
+  [ES ? 'Pentatónica mayor' : 'Major pentatonic', [0, 2, 4, 7, 9], ES ? 'Cinco notas que nunca suenan mal. Folk y country.' : 'Five notes that never sound wrong. Folk and country.'],
+  [ES ? 'Pentatónica menor' : 'Minor pentatonic', [0, 3, 5, 7, 10], ES ? 'La de los solos de rock y blues.' : 'The rock and blues solo scale.'],
+  ['Blues', [0, 3, 5, 6, 7, 10], ES ? 'Pentatónica menor con la “blue note”.' : 'Minor pentatonic plus the “blue note”.'],
+  [ES ? 'Menor armónica' : 'Harmonic minor', [0, 2, 3, 5, 7, 8, 11], ES ? 'Dramática, con aire clásico y oriental.' : 'Dramatic, with a classical and eastern flavour.'],
+  [ES ? 'Dórica' : 'Dorian', [0, 2, 3, 5, 7, 9, 10], ES ? 'Menor con un toque de luz. Jazz y funk.' : 'Minor with a touch of light. Jazz and funk.'],
+  [ES ? 'Mixolidia' : 'Mixolydian', [0, 2, 4, 5, 7, 9, 10], ES ? 'Mayor con séptima menor. Rock clásico.' : 'Major with a flat seventh. Classic rock.'],
+  [ES ? 'Frigia' : 'Phrygian', [0, 1, 3, 5, 7, 8, 10], ES ? 'Oscura, con sabor flamenco.' : 'Dark, with a flamenco feel.'],
+  [ES ? 'Lidia' : 'Lydian', [0, 2, 4, 6, 7, 9, 11], ES ? 'Soñadora, de banda sonora.' : 'Dreamy, film-score sound.'],
+  [ES ? 'Cromática' : 'Chromatic', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], ES ? 'Las doce notas.' : 'All twelve notes.'],
+];
+const $ = id => document.getElementById(id);
+let root = 0, sc = 0, view = 0, ac;
+try { const s = JSON.parse(localStorage.getItem('scales') || '{}'); root = s.root || 0; sc = s.sc || 0; view = s.view || 0; } catch (e) {}
+const save = () => { try { localStorage.setItem('scales', JSON.stringify({ root, sc, view })); } catch (e) {} };
+$('ttl').textContent = T.title; $('up').textContent = T.up; $('down').textContent = T.down;
+function tone(midi, t = 0) {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); const s = ac.currentTime + t, f = 440 * Math.pow(2, (midi - 69) / 12);
+  [1, 2, 3].forEach((h, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = i ? 'sine' : 'triangle'; o.frequency.value = f * h; g.gain.setValueAtTime(0, s); g.gain.linearRampToValueAtTime(.2 / (h * h), s + .01); g.gain.exponentialRampToValueAtTime(.0001, s + .9); o.connect(g); g.connect(ac.destination); o.start(s); o.stop(s + 1); });
+  setTimeout(() => flash(midi), t * 1000);
+}
+function flash(m) { document.querySelectorAll(`[data-m="${m}"]`).forEach(el => { el.classList.add('hit'); setTimeout(() => el.classList.remove('hit'), 280); }); }
+const inScale = m => SCALES[sc][1].includes(((m - root) % 12 + 12) % 12);
+function piano() {
+  // Two octaves from C4; white keys laid out first, black keys on top.
+  const whites = [], blacks = []; let wi = 0;
+  for (let m = 60; m <= 84; m++) { const n = m % 12, isB = [1, 3, 6, 8, 10].includes(n); (isB ? blacks : whites).push({ m, n, x: isB ? wi - .32 : wi++ }); }
+  const W = 100 / wi, iv = m => ((m - root) % 12 + 12) % 12;
+  return `<div class="piano">${whites.map(k => `<div class="wk ${inScale(k.m) ? 'in' : ''} ${iv(k.m) === 0 ? 'r' : ''}" data-m="${k.m}" style="left:${k.x * W}%;width:${W}%">${inScale(k.m) ? `<span class="dot">${DEG[iv(k.m)]}</span>` : ''}</div>`).join('')}${blacks.map(k => `<div class="bk ${inScale(k.m) ? 'in' : ''} ${iv(k.m) === 0 ? 'r' : ''}" data-m="${k.m}" style="left:${k.x * W}%;width:${W * .64}%">${inScale(k.m) ? `<span class="dot" style="width:14px;height:14px;font-size:8px">${DEG[iv(k.m)]}</span>` : ''}</div>`).join('')}</div><div class="feel" style="margin:8px 0 0">${T.tap}</div>`;
+}
+function guitar() {
+  const TUN = [64, 59, 55, 50, 45, 40], frets = 15, fw = 46, sh = 22, w = 30 + frets * fw;
+  let g = `<svg viewBox="0 0 ${w} 150" style="width:${w}px;max-width:none;height:150px">`;
+  for (let f = 0; f <= frets; f++) g += `<line x1="${30 + f * fw}" x2="${30 + f * fw}" y1="14" y2="${14 + 5 * sh}" stroke="${f ? '#b9c2d0' : '#172036'}" stroke-width="${f ? 2 : 5}"/>`;
+  [3, 5, 7, 9, 15].forEach(f => g += `<circle cx="${30 + (f - .5) * fw}" cy="${14 + 2.5 * sh}" r="5" fill="#dfe5ef"/>`); g += `<circle cx="${30 + 11.5 * fw}" cy="${14 + 1.5 * sh}" r="5" fill="#dfe5ef"/><circle cx="${30 + 11.5 * fw}" cy="${14 + 3.5 * sh}" r="5" fill="#dfe5ef"/>`;
+  TUN.forEach((o, s) => g += `<line x1="30" x2="${w}" y1="${14 + s * sh}" y2="${14 + s * sh}" stroke="#8a93a6" stroke-width="${1 + s * .35}"/>`);
+  TUN.forEach((o, s) => { for (let f = 0; f <= frets; f++) { const m = o + f; if (!inScale(m)) continue; const iv = ((m - root) % 12 + 12) % 12, x = f ? 30 + (f - .5) * fw : 14; g += `<g data-m="${m}" class="fn" style="cursor:pointer"><circle cx="${x}" cy="${14 + s * sh}" r="9.5" fill="${iv === 0 ? '#e8590c' : '#1971c2'}"/><text x="${x}" y="${14 + s * sh + 3.5}" text-anchor="middle" font-size="9" font-weight="900" fill="#fff">${DEG[iv]}</text></g>`; } });
+  for (let f = 1; f <= frets; f++) g += `<text x="${30 + (f - .5) * fw}" y="146" text-anchor="middle" font-size="10" font-weight="700" fill="#6b7590">${f}</text>`;
+  return `<div class="fret">${g}</svg></div><div class="feel" style="margin:8px 0 0">${T.tap}</div>`;
+}
+function render() {
+  $('roots').innerHTML = NOTE.map((n, i) => `<button data-r="${i}" class="${root === i ? 'on' : ''}">${n}</button>`).join('');
+  $('roots').querySelectorAll('button').forEach(b => b.onclick = () => { root = +b.dataset.r; save(); render(); });
+  $('scales').innerHTML = SCALES.map((s, i) => `<button data-s="${i}" class="${sc === i ? 'on' : ''}">${s[0]}</button>`).join('');
+  $('scales').querySelectorAll('button').forEach(b => b.onclick = () => { sc = +b.dataset.s; save(); render(); });
+  const [name, ivs, feel] = SCALES[sc];
+  $('sname').textContent = `${NOTE[root]} ${name}`; $('feel').textContent = feel;
+  $('notes').innerHTML = ivs.map(i => `<span class="${i ? '' : 'r'}">${NOTE[(root + i) % 12]}<small>${DEG[i]}</small></span>`).join('');
+  $('steps').textContent = [...ivs, 12].slice(1).map((v, i) => { const d = v - ivs[i]; return d === 1 ? T.H : d === 2 ? T.W : d === 3 ? 'W+H' : d; }).join(' ');
+  $('view').innerHTML = [T.piano, T.guitar].map((v, i) => `<button data-v="${i}" class="${view === i ? 'on' : ''}">${v}</button>`).join('');
+  $('view').querySelectorAll('button').forEach(b => b.onclick = () => { view = +b.dataset.v; save(); render(); });
+  $('inst').innerHTML = view ? guitar() : piano();
+  $('inst').querySelectorAll('[data-m]').forEach(el => el.addEventListener('pointerdown', () => tone(+el.dataset.m)));
+}
+function run(dir) { const base = 60 + root, ivs = [...SCALES[sc][1], 12], seq = ivs.map(i => base + i); (dir > 0 ? seq : seq.reverse()).forEach((m, i) => tone(m, i * .28)); }
+$('up').onclick = () => run(1); $('down').onclick = () => run(-1);
+render();
+</script>
+</body>
+</html>

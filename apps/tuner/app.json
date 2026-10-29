@@ -1,0 +1,14 @@
+{
+  "id": "tuner",
+  "name": "Tuner",
+  "emoji": "🎸",
+  "category": "music",
+  "description": "Tune your guitar, bass, ukulele or violin with the microphone: a needle shows how far you are, and it turns green when it's right.",
+  "prompt": "A chromatic and instrument tuner using the microphone with pitch detection, a needle in cents, the nearest string for guitar, bass, ukulele and violin, tune up or down hints, reference A from 415 to 466 Hz and tappable strings that play the target note.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

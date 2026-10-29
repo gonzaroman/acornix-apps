@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Metronome</title>
+<style>
+  :root { --bg:#14110f; --card:#221d19; --ink:#f7efe6; --muted:#a8998a; --a:#ff9f43; --b:#ee5253; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  h1 { margin:0; font-size:20px; }
+  .beats { display:flex; justify-content:center; gap:10px; margin:22px 0 8px; flex-wrap:wrap; }
+  .beat { width:30px; height:30px; border-radius:50%; background:var(--card); border:2px solid #3a312a; transition:transform .06s, background .06s; }
+  .beat.acc { border-color:var(--a); }
+  .beat.mute { opacity:.3; }
+  .beat.on { background:var(--a); transform:scale(1.25); }
+  .beat.on.acc { background:var(--b); }
+  .arm { position:relative; height:150px; margin:6px auto 0; width:100%; }
+  .arm i { position:absolute; left:50%; bottom:0; width:6px; height:140px; margin-left:-3px; border-radius:3px; background:linear-gradient(var(--a),#7a4a1c); transform-origin:50% 100%; }
+  .arm i::after { content:''; position:absolute; left:-9px; top:22px; width:24px; height:16px; border-radius:5px; background:var(--ink); }
+  .bpm { text-align:center; margin-top:10px; }
+  .bpm b { font-size:84px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-3px; }
+  .bpm small { display:block; color:var(--muted); font-weight:700; margin-top:2px; }
+  .slider { display:flex; align-items:center; gap:10px; margin:14px 0; }
+  .slider button { width:52px; height:52px; border-radius:16px; background:var(--card); font-size:24px; font-weight:900; }
+  .slider input { flex:1; accent-color:var(--a); }
+  .row { display:flex; gap:8px; margin-bottom:8px; }
+  .row button { flex:1; padding:12px 4px; border-radius:14px; background:var(--card); font-weight:800; font-size:14px; }
+  .row button.on { background:#3a2c20; color:var(--a); outline:2px solid var(--a); }
+  .play { margin-top:auto; padding:20px; border-radius:22px; background:var(--a); color:#2a1606; font-weight:900; font-size:22px; }
+  .play.on { background:var(--b); color:#fff; }
+  .lbl { color:var(--muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; margin:6px 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🥁 <span id="ttl"></span></h1>
+  <div class="beats" id="beats"></div>
+  <div class="arm"><i id="arm"></i></div>
+  <div class="bpm"><b id="bpm"></b><small id="tempo"></small></div>
+  <div class="slider"><button id="minus">−</button><input type="range" id="range" min="30" max="260"><button id="plus">+</button></div>
+  <div class="lbl" id="lSig"></div><div class="row" id="sigs"></div>
+  <div class="lbl" id="lSub"></div><div class="row" id="subs"></div>
+  <div class="row"><button id="tap"></button><button id="sound"></button></div>
+  <button class="play" id="play"></button>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Metrónomo', sig:'Compás', sub:'Subdivisión', tap:'👆 Marcar tempo', play:'▶ Empezar', stop:'■ Parar', sounds:['🔔 Clic','🪵 Madera','🎵 Pitido'], hint:'Toca un punto para acentuarlo o silenciarlo', names:[[40,'Grave'],[60,'Largo'],[66,'Lento'],[76,'Adagio'],[108,'Andante'],[120,'Moderato'],[156,'Allegro'],[176,'Vivace'],[200,'Presto'],[999,'Prestissimo']] }
+ : { title:'Metronome', sig:'Time signature', sub:'Subdivision', tap:'👆 Tap tempo', play:'▶ Start', stop:'■ Stop', sounds:['🔔 Click','🪵 Wood','🎵 Beep'], hint:'Tap a dot to accent or mute it', names:[[40,'Grave'],[60,'Largo'],[66,'Lento'],[76,'Adagio'],[108,'Andante'],[120,'Moderato'],[156,'Allegro'],[176,'Vivace'],[200,'Presto'],[999,'Prestissimo']] };
+const SIGS = [[2, 4], [3, 4], [4, 4], [5, 4], [6, 8], [7, 8]], SUBS = [[1, '♩'], [2, '♫'], [3, '³'], [4, '♬']];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let c = { bpm: 100, sig: 2, sub: 0, sound: 0, marks: null }, running = false, ac, nextT = 0, step = 0, timer, queue = [];
+['ttl', 'lSig', 'lSub', 'tap'].forEach((id, i) => $(id).textContent = [T.title, T.sig, T.sub, T.tap][i]);
+const beatsN = () => SIGS[c.sig][0];
+// Marks per beat: 2 = accent, 1 = normal, 0 = muted.
+function marks() { if (!c.marks || c.marks.length !== beatsN()) c.marks = Array.from({ length: beatsN() }, (_, i) => i === 0 || (SIGS[c.sig][1] === 8 && i % 3 === 0) ? 2 : 1); return c.marks; }
+function render() {
+  $('bpm').textContent = c.bpm; $('range').value = c.bpm; $('tempo').textContent = T.names.find(([m]) => c.bpm < m)[1];
+  $('beats').innerHTML = marks().map((m, i) => `<button class="beat ${m === 2 ? 'acc' : ''} ${m === 0 ? 'mute' : ''}" data-i="${i}" title="${T.hint}"></button>`).join('');
+  $('beats').querySelectorAll('.beat').forEach(b => b.onclick = () => { const i = +b.dataset.i; c.marks[i] = (c.marks[i] + 2) % 3; save(); render(); });
+  $('sigs').innerHTML = SIGS.map(([a, b], i) => `<button data-i="${i}" class="${c.sig === i ? 'on' : ''}">${a}/${b}</button>`).join('');
+  $('sigs').querySelectorAll('button').forEach(b => b.onclick = () => { c.sig = +b.dataset.i; c.marks = null; save(); render(); });
+  $('subs').innerHTML = SUBS.map(([n, s], i) => `<button data-i="${i}" class="${c.sub === i ? 'on' : ''}" style="font-size:20px">${s}</button>`).join('');
+  $('subs').querySelectorAll('button').forEach(b => b.onclick = () => { c.sub = +b.dataset.i; save(); render(); });
+  $('sound').textContent = T.sounds[c.sound];
+  $('play').textContent = running ? T.stop : T.play; $('play').classList.toggle('on', running);
+}
+function save() { store.set('cfg', c); }
+function setBpm(v) { c.bpm = Math.max(30, Math.min(260, Math.round(v))); save(); render(); }
+function click(t, level) {
+  const o = ac.createOscillator(), g = ac.createGain(), vol = level === 2 ? .5 : level === 1 ? .3 : .12;
+  if (c.sound === 1) { o.type = 'triangle'; o.frequency.setValueAtTime(level === 2 ? 1400 : 1000, t); o.frequency.exponentialRampToValueAtTime(300, t + .03); }
+  else if (c.sound === 2) { o.type = 'sine'; o.frequency.value = level === 2 ? 1760 : level === 1 ? 880 : 660; }
+  else { o.type = 'square'; o.frequency.value = level === 2 ? 2000 : level === 1 ? 1500 : 1100; }
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + (c.sound === 2 ? .08 : .035));
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + .1);
+}
+// Lookahead scheduler: audio is timed by the AudioContext clock, the screen just follows.
+function schedule() {
+  const subs = SUBS[c.sub][0], dur = 60 / c.bpm / subs;
+  while (nextT < ac.currentTime + .12) {
+    const beat = Math.floor(step / subs) % beatsN(), isBeat = step % subs === 0, m = marks()[beat];
+    if (m > 0) click(nextT, isBeat ? m : -1);
+    if (isBeat) queue.push({ t: nextT, beat });
+    nextT += dur; step++;
+  }
+}
+function draw() {
+  if (!running) return;
+  while (queue.length && queue[0].t <= ac.currentTime) {
+    const { beat } = queue.shift();
+    $('beats').querySelectorAll('.beat').forEach((b, i) => b.classList.toggle('on', i === beat));
+    if (marks()[beat] === 2) try { if (window.Acornix) Acornix.vibrate(15); } catch (e) {}
+  }
+  const period = 60 / c.bpm * 2, ph = ((ac.currentTime - startT) % period) / period;
+  $('arm').style.transform = `rotate(${Math.sin(ph * Math.PI * 2) * 28}deg)`;
+  requestAnimationFrame(draw);
+}
+let startT = 0;
+function start() {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume();
+  running = true; step = 0; queue = []; nextT = ac.currentTime + .06; startT = nextT - 60 / c.bpm / 2;
+  timer = setInterval(schedule, 25); schedule(); requestAnimationFrame(draw); render();
+}
+function stop() { running = false; clearInterval(timer); $('arm').style.transform = ''; $('beats').querySelectorAll('.beat').forEach(b => b.classList.remove('on')); render(); }
+$('play').onclick = () => running ? stop() : start();
+$('range').oninput = () => setBpm(+$('range').value);
+$('minus').onclick = () => setBpm(c.bpm - 1); $('plus').onclick = () => setBpm(c.bpm + 1);
+let taps = [];
+$('tap').onclick = () => { const t = performance.now(); taps = taps.filter(x => t - x < 2500); taps.push(t); if (taps.length >= 2) { const gaps = taps.slice(1).map((x, i) => x - taps[i]); setBpm(60000 / (gaps.reduce((a, b) => a + b, 0) / gaps.length)); } };
+$('sound').onclick = () => { c.sound = (c.sound + 1) % 3; save(); render(); };
+addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); $('play').click(); } else if (e.key === 'ArrowUp') setBpm(c.bpm + 1); else if (e.key === 'ArrowDown') setBpm(c.bpm - 1); });
+(async () => { c = Object.assign(c, await store.get('cfg', {})); render(); })();
+</script>
+</body>
+</html>

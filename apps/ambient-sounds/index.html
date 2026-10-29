@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ambient Sounds</title>
+<style>
+  :root { --ink:#eef5f7; --muted:#9db3bb; --card:#ffffff12; --a:#7fdbca; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:#0d1f26; }
+  body { background:linear-gradient(170deg,#0d1f26,#163842 55%,#1d4a4f); padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .head { display:flex; justify-content:space-between; align-items:center; }
+  h1 { margin:4px 0; font-size:26px; }
+  .main { padding:12px 18px; border-radius:16px; background:var(--a); color:#0d1f26; font-weight:900; }
+  .presets { display:flex; gap:6px; overflow-x:auto; margin:12px 0; scrollbar-width:none; }
+  .presets::-webkit-scrollbar { display:none; }
+  .presets button { flex:none; padding:9px 13px; border-radius:14px; background:var(--card); font-weight:800; font-size:14px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .snd { padding:14px; border-radius:20px; background:var(--card); border:1px solid #ffffff14; transition:background .2s; }
+  .snd.on { background:#7fdbca26; border-color:#7fdbca66; }
+  .snd button { width:100%; display:flex; align-items:center; gap:10px; background:none; padding:0; text-align:left; font-weight:800; }
+  .snd button span { font-size:30px; transition:transform .3s; }
+  .snd.on button span { animation:breathe 3s ease-in-out infinite; }
+  @keyframes breathe { 50% { transform:scale(1.15); } }
+  .snd input { width:100%; margin-top:10px; accent-color:var(--a); }
+  .timer { margin-top:14px; padding:14px; border-radius:20px; background:var(--card); }
+  .timer b { display:block; margin-bottom:8px; }
+  .timer .row { display:flex; gap:6px; }
+  .timer .row button { flex:1; padding:10px 4px; border-radius:12px; background:#ffffff14; font-weight:800; font-size:13px; }
+  .timer .row button.on { background:var(--a); color:#0d1f26; }
+  .left { color:var(--muted); font-weight:700; margin-top:8px; min-height:18px; }
+</style>
+</head>
+<body>
+<div class="head"><h1>🌧️ <span id="ttl"></span></h1><button class="main" id="main"></button></div>
+<div class="presets" id="presets"></div>
+<div class="grid" id="grid"></div>
+<div class="timer"><b id="tT"></b><div class="row" id="timer"></div><div class="left" id="left"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Sonidos', play:'▶ Sonar', pause:'⏸ Pausa', timer:'Apagar en…', off:'No', min:'min', left:'Se apaga en', names:['Lluvia','Tormenta','Olas','Viento','Fuego','Pájaros','Río','Ruido marrón'], presets:[['😴 Dormir',[0,.5,1,.3,2,.4]],['📚 Concentrarse',[7,.5,0,.3]],['🏖️ Playa',[2,.7,3,.2,5,.2]],['🏕️ Acampada',[4,.6,6,.4,5,.3]],['⛈️ Noche de tormenta',[0,.7,1,.6,3,.3]]] }
+ : { title:'Ambient Sounds', play:'▶ Play', pause:'⏸ Pause', timer:'Turn off in…', off:'Off', min:'min', left:'Turning off in', names:['Rain','Thunder','Waves','Wind','Fire','Birds','Stream','Brown noise'], presets:[['😴 Sleep',[0,.5,1,.3,2,.4]],['📚 Focus',[7,.5,0,.3]],['🏖️ Beach',[2,.7,3,.2,5,.2]],['🏕️ Camping',[4,.6,6,.4,5,.3]],['⛈️ Stormy night',[0,.7,1,.6,3,.3]]] };
+const ICONS = ['🌧️', '⛈️', '🌊', '🌬️', '🔥', '🐦', '🏞️', '🟤'];
+const $ = id => document.getElementById(id);
+let vols = Array(8).fill(0), playing = false, ac, master, chans = [], timerMin = 0, endAt = 0, tick;
+try { const s = JSON.parse(localStorage.getItem('amb') || '{}'); if (s.vols) vols = s.vols; } catch (e) {}
+const save = () => { try { localStorage.setItem('amb', JSON.stringify({ vols })); } catch (e) {} };
+$('ttl').textContent = T.title; $('tT').textContent = T.timer;
+function noiseBuf(kind, secs = 6) {
+  const sr = ac.sampleRate, len = sr * secs, b = ac.createBuffer(2, len, sr);
+  for (let ch = 0; ch < 2; ch++) { const d = b.getChannelData(ch); let last = 0, p1 = 0, p2 = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; if (kind === 'brown') { last = (last + .02 * w) / 1.02; d[i] = last * 3.5; } else if (kind === 'pink') { p1 = .997 * p1 + w * .029; p2 = .985 * p2 + w * .032; d[i] = (p1 + p2 + w * .1) * .9; } else d[i] = w; } }
+  return b;
+}
+// Each channel: a looped noise source shaped by filters (and an LFO for waves/wind), plus extra one-shots for thunder, fire crackles and birds.
+function build() {
+  ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = .9; master.connect(ac.destination);
+  const white = noiseBuf('white'), pink = noiseBuf('pink'), brown = noiseBuf('brown');
+  const loop = (buf, type, f, q, gain) => { const s = ac.createBufferSource(); s.buffer = buf; s.loop = true; s.loopStart = Math.random(); const fl = ac.createBiquadFilter(); fl.type = type; fl.frequency.value = f; fl.Q.value = q; const g = ac.createGain(); g.gain.value = gain; s.connect(fl); fl.connect(g); s.start(0, Math.random() * 3); return g; };
+  const lfo = (target, rate, depth, base) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = rate; g.gain.value = depth; target.value = base; o.connect(g); g.connect(target); o.start(); };
+  for (let i = 0; i < 8; i++) { const g = ac.createGain(); g.gain.value = 0; g.connect(master); chans.push(g); }
+  loop(pink, 'highpass', 600, .5, .55).connect(chans[0]); loop(white, 'bandpass', 4000, .6, .12).connect(chans[0]);
+  loop(brown, 'lowpass', 200, .7, .5).connect(chans[1]);
+  const w = loop(brown, 'lowpass', 900, .5, 1); const wg = ac.createGain(); w.connect(wg); wg.connect(chans[2]); lfo(wg.gain, .11, .45, .55);
+  const wi = ac.createBufferSource(); wi.buffer = pink; wi.loop = true; const wf = ac.createBiquadFilter(); wf.type = 'bandpass'; wf.Q.value = 1.4; wi.connect(wf); const wig = ac.createGain(); wig.gain.value = .9; wf.connect(wig); wig.connect(chans[3]); wi.start(); lfo(wf.frequency, .07, 300, 600);
+  loop(brown, 'lowpass', 500, .5, .5).connect(chans[4]);
+  loop(pink, 'bandpass', 1800, .4, .35).connect(chans[6]); loop(white, 'highpass', 5000, .5, .05).connect(chans[6]);
+  loop(brown, 'lowpass', 400, .3, .9).connect(chans[7]);
+  // One-shot generators, scheduled only while their channel is up.
+  setInterval(() => {
+    if (!playing) return; const t = ac.currentTime;
+    if (vols[4] > 0) for (let k = 0; k < 3; k++) if (Math.random() < .5) { const s = ac.createBufferSource(), b = ac.createBuffer(1, 300 + Math.random() * 500 | 0, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); s.buffer = b; const g = ac.createGain(); g.gain.value = Math.random() * .7; s.connect(g); g.connect(chans[4]); s.start(t + Math.random() * .2); }
+    if (vols[5] > 0 && Math.random() < .12) { const base = 2200 + Math.random() * 1800, n = 2 + Math.random() * 4 | 0; for (let k = 0; k < n; k++) { const o = ac.createOscillator(), g = ac.createGain(), st = t + k * (.09 + Math.random() * .06); o.frequency.setValueAtTime(base, st); o.frequency.exponentialRampToValueAtTime(base * (1.3 + Math.random() * .5), st + .06); g.gain.setValueAtTime(0, st); g.gain.linearRampToValueAtTime(.08, st + .01); g.gain.exponentialRampToValueAtTime(.0001, st + .08); o.connect(g); g.connect(chans[5]); o.start(st); o.stop(st + .1); } }
+    if (vols[1] > 0 && Math.random() < .012) { const s = ac.createBufferSource(); s.buffer = brown; const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 300; const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(2.2, t + .05 + Math.random() * .3); g.gain.exponentialRampToValueAtTime(.001, t + 4 + Math.random() * 3); s.connect(fl); fl.connect(g); g.connect(chans[1]); s.start(t, Math.random() * 3); s.stop(t + 8); }
+  }, 120);
+}
+function apply() { if (!ac) return; chans.forEach((g, i) => g.gain.setTargetAtTime(playing ? vols[i] * vols[i] : 0, ac.currentTime, .3)); }
+function render() {
+  $('main').textContent = playing ? T.pause : T.play;
+  $('grid').innerHTML = T.names.map((n, i) => `<div class="snd ${vols[i] > 0 ? 'on' : ''}"><button data-i="${i}"><span>${ICONS[i]}</span>${n}</button><input type="range" min="0" max="1" step="0.01" value="${vols[i]}" data-i="${i}"></div>`).join('');
+  $('grid').querySelectorAll('button').forEach(b => b.onclick = () => { const i = +b.dataset.i; vols[i] = vols[i] > 0 ? 0 : .5; save(); if (!playing && vols[i]) start(); else apply(); render(); });
+  $('grid').querySelectorAll('input').forEach(r => r.oninput = () => { const i = +r.dataset.i; vols[i] = +r.value; r.parentElement.classList.toggle('on', vols[i] > 0); save(); if (!playing && vols[i]) { start(); } apply(); });
+  $('timer').innerHTML = [0, 15, 30, 60, 90].map(m => `<button data-m="${m}" class="${timerMin === m ? 'on' : ''}">${m ? m + ' ' + T.min : T.off}</button>`).join('');
+  $('timer').querySelectorAll('button').forEach(b => b.onclick = () => { timerMin = +b.dataset.m; endAt = timerMin ? Date.now() + timerMin * 6e4 : 0; render(); });
+  $('presets').innerHTML = T.presets.map(([n], i) => `<button data-p="${i}">${n}</button>`).join('');
+  $('presets').querySelectorAll('button').forEach(b => b.onclick = () => { vols = Array(8).fill(0); const p = T.presets[+b.dataset.p][1]; for (let i = 0; i < p.length; i += 2) vols[p[i]] = p[i + 1]; save(); if (!playing) start(); else apply(); render(); });
+}
+function start() { if (!ac) build(); ac.resume(); master.gain.setTargetAtTime(.9, ac.currentTime, .1); playing = true; if (!vols.some(v => v > 0)) vols[0] = .5; apply(); render(); }
+function pause() { playing = false; apply(); render(); }
+$('main').onclick = () => playing ? pause() : start();
+tick = setInterval(() => {
+  if (!endAt) { $('left').textContent = ''; return; }
+  const ms = endAt - Date.now();
+  if (ms <= 0) { endAt = 0; timerMin = 0; pause(); return; }
+  if (ms < 60000 && master) master.gain.setTargetAtTime(.9 * ms / 60000, ac.currentTime, .5);
+  $('left').textContent = `${T.left} ${Math.floor(ms / 6e4)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}`;
+}, 1000);
+render();
+</script>
+</body>
+</html>

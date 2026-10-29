@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Kalimba</title>
+<style>
+  :root { --ink:#3b2412; --muted:#8a6a4c; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:#e9d8bf; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:10px; }
+  .top { display:flex; justify-content:space-between; align-items:center; }
+  .top h1 { margin:0; font-size:22px; }
+  .top select { padding:8px 10px; border-radius:12px; border:0; background:#f7eedf; font:inherit; font-weight:800; color:var(--ink); }
+  .body { flex:1; position:relative; border-radius:28px 28px 120px 120px; background:linear-gradient(160deg,#c48a52,#9a6033 60%,#7a4a26); box-shadow:inset 0 0 0 6px #ffffff22, 0 14px 30px #3b241255; overflow:hidden; touch-action:none; }
+  .hole { position:absolute; left:50%; bottom:16%; width:24%; aspect-ratio:1; transform:translateX(-50%); border-radius:50%; background:radial-gradient(#2a170a,#4a2b14 70%); box-shadow:inset 0 4px 12px #000a; }
+  .bridge { position:absolute; left:4%; right:4%; top:58%; height:14px; border-radius:7px; background:linear-gradient(#d9d9d9,#8f8f8f); box-shadow:0 3px 6px #0006; }
+  .tines { position:absolute; left:5%; right:5%; top:3%; bottom:42%; display:flex; align-items:flex-end; justify-content:center; gap:1.2%; }
+  .tine { flex:1; max-width:34px; border-radius:12px 12px 4px 4px; background:linear-gradient(90deg,#9ea3a8,#f2f4f6 45%,#b8bdc2); box-shadow:0 3px 5px #0005; display:flex; align-items:flex-start; justify-content:center; padding-top:8px; font-size:11px; font-weight:900; color:#5d4630; transition:transform .05s; transform-origin:50% 100%; }
+  .tine.hit { animation:twang .35s; background:linear-gradient(90deg,#c9a24a,#fff3c4 45%,#d6b25a); }
+  .tine.next { box-shadow:0 0 0 3px #ffd43b, 0 0 16px #ffd43b; }
+  @keyframes twang { 0% { transform:scaleY(.97) rotate(1deg); } 30% { transform:rotate(-1deg); } 60% { transform:rotate(.6deg); } 100% { transform:none; } }
+  .song { display:flex; gap:8px; align-items:center; }
+  .song select { flex:1; padding:12px; border-radius:14px; border:0; background:#f7eedf; font:inherit; font-weight:800; color:var(--ink); }
+  .song button { padding:12px 16px; border-radius:14px; background:var(--ink); color:#fff; font-weight:900; }
+  .tip { text-align:center; color:var(--muted); font-weight:700; font-size:13px; min-height:18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎶 <span id="ttl"></span></h1><select id="key"></select></div>
+  <div class="body" id="body"><div class="hole"></div><div class="bridge"></div><div class="tines" id="tines"></div></div>
+  <div class="tip" id="tip"></div>
+  <div class="song"><select id="songs"></select><button id="learn"></button><button id="autoplay">▶</button></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Kalimba', learn:'Aprender', stop:'Parar', pick:'Elige una canción…', tip:'Toca las púas. En “Aprender”, la siguiente nota se ilumina.', done:'¡Canción completa! 🎉', names:['Do','Re','Mi','Fa','Sol','La','Si'] }
+ : { title:'Kalimba', learn:'Learn', stop:'Stop', pick:'Choose a song…', tip:'Tap the tines. In “Learn”, the next note lights up.', done:'Song complete! 🎉', names:['C','D','E','F','G','A','B'] };
+// Standard 17-key layout (C4 to E6): the lowest tine in the middle, alternating outwards. Values are scale degrees from C4.
+const DEG = [15, 13, 11, 9, 7, 5, 3, 1, 0, 2, 4, 6, 8, 10, 12, 14, 16];
+const MAJOR = [0, 2, 4, 5, 7, 9, 11];
+const KEYS = [['C', 0], ['D', 2], ['E', 4], ['F', 5], ['G', 7], ['A', 9], ['Bb', 10]];
+// Songs as scale degrees (0 = C4 in the key), with durations in beats.
+const SONGS = [
+  [ES ? 'Estrellita' : 'Twinkle Twinkle', '0 0 4 4 5 5 4- 3 3 2 2 1 1 0-'],
+  [ES ? 'Himno de la alegría' : 'Ode to Joy', '2 2 3 4 4 3 2 1 0 0 1 2 2. 1, 1-'],
+  [ES ? 'Cumpleaños feliz' : 'Happy Birthday', '4, 4 5 4 7 6- 4, 4 5 4 8 7-'],
+  ['Frère Jacques', '0 1 2 0 0 1 2 0 2 3 4- 2 3 4-'],
+  [ES ? 'Cumbayá' : 'Kumbaya', '0 2 4 4. 4, 5 5 4- 0 2 4 4. 4, 3 2 1-'],
+  ['Jingle Bells', '2 2 2- 2 2 2- 2 4 0. 1, 2--'],
+];
+const $ = id => document.getElementById(id);
+let key = 0, ac, learn = null, auto = null;
+try { key = +(localStorage.getItem('key') || 0); } catch (e) {}
+$('ttl').textContent = T.title; $('learn').textContent = T.learn; $('tip').textContent = T.tip;
+$('key').innerHTML = KEYS.map(([n], i) => `<option value="${i}">${n}</option>`).join(''); $('key').value = key;
+$('songs').innerHTML = `<option value="">${T.pick}</option>` + SONGS.map(([n], i) => `<option value="${i}">${n}</option>`).join('');
+const midiOf = d => { const o = Math.floor(d / 7), s = ((d % 7) + 7) % 7; return 60 + KEYS[key][1] + o * 12 + MAJOR[s]; };
+function tines() {
+  const max = Math.max(...DEG), min = Math.min(...DEG);
+  $('tines').innerHTML = DEG.map((d, i) => { const h = 55 + (max - d) / (max - min) * 45; const s = ((d % 7) + 7) % 7; return `<div class="tine" data-i="${i}" style="height:${h}%">${T.names[s]}${d >= 7 ? '·' : ''}${d >= 14 ? '·' : ''}</div>`; }).join('');
+}
+tines();
+// Bell-like tone: two sine partials with a slightly inharmonic overtone and a long decay.
+function ring(midi) {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume();
+  const t = ac.currentTime, f = 440 * Math.pow(2, (midi - 69) / 12);
+  [[1, .35, 2.8], [5.4, .06, .4], [2.01, .07, 1.2]].forEach(([m, v, d]) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f * m; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .004); g.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + d + .05); });
+}
+function hit(i) {
+  const el = $('tines').children[i]; el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit');
+  ring(midiOf(DEG[i])); try { if (window.Acornix) Acornix.vibrate(6); } catch (e) {}
+  if (learn) { const want = learn.notes[learn.pos]; if (want && DEG[i] === want.d) { learn.pos++; showNext(); } }
+}
+const down = new Set();
+$('body').addEventListener('pointerdown', e => { const t = e.target.closest('.tine'); if (t) { down.add(e.pointerId); hit(+t.dataset.i); } });
+// Sliding across tines plays each one once (glissando).
+let lastT = {};
+$('body').addEventListener('pointermove', e => { if (!down.has(e.pointerId)) return; const el = document.elementFromPoint(e.clientX, e.clientY), t = el && el.closest('.tine'); if (t && lastT[e.pointerId] !== t.dataset.i) { lastT[e.pointerId] = t.dataset.i; hit(+t.dataset.i); } });
+['pointerup', 'pointercancel'].forEach(ev => $('body').addEventListener(ev, e => { down.delete(e.pointerId); delete lastT[e.pointerId]; }));
+function parse(str) { return str.split(' ').map(tok => { const m = tok.match(/^(-?\d+)([-.,]*)$/); return { d: +m[1], beats: m[2] === '-' ? 2 : m[2] === '--' ? 4 : m[2] === '.' ? 1.5 : m[2] === ',' ? .5 : 1 }; }); }
+function showNext() {
+  [...$('tines').children].forEach(t => t.classList.remove('next'));
+  if (!learn) return;
+  const n = learn.notes[learn.pos];
+  if (!n) { $('tip').textContent = T.done; learn = null; $('learn').textContent = T.learn; try { if (window.Acornix) Acornix.vibrate([40, 40, 80]); } catch (e) {} return; }
+  const i = DEG.findIndex(d => d === n.d); if (i >= 0) $('tines').children[i].classList.add('next');
+  $('tip').textContent = `${learn.pos + 1} / ${learn.notes.length}`;
+}
+$('learn').onclick = () => {
+  if (learn) { learn = null; $('learn').textContent = T.learn; showNext(); $('tip').textContent = T.tip; return; }
+  const s = SONGS[+$('songs').value]; if (!s) { $('songs').focus(); return; }
+  learn = { notes: parse(s[1]), pos: 0 }; $('learn').textContent = T.stop; showNext();
+};
+$('autoplay').onclick = () => {
+  if (auto) { clearTimeout(auto); auto = null; $('autoplay').textContent = '▶'; return; }
+  const s = SONGS[+$('songs').value]; if (!s) { $('songs').focus(); return; }
+  const notes = parse(s[1]); let k = 0; $('autoplay').textContent = '■';
+  const step = () => { const n = notes[k++]; if (!n) { auto = null; $('autoplay').textContent = '▶'; return; } const i = DEG.findIndex(d => d === n.d); if (i >= 0) hit(i); auto = setTimeout(step, n.beats * 380); };
+  step();
+};
+$('key').onchange = () => { key = +$('key').value; try { localStorage.setItem('key', key); } catch (e) {} };
+</script>
+</body>
+</html>

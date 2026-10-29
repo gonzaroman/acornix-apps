@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Tuner</title>
+<style>
+  :root { --bg:#0e1116; --card:#181d26; --ink:#eef2f8; --muted:#8792a6; --g:#2ee59d; --y:#ffd166; --r:#ff6b6b; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  h1 { margin:0 0 10px; font-size:20px; }
+  .modes { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+  .modes::-webkit-scrollbar { display:none; }
+  .modes button { flex:none; padding:9px 13px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; }
+  .modes button.on { background:var(--ink); color:var(--bg); }
+  .gauge { position:relative; width:min(88vw,360px); aspect-ratio:2/1.15; margin:24px auto 0; }
+  .gauge svg { width:100%; height:100%; overflow:visible; }
+  .note { text-align:center; margin-top:-8px; }
+  .note b { font-size:92px; font-weight:800; line-height:1; transition:color .2s; }
+  .note b sup { font-size:.4em; }
+  .note b sub { font-size:.32em; color:var(--muted); }
+  .note small { display:block; color:var(--muted); font-weight:700; font-variant-numeric:tabular-nums; margin-top:4px; }
+  .msg { text-align:center; font-weight:800; min-height:24px; margin-top:6px; }
+  .strings { display:flex; justify-content:center; gap:8px; margin-top:18px; flex-wrap:wrap; }
+  .strings button { width:48px; height:48px; border-radius:50%; background:var(--card); font-weight:900; border:2px solid transparent; }
+  .strings button.hit { border-color:var(--g); color:var(--g); }
+  .strings button.near { border-color:var(--y); }
+  .start { margin-top:auto; padding:18px; border-radius:20px; background:var(--g); color:#003d26; font-weight:900; font-size:18px; }
+  .start.on { background:var(--card); color:var(--ink); }
+  .ref { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-weight:700; font-size:13px; margin-top:12px; }
+  .ref button { padding:6px 10px; border-radius:10px; background:var(--card); font-weight:800; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎸 <span id="ttl"></span></h1>
+  <div class="modes" id="modes"></div>
+  <div class="gauge"><svg viewBox="-110 -105 220 120" id="svg"></svg></div>
+  <div class="note"><b id="note">–</b><small id="freq"></small></div>
+  <div class="msg" id="msg"></div>
+  <div class="strings" id="strings"></div>
+  <div class="ref"><span id="refL"></span><span><button id="rm">−</button> <b id="refV"></b> Hz <button id="rp">+</button></span></div>
+  <button class="start" id="start"></button>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const NAMES = ES ? ['Do', 'Do♯', 'Re', 'Re♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'] : ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+const T = ES ? { title:'Afinador', start:'🎤 Empezar a escuchar', stop:'■ Parar', mic:'Necesito el micrófono para escuchar tu instrumento.', play:'Toca una cuerda…', inTune:'¡Afinada! ✓', up:'Sube ↑', down:'Baja ↓', ref:'La de referencia', modes:['Cromático','Guitarra','Bajo','Ukelele','Violín'], tap:'Toca una cuerda para oír su nota' }
+ : { title:'Tuner', start:'🎤 Start listening', stop:'■ Stop', mic:'I need the microphone to hear your instrument.', play:'Play a string…', inTune:'In tune! ✓', up:'Tune up ↑', down:'Tune down ↓', ref:'Reference A', modes:['Chromatic','Guitar','Bass','Ukulele','Violin'], tap:'Tap a string to hear its note' };
+// Strings as MIDI note numbers, low to high.
+const MODES = [null, [40, 45, 50, 55, 59, 64], [28, 33, 38, 43], [67, 60, 64, 69], [55, 62, 69, 76]];
+const $ = id => document.getElementById(id);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let mode = 1, ref = 440, ac, an, stream, buf, raf, listening = false, smooth = null, needle = 0;
+['ttl', 'refL'].forEach((id, i) => $(id).textContent = [T.title, T.ref][i]);
+const midiToF = m => ref * Math.pow(2, (m - 69) / 12);
+const fToMidi = f => 69 + 12 * Math.log2(f / ref);
+const nameOf = m => { const n = ((Math.round(m) % 12) + 12) % 12, o = Math.floor(Math.round(m) / 12) - 1; return [NAMES[n], o]; };
+// Gauge: ticks from -50 to +50 cents.
+$('svg').innerHTML = [...Array(21)].map((_, i) => { const c = (i - 10) * 5, a = c / 50 * 70 * Math.PI / 180, r1 = i % 5 ? 88 : 82, x1 = Math.sin(a) * r1, y1 = -Math.cos(a) * r1, x2 = Math.sin(a) * 96, y2 = -Math.cos(a) * 96; return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${Math.abs(c) <= 5 ? '#2ee59d' : '#3a4558'}" stroke-width="${i % 5 ? 2 : 3.5}" stroke-linecap="round"/>`; }).join('') +
+  `<text x="-80" y="12" fill="#8792a6" font-size="11" font-weight="700" text-anchor="middle">−50</text><text x="80" y="12" fill="#8792a6" font-size="11" font-weight="700" text-anchor="middle">+50</text>` +
+  `<g id="needle"><line x1="0" y1="0" x2="0" y2="-90" stroke="#eef2f8" stroke-width="3.5" stroke-linecap="round"/><circle r="7" fill="#eef2f8"/></g>`;
+function render() {
+  $('modes').innerHTML = T.modes.map((m, i) => `<button data-i="${i}" class="${mode === i ? 'on' : ''}">${m}</button>`).join('');
+  $('modes').querySelectorAll('button').forEach(b => b.onclick = () => { mode = +b.dataset.i; store.set('mode', mode); render(); });
+  const strs = MODES[mode];
+  $('strings').innerHTML = strs ? strs.map((m, i) => `<button data-m="${m}" title="${T.tap}">${nameOf(m)[0]}<sub style="font-size:10px">${nameOf(m)[1]}</sub></button>`).join('') : '';
+  $('strings').querySelectorAll('button').forEach(b => b.onclick = () => pluck(+b.dataset.m));
+  $('refV').textContent = ref; $('start').textContent = listening ? T.stop : T.start; $('start').classList.toggle('on', listening);
+}
+function pluck(m) {
+  ac = ac || new AudioContext(); const t = ac.currentTime, f = midiToF(m);
+  [1, 2, 3].forEach((h, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.value = f * h; g.gain.setValueAtTime(.18 / (i + 1), t); g.gain.exponentialRampToValueAtTime(.0001, t + 2.2); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 2.3); });
+}
+// Autocorrelation pitch detection (works well for guitar, bass, voice).
+function detect(b, rate) {
+  let rms = 0; for (const v of b) rms += v * v; rms = Math.sqrt(rms / b.length); if (rms < .012) return -1;
+  let r1 = 0, r2 = b.length - 1; const th = .2;
+  for (let i = 0; i < b.length / 2; i++) if (Math.abs(b[i]) < th) { r1 = i; break; }
+  for (let i = 1; i < b.length / 2; i++) if (Math.abs(b[b.length - i]) < th) { r2 = b.length - i; break; }
+  const x = b.slice(r1, r2), n = x.length, c = new Float32Array(n);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n - i; j++) c[i] += x[j] * x[j + i];
+  let d = 0; while (d < n - 1 && c[d] > c[d + 1]) d++;
+  let max = -1, pos = -1; for (let i = d; i < n; i++) if (c[i] > max) { max = c[i]; pos = i; }
+  if (pos <= 0) return -1;
+  const y1 = c[pos - 1] || 0, y2 = c[pos], y3 = c[pos + 1] || 0, a = (y1 + y3 - 2 * y2) / 2, bb = (y3 - y1) / 2;
+  return rate / (a ? pos - bb / (2 * a) : pos);
+}
+let lastHeard = 0, frameN = 0;
+function loop() {
+  raf = requestAnimationFrame(loop);
+  // Detection is O(n²), so run it every third frame (about 20 times a second).
+  if (frameN++ % 3) { $('needle').setAttribute('transform', `rotate(${needle / 50 * 70})`); return; }
+  an.getFloatTimeDomainData(buf);
+  const f = detect(buf, ac.sampleRate);
+  if (f > 25 && f < 2000) {
+    smooth = smooth ? smooth * .7 + f * .3 : f; lastHeard = performance.now();
+    let target = fToMidi(smooth);
+    if (MODES[mode]) target = MODES[mode].reduce((a, b) => Math.abs(b - fToMidi(smooth)) < Math.abs(a - fToMidi(smooth)) ? b : a); else target = Math.round(target);
+    const cents = Math.max(-50, Math.min(50, (fToMidi(smooth) - target) * 100)), [n, o] = nameOf(target);
+    $('note').innerHTML = `${n}<sub>${o}</sub>`; $('freq').textContent = `${smooth.toFixed(1)} Hz · ${cents > 0 ? '+' : ''}${cents.toFixed(0)} cents`;
+    const ok = Math.abs(cents) <= 5, col = ok ? 'var(--g)' : Math.abs(cents) <= 15 ? 'var(--y)' : 'var(--r)';
+    $('note').style.color = col; $('msg').style.color = col; $('msg').textContent = ok ? T.inTune : cents < 0 ? T.up : T.down;
+    needle = needle * .6 + cents * .4;
+    $('strings').querySelectorAll('button').forEach(b => { b.classList.toggle('hit', +b.dataset.m === target && ok); b.classList.toggle('near', +b.dataset.m === target && !ok); });
+    if (ok && !window.__buzzed) { window.__buzzed = 1; try { if (window.Acornix) Acornix.vibrate(30); } catch (e) {} } else if (!ok) window.__buzzed = 0;
+  } else if (performance.now() - lastHeard > 1200) { smooth = null; needle *= .85; $('msg').textContent = T.play; $('msg').style.color = 'var(--muted)'; }
+  $('needle').setAttribute('transform', `rotate(${needle / 50 * 70})`);
+}
+async function start() {
+  try {
+    ac = ac || new AudioContext(); await ac.resume();
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    const src = ac.createMediaStreamSource(stream); an = ac.createAnalyser(); an.fftSize = 2048; buf = new Float32Array(an.fftSize); src.connect(an);
+    listening = true; render(); $('msg').textContent = T.play; loop();
+  } catch (e) { $('msg').textContent = T.mic; $('msg').style.color = 'var(--r)'; }
+}
+function stop() { cancelAnimationFrame(raf); if (stream) stream.getTracks().forEach(t => t.stop()); listening = false; render(); }
+$('start').onclick = () => listening ? stop() : start();
+$('rm').onclick = () => { ref = Math.max(415, ref - 1); store.set('ref', ref); render(); };
+$('rp').onclick = () => { ref = Math.min(466, ref + 1); store.set('ref', ref); render(); };
+(async () => { mode = await store.get('mode', 1); ref = await store.get('ref', 440); render(); })();
+</script>
+</body>
+</html>

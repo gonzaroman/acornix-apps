@@ -1,0 +1,14 @@
+{
+  "id": "scales",
+  "name": "Scales",
+  "emoji": "🎹",
+  "category": "music",
+  "description": "See any scale on a piano and a guitar neck, with the notes, degrees and steps, and hear it going up and down.",
+  "prompt": "A music scales reference with every root and major, minor, pentatonic, blues, harmonic minor, modes and chromatic scales, showing the notes, degrees and whole and half steps, on a two-octave piano or a 15-fret guitar neck you can tap, and playing it up and down.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

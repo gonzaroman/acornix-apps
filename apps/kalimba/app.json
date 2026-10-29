@@ -1,0 +1,14 @@
+{
+  "id": "kalimba",
+  "name": "Kalimba",
+  "emoji": "🎶",
+  "category": "music",
+  "description": "A 17-key kalimba with bell-like tines. Slide across them for a glissando, or learn songs as the next note lights up.",
+  "prompt": "A kalimba with the standard 17-tine layout and a bell-like sound, glissando by sliding, a key selector, and songs like Twinkle Twinkle, Ode to Joy and Happy Birthday that you can learn note by note or listen to.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

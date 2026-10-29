@@ -1,0 +1,14 @@
+{
+  "id": "metronome",
+  "name": "Metronome",
+  "emoji": "🥁",
+  "category": "music",
+  "description": "A precise metronome with tap tempo, time signatures, subdivisions, accents you can set per beat and a swinging pendulum.",
+  "prompt": "A metronome from 30 to 260 bpm with sample-accurate timing, tempo names, tap tempo, time signatures from 2/4 to 7/8, subdivisions, accent, normal or muted beats, three click sounds, a pendulum and vibration on accents.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

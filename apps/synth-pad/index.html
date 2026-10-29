@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Synth Pad</title>
+<style>
+  :root { --bg:#0b0820; --ink:#f1edff; --muted:#9a90c8; --a:#ff3df2; --b:#3dd6ff; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:8px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:20px; flex:1; }
+  .row { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+  .row::-webkit-scrollbar { display:none; }
+  .row button { flex:none; padding:8px 12px; border-radius:12px; background:#ffffff14; font-weight:800; font-size:13px; }
+  .row button.on { background:linear-gradient(90deg,var(--a),var(--b)); color:#0b0820; }
+  .pad { flex:1; position:relative; border-radius:22px; overflow:hidden; background:radial-gradient(circle at 30% 20%,#2a1563,transparent 60%),radial-gradient(circle at 80% 90%,#0f3b5c,transparent 60%),#120d33; touch-action:none; }
+  .pad canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .pad .hint { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center; color:var(--muted); font-weight:700; pointer-events:none; padding:0 30px; line-height:1.5; }
+  .pad .axis { position:absolute; font-size:11px; font-weight:800; color:#ffffff55; pointer-events:none; text-transform:uppercase; letter-spacing:.6px; }
+  .knobs { display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; }
+  .knobs label { font-size:12px; font-weight:800; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .knobs input { flex:1; accent-color:var(--a); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎛️ <span id="ttl"></span></h1><div class="row" id="waves"></div></div>
+  <div class="row" id="scales"></div>
+  <div class="pad" id="pad"><canvas id="c"></canvas><div class="hint" id="hint"></div><span class="axis" style="left:10px;bottom:8px" id="axX"></span><span class="axis" style="right:10px;top:8px" id="axY"></span></div>
+  <div class="knobs">
+    <label><span id="lEcho"></span><input type="range" id="echo" min="0" max="0.8" step="0.01"></label>
+    <label><span id="lGlide"></span><input type="range" id="glide" min="0" max="0.4" step="0.01"></label>
+    <label><span id="lOct"></span><input type="range" id="oct" min="2" max="5" step="1"></label>
+    <label><span id="lVol"></span><input type="range" id="vol" min="0" max="1" step="0.01"></label>
+  </div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Sintetizador', hint:'Desliza los dedos por la pantalla. Varios a la vez para acordes.', x:'nota →', y:'brillo ↑', echo:'Eco', glide:'Glide', oct:'Octava', vol:'Volumen', scales:[['Pentatónica','penta'],['Mayor','major'],['Menor','minor'],['Blues','blues'],['Japonesa','japan'],['Libre','free']] }
+ : { title:'Synth Pad', hint:'Slide your fingers across the screen. Use several at once for chords.', x:'note →', y:'brightness ↑', echo:'Echo', glide:'Glide', oct:'Octave', vol:'Volume', scales:[['Pentatonic','penta'],['Major','major'],['Minor','minor'],['Blues','blues'],['Japanese','japan'],['Free','free']] };
+const SCALES = { penta: [0, 2, 4, 7, 9], major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10], blues: [0, 3, 5, 6, 7, 10], japan: [0, 1, 5, 7, 8], free: null };
+const WAVES = [['sawtooth', '◢ Saw'], ['square', '▣ Square'], ['triangle', '△ Tri'], ['sine', '∿ Sine']];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+let cfg = { wave: 0, scale: 'penta', echo: .35, glide: .05, oct: 3, vol: .7 };
+try { cfg = Object.assign(cfg, JSON.parse(localStorage.getItem('synth') || '{}')); } catch (e) {}
+const save = () => { try { localStorage.setItem('synth', JSON.stringify(cfg)); } catch (e) {} };
+['ttl', 'hint', 'axX', 'axY', 'lEcho', 'lGlide', 'lOct', 'lVol'].forEach((id, i) => $(id).textContent = [T.title, T.hint, T.x, T.y, T.echo, T.glide, T.oct, T.vol][i]);
+['echo', 'glide', 'oct', 'vol'].forEach(k => { $(k).value = cfg[k]; $(k).oninput = () => { cfg[k] = +$(k).value; save(); if (k === 'echo' && fb) fb.gain.value = cfg.echo; if (k === 'vol' && master) master.gain.value = cfg.vol * .5; }; });
+function bars() {
+  $('waves').innerHTML = WAVES.map(([w, n], i) => `<button data-i="${i}" class="${cfg.wave === i ? 'on' : ''}">${n}</button>`).join('');
+  $('waves').querySelectorAll('button').forEach(b => b.onclick = () => { cfg.wave = +b.dataset.i; save(); bars(); });
+  $('scales').innerHTML = T.scales.map(([n, k]) => `<button data-k="${k}" class="${cfg.scale === k ? 'on' : ''}">${n}</button>`).join('');
+  $('scales').querySelectorAll('button').forEach(b => b.onclick = () => { cfg.scale = b.dataset.k; save(); bars(); });
+}
+bars();
+// Audio graph: voices → filter per voice → master → delay with feedback → speakers.
+let ac, master, delay, fb;
+function audio() {
+  if (ac) return ac.resume();
+  ac = new (window.AudioContext || window.webkitAudioContext)();
+  master = ac.createGain(); master.gain.value = cfg.vol * .5;
+  delay = ac.createDelay(1); delay.delayTime.value = .32; fb = ac.createGain(); fb.gain.value = cfg.echo;
+  const comp = ac.createDynamicsCompressor();
+  master.connect(comp); master.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(comp); comp.connect(ac.destination);
+}
+// x → note snapped to the scale, y → filter cutoff.
+const span = 2; // octaves across the pad
+function noteAt(x) {
+  const semis = x * span * 12, sc = SCALES[cfg.scale];
+  if (!sc) return 12 * (cfg.oct + 1) + semis;
+  const oct = Math.floor(semis / 12), within = semis - oct * 12, deg = sc.reduce((a, b) => Math.abs(b - within) < Math.abs(a - within) ? b : a);
+  return 12 * (cfg.oct + 1) + oct * 12 + deg;
+}
+const freq = m => 440 * Math.pow(2, (m - 69) / 12);
+const voices = new Map();
+function rel(e) { const b = $('pad').getBoundingClientRect(); return [Math.max(0, Math.min(1, (e.clientX - b.left) / b.width)), Math.max(0, Math.min(1, 1 - (e.clientY - b.top) / b.height))]; }
+function setVoice(v, x, y) {
+  const t = ac.currentTime, f = freq(noteAt(x));
+  v.osc.frequency.setTargetAtTime(f, t, cfg.glide || .001); v.osc2.frequency.setTargetAtTime(f * 1.006, t, cfg.glide || .001);
+  v.filter.frequency.setTargetAtTime(200 + Math.pow(y, 2) * 7000, t, .02); v.x = x; v.y = y;
+}
+$('pad').addEventListener('pointerdown', e => {
+  audio(); $('pad').setPointerCapture(e.pointerId); $('hint').style.display = 'none';
+  const [x, y] = rel(e), t = ac.currentTime, osc = ac.createOscillator(), osc2 = ac.createOscillator(), filter = ac.createBiquadFilter(), g = ac.createGain();
+  osc.type = osc2.type = WAVES[cfg.wave][0]; filter.type = 'lowpass'; filter.Q.value = 6; g.gain.value = 0;
+  osc.connect(filter); osc2.connect(filter); filter.connect(g); g.connect(master); osc.start(); osc2.start();
+  g.gain.setTargetAtTime(.35, t, .015);
+  const v = { osc, osc2, filter, g, x, y, hue: Math.random() * 360 }; voices.set(e.pointerId, v); setVoice(v, x, y);
+  try { if (window.Acornix) Acornix.vibrate(8); } catch (er) {}
+});
+$('pad').addEventListener('pointermove', e => { const v = voices.get(e.pointerId); if (v) { const [x, y] = rel(e); setVoice(v, x, y); } });
+const end = e => { const v = voices.get(e.pointerId); if (!v) return; const t = ac.currentTime; v.g.gain.setTargetAtTime(0, t, .12); v.osc.stop(t + .8); v.osc2.stop(t + .8); voices.delete(e.pointerId); trail.push({ x: v.x, y: v.y, life: 1, hue: v.hue }); };
+$('pad').addEventListener('pointerup', end); $('pad').addEventListener('pointercancel', end);
+// Visuals: scale grid lines plus glowing rings under each finger.
+let trail = [], W, H, dpr;
+function size() { const b = $('pad').getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = b.width; H = b.height; cv.width = W * dpr; cv.height = H * dpr; }
+addEventListener('resize', size); size();
+let ph = 0;
+(function frame() {
+  ph += .03; cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, W, H);
+  const sc = SCALES[cfg.scale];
+  if (sc) for (let o = 0; o < span; o++) sc.forEach((d, i) => { const x = (o * 12 + d) / (span * 12) * W; cx.strokeStyle = d === 0 ? '#ffffff30' : '#ffffff12'; cx.lineWidth = d === 0 ? 2 : 1; cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, H); cx.stroke(); });
+  trail = trail.filter(p => (p.life -= .03) > 0);
+  [...trail, ...[...voices.values()].map(v => ({ ...v, life: 1, live: true }))].forEach(p => {
+    const x = p.x * W, y = (1 - p.y) * H, r = (p.live ? 34 + Math.sin(ph * 4) * 6 : 34 + (1 - p.life) * 60);
+    const g = cx.createRadialGradient(x, y, 0, x, y, r * 1.8); g.addColorStop(0, `hsla(${p.hue},100%,70%,${.8 * p.life})`); g.addColorStop(1, `hsla(${p.hue},100%,60%,0)`);
+    cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, r * 1.8, 0, 7); cx.fill();
+    cx.strokeStyle = `hsla(${p.hue + 40},100%,80%,${p.life})`; cx.lineWidth = 2; cx.beginPath(); cx.arc(x, y, r, 0, 7); cx.stroke();
+  });
+  voices.forEach(v => v.hue = (v.hue + .6) % 360);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

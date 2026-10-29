@@ -1,0 +1,14 @@
+{
+  "id": "guitar-chords",
+  "name": "Guitar Chords",
+  "emoji": "🎼",
+  "category": "music",
+  "description": "Any chord in any key with a clear diagram and a real plucked sound, plus a progression player to practise changes.",
+  "prompt": "A guitar chord finder: pick a root and type (major, minor, 7, m7, maj7, sus, dim, add9, 6) to see the diagram with open or barre shapes and hear it strummed or as an arpeggio with Karplus-Strong synthesis, and build a looping progression at your tempo.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

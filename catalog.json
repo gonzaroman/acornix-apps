@@ -177,6 +177,29 @@
       "trending": 0
     },
     {
+      "id": "guitar-chords",
+      "name": "Guitar Chords",
+      "emoji": "🎼",
+      "category": "music",
+      "description": "Any chord in any key with a clear diagram and a real plucked sound, plus a progression player to practise changes.",
+      "prompt": "A guitar chord finder: pick a root and type (major, minor, 7, m7, maj7, sus, dim, add9, 6) to see the diagram with open or barre shapes and hear it strummed or as an arpeggio with Karplus-Strong synthesis, and build a looping progression at your tempo.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12097,
+      "sha256": "0c4fc3869954a96cc5fa0f86a953fa49e89854c454f9162fd7fc3a7501045a4e",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "first-aid",
       "name": "First Aid",
       "emoji": "🩹",
@@ -513,6 +536,31 @@
       "trending": 0
     },
     {
+      "id": "tuner",
+      "name": "Tuner",
+      "emoji": "🎸",
+      "category": "music",
+      "description": "Tune your guitar, bass, ukulele or violin with the microphone: a needle shows how far you are, and it turns green when it's right.",
+      "prompt": "A chromatic and instrument tuner using the microphone with pitch detection, a needle in cents, the nearest string for guitar, bass, ukulele and violin, tune up or down hints, reference A from 415 to 466 Hz and tappable strings that play the target note.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "microphone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10634,
+      "sha256": "e562877b8c9b5209bd27449f26c5e6b6a8dabeba150e47d47758dea4eec28572",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "truth-or-dare",
       "name": "Truth or Dare",
       "emoji": "🎲",
@@ -628,6 +676,29 @@
       ],
       "size": 5665,
       "sha256": "34bbda2a76882b081f51ffacbc34ae2c81ce3519e07a8cd489fe8261b3de13ec",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "tone-matrix",
+      "name": "Tone Matrix",
+      "emoji": "🎵",
+      "category": "music",
+      "description": "Tap squares on a 16×16 grid and it plays a looping melody that always sounds good, with ripples of light. Share it as a link.",
+      "prompt": "A 16 by 16 step sequencer on a pentatonic scale: tap or drag to fill squares, it loops with glowing ripples, three sounds, tempo, random and clear buttons, and the pattern can be shared as a link.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8874,
+      "sha256": "3bf873a35d7b22f91c9a693689ddbe455566110494b375103ce6e05825383174",
       "downloads": 0,
       "trending": 0
     },
@@ -816,6 +887,29 @@
       ],
       "size": 9187,
       "sha256": "6c6476caedb2e224d39824d3df0648879e03ee8b679ab79d8b033017ae9c50ed",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "synth-pad",
+      "name": "Synth Pad",
+      "emoji": "🎛️",
+      "category": "music",
+      "description": "Slide your fingers to play: left and right change the note, up and down the brightness. Glowing, multi-touch and always in tune.",
+      "prompt": "A multi-touch synth pad: horizontal position picks the note snapped to a scale (pentatonic, major, minor, blues, Japanese or free), vertical position opens the filter, with saw, square, triangle and sine waves, echo, glide, octave and glowing visuals.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9554,
+      "sha256": "0f23edce1f8bb9f01863adfcf5968f82065bc1c1b729dbb4d44ff7f0ddb4722f",
       "downloads": 0,
       "trending": 0
     },
@@ -1033,6 +1127,31 @@
       "trending": 0
     },
     {
+      "id": "lyrics-writer-ai",
+      "name": "Song Lyrics",
+      "emoji": "✍️",
+      "category": "music",
+      "description": "Tell your AI what the song is about and it writes original lyrics with guitar chords on top. Transpose, save and share.",
+      "prompt": "A songwriting helper with the AI: describe the topic and pick a style, mood and language, and get an original song with verses, chorus and bridge, chords placed above the lyrics, transposition up and down, another take, saved songs and sharing.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11171,
+      "sha256": "14b6811f227268e96b2bcfb68bcd413ac786488bbc5e3f6a9ddef6c0870be87f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "solitaire",
       "name": "Solitaire",
       "emoji": "♠️",
@@ -1174,6 +1293,29 @@
       ],
       "size": 12292,
       "sha256": "585e4e2de3fcc64fc08882d7f658f1b9d6ae56f041c3d52c53e9ef142c6be96c",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "scales",
+      "name": "Scales",
+      "emoji": "🎹",
+      "category": "music",
+      "description": "See any scale on a piano and a guitar neck, with the notes, degrees and steps, and hear it going up and down.",
+      "prompt": "A music scales reference with every root and major, minor, pentatonic, blues, harmonic minor, modes and chromatic scales, showing the notes, degrees and whole and half steps, on a two-octave piano or a 15-fret guitar neck you can tap, and playing it up and down.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11495,
+      "sha256": "c2aea6a456ccc5f0ba458eedf69b55eb83eeaf5c876614b2b5000dfc7e512948",
       "downloads": 0,
       "trending": 0
     },
@@ -1661,6 +1803,29 @@
       "trending": 0
     },
     {
+      "id": "metronome",
+      "name": "Metronome",
+      "emoji": "🥁",
+      "category": "music",
+      "description": "A precise metronome with tap tempo, time signatures, subdivisions, accents you can set per beat and a swinging pendulum.",
+      "prompt": "A metronome from 30 to 260 bpm with sample-accurate timing, tempo names, tap tempo, time signatures from 2/4 to 7/8, subdivisions, accent, normal or muted beats, three click sounds, a pendulum and vibration on accents.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9525,
+      "sha256": "0daec822220a7a4fedefcf3b4ad14112dc50b89200998f90a8ffece40b6b38d1",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "memory-match",
       "name": "Memory Match",
       "emoji": "🃏",
@@ -1866,6 +2031,29 @@
       ],
       "size": 10604,
       "sha256": "dc92223b93d0e55284f6f50dfc16b5dc0847aa1798cb1b79ff08935f344ac202",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "kalimba",
+      "name": "Kalimba",
+      "emoji": "🎶",
+      "category": "music",
+      "description": "A 17-key kalimba with bell-like tines. Slide across them for a glissando, or learn songs as the next note lights up.",
+      "prompt": "A kalimba with the standard 17-tine layout and a bell-like sound, glissando by sliding, a key selector, and songs like Twinkle Twinkle, Ode to Joy and Happy Birthday that you can learn note by note or listen to.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8880,
+      "sha256": "9d543af2c376f13716a0db0b0aadb4e2d5662be124d097dc5205f3cea8bb6a3a",
       "downloads": 0,
       "trending": 0
     },
@@ -2222,6 +2410,29 @@
       ],
       "size": 8996,
       "sha256": "34dde9b328c3a1de7f2233374802233e6a3adcd85e321b2881dd5c9274f14362",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "ear-trainer",
+      "name": "Ear Trainer",
+      "emoji": "👂",
+      "category": "music",
+      "description": "Train your ear with intervals, chords and notes, each with a song to remember it by, and see your accuracy for each one.",
+      "prompt": "An ear training game with three modes: intervals with a famous song for each, chord qualities, and notes of the scale after a C, in easy, medium and hard levels, with a streak, replay and accuracy per answer.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9840,
+      "sha256": "2feb0d2264053737e2e98e22b4fa9554e468bcafd78e21989521926b23fff930",
       "downloads": 0,
       "trending": 0
     },
@@ -2671,6 +2882,29 @@
       ],
       "size": 7279,
       "sha256": "8856c2e3704fb9d73c507c1bb54616f7c2f7517b96e9163ca3f5ca1022467ba9",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "ambient-sounds",
+      "name": "Ambient Sounds",
+      "emoji": "🌧️",
+      "category": "music",
+      "description": "Mix rain, thunder, waves, wind, fire, birds, a stream and brown noise to sleep, focus or relax, with a sleep timer.",
+      "prompt": "An ambient sound mixer with eight sounds made in the browser (rain, thunder, waves, wind, fire, birds, stream, brown noise), a volume slider each, presets for sleep, focus, beach, camping and storm, and a timer that fades out.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10406,
+      "sha256": "c11939eb7dcb61b6069268a85cac6051410e22abadf3ba9ccfda8213f5ac8e42",
       "downloads": 0,
       "trending": 0
     },

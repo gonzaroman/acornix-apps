@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Song Lyrics</title>
+<style>
+  :root { --bg:#fff8f1; --card:#fff; --ink:#2a1d14; --muted:#8f7a68; --a:#e8590c; --c:#c2255c; --line:#f1e3d3; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 2px; font-size:28px; }
+  .sub { color:var(--muted); font-weight:600; margin:0 0 12px; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; }
+  .lbl { font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin:10px 0 6px; }
+  .lbl:first-child { margin-top:0; }
+  textarea { width:100%; min-height:70px; padding:12px; border-radius:14px; border:2px solid var(--line); font:inherit; font-size:16px; resize:vertical; outline:none; }
+  textarea:focus { border-color:var(--a); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { padding:8px 12px; border-radius:14px; background:var(--bg); font-weight:700; font-size:14px; }
+  .chip.on { background:var(--ink); color:#fff; }
+  .go { width:100%; padding:16px; border-radius:18px; background:linear-gradient(90deg,var(--a),var(--c)); color:#fff; font-weight:900; font-size:18px; }
+  .go:disabled { opacity:.6; }
+  .err { color:#c92a2a; font-weight:700; margin-top:8px; }
+  .song { background:var(--card); border-radius:22px; padding:18px 16px; margin-top:12px; box-shadow:0 8px 24px #e8590c14; }
+  .song h2 { margin:0; font-family:Georgia,serif; font-size:28px; }
+  .song .meta { color:var(--muted); font-weight:700; font-size:13px; margin:4px 0 10px; }
+  .tools { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .tools button { padding:8px 12px; border-radius:12px; background:var(--bg); font-weight:800; font-size:13px; }
+  .sec { margin-top:16px; }
+  .sec h4 { margin:0 0 6px; font-size:12px; color:var(--a); text-transform:uppercase; letter-spacing:1px; }
+  .ln { font-size:17px; line-height:1.15; margin-bottom:10px; white-space:pre-wrap; }
+  .ln .w { display:inline-flex; flex-direction:column; vertical-align:bottom; }
+  .ln .ch { color:var(--c); font-weight:900; font-size:14px; min-height:16px; font-family:ui-monospace,Menlo,monospace; }
+  .saved h3 { margin:18px 4px 8px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .si { display:flex; justify-content:space-between; width:100%; padding:12px 14px; border-radius:14px; background:var(--card); margin-bottom:6px; text-align:left; font-weight:700; }
+  .si small { color:var(--muted); }
+  .dots::after { content:'…'; animation:d 1s steps(3) infinite; }
+</style>
+</head>
+<body>
+<h1>✍️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+<div id="form" class="card">
+  <p class="lbl" id="lAbout"></p><textarea id="about"></textarea>
+  <p class="lbl" id="lGenre"></p><div class="chips" id="genres"></div>
+  <p class="lbl" id="lMood"></p><div class="chips" id="moods"></div>
+  <p class="lbl" id="lLang"></p><div class="chips" id="langs"></div>
+</div>
+<button class="go" id="go"></button><div class="err" id="err"></div>
+<div id="out"></div>
+<div class="saved" id="saved"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Letras de canciones', sub:'Cuéntale de qué va y tu IA escribe la letra con los acordes encima.', about:'¿De qué trata?', aboutPh:'Ej.: el verano en el pueblo de mis abuelos; una canción para el cumple de Marta; perder el último autobús…', genre:'Estilo', mood:'Ánimo', lang:'Idioma', go:'✨ Escribir canción', making:'Componiendo', tUp:'♯ +1', tDown:'♭ −1', again:'🔄 Otra versión', share:'Compartir', save:'⭐ Guardar', savedL:'Mis canciones', del:'Borrar', key:'Tono', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No ha salido bien: ', genres:['Pop','Rock','Balada','Folk','Rap','Reggaetón','Country','Infantil'], moods:['Alegre','Nostálgica','Romántica','Épica','Divertida','Triste'], langs:['Español','English'] }
+ : { title:'Song Lyrics', sub:'Tell it what the song is about and your AI writes the lyrics with chords on top.', about:'What is it about?', aboutPh:'e.g. summer at my grandparents\' village; a song for Maya\'s birthday; missing the last bus…', genre:'Style', mood:'Mood', lang:'Language', go:'✨ Write a song', making:'Writing', tUp:'♯ +1', tDown:'♭ −1', again:'🔄 Another take', share:'Share', save:'⭐ Save', savedL:'My songs', del:'Delete', key:'Key', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'That didn\'t work: ', genres:['Pop','Rock','Ballad','Folk','Rap','Reggaeton','Country','Kids'], moods:['Happy','Nostalgic','Romantic','Epic','Funny','Sad'], langs:['Español','English'] };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let f = { genre: 0, mood: 0, lang: ES ? 0 : 1 }, song = null, shift = 0, saved = [];
+['ttl', 'sub', 'lAbout', 'lGenre', 'lMood', 'lLang', 'go'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.about, T.genre, T.mood, T.lang, T.go][i]);
+$('about').placeholder = T.aboutPh;
+function chips(el, items, k) { el.innerHTML = items.map((t, i) => `<button class="chip ${f[k] === i ? 'on' : ''}" data-i="${i}">${t}</button>`).join(''); el.querySelectorAll('.chip').forEach(b => b.onclick = () => { f[k] = +b.dataset.i; chips(el, items, k); }); }
+chips($('genres'), T.genres, 'genre'); chips($('moods'), T.moods, 'mood'); chips($('langs'), T.langs, 'lang');
+// Transposition works on chord names like C#m7, Bb, F/A.
+const SH = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'], IDX = { C: 0, 'B#': 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, Fb: 4, F: 5, 'E#': 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11, Cb: 11 };
+const tr = ch => ch.replace(/([A-G][#b]?)/g, n => IDX[n] == null ? n : SH[(IDX[n] + shift + 120) % 12]);
+// Lines come as "[C]Here comes the [G]sun": chords sit above the syllable that follows them.
+function lineHtml(line) {
+  const parts = line.split(/(\[[^\]]+\])/).filter(Boolean); let html = '', pending = '';
+  parts.forEach(p => { const m = p.match(/^\[([^\]]+)\]$/); if (m) { if (pending) html += `<span class="w"><span class="ch">${esc(tr(pending))}</span><span>&nbsp;</span></span>`; pending = m[1]; } else { const first = p.match(/^(\S*\s?)([\s\S]*)$/); html += `<span class="w"><span class="ch">${pending ? esc(tr(pending)) : ''}</span><span>${esc(first[1])}</span></span>${esc(first[2])}`; pending = ''; } });
+  if (pending) html += `<span class="w"><span class="ch">${esc(tr(pending))}</span><span>&nbsp;</span></span>`;
+  return html;
+}
+function render() {
+  if (!song) { $('out').innerHTML = ''; return; }
+  $('out').innerHTML = `<div class="song"><h2>${esc(song.title)}</h2><div class="meta">${esc(song.style || '')} · ${T.key}: ${esc(tr(song.key || ''))}${song.bpm ? ` · ${+song.bpm} bpm` : ''}</div>
+    <div class="tools"><button id="down">${T.tDown}</button><button id="up">${T.tUp}</button><button id="again">${T.again}</button><button id="saveB">${T.save}</button><button id="shareB">${T.share}</button></div>
+    ${song.sections.map(s => `<div class="sec"><h4>${esc(s.name)}</h4>${s.lines.map(l => `<div class="ln">${lineHtml(l)}</div>`).join('')}</div>`).join('')}</div>`;
+  $('up').onclick = () => { shift++; render(); }; $('down').onclick = () => { shift--; render(); };
+  $('again').onclick = make;
+  $('saveB').onclick = () => { const s = { ...song, shift }; saved = [s, ...saved.filter(x => x.title !== s.title)].slice(0, 30); store.set('saved', saved); renderSaved(); try { if (window.Acornix) Acornix.toast('⭐'); } catch (e) {} };
+  $('shareB').onclick = () => { const txt = `${song.title}\n\n` + song.sections.map(s => `[${s.name}]\n` + s.lines.map(l => l.replace(/\[([^\]]+)\]/g, (_, c) => `[${tr(c)}]`)).join('\n')).join('\n\n'); try { if (window.Acornix) Acornix.share(txt); else if (navigator.share) navigator.share({ text: txt }); else navigator.clipboard.writeText(txt); } catch (e) {} };
+}
+function renderSaved() {
+  $('saved').innerHTML = saved.length ? `<h3>${T.savedL}</h3>` + saved.map((s, i) => `<button class="si" data-i="${i}"><span>🎵 ${esc(s.title)}</span><small>${esc(s.style || '')}</small></button>`).join('') : '';
+  $('saved').querySelectorAll('.si').forEach(b => { b.onclick = () => { song = saved[+b.dataset.i]; shift = song.shift || 0; render(); scrollTo({ top: $('out').offsetTop - 10, behavior: 'smooth' }); }; b.oncontextmenu = e => { e.preventDefault(); saved.splice(+b.dataset.i, 1); store.set('saved', saved); renderSaved(); }; });
+}
+async function make() {
+  $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  const about = $('about').value.trim(); if (!about) { $('about').focus(); return; }
+  $('go').disabled = true; $('go').innerHTML = `<span class="dots">${T.making}</span>`;
+  try {
+    const r = await Acornix.askAI(`Write an original song about: ${about}. Style: ${['pop', 'rock', 'ballad', 'folk', 'rap', 'reggaeton', 'country', 'children\'s song'][f.genre]}. Mood: ${['happy', 'nostalgic', 'romantic', 'epic', 'funny', 'sad'][f.mood]}. Language of the lyrics: ${f.lang === 0 ? 'Spanish' : 'English'}.`, {
+      json: true, system: 'You are a songwriter. Write singable, rhyming, original lyrics (never copy existing songs) with simple guitar chords that fit the key. Put each chord in square brackets right before the syllable where it changes, e.g. "[C]Walking down the [G]road". Use 4-chord progressions, mostly open chords. Reply only with JSON: {"title":"song title","style":"style in a few words","key":"e.g. G","bpm":number,"sections":[{"name":"Verse 1 / Chorus / Bridge… in the lyrics language","lines":["lyric line with [chords]"]}]} with verse, chorus, verse, chorus, bridge, chorus.'
+    });
+    if (!r || !Array.isArray(r.sections) || !r.sections.length) throw new Error('?');
+    song = r; shift = 0; render(); scrollTo({ top: $('out').offsetTop - 10, behavior: 'smooth' });
+    try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { $('err').textContent = T.failed + (e.message || ''); }
+  $('go').disabled = false; $('go').textContent = T.go;
+}
+$('go').onclick = make;
+(async () => { saved = await store.get('saved', []); renderSaved(); })();
+</script>
+</body>
+</html>

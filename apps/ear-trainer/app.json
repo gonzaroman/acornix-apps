@@ -1,0 +1,14 @@
+{
+  "id": "ear-trainer",
+  "name": "Ear Trainer",
+  "emoji": "👂",
+  "category": "music",
+  "description": "Train your ear with intervals, chords and notes, each with a song to remember it by, and see your accuracy for each one.",
+  "prompt": "An ear training game with three modes: intervals with a famous song for each, chord qualities, and notes of the scale after a C, in easy, medium and hard levels, with a streak, replay and accuracy per answer.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

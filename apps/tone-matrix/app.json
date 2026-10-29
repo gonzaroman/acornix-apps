@@ -1,0 +1,14 @@
+{
+  "id": "tone-matrix",
+  "name": "Tone Matrix",
+  "emoji": "🎵",
+  "category": "music",
+  "description": "Tap squares on a 16×16 grid and it plays a looping melody that always sounds good, with ripples of light. Share it as a link.",
+  "prompt": "A 16 by 16 step sequencer on a pentatonic scale: tap or drag to fill squares, it loops with glowing ripples, three sounds, tempo, random and clear buttons, and the pattern can be shared as a link.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

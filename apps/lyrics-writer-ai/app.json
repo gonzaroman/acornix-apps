@@ -1,0 +1,14 @@
+{
+  "id": "lyrics-writer-ai",
+  "name": "Song Lyrics",
+  "emoji": "✍️",
+  "category": "music",
+  "description": "Tell your AI what the song is about and it writes original lyrics with guitar chords on top. Transpose, save and share.",
+  "prompt": "A songwriting helper with the AI: describe the topic and pick a style, mood and language, and get an original song with verses, chorus and bridge, chords placed above the lyrics, transposition up and down, another take, saved songs and sharing.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}
