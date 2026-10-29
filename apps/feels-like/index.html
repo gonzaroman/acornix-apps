@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f7f5ef">
+<title>Sensación · Termómetro personal</title>
+<style>
+:root{--bg:#f7f5ef;--ink:#23352e;--muted:#738077;--line:#e3e7dc;--accent:#e17b37;--soft:#fff0df;--result:#ad511c;--shadow:0 8px 30px #29382a07}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,summary:focus-visible{outline:3px solid #589681;outline-offset:3px}
+.page{max-width:540px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) calc(26px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+header{display:flex;align-items:center;gap:11px;margin-bottom:23px}
+.logo{height:43px;width:43px;background:#254c3d;border-radius:15px;color:#fff;display:grid;place-items:center}
+.logo svg{width:25px;height:25px}
+.brand{font-size:22px;font-weight:800;letter-spacing:-.8px}.subtitle{font-size:12px;color:var(--muted);margin-top:1px}
+.offline{margin-left:auto;border:1px solid #dce3d6;border-radius:30px;padding:7px 10px;font-size:10px;font-weight:700;display:flex;gap:5px;align-items:center;white-space:nowrap}
+.dot{width:6px;height:6px;border-radius:50%;background:#5b8c66}
+.intro h1{font-size:29px;line-height:1.15;letter-spacing:-1.1px;margin:0 0 9px;font-weight:800}
+.intro p{font-size:14px;color:var(--muted);line-height:1.55;margin:0 0 21px;max-width:340px}
+.unitbar{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px;gap:12px}
+.unit-label{font-size:12px;font-weight:650;color:var(--muted)}
+.unitgroups{display:flex;gap:9px}
+.segment{display:flex;background:#e9ece3;border-radius:12px;padding:3px}
+.segment button{border:0;background:none;color:#708075;border-radius:9px;min-width:45px;min-height:37px;font-size:12px;font-weight:750;padding:6px 10px}
+.segment button.selected{background:white;color:#284b3a;box-shadow:0 2px 5px #223d2410}
+.card{border:1px solid var(--line);background:#fff;border-radius:23px;box-shadow:var(--shadow)}
+.inputs{padding:6px 20px}
+.control{padding:17px 0 13px}
+.control+.control{border-top:1px solid #edf0e9}
+.control-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.control-name{font-size:13px;font-weight:650;display:flex;align-items:center;gap:9px}
+.control-name svg{width:19px;height:19px;color:#7f8b7e;flex-shrink:0}
+.input-value{font-size:25px;letter-spacing:-.9px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.input-value small{font-size:13px;font-weight:550;color:var(--muted);letter-spacing:0;margin-left:3px}
+input[type=range]{--fill:50%;display:block;width:100%;height:38px;margin:4px 0 0;background:transparent;appearance:none;-webkit-appearance:none;touch-action:pan-y;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:10px;background:linear-gradient(to right,#42664d 0 var(--fill),#e8ece3 var(--fill) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:5px solid #42664d;box-shadow:0 2px 5px #27432b18;margin-top:-10px}
+input[type=range]::-moz-range-track{height:6px;border-radius:10px;background:#e8ece3}
+input[type=range]::-moz-range-progress{height:6px;background:#42664d;border-radius:10px}
+input[type=range]::-moz-range-thumb{height:17px;width:17px;background:white;border:5px solid #42664d;border-radius:50%}
+input[type=range]:focus-visible{outline:2px solid #93ae97;border-radius:10px;outline-offset:1px}
+.range-labels{display:flex;justify-content:space-between;font-size:10px;color:#8b958b;margin-top:-1px;font-variant-numeric:tabular-nums}
+.weather-btn{display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid #d7dfd1;background:#eaf0e5;color:#34543d;width:100%;min-height:49px;border-radius:15px;font-size:13px;font-weight:750;margin-top:13px}
+.weather-btn svg{width:19px;height:19px}
+.weather-btn:active{transform:scale(.985)}.weather-btn:disabled{opacity:.65;cursor:wait}
+.status{font-size:11px;line-height:1.5;color:var(--muted);text-align:center;min-height:19px;margin:8px 5px 17px}
+.status.error{color:#b14937}
+.result{position:relative;overflow:hidden;background:var(--soft);border:1px solid color-mix(in srgb,var(--accent) 18%,transparent);border-radius:25px;padding:23px 22px;transition:background .5s,border-color .5s}
+.result-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.eyebrow{text-transform:uppercase;font-size:10px;letter-spacing:1.7px;font-weight:800;color:var(--result)}
+.live{display:flex;align-items:center;gap:5px;color:var(--result);font-size:10px;font-weight:650;white-space:nowrap}
+.live i{background:var(--accent);width:5px;height:5px;border-radius:50%}
+.result-main{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:161px}
+.result-num{font-size:77px;line-height:1;letter-spacing:-5px;font-weight:800;color:var(--result);font-variant-numeric:tabular-nums;white-space:nowrap}
+.result-num small{font-size:29px;letter-spacing:-1.5px;vertical-align:top;display:inline-block;margin-top:10px;margin-left:3px}
+.result-name{font-size:20px;font-weight:800;color:var(--result);margin:9px 0 5px;letter-spacing:-.5px}
+.result-diff{font-size:12px;color:var(--result);opacity:.85;line-height:1.45;max-width:250px}
+.thermo{width:53px;height:142px;flex-shrink:0;position:relative;margin:5px 2px 0 0}
+.thermo-track{position:absolute;left:12px;top:0;width:25px;height:120px;border:5px solid #ffffffbb;border-radius:20px;background:#ffffff77;box-shadow:0 1px 4px #00000008}
+.thermo-fill{position:absolute;bottom:0;left:0;right:0;border-radius:10px;background:var(--accent);height:60%;transition:height .5s,background .5s}
+.bulb{position:absolute;bottom:0;left:2px;width:45px;height:45px;border:6px solid #ffffffcc;border-radius:50%;background:var(--accent);transition:background .5s}
+.ticks{position:absolute;right:0;top:10px;height:91px;width:6px;background:repeating-linear-gradient(to top,transparent 0 16px,var(--accent) 16px 18px);opacity:.45}
+.scale{height:7px;border-radius:8px;position:relative;background:linear-gradient(90deg,#547dce,#6ba8c1 22%,#8abf9b 42%,#e6c65c 60%,#e69045 78%,#ce5057);margin-top:8px}
+.scale-marker{position:absolute;left:50%;top:-4px;width:6px;height:15px;border-radius:5px;background:#fff;border:1px solid #fff;box-shadow:0 1px 5px #0003;transform:translateX(-50%);transition:left .5s}
+.scale-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--result);opacity:.75;margin-top:8px}
+.method{display:flex;gap:7px;align-items:center;border-top:1px solid color-mix(in srgb,var(--accent) 16%,transparent);margin-top:17px;padding-top:13px;font-size:11px;color:var(--result);line-height:1.4}
+.method svg{height:15px;width:15px;flex-shrink:0}
+.advice{padding:20px;margin-top:14px}
+.advice-head{display:flex;gap:9px;align-items:center;font-size:14px;font-weight:750}
+.advice-head svg{height:19px;width:19px;color:var(--accent)}
+.risk{font-size:12px;line-height:1.65;color:#637166;margin:11px 0 15px}
+.tips{display:flex;flex-direction:column;gap:11px}
+.tip{display:flex;gap:10px;font-size:12px;line-height:1.5}
+.check{width:19px;height:19px;display:grid;place-items:center;background:#eff3ea;border-radius:50%;color:#5c7e57;font-size:11px;flex-shrink:0}
+details{margin-top:19px;border-top:1px solid var(--line);padding:15px 2px 0}
+summary{font-size:12px;font-weight:650;min-height:34px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between}
+summary::after{content:"+";font-size:19px;color:#748273}details[open] summary::after{content:"−"}
+.explainer{font-size:11px;color:var(--muted);line-height:1.75}
+.explainer p{margin:7px 0 12px}.explainer strong{color:#536452}
+footer{font-size:10px;line-height:1.6;text-align:center;color:#8b9589;margin-top:20px}
+.save-status{font-size:11px;color:#aa563c;text-align:center;margin-top:8px}
+.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:360px){.page{padding-left:15px;padding-right:15px}.result-num{font-size:64px}.intro h1{font-size:26px}.offline{font-size:9px;padding:7px}.unit-label{display:none}.unitbar{justify-content:flex-end}.result{padding:20px}.input-value{font-size:23px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+<header>
+<div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 14.8V5a3 3 0 0 1 6 0v9.8a5 5 0 1 1-6 0Z"/><path d="M12 8v10"/><circle cx="12" cy="18" r="1.3"/><path d="M18 5h2m-2 4h2"/></svg></div>
+<div><div class="brand">sensación<span style="color:#83a064">.</span></div><div class="subtitle">El tiempo, como lo sientes</div></div>
+<div class="offline"><span class="dot"></span> Cálculo sin conexión</div>
+</header>
+<section class="intro">
+<h1>No son solo grados.</h1>
+<p>Descubre cómo el viento y la humedad cambian la sensación de temperatura.</p>
+</section>
+<div class="unitbar">
+<span class="unit-label">Tus unidades</span>
+<div class="unitgroups">
+<div class="segment" role="group" aria-label="Unidad de temperatura">
+<button type="button" id="unitC" class="selected" aria-pressed="true">°C</button>
+<button type="button" id="unitF" aria-pressed="false">°F</button>
+</div>
+<div class="segment" role="group" aria-label="Unidad de velocidad">
+<button type="button" id="unitK" class="selected" aria-pressed="true">km/h</button>
+<button type="button" id="unitM" aria-pressed="false">mph</button>
+</div>
+</div>
+</div>
+<section class="card inputs" aria-label="Condiciones del aire">
+<div class="control">
+<div class="control-top">
+<label class="control-name" for="temperature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 14.8V5a3 3 0 0 1 6 0v9.8a5 5 0 1 1-6 0Z"/><path d="M12 9v9"/></svg>Temperatura del aire</label>
+<output class="input-value" id="tempValue" for="temperature"></output>
+</div>
+<input type="range" id="temperature" min="-40" max="50" step="0.5" value="30" aria-label="Temperatura del aire">
+<div class="range-labels"><span id="tempMin">−40 °C</span><span id="tempMax">50 °C</span></div>
+</div>
+<div class="control">
+<div class="control-top">
+<label class="control-name" for="humidity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3C9 7 5.5 10.7 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10.7 15 7 12 3Z"/><path d="M9 15a3 3 0 0 0 3 3" stroke-linecap="round"/></svg>Humedad relativa</label>
+<output class="input-value" id="humidityValue" for="humidity"></output>
+</div>
+<input type="range" id="humidity" min="0" max="100" step="1" value="65" aria-label="Humedad relativa">
+<div class="range-labels"><span>0 % · seco</span><span>100 % · húmedo</span></div>
+</div>
+<div class="control">
+<div class="control-top">
+<label class="control-name" for="wind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h6a3 3 0 1 1-3 3"/></svg>Velocidad del viento</label>
+<output class="input-value" id="windValue" for="wind"></output>
+</div>
+<input type="range" id="wind" min="0" max="120" step="1" value="10" aria-label="Velocidad del viento">
+<div class="range-labels"><span id="windMin">0 km/h · calma</span><span id="windMax">120 km/h</span></div>
+</div>
+</section>
+<button type="button" class="weather-btn" id="weatherBtn">
+<svg id="weatherIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+<span id="weatherLabel">Usar el tiempo de mi ubicación</span>
+</button>
+<div id="status" class="status" role="status">Ajusta los controles. El resultado cambia al instante.</div>
+<section class="result" aria-label="Resultado de sensación térmica">
+<div class="result-top"><span class="eyebrow">Sensación térmica</span><span class="live"><i></i> En tiempo real</span></div>
+<div class="result-main">
+<div>
+<div class="result-num" id="resultNumber">35<small>°C</small></div>
+<div class="result-name" id="resultName">Mucho calor</div>
+<div class="result-diff" id="resultDiff"></div>
+</div>
+<div class="thermo" aria-hidden="true"><div class="thermo-track"><div class="thermo-fill" id="thermoFill"></div></div><div class="ticks"></div><div class="bulb"></div></div>
+</div>
+<div class="scale" aria-hidden="true"><div class="scale-marker" id="scaleMarker"></div></div>
+<div class="scale-labels"><span>Frío extremo</span><span>Templado</span><span>Calor extremo</span></div>
+<div class="method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v2"/></svg><span id="methodText"></span></div>
+</section>
+<section class="card advice" aria-label="Riesgos y recomendaciones">
+<div class="advice-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 9 4v6c0 4-9 8-9 8s-9-4-9-8V7l9-4Z"/><path d="m8 12 3 3 5-6"/></svg><span id="riskTitle">Cuídate del calor</span></div>
+<p class="risk" id="riskText"></p>
+<div class="tips" id="tips"></div>
+</section>
+<details>
+<summary>Cómo se calcula y qué debes saber</summary>
+<div class="explainer">
+<p><strong>Calor:</strong> desde 26,7 °C usamos el índice de calor del servicio meteorológico de EE. UU. (NOAA/NWS), con temperatura y humedad. Se aplica la fórmula simplificada o la regresión de Rothfusz y sus ajustes según las condiciones. El viento no interviene en este índice.</p>
+<p><strong>Frío:</strong> con 10 °C o menos y viento superior a 4,8 km/h usamos la fórmula estándar de enfriamiento por viento de Canadá/NWS. La humedad no interviene. Fuera de ambos intervalos mostramos la temperatura del aire, sin corrección.</p>
+<p><strong>Una orientación, no una medición corporal.</strong> Los valores se refieren a la sombra. El sol directo, la ropa, el esfuerzo, la edad y la salud cambian el riesgo real. Con sol, el índice de calor puede aumentar hasta unos 8 °C. Los tiempos de congelación son aproximados y se refieren a piel expuesta.</p>
+<p><strong>Señales de alarma:</strong> confusión, desmayo o piel muy caliente pueden indicar un golpe de calor. Busca ayuda de emergencias y enfría a la persona. Piel blanca, dura o insensible puede indicar congelación: busca refugio y atención médica; no la frotes.</p>
+<p><strong>Tiempo local:</strong> Open-Meteo ofrece condiciones actuales estimadas para tu ubicación, no una lectura de un sensor personal. Solo esta función necesita internet y permiso de ubicación. Las coordenadas se envían a Open-Meteo para consultar el tiempo; esta app no las guarda.</p>
+</div>
+</details>
+<div class="save-status" id="saveStatus" role="status"></div>
+<footer>Hecho para orientarte, no para sustituir avisos oficiales.<br>Fórmulas NOAA / NWS · Datos meteorológicos: Open-Meteo</footer>
+</main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const KEY='sensacion_config_v1';
+const storage=window.Acornix&&window.Acornix.db?window.Acornix.db:{
+  async get(k){const s=localStorage.getItem(k);return s?JSON.parse(s):null},
+  async set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+};
+let state={t:30,h:65,w:10,tu:'C',wu:'kmh',weatherAt:null};
+let ready=false,busy=false,saveChain=Promise.resolve(),changeVersion=0;
+const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
+const toF=c=>c*9/5+32;
+const displayT=c=>state.tu==='F'?toF(c):c;
+const fmt=(n,dec=0)=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:dec,minimumFractionDigits:dec}).format(Math.abs(n)<Math.pow(10,-dec)/2?0:n);
+const unit=()=> '°'+state.tu;
+function sanitize(s){
+ if(!s||typeof s!=='object')return;
+ state={
+ t:typeof s.t==='number'&&isFinite(s.t)?clamp(s.t,-60,60):30,
+ h:typeof s.h==='number'&&isFinite(s.h)?clamp(s.h,0,100):65,
+ w:typeof s.w==='number'&&isFinite(s.w)?clamp(s.w,0,300):10,
+ tu:s.tu==='F'?'F':'C',wu:s.wu==='mph'?'mph':'kmh',
+ weatherAt:typeof s.weatherAt==='number'&&isFinite(s.weatherAt)?s.weatherAt:null
+ };
+}
+function persist(){
+ const snapshot={...state};
+ saveChain=saveChain.catch(()=>{}).then(()=>storage.set(KEY,snapshot)).then(()=>{$('saveStatus').textContent=''}).catch(()=>{$('saveStatus').textContent='No se pudieron guardar los ajustes en este dispositivo.'});
+}
+function heatIndex(c,r){
+ const t=toF(c);
+ let hi=.5*(t+61+(t-68)*1.2+r*.094);
+ if((hi+t)/2>=80){
+  hi=-42.379+2.04901523*t+10.14333127*r-.22475541*t*r-.00683783*t*t-.05481717*r*r+.00122874*t*t*r+.00085282*t*r*r-.00000199*t*t*r*r;
+  if(r<13&&t>=80&&t<=112)hi-=((13-r)/4)*Math.sqrt((17-Math.abs(t-95))/17);
+  else if(r>85&&t>=80&&t<=87)hi+=((r-85)/10)*((87-t)/5);
+ }
+ return (hi-32)*5/9;
+}
+function calculate(){
+ if(state.t<=10&&state.w>4.8){
+  const v=Math.pow(state.w,.16);
+  return {value:13.12+.6215*state.t-11.37*v+.3965*state.t*v,mode:'cold'};
+ }
+ if(state.t>=26.7)return {value:heatIndex(state.t,state.h),mode:'hot'};
+ return {value:state.t,mode:'air'};
+}
+function category(v){
+ if(v<=-40)return {name:'Frío extremo',color:'#5271b1',soft:'#e9effb',ink:'#355588'};
+ if(v<=-28)return {name:'Frío peligroso',color:'#5b81bc',soft:'#eaf1fc',ink:'#3a5f96'};
+ if(v<=0)return {name:'Helador',color:'#669bb9',soft:'#eaf3f8',ink:'#3f718e'};
+ if(v<10)return {name:'Frío',color:'#74a8b6',soft:'#ebf5f7',ink:'#437985'};
+ if(v<18)return {name:'Fresco',color:'#79aa97',soft:'#edf5ee',ink:'#4b7962'};
+ if(v<27)return {name:'Agradable',color:'#85a963',soft:'#f0f5e6',ink:'#5b793b'};
+ if(v<32)return {name:'Calor',color:'#d4a13c',soft:'#fff5df',ink:'#967022'};
+ if(v<41)return {name:'Mucho calor',color:'#e18a3c',soft:'#fff0df',ink:'#ac5e25'};
+ if(v<54)return {name:'Calor peligroso',color:'#df6349',soft:'#fff0e9',ink:'#ac4937'};
+ return {name:'Calor extremo',color:'#cd4e60',soft:'#ffedf0',ink:'#a9354a'};
+}
+function recommendations(v,mode){
+ if(v<=-28){
+  let time=v<=-55?'en menos de 2 minutos':v<=-48?'en unos 2–5 minutos':v<=-40?'en unos 5–10 minutos':'en unos 10–30 minutos';
+  return {title:'Riesgo alto de congelación',text:`La piel expuesta puede congelarse ${time}${mode==='cold'?' con este enfriamiento por viento':''}. También hay riesgo de hipotermia. Los tiempos son orientativos.`,
+  tips:['Busca un refugio caliente y limita al máximo el tiempo fuera.','Cubre toda la piel, incluida la cara; usa manoplas y varias capas secas.','Si pierdes sensibilidad o notas confusión, busca atención médica.']};
+ }
+ if(v<=0)return {title:'Protege tu cuerpo del frío',text:'Puede haber hipotermia con exposición prolongada, especialmente si te mojas. El riesgo de congelación aumenta al bajar la temperatura y al exponerte más tiempo.',tips:['Usa capas aislantes, gorro y guantes; protege manos y pies.','Mantén la ropa seca y haz pausas en un lugar cálido.','No ignores temblores intensos, torpeza o pérdida de sensibilidad.']};
+ if(v<10)return {title:'Abrígate antes de salir',text:'El frío prolongado puede enfriar el cuerpo, sobre todo con ropa mojada. La infancia y las personas mayores necesitan más protección.',tips:['Lleva una capa exterior que corte el viento.','Evita quedarte con ropa húmeda y busca abrigo si empiezas a tiritar.','En recorridos largos, lleva una capa extra.']};
+ if(v<27)return {title:'Un momento para disfrutar',text:'Riesgo térmico generalmente bajo en condiciones normales. El sol, el esfuerzo y tu salud pueden cambiar cómo te encuentras.',tips:['Adapta las capas de ropa a tu actividad.','Lleva agua si vas a caminar o hacer ejercicio.','Protégete del sol: una temperatura suave no indica un índice UV bajo.']};
+ if(v<32)return {title:'Atención al calor',text:'Puede aparecer fatiga con exposición prolongada o ejercicio. Las personas vulnerables pueden sufrir efectos antes.',tips:['Bebe agua con frecuencia y haz pausas a la sombra.','Usa ropa ligera y reduce el ejercicio en las horas de más calor.','Presta especial atención a menores y personas mayores.']};
+ if(v<41)return {title:'Riesgo de agotamiento por calor',text:'La exposición prolongada o el esfuerzo pueden causar calambres y agotamiento. El riesgo de golpe de calor aumenta si la exposición continúa.',tips:['Reduce el esfuerzo y descansa en un sitio fresco.','Bebe agua regularmente; si tienes restricciones médicas, sigue tu pauta.','Si hay mareo, náuseas o dolor de cabeza, detente y enfríate.']};
+ return {title:v>=54?'Peligro extremo por calor':'Riesgo de golpe de calor',text:v>=54?'El golpe de calor es muy probable con exposición prolongada. Evita exponerte y busca un lugar fresco de inmediato.':'Son probables los calambres y el agotamiento con exposición prolongada. El golpe de calor es posible: reduce tu exposición de inmediato.',tips:['Evita el esfuerzo y busca un lugar climatizado.','Enfríate con agua y paños húmedos; comprueba cómo están las personas vulnerables.','Ante confusión o desmayo, llama a emergencias y empieza a enfriar a la persona.']};
+}
+function setSlider(id,value,min,max,step,text){
+ const el=$(id);el.min=min;el.max=max;el.step=step;el.value=value;
+ el.style.setProperty('--fill',((value-min)/(max-min)*100)+'%');
+ el.setAttribute('aria-valuetext',text);
+}
+function renderInputs(){
+ const f=state.tu==='F',mph=state.wu==='mph';
+ ['C','F'].forEach(u=>{const b=$('unit'+u);b.classList.toggle('selected',state.tu===u);b.setAttribute('aria-pressed',String(state.tu===u))});
+ [['K',!mph],['M',mph]].forEach(([id,on])=>{$('unit'+id).classList.toggle('selected',on);$('unit'+id).setAttribute('aria-pressed',String(on))});
+ const t=displayT(state.t),w=mph?state.w/1.609344:state.w,wu=mph?'mph':'km/h';
+ const minC=Math.min(-40,Math.floor(state.t/10)*10),maxC=Math.max(50,Math.ceil(state.t/10)*10);
+ const maxW=Math.max(120,Math.ceil(state.w/10)*10);
+ const tmin=f?toF(minC):minC,tmax=f?toF(maxC):maxC;
+ setSlider('temperature',t,tmin,tmax,f?1:.5,fmt(t,1)+' '+unit());
+ setSlider('humidity',state.h,0,100,1,fmt(state.h)+' %');
+ setSlider('wind',w,0,mph?Math.ceil(maxW/1.609344):maxW,1,fmt(w,1)+' '+wu);
+ $('tempValue').innerHTML=fmt(t,1)+'<small>'+unit()+'</small>';
+ $('humidityValue').innerHTML=fmt(state.h)+'<small>%</small>';
+ $('windValue').innerHTML=fmt(w,1)+'<small>'+wu+'</small>';
+ $('tempMin').textContent=fmt(tmin)+' '+unit();$('tempMax').textContent=fmt(tmax)+' '+unit();
+ $('windMin').textContent='0 '+wu+' · calma';$('windMax').textContent=(mph?Math.ceil(maxW/1.609344):maxW)+' '+wu;
+}
+function renderResult(){
+ const {value:v,mode}=calculate(),c=category(v),r=recommendations(v,mode);
+ document.documentElement.style.setProperty('--accent',c.color);
+ document.documentElement.style.setProperty('--soft',c.soft);
+ document.documentElement.style.setProperty('--result',c.ink);
+ $('resultNumber').innerHTML=fmt(displayT(v))+'<small>'+unit()+'</small>';
+ $('resultName').textContent=c.name;
+ const delta=(v-state.t)*(state.tu==='F'?1.8:1);
+ $('resultDiff').textContent=Math.abs(delta)<.5?'Similar a la temperatura del aire':fmt(Math.abs(delta),1)+' '+unit()+(delta>0?' más que la temperatura del aire':' menos que la temperatura del aire');
+ $('methodText').textContent=mode==='hot'?'Índice de calor · temperatura + humedad':mode==='cold'?'Enfriamiento por viento · temperatura + viento':'Temperatura del aire · sin corrección aplicable';
+ const pct=clamp((v+40)/95*100,0,100);
+ $('thermoFill').style.height=(8+pct*.92)+'%';
+ $('scaleMarker').style.left=clamp(pct,1,99)+'%';
+ $('riskTitle').textContent=r.title;$('riskText').textContent=r.text;
+ $('tips').replaceChildren(...r.tips.map(text=>{
+ const row=document.createElement('div');row.className='tip';
+ const check=document.createElement('span');check.className='check';check.textContent='✓';check.setAttribute('aria-hidden','true');
+ const span=document.createElement('span');span.textContent=text;row.append(check,span);return row;
+ }));
+}
+function normalStatus(){
+ $('status').classList.remove('error');
+ if(state.weatherAt){
+  const date=new Date(state.weatherAt);
+  $('status').textContent='Tiempo local · consulta del '+date.toLocaleDateString('es-ES',{day:'numeric',month:'short'})+' a las '+date.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+'.';
+ }else $('status').textContent='Valores manuales · cálculo inmediato, sin internet.';
+}
+function update(manual=true){
+ changeVersion++;
+ if(manual)state.weatherAt=null;
+ renderInputs();renderResult();if(!busy)normalStatus();persist();
+}
+$('temperature').addEventListener('input',e=>{state.t=state.tu==='F'?(Number(e.target.value)-32)*5/9:Number(e.target.value);update()});
+$('humidity').addEventListener('input',e=>{state.h=Number(e.target.value);update()});
+$('wind').addEventListener('input',e=>{state.w=Number(e.target.value)*(state.wu==='mph'?1.609344:1);update()});
+$('unitC').onclick=()=>{state.tu='C';update(false)};
+$('unitF').onclick=()=>{state.tu='F';update(false)};
+$('unitK').onclick=()=>{state.wu='kmh';update(false)};
+$('unitM').onclick=()=>{state.wu='mph';update(false)};
+function getPosition(){
+ return new Promise((resolve,reject)=>{
+  if(!navigator.geolocation){reject(new Error('Tu dispositivo no ofrece ubicación. Puedes introducir los valores a mano.'));return}
+  let settled=false;
+  const timeout=setTimeout(()=>{if(!settled){settled=true;reject(new Error('La ubicación tarda demasiado. Comprueba el GPS y vuelve a intentarlo.'))}},16000);
+  navigator.geolocation.getCurrentPosition(pos=>{if(!settled){settled=true;clearTimeout(timeout);resolve(pos)}},err=>{
+   if(settled)return;settled=true;clearTimeout(timeout);
+   reject(new Error(err.code===1?'Activa el permiso de ubicación para consultar el tiempo. También puedes usar los controles.':err.code===3?'No se pudo localizarte a tiempo. Comprueba el GPS y reintenta.':'No se pudo obtener tu ubicación. Comprueba el GPS y vuelve a intentarlo.'));
+  },{enableHighAccuracy:false,timeout:14000,maximumAge:300000});
+ });
+}
+$('weatherBtn').onclick=async()=>{
+ if(busy||!ready)return;
+ busy=true;$('weatherBtn').disabled=true;$('weatherIcon').classList.add('spin');
+ $('weatherLabel').textContent='Buscando tu ubicación…';
+ $('status').classList.remove('error');$('status').textContent='Solo se usa tu ubicación para esta consulta.';
+ try{
+  const position=await getPosition();
+  $('weatherLabel').textContent='Consultando el tiempo…';
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+  let data;
+  try{
+   const params=new URLSearchParams({latitude:position.coords.latitude.toFixed(4),longitude:position.coords.longitude.toFixed(4),current:'temperature_2m,relative_humidity_2m,wind_speed_10m',temperature_unit:'celsius',wind_speed_unit:'kmh',timezone:'auto'});
+   const response=await fetch('https://api.open-meteo.com/v1/forecast?'+params,{signal:controller.signal});
+   if(!response.ok)throw new Error('El servicio meteorológico no está disponible. Vuelve a intentarlo.');
+   data=await response.json();
+  }finally{clearTimeout(timer)}
+  const c=data.current;
+  if(!c||!Number.isFinite(c.temperature_2m)||!Number.isFinite(c.relative_humidity_2m)||!Number.isFinite(c.wind_speed_10m))throw new Error('No llegaron datos completos. Vuelve a intentarlo.');
+  if(c.temperature_2m < -60||c.temperature_2m>60||c.relative_humidity_2m<0||c.relative_humidity_2m>100||c.wind_speed_10m<0||c.wind_speed_10m>300)throw new Error('Los datos recibidos están fuera del intervalo admitido. Usa los controles o reintenta.');
+  state.t=c.temperature_2m;state.h=c.relative_humidity_2m;state.w=c.wind_speed_10m;state.weatherAt=Date.now();
+  update(false);normalStatus();
+  $('weatherLabel').textContent='Actualizar el tiempo local';
+ }catch(err){
+  $('status').classList.add('error');
+  $('status').textContent=err.name==='AbortError'?'La consulta tardó demasiado. Tus valores siguen disponibles; puedes reintentar.':err instanceof TypeError?'No se pudo conectar. Comprueba internet o usa los controles sin conexión.':(err.message||'No se pudo consultar el tiempo. Puedes reintentar.');
+  $('weatherLabel').textContent='Reintentar el tiempo local';
+ }finally{busy=false;$('weatherBtn').disabled=false;$('weatherIcon').classList.remove('spin')}
+};
+async function reload(){
+ const version=changeVersion;
+ try{const saved=await storage.get(KEY);if(version!==changeVersion)return;if(saved)sanitize(saved);renderInputs();renderResult();normalStatus()}
+ catch{ $('saveStatus').textContent='No se pudieron recuperar los ajustes guardados.' }
+ finally{ready=true}
+}
+window.addEventListener('acornixdata',()=>{saveChain.then(reload)});
+renderInputs();renderResult();reload();
+})();
+</script>
+</body>
+</html>

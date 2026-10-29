@@ -1896,6 +1896,31 @@
       "trending": 0
     },
     {
+      "id": "feels-like",
+      "name": "Feels Like",
+      "emoji": "🌦️",
+      "category": "weather",
+      "description": "Heat index and wind chill from temperature, humidity and wind, offline, with a coloured thermometer, the health risk and advice.",
+      "prompt": "A feels like temperature calculator that works offline. Enter the air temperature, humidity and wind speed with big sliders, in Celsius or Fahrenheit and km/h or mph, and calculate the heat index when it is hot and the wind chill when it is cold. Show the result big on a coloured thermometer with a word from freezing to dangerous heat, the risk for frostbite or heat stroke, and practical advice. Add a button to fill the values from the current weather with the free Open-Meteo API and my location",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 29075,
+      "sha256": "c6f7cdc7176cdcb3a6c3c1d5123064095131138eb6e44613848ebc1021b2a2eb",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "expenses",
       "name": "Expenses",
       "emoji": "💸",
