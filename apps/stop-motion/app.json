@@ -1,0 +1,15 @@
+{
+  "id": "stop-motion",
+  "name": "Stop Motion",
+  "emoji": "🌰",
+  "category": "photo-video",
+  "description": "Make stop motion films with the camera: onion skin to line up each frame, a film strip, playback speed and saving the video.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 18
+}
