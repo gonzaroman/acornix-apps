@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f8f6f1">
+<title>A punto · Qué me pongo</title>
+<style>
+:root{--bg:#f8f6f1;--ink:#292638;--muted:#797582;--purple:#7560ae;--lav:#ede7fa;--line:#e7e3dc;--orange:#ed8853}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}button,input{font:inherit}button{cursor:pointer;color:inherit;border:0}button:focus-visible,input:focus-visible{outline:3px solid #a38bce;outline-offset:3px}button:disabled{opacity:.55;cursor:wait}svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}button{touch-action:manipulation}main{max-width:620px;margin:auto;padding:calc(24px + env(safe-area-inset-top)) 22px calc(24px + env(safe-area-inset-bottom))}header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}.brand{display:flex;gap:10px;align-items:center;font-size:23px;font-weight:800;letter-spacing:-1px}.brandmark{width:37px;height:37px;background:#ffe4c8;color:#c96d39;border-radius:13px;display:grid;place-items:center}.brandmark svg{width:25px;height:25px}.iconbtn{width:46px;height:46px;border:1px solid var(--line);background:transparent;border-radius:50%;display:grid;place-items:center}.eyebrow{text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1.7px;color:var(--muted)}.locationrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:7px 0 22px}.citybtn{background:transparent;display:flex;align-items:center;gap:8px;padding:0;min-height:46px;min-width:0;text-align:left}.citybtn strong{font-size:27px;letter-spacing:-1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.citybtn svg{width:18px;color:var(--muted)}.gps{background:white;box-shadow:0 2px 8px #30233d05;border:1px solid var(--line)}.daytabs{background:#eeebe5;padding:5px;display:flex;border-radius:17px;margin-bottom:20px}.daytabs button{min-height:45px;flex:1;background:none;border-radius:12px;font-weight:700;font-size:14px;transition:.2s}.daytabs button.active{background:white;box-shadow:0 2px 5px #30233d09}.hero{position:relative;overflow:hidden;background:var(--lav);border-radius:27px;padding:24px;margin-bottom:24px;min-height:190px}.hero .date{font-size:12px;color:#6c6182;font-weight:600}.hero h1{font-size:29px;letter-spacing:-1px;line-height:1.15;margin:12px 0 9px;max-width:78%;position:relative;z-index:1}.hero p{font-size:13px;line-height:1.6;color:#6b607e;max-width:74%;margin:0;position:relative;z-index:1}.heroart{position:absolute;right:10px;top:28px;font-size:72px;filter:drop-shadow(0 7px 7px #68518a15);transform:rotate(-9deg)}.range{display:inline-flex;align-items:center;gap:8px;background:#ffffff80;border-radius:20px;font-size:12px;font-weight:700;padding:7px 11px;margin-top:17px}.range span{color:#80758f;font-weight:500}.sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.sectionhead h2{font-size:17px;letter-spacing:-.4px;margin:0}.sectionhead span{font-size:11px;color:var(--muted)}.periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.period{border:1px solid var(--line);border-radius:19px;background:transparent;padding:14px 5px;display:flex;align-items:center;flex-direction:column;gap:6px;transition:background .2s,transform .2s}.period.active{border-color:#aa94ce;background:#f0eafa;box-shadow:0 0 0 1px #aa94ce}.period .label{font-size:12px;font-weight:700}.period .hours{font-size:10px;color:var(--muted)}.period .emoji{font-size:29px;margin:3px 0}.period .temp{font-weight:800;font-size:23px;letter-spacing:-1px}.period .feel{font-size:10px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);padding:19px 0 20px;border-bottom:1px solid var(--line);margin-bottom:22px}.metric{text-align:center;border-right:1px solid var(--line);font-size:14px;font-weight:700}.metric:last-child{border:0}.metric small{display:block;font-weight:500;font-size:10px;color:var(--muted);margin-top:6px}.outfithead{display:flex;justify-content:space-between;align-items:center;gap:8px}.outfithead h2{font-size:22px;letter-spacing:-.7px;margin:0}.badge{font-size:10px;font-weight:700;color:#77614a;background:#eee7dc;padding:7px 10px;border-radius:20px;white-space:nowrap}.outfitdesc{font-size:13px;color:var(--muted);line-height:1.6;margin:9px 0 17px}.wardrobe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.garment{min-height:148px;border-radius:22px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:17px 9px;animation:appear .35s both}.garment .emoji{font-size:49px;line-height:1.25;margin-bottom:11px}.garment strong{font-size:14px;text-align:center}.garment small{font-size:11px;margin-top:5px;text-align:center;color:#776e71}.garment:nth-child(4n+1){background:#f4e6dc}.garment:nth-child(4n+2){background:#e9ecdf}.garment:nth-child(4n+3){background:#e7eaf1}.garment:nth-child(4n){background:#f0e7ef}.tip{display:flex;gap:11px;border:1px solid var(--line);border-radius:17px;padding:15px;margin-top:17px;font-size:12px;line-height:1.65;color:#726d76}.tip span{font-size:21px}.tip p{margin:0}.personal{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:white;border-radius:18px;padding:16px;margin-top:21px;border:1px solid var(--line)}.personal strong{display:block;font-size:13px}.personal small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.personal .left{display:flex;gap:12px;align-items:center}.personal .left>span{font-size:24px}footer{text-align:center;margin-top:25px;color:#938e98;font-size:10px;line-height:1.8}footer a{color:inherit}.refresh{background:none;color:var(--purple);text-decoration:underline;padding:9px;min-height:36px;font-size:11px}.notice{padding:13px 15px;background:#fff0d8;border-radius:14px;font-size:12px;line-height:1.6;margin-bottom:15px;display:none}.notice.show{display:block}.notice button{background:none;text-decoration:underline;font-weight:700;padding:5px}.overlay{position:fixed;inset:0;background:#26213265;z-index:10;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);padding-top:env(safe-area-inset-top)}.overlay[hidden]{display:none}.sheet{width:100%;max-width:620px;background:var(--bg);border-radius:28px 28px 0 0;padding:13px 23px calc(25px + env(safe-area-inset-bottom));max-height:88dvh;overflow:auto;animation:slide .25s}.handle{height:4px;width:36px;background:#d8d3dc;border-radius:10px;margin:0 auto 20px}.sheethead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.sheethead h2{font-size:23px;letter-spacing:-.7px;margin:0}.sheet p{color:var(--muted);font-size:13px;line-height:1.6}.searchbox{display:flex;gap:10px;border:1px solid var(--line);border-radius:15px;background:white;padding:0 13px;align-items:center}.searchbox input{border:0;background:none;outline:none;min-width:0;width:100%;height:52px;color:var(--ink);font-size:16px}.searchbox button{background:none;min-width:42px;height:46px;color:var(--purple);font-weight:700}.results{margin-top:12px;min-height:60px}.result{display:flex;align-items:center;gap:12px;background:transparent;border-bottom:1px solid var(--line);width:100%;text-align:left;padding:16px 4px}.result strong{display:block;font-size:15px}.result small{display:block;color:var(--muted);font-size:12px;margin-top:4px}.searchstatus{color:var(--muted);padding:15px 0;font-size:13px}.sensitivity{display:flex;flex-direction:column;gap:10px;margin-top:20px}.choice{background:white;border:1px solid var(--line);padding:17px;border-radius:17px;display:flex;align-items:center;text-align:left;gap:13px}.choice.selected{background:var(--lav);border-color:#a18ac7}.choice .em{font-size:28px}.choice strong{font-size:14px;display:block}.choice small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.choice .check{margin-left:auto;color:var(--purple);font-weight:bold}.done{background:var(--ink);color:white;border-radius:15px;min-height:50px;width:100%;font-weight:700;margin-top:22px}.loadingline{height:3px;position:fixed;top:0;left:0;right:0;z-index:25;overflow:hidden;display:none;background:#e9e1f2}.loadingline.on{display:block}.loadingline:after{content:"";position:absolute;height:100%;width:40%;background:var(--purple);animation:loading 1s infinite ease-in-out}.empty{text-align:center;padding:40px 15px;color:var(--muted);line-height:1.7;font-size:14px}.empty span{display:block;font-size:52px;margin-bottom:16px}@keyframes loading{from{left:-40%}to{left:100%}}@keyframes slide{from{transform:translateY(35px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}@media(min-width:500px){main{padding-left:32px;padding-right:32px}.hero{padding:28px}.heroart{right:30px}.garment{min-height:160px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="loadingline" id="loading" role="progressbar" aria-label="Consultando el tiempo"></div>
+<main>
+<header><div class="brand"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M3 17h18M5 14a7 7 0 0 1 14 0M12 2v3M3 6l2 2M21 6l-2 2M1 12h3M20 12h3"/></svg></span>A punto<span style="color:#ed8853">.</span></div><button class="iconbtn" id="settings" aria-label="Ajustar mi sensibilidad al frío"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#f8f6f1"/><circle cx="16" cy="17" r="3" fill="#f8f6f1"/></svg></button></header>
+<div class="eyebrow">Tu día, bien vestido</div>
+<div class="locationrow"><button class="citybtn" id="openSearch" aria-label="Buscar una ciudad"><strong id="city">Madrid</strong><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><button class="iconbtn gps" id="locate" aria-label="Usar mi ubicación"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg></button></div>
+<div class="notice" id="notice" role="status"></div>
+<div class="daytabs" role="group" aria-label="Día de la previsión"><button class="active" data-day="0" aria-pressed="true">Hoy</button><button data-day="1" aria-pressed="false">Mañana</button></div>
+<div id="content"><div class="empty"><span>🌤️</span>Preparando el tiempo y tu conjunto…</div></div>
+<button class="personal" id="personal"><div class="left"><span>🧶</span><div><strong>El tiempo, a tu medida</strong><small id="prefLabel">Sensibilidad al frío: normal</small></div></div><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></button>
+<footer><div id="updated">Previsión por horas · Open-Meteo</div><button class="refresh" id="refresh">Actualizar previsión</button><br><a href="https://open-meteo.com/" target="_blank" rel="noopener">Datos de Open-Meteo</a> · Orientación para vestir, no un aviso meteorológico.</footer>
+</main>
+<div class="overlay" id="searchModal" hidden>
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
+<div class="handle"></div><div class="sheethead"><h2 id="searchTitle">¿Dónde vas a estar?</h2><button class="iconbtn close" aria-label="Cerrar">✕</button></div>
+<p>Busca una ciudad para preparar tu conjunto.</p>
+<form id="searchForm" class="searchbox"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="searchInput" type="search" placeholder="Ciudad o localidad" autocomplete="off" aria-label="Nombre de la ciudad"><button type="submit" aria-label="Buscar">Ir</button></form>
+<div class="results" id="results" aria-live="polite"><div class="searchstatus">Por ejemplo: Sevilla, Bogotá o Buenos Aires.</div></div>
+</section></div>
+<div class="overlay" id="prefModal" hidden>
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="prefTitle"><div class="handle"></div><div class="sheethead"><h2 id="prefTitle">¿Cómo llevas el frío?</h2><button class="iconbtn close" aria-label="Cerrar">✕</button></div><p>No todos sentimos lo mismo. Ajustamos las capas usando la sensación térmica y tu preferencia.</p><div class="sensitivity" id="choices"></div><p style="font-size:11px">La temperatura mostrada no cambia; solo adaptamos las prendas recomendadas. Tu elección se guarda automáticamente.</p><button class="done" id="done">Listo, a vestirme</button></section></div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const storage=window.Acornix?.db||{get:async k=>{try{return JSON.parse(localStorage.getItem('apunto_'+k))}catch{return null}},set:async(k,v)=>localStorage.setItem('apunto_'+k,JSON.stringify(v))};
+let state={place:{name:'Madrid',latitude:40.4168,longitude:-3.7038},sensitivity:0,day:0,period:0},forecast=null,stamp=0,loadId=0,searchId=0,searchTimer,lastFocus;
+const periods=[{name:'Mañana',hours:'07–11 h',start:7,end:11},{name:'Tarde',hours:'12–17 h',start:12,end:17},{name:'Noche',hours:'18–22 h',start:18,end:22}];
+const preferences=[{value:1,emoji:'🧣',title:'Soy de abrigarme',desc:'Siento más frío · una capa extra'},{value:0,emoji:'🙂',title:'Ni frío ni calor',desc:'La recomendación equilibrada'},{value:-1,emoji:'☀️',title:'Soy de pasar calor',desc:'Siento menos frío · capas más ligeras'}];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function save(){try{await storage.set('preferences',state)}catch{notice('No se ha podido guardar tu preferencia en este dispositivo.');}}
+function notice(text,retry=false){$('#notice').classList.add('show');$('#notice').textContent=text;if(retry){const b=document.createElement('button');b.textContent='Reintentar';b.onclick=()=>loadWeather();$('#notice').append(b)}}
+function clearNotice(){$('#notice').classList.remove('show')}
+function localDay(){try{return new Intl.DateTimeFormat('en-CA',{timeZone:forecast?.timezone||'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}catch{return new Date().toISOString().slice(0,10)}}
+function dayIndex(){const i=forecast.daily.time.indexOf(localDay());return Math.max(0,i)+state.day}
+function weather(code){if(code===0)return['☀️','Despejado'];if(code<=2)return['🌤️','Sol y algunas nubes'];if(code===3)return['☁️','Cielo cubierto'];if(code<=48)return['🌫️','Niebla'];if(code>=95)return['⛈️','Tormentas'];if((code>=71&&code<=77)||code===85||code===86)return['🌨️','Nieve'];if(code>=51)return['🌧️','Lluvia'];return['🌤️','Variable']}
+function stats(date,p){const h=forecast.hourly,ids=[];h.time.forEach((t,i)=>{const hour=Number(t.slice(11,13));if(t.slice(0,10)===date&&hour>=p.start&&hour<=p.end)ids.push(i)});
+if(!ids.length)return null;
+const vals=k=>ids.map(i=>Number(h[k]?.[i])).filter(Number.isFinite);
+const avg=k=>{const a=vals(k);return a.length?a.reduce((s,v)=>s+v,0)/a.length:0};
+const max=k=>Math.max(0,...vals(k));
+const codes=ids.map(i=>h.weather_code[i]);const code=codes.reduce((a,b)=>a>b?a:b,0);
+return{temp:avg('temperature_2m'),feel:avg('apparent_temperature'),rain:max('precipitation_probability'),wind:max('wind_speed_10m'),uv:max('uv_index'),code}}
+function outfit(s){
+const t=s.feel-state.sensitivity*3,items=[];
+let title,desc;
+if(t<5){title='Abrígate de pies a cabeza';desc='Un buen abrigo y capas cálidas serán tus aliados.';items.push(['🧥','Abrigo de invierno','Cálido y aislante'],['🧶','Jersey grueso','Una capa que arrope'])}
+else if(t<12){title='Hoy toca ir bien abrigado';desc='Combina un abrigo con un jersey para conservar el calor.';items.push(['🧥','Abrigo','Mejor con forro'],['🧶','Jersey','De punto, bien cómodo'])}
+else if(t<18){title='Las capas son la clave';desc='Una capa fácil de quitar te acompañará sin pasar frío.';items.push(['🧥','Chaqueta ligera','Para llevar sobre el jersey'],['🧶','Jersey ligero','Sin demasiado grosor'])}
+else if(t<23){title='Ligero, con una capa extra';desc='Un conjunto cómodo y una capa fina por si refresca.';items.push(['👕','Camiseta','Cómoda y transpirable'],['🧥','Sobrecamisa','Ligera y fácil de quitar'])}
+else{title=t>=30?'Fresco y sin complicaciones':'Hoy, mejor con ropa ligera';desc=t>=30?'Tejidos transpirables, prendas holgadas y poco peso.':'No necesitas mucho abrigo: deja respirar a tu piel.';items.push(['👕',t>=30?'Camiseta fresca':'Camiseta','Algodón o lino'])}
+items.push([t>=25?'🩳':'👖',t>=25?'Pantalón corto':'Pantalón largo',t<12?'De tejido cálido':t>=25?'Ligero y cómodo':'Cómodo para el día']);
+items.push([s.rain>=45?'🥾':'👟',s.rain>=45?'Calzado impermeable':'Zapatillas',s.rain>=45?'Para mantener los pies secos':'Cómodas para caminar']);
+if(t<10)items.push(['🧣','Bufanda',t<3?'Añade gorro y guantes':'Protege bien el cuello']);
+if(s.rain>=30)items.push(['☂️','Paraguas',s.rain>=70?'Muy recomendable':'Por si te sorprende la lluvia']);
+if(s.wind>=30)items.push(['🌬️','Cortavientos',s.wind>=50?'Evita el paraguas con rachas':'Una capa que frene el viento']);
+if(s.uv>=3){items.push(['🕶️','Gafas de sol','Con protección UV']);items.push(['🧴','Protector solar','FPS 30 o superior'])}
+if(s.uv>=6)items.push(['🧢','Gorra o sombrero','Busca también la sombra']);
+let tips=[];
+if(s.wind>=50)tips.push('Viento fuerte: evita prendas sueltas y prioriza un impermeable frente al paraguas.');
+else if(s.rain>=30)tips.push('Lleva las capas exteriores a mano: puede llover durante esta franja.');
+if(s.uv>=8)tips.push('UV muy alto: evita el sol directo al mediodía y renueva el protector.');
+else if(s.uv>=3)tips.push('Aunque haya nubes, protege tu piel del sol.');
+if(t>=30)tips.push('Lleva agua y busca lugares frescos.');
+if(s.code>=95)tips.push('Si hay tormenta, busca refugio y consulta los avisos locales.');
+if(!tips.length)tips.push('La sensación térmica ya tiene en cuenta el frío o el calor que se siente. Lleva una capa fácil de poner y quitar si vas a estar fuera varias horas.');
+return{title,desc,items,tip:tips.join(' ')}}
+function render(){
+$('#city').textContent=state.place.name;
+$('#prefLabel').textContent='Sensibilidad al frío: '+(state.sensitivity===1?'alta':state.sensitivity===-1?'baja':'normal');
+document.querySelectorAll('[data-day]').forEach(b=>{const active=+b.dataset.day===state.day;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
+if(!forecast)return;
+const di=dayIndex(),date=forecast.daily.time[di];
+if(!date){$('#content').innerHTML='<div class="empty"><span>🗓️</span>Esta previsión ya no está disponible. Actualiza el tiempo.</div>';return}
+const groups=periods.map(p=>stats(date,p)),s=groups[state.period];if(!s)return;
+const o=outfit(s),d=new Date(date+'T12:00:00'),dateLabel=new Intl.DateTimeFormat('es',{weekday:'long',day:'numeric',month:'long'}).format(d);
+const uvLabel=s.uv<3?'bajo':s.uv<6?'moderado':s.uv<8?'alto':s.uv<11?'muy alto':'extremo';
+$('#content').innerHTML=`
+<section class="hero"><div class="date">${esc(dateLabel)}</div><div class="heroart" aria-hidden="true">${weather(forecast.daily.weather_code[di])[0]}</div><h1>${state.day?'Mañana también,<br>a punto.':'Sal a disfrutar.<br>Nosotros te vestimos.'}</h1><p>${esc(weather(forecast.daily.weather_code[di])[1])}. Tu conjunto, adaptado a lo que se siente fuera.</p><div class="range">↑ ${Math.round(forecast.daily.temperature_2m_max[di])}° <span>↓ ${Math.round(forecast.daily.temperature_2m_min[di])}° · mín. / máx. del día</span></div></section>
+<div class="sectionhead"><h2>Cada momento cuenta</h2><span>Hora local del destino</span></div>
+<div class="periods" role="group" aria-label="Franja horaria">${groups.map((g,i)=>`<button class="period ${state.period===i?'active':''}" data-period="${i}" aria-pressed="${state.period===i}"><span class="label">${periods[i].name}</span><span class="hours">${periods[i].hours}</span><span class="emoji" aria-label="${esc(weather(g.code)[1])}">${i===2&&g.code<=2?'🌙':weather(g.code)[0]}</span><span class="temp">${Math.round(g.temp)}°</span><span class="feel">Sensación ${Math.round(g.feel)}°</span></button>`).join('')}</div>
+<div class="metrics"><div class="metric">💧 ${Math.round(s.rain)} %<small>Prob. máx. de lluvia</small></div><div class="metric">🌬️ ${Math.round(s.wind)} <span style="font-size:10px">km/h</span><small>Viento máximo</small></div><div class="metric">☀️ ${s.uv.toFixed(1)}<small>UV ${uvLabel} · máximo</small></div></div>
+<section><div class="outfithead"><h2>Tu conjunto ideal</h2><span class="badge">${periods[state.period].name} ${state.day?'de mañana':'de hoy'}</span></div><p class="outfitdesc"><strong style="color:var(--ink)">${o.title}.</strong> ${o.desc}</p><div class="wardrobe">${o.items.map((item,i)=>`<div class="garment" style="animation-delay:${i*35}ms"><span class="emoji" aria-hidden="true">${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('')}</div><div class="tip"><span>💡</span><p>${o.tip}</p></div></section>`;
+$('#updated').textContent='Open-Meteo · Actualizado a las '+new Date(stamp).toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})+' · °C';
+}
+async function getJSON(url){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);try{const r=await fetch(url,{signal:controller.signal});if(!r.ok)throw Error('red');return await r.json()}finally{clearTimeout(timer)}}
+async function loadWeather(place=state.place){
+const id=++loadId;$('#loading').classList.add('on');$('#refresh').disabled=true;clearNotice();
+try{
+const params=new URLSearchParams({latitude:place.latitude,longitude:place.longitude,timezone:'auto',forecast_days:3,hourly:'temperature_2m,apparent_temperature,precipitation_probability,wind_speed_10m,uv_index,weather_code',daily:'temperature_2m_max,temperature_2m_min,weather_code',wind_speed_unit:'kmh'});
+const data=await getJSON('https://api.open-meteo.com/v1/forecast?'+params);
+if(id!==loadId)return;if(!data.hourly?.time?.length||!data.daily?.time?.length)throw Error('datos');
+state.place=place;forecast=data;stamp=Date.now();render();await save();
+try{await storage.set('weatherCache',{place,data,stamp})}catch{}
+}catch(e){if(id!==loadId)return;notice(forecast?'No pudimos actualizar el tiempo. Sigues viendo la última previsión disponible.':'No pudimos consultar el tiempo. Revisa tu conexión y vuelve a intentarlo.',true);if(!forecast)$('#content').innerHTML='<div class="empty"><span>🌦️</span>Tu conjunto te espera.<br>Conéctate para obtener la previsión.</div>'}
+finally{if(id===loadId){$('#loading').classList.remove('on');$('#refresh').disabled=false}}
+}
+function openModal(id){lastFocus=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';if(id==='#searchModal')setTimeout(()=>$('#searchInput').focus(),70);else{renderChoices();$('#prefModal .close').focus()}}
+function closeModal(){document.querySelectorAll('.overlay').forEach(x=>x.hidden=true);document.body.style.overflow='';lastFocus?.focus()}
+function renderChoices(){$('#choices').innerHTML=preferences.map(p=>`<button class="choice ${p.value===state.sensitivity?'selected':''}" data-value="${p.value}" aria-pressed="${p.value===state.sensitivity}"><span class="em">${p.emoji}</span><span><strong>${p.title}</strong><small>${p.desc}</small></span><span class="check">${p.value===state.sensitivity?'✓':''}</span></button>`).join('')}
+$('#choices').onclick=e=>{const b=e.target.closest('[data-value]');if(!b)return;state.sensitivity=Number(b.dataset.value);renderChoices();render();save()};
+$('#settings').onclick=$('#personal').onclick=()=>openModal('#prefModal');
+$('#openSearch').onclick=()=>openModal('#searchModal');
+$('.daytabs').onclick=e=>{const b=e.target.closest('[data-day]');if(!b)return;state.day=+b.dataset.day;render();save()};
+$('#content').onclick=e=>{const b=e.target.closest('[data-period]');if(!b)return;state.period=+b.dataset.period;render();save()};
+document.querySelectorAll('.close').forEach(b=>b.onclick=closeModal);$('#done').onclick=closeModal;
+document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal()}));
+document.addEventListener('keydown',e=>{const m=[...document.querySelectorAll('.overlay')].find(x=>!x.hidden);if(!m)return;if(e.key==='Escape')closeModal();if(e.key==='Tab'){const nodes=[...m.querySelectorAll('button,input,a')].filter(x=>!x.disabled);const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
+let searchResults=[];
+async function search(){const query=$('#searchInput').value.trim();const id=++searchId;if(query.length<2){$('#results').innerHTML='<div class="searchstatus">Escribe al menos dos letras.</div>';return}
+$('#results').innerHTML='<div class="searchstatus">Buscando ciudades…</div>';
+try{const data=await getJSON('https://geocoding-api.open-meteo.com/v1/search?'+new URLSearchParams({name:query,count:8,language:'es',format:'json'}));if(id!==searchId)return;
+searchResults=data.results||[];
+$('#results').innerHTML=searchResults.length?searchResults.map((p,i)=>`<button class="result" data-result="${i}"><span style="font-size:22px">📍</span><span><strong>${esc(p.name)}</strong><small>${esc([p.admin1,p.country].filter(Boolean).join(' · '))}</small></span></button>`).join(''):'<div class="searchstatus">No encontramos esa ciudad. Prueba con otra escritura.</div>';
+}catch{if(id===searchId)$('#results').innerHTML='<div class="searchstatus">No se pudo buscar. Revisa tu conexión y pulsa «Ir» para reintentar.</div>'}}
+$('#searchInput').oninput=()=>{clearTimeout(searchTimer);++searchId;searchTimer=setTimeout(search,400)};
+$('#searchForm').onsubmit=e=>{e.preventDefault();clearTimeout(searchTimer);search()};
+$('#results').onclick=e=>{const b=e.target.closest('[data-result]');if(!b)return;const p=searchResults[+b.dataset.result];closeModal();loadWeather({name:p.name,latitude:p.latitude,longitude:p.longitude})};
+$('#refresh').onclick=()=>loadWeather();
+$('#locate').onclick=()=>{
+if(!navigator.geolocation){notice('Este dispositivo no permite acceder a la ubicación. Busca tu ciudad con el nombre de arriba.');return}
+const b=$('#locate');b.disabled=true;notice('Buscando tu ubicación…');
+navigator.geolocation.getCurrentPosition(async pos=>{
+const lat=pos.coords.latitude,lon=pos.coords.longitude;
+let name='Mi ubicación';
+try{const matches=Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace(/_/g,' ');if(matches)name='Mi ubicación'}catch{}
+await loadWeather({name,latitude:lat,longitude:lon});b.disabled=false;
+},()=>{b.disabled=false;notice('No pudimos obtener tu ubicación. Activa el permiso de ubicación o busca una ciudad.');},{enableHighAccuracy:false,timeout:15000,maximumAge:300000});
+};
+async function reload(external=false){
+try{
+const saved=await storage.get('preferences');
+if(saved?.place&&Number.isFinite(saved.place.latitude)&&Number.isFinite(saved.place.longitude))state={...state,...saved,sensitivity:[-1,0,1].includes(saved.sensitivity)?saved.sensitivity:0,day:[0,1].includes(saved.day)?saved.day:0,period:[0,1,2].includes(saved.period)?saved.period:0};
+const cache=await storage.get('weatherCache');
+if(cache?.data?.daily&&cache.place?.latitude===state.place.latitude&&cache.place?.longitude===state.place.longitude){forecast=cache.data;stamp=cache.stamp}
+else if(external)forecast=null;
+}catch{}
+render();if(!$('#prefModal').hidden)renderChoices();loadWeather();
+}
+window.addEventListener('acornixdata',()=>reload(true));
+reload();
+})();
+</script>
+</body>
+</html>

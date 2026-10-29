@@ -318,6 +318,31 @@
       "trending": 0
     },
     {
+      "id": "what-to-wear",
+      "name": "What to Wear",
+      "emoji": "🌰",
+      "category": "weather",
+      "description": "Looks at the forecast for the morning, afternoon and evening and tells you what to wear, adjusted to whether you feel the cold.",
+      "prompt": "A what to wear app using the free Open-Meteo forecast API with no key, with my location or a searched city. Look at today's temperature, feels like, rain chance, wind and UV for the morning, afternoon and evening and suggest an outfit with big emoji cards like coat, sweater, t-shirt, umbrella, sunglasses and scarf. Let me say if I feel the cold more or less than most people and adjust the advice. Also suggest what to wear tomorrow.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 27935,
+      "sha256": "bb75b88eb939fc8e433ca9453b157e60579d1a69b4aac5f0d127c29af4f22fc3",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "weather-now",
       "name": "Weather Now",
       "emoji": "🌦️",
