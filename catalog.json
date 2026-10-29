@@ -1688,6 +1688,31 @@
       "trending": 0
     },
     {
+      "id": "photo-palette",
+      "name": "Photo Palette",
+      "emoji": "📷",
+      "category": "photo-video",
+      "description": "Pull the main colours out of any photo, see where each one is, copy their codes and keep the palettes you like.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11277,
+      "sha256": "2bab4fe4f404b2a889bf6a16cbe5cab90281dab1dfd1fe941f90d0d8c871c9e1",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "photo-filters",
       "name": "Photo Filters",
       "emoji": "📷",

@@ -1,0 +1,15 @@
+{
+  "id": "photo-palette",
+  "name": "Photo Palette",
+  "emoji": "📷",
+  "category": "photo-video",
+  "description": "Pull the main colours out of any photo, see where each one is, copy their codes and keep the palettes you like.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 20
+}

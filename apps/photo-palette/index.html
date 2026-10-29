@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Photo Palette</title>
+<style>
+  :root { --bg:#faf8f5; --card:#fff; --ink:#22201c; --muted:#8a837a; --line:#ece7df; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  .top { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+  .top h1 { margin:0; font-size:24px; flex:1; }
+  .btn { padding:10px 14px; border-radius:14px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:14px; display:inline-block; }
+  .btn.main { background:var(--ink); color:#fff; border-color:var(--ink); }
+  input[type=file] { display:none; }
+  .card { background:var(--card); border-radius:22px; overflow:hidden; box-shadow:0 8px 30px #22201c14; }
+  .photo { position:relative; }
+  .photo img { width:100%; display:block; max-height:52vh; object-fit:cover; }
+  .photo .dot { position:absolute; width:22px; height:22px; margin:-11px 0 0 -11px; border-radius:50%; border:3px solid #fff; box-shadow:0 2px 8px #0006; pointer-events:none; }
+  .sw { display:flex; height:110px; }
+  .sw button { flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:8px 4px; font-size:11px; font-weight:800; font-family:ui-monospace,monospace; letter-spacing:.3px; transition:flex .2s; }
+  .sw button:active { flex:1.4; }
+  .ctl { display:flex; align-items:center; gap:10px; margin:14px 2px; font-size:13px; font-weight:800; color:var(--muted); }
+  .ctl input { flex:1; accent-color:var(--ink); }
+  .ctl b { color:var(--ink); }
+  .acts { display:flex; gap:8px; }
+  .acts .btn { flex:1; text-align:center; }
+  .empty { text-align:center; padding:50px 20px; color:var(--muted); font-weight:600; line-height:1.6; }
+  .empty .big { font-size:60px; }
+  .empty .demo { display:flex; height:40px; border-radius:12px; overflow:hidden; margin:18px auto 0; max-width:280px; }
+  .empty .demo i { flex:1; }
+  h3 { margin:26px 0 10px; font-size:16px; }
+  .saved { display:grid; gap:10px; }
+  .pal { display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:8px; border:2px solid var(--line); }
+  .pal img { width:44px; height:44px; border-radius:10px; object-fit:cover; }
+  .pal .strip { flex:1; display:flex; height:30px; border-radius:8px; overflow:hidden; }
+  .pal .strip i { flex:1; }
+  .pal .x { padding:6px 10px; color:var(--muted); font-size:16px; background:none; }
+  .toast { position:fixed; left:50%; bottom:-80px; transform:translateX(-50%); padding:10px 18px; border-radius:20px; background:var(--ink); color:#fff; font-weight:800; transition:bottom .25s; }
+  .toast.on { bottom:calc(env(safe-area-inset-bottom) + 24px); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎨 <span id="ttl"></span></h1><label class="btn"><input type="file" id="file" accept="image/*">🖼️</label><label class="btn"><input type="file" id="cam" accept="image/*" capture="environment">📸</label></div>
+  <div id="main"></div>
+  <h3 id="lSaved"></h3>
+  <div class="saved" id="saved"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Paleta', empty:'Saca los colores de cualquier foto: un atardecer, tu salón, un cuadro… Toca un color para copiar su código.', count:'Colores', copy:'Copiado', keep:'⭐ Guardar paleta', img:'🖼️ Guardar imagen', savedT:'Tus paletas', kept:'Paleta guardada', imgSaved:'Imagen guardada en esta app' }
+ : { title:'Photo Palette', empty:'Pull the colors out of any photo: a sunset, your living room, a painting… Tap a color to copy its code.', count:'Colors', copy:'Copied', keep:'⭐ Keep palette', img:'🖼️ Save image', savedT:'Your palettes', kept:'Palette kept', imgSaved:'Image saved in this app' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('lSaved').textContent = T.savedT;
+let src = null, photoUrl = '', thumbUrl = '', pixels = null, n = 5, colors = [], saved = [];
+const hex = c => '#' + c.map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+const lum = c => (c[0] * .299 + c[1] * .587 + c[2] * .114) / 255;
+function toast(t) { const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove('on'), 1400); }
+// k-means on a sample of the photo's pixels, seeded with k-means++ so results are stable and spread out.
+function kmeans(px, k) {
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const d2 = (a, b) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2;
+  const cs = [px[Math.floor(rnd() * px.length)].slice()];
+  while (cs.length < k) { const ds = px.map(p => Math.min(...cs.map(c => d2(p, c)))), sum = ds.reduce((a, b) => a + b, 0); let r = rnd() * sum, i = 0; while ((r -= ds[i]) > 0 && i < px.length - 1) i++; cs.push(px[i].slice()); }
+  let as = new Array(px.length).fill(0);
+  for (let it = 0; it < 12; it++) {
+    as = px.map(p => { let b = 0, bd = 1e12; cs.forEach((c, j) => { const d = d2(p, c); if (d < bd) { bd = d; b = j; } }); return b; });
+    const acc = cs.map(() => [0, 0, 0, 0, 0, 0]);
+    px.forEach((p, i) => { const a = acc[as[i]]; a[0] += p[0]; a[1] += p[1]; a[2] += p[2]; a[3]++; a[4] += p[3]; a[5] += p[4]; });
+    acc.forEach((a, j) => { if (a[3]) cs[j] = [a[0] / a[3], a[1] / a[3], a[2] / a[3], a[4] / a[3], a[5] / a[3]]; });
+  }
+  // Each colour also remembers where it is in the photo (the pixel closest to it), for the dots.
+  return cs.map((c, j) => { let best = null, bd = 1e12; px.forEach((p, i) => { if (as[i] === j) { const d = d2(p, c); if (d < bd) { bd = d; best = p; } } }); return { c: c.slice(0, 3), x: best ? best[3] : c[3], y: best ? best[4] : c[4], w: as.filter(a => a === j).length }; })
+    .filter(o => o.w).sort((a, b) => lum(a.c) - lum(b.c));
+}
+function extract() { colors = kmeans(pixels, n); render(); }
+function render() {
+  if (!src) { $('main').innerHTML = `<div class="empty"><div class="big">🌅</div>${T.empty}<div class="demo">${['#2d1b4e', '#a63d6e', '#e0605e', '#f59d5e', '#fbd38a'].map(c => `<i style="background:${c}"></i>`).join('')}</div></div>`; return; }
+  $('main').innerHTML = `<div class="card"><div class="photo"><img src="${photoUrl}">${colors.map(o => `<span class="dot" style="left:${o.x * 100}%;top:${o.y * 100}%;background:${hex(o.c)}"></span>`).join('')}</div>
+    <div class="sw">${colors.map(o => `<button style="background:${hex(o.c)};color:${lum(o.c) > .6 ? '#22201c' : '#fff'}" data-h="${hex(o.c)}">${hex(o.c).toUpperCase()}</button>`).join('')}</div></div>
+    <div class="ctl"><span>${T.count}</span><input type="range" id="n" min="3" max="8" value="${n}"><b>${n}</b></div>
+    <div class="acts"><button class="btn" id="keep">${T.keep}</button><button class="btn main" id="img">${T.img}</button></div>`;
+  $('main').querySelectorAll('.sw button').forEach(b => b.onclick = async () => { const h = b.dataset.h.toUpperCase(); try { await navigator.clipboard.writeText(h); } catch (e) {} toast(`${T.copy} ${h}`); try { window.Acornix && Acornix.vibrate(10); } catch (e) {} });
+  $('n').oninput = e => { n = +e.target.value; extract(); };
+  $('keep').onclick = () => { saved.unshift({ t: Date.now(), thumb: thumbUrl, colors: colors.map(o => hex(o.c)) }); saved = saved.slice(0, 40); store.set('palettes', saved); savedUI(); toast(T.kept); };
+  $('img').onclick = saveImage;
+}
+async function saveImage() {
+  const c = document.createElement('canvas'), W = 1080, ph = Math.round(W * src.height / src.width), H = ph + 300; c.width = W; c.height = H; const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.drawImage(src, 0, 0, W, ph);
+  const w = W / colors.length; colors.forEach((o, i) => { g.fillStyle = hex(o.c); g.fillRect(i * w, ph, w + 1, 220); g.fillStyle = lum(o.c) > .6 ? '#22201c' : '#fff'; g.font = '800 28px ui-monospace,monospace'; g.textAlign = 'center'; g.fillText(hex(o.c).toUpperCase(), i * w + w / 2, ph + 196); });
+  g.fillStyle = '#8a837a'; g.font = '700 30px system-ui'; g.textAlign = 'center'; g.fillText('🎨 ' + T.title, W / 2, H - 30);
+  const url = c.toDataURL('image/jpeg', .92), name = `palette-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.save(name, url); toast(T.imgSaved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+}
+function savedUI() {
+  $('lSaved').hidden = !saved.length;
+  $('saved').innerHTML = saved.map((p, i) => `<div class="pal"><img src="${p.thumb}"><div class="strip">${p.colors.map(c => `<i style="background:${c}"></i>`).join('')}</div><button class="x" data-i="${i}">✕</button></div>`).join('');
+  $('saved').querySelectorAll('.x').forEach(b => b.onclick = () => { saved.splice(+b.dataset.i, 1); store.set('palettes', saved); savedUI(); });
+  $('saved').querySelectorAll('.strip').forEach((s, i) => s.onclick = async () => { const t = saved[i].colors.join(' ').toUpperCase(); try { await navigator.clipboard.writeText(t); } catch (e) {} toast(T.copy); });
+}
+function load(f) {
+  if (!f) return; const im = new Image();
+  im.onload = () => {
+    const s = Math.min(1, 1400 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); src = c; photoUrl = c.toDataURL('image/jpeg', .85);
+    const t = document.createElement('canvas'); t.width = t.height = 96; const ts = Math.max(96 / c.width, 96 / c.height); t.getContext('2d').drawImage(c, (96 - c.width * ts) / 2, (96 - c.height * ts) / 2, c.width * ts, c.height * ts); thumbUrl = t.toDataURL('image/jpeg', .7);
+    const sw = 80, sh = Math.max(1, Math.round(80 * c.height / c.width)), sm = document.createElement('canvas'); sm.width = sw; sm.height = sh; const sg = sm.getContext('2d'); sg.drawImage(c, 0, 0, sw, sh);
+    const d = sg.getImageData(0, 0, sw, sh).data; pixels = [];
+    for (let i = 0; i < sw * sh; i++) pixels.push([d[i * 4], d[i * 4 + 1], d[i * 4 + 2], (i % sw + .5) / sw, (Math.floor(i / sw) + .5) / sh]);
+    extract(); URL.revokeObjectURL(im.src);
+  };
+  im.src = URL.createObjectURL(f);
+}
+$('file').onchange = e => { load(e.target.files[0]); e.target.value = ''; };
+$('cam').onchange = e => { load(e.target.files[0]); e.target.value = ''; };
+(async () => { saved = await store.get('palettes', []); render(); savedUI(); })();
+</script>
+</body>
+</html>
