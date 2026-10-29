@@ -2796,6 +2796,31 @@
       "trending": 0
     },
     {
+      "id": "caption-writer",
+      "name": "Caption Writer",
+      "emoji": "🌰",
+      "category": "photo-video",
+      "description": "Your AI looks at your photo and writes four captions in the tone you pick, funny, poetic, bold or sweet, with hashtags for each platform.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9640,
+      "sha256": "735d1a0729464f0ab2491ce6b945bfcd32ef49b0aadec2e458d828499ea1da2b",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "capitals-quiz",
       "name": "Capitals",
       "emoji": "🏛️",

@@ -1,0 +1,15 @@
+{
+  "id": "caption-writer",
+  "name": "Caption Writer",
+  "emoji": "🌰",
+  "category": "photo-video",
+  "description": "Your AI looks at your photo and writes four captions in the tone you pick, funny, poetic, bold or sweet, with hashtags for each platform.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 21
+}
