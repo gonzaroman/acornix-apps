@@ -16,7 +16,12 @@ apps/<id>/index.html      the app
 apps/<id>/app.json        name, emoji, category, description, the request that created it, author
 apps/<id>/screenshot.jpg  what you see in the gallery
 catalog.json              generated from all of the above; Acornix reads this file
+stats/downloads.json      download counts (see below)
 ```
+
+**Categories:** games, entertainment, utilities, productivity, finance, business, education, reference, health-fitness, sports, music, photo-video, graphics-design, lifestyle, food-drink, travel, kids, shopping and weather.
+
+**Downloads:** every app is also a ZIP in the [`apps` release](https://github.com/gonzaroman/acornix-apps/releases/tag/apps), and Acornix installs from there, so GitHub counts each install. Once a day an Action copies those counts into `catalog.json` (`downloads`, and `trending` for the last week), which Acornix uses for its Popular and Trending lists.
 
 `scripts/build_catalog.py` validates every app and writes `catalog.json`. It also labels what each app uses, so people know before installing:
 

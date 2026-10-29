@@ -2,7 +2,7 @@
   "id": "pocket-coach",
   "name": "Pocket Coach",
   "emoji": "💪",
-  "category": "health",
+  "category": "health-fitness",
   "description": "A workout coach that talks you through a 3-minute routine and vibrates on every change.",
   "prompt": "A personal workout coach that talks: a 3-minute routine of exercises with a big animated countdown ring. The phone says each exercise out loud, counts down the last 3 seconds by voice, vibrates when switching and cheers you at the end. Energetic, modern design.",
   "author": "gonzaroman",

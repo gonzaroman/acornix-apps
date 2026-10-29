@@ -2,7 +2,7 @@
   "id": "calculator",
   "name": "Calculator",
   "emoji": "🧮",
-  "category": "tools",
+  "category": "utilities",
   "description": "A clean calculator with proper operator precedence and a saved history.",
   "prompt": "",
   "author": "gonzaroman",

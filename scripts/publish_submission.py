@@ -14,6 +14,7 @@ from acornix_bot import (
     repo, set_labels, sha256, split_files,
 )
 import build_catalog
+import downloads
 
 
 def last_review(number):
@@ -75,6 +76,8 @@ def main():
     }
     (folder / "app.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
+    # Acornix installs from the ZIP in the "apps" release, which is how downloads are counted.
+    downloads.upload([sub["id"]])
     errors, catalog = build_catalog.build()
     if errors:
         comment(number, "⚠️ Not published, the catalog check failed:\n\n" + "\n".join(f"- {e}" for e in errors))

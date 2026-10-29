@@ -4,6 +4,7 @@
 Usage: python3 scripts/build_catalog.py [--check]
 With --check it only validates and fails if catalog.json is out of date.
 """
+import datetime
 import hashlib
 import json
 import re
@@ -13,8 +14,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 APPS = ROOT / "apps"
 CATALOG = ROOT / "catalog.json"
+STATS = ROOT / "stats" / "downloads.json"
+TREND_DAYS = 7
 
-CATEGORIES = {"games", "tools", "creative", "health", "learning"}
+# The App Store's categories, without the ones that don't fit apps made in Acornix
+# (social networks, news, magazines, books, medical, navigation, developer tools).
+CATEGORIES = {
+    "games", "entertainment", "utilities", "productivity", "finance", "business", "education",
+    "reference", "health-fitness", "sports", "music", "photo-video", "graphics-design", "lifestyle",
+    "food-drink", "travel", "kids", "shopping", "weather",
+}
 REQUIRED = ["id", "name", "emoji", "category", "description", "author", "version", "added", "updated"]
 MAX_APP_BYTES = 2 * 1024 * 1024
 ID = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -30,7 +39,24 @@ TAGS = {
 }
 
 
+def download_counts():
+    """{id: (all-time downloads, downloads in the last week of the history)} from stats/downloads.json."""
+    if not STATS.exists():
+        return {}
+    stats = json.loads(STATS.read_text(encoding="utf-8"))
+    totals = {k: v["base"] + v["count"] for k, v in stats.get("assets", {}).items()}
+    days = sorted(stats.get("history", {}))
+    if not days:
+        return {k: (n, 0) for k, n in totals.items()}
+    # A week before the newest day counted (or the oldest day there is), so the result doesn't depend on today.
+    latest = datetime.date.fromisoformat(days[-1])
+    start = max([d for d in days if d <= (latest - datetime.timedelta(days=TREND_DAYS)).isoformat()] or [days[0]])
+    before = stats["history"][start]
+    return {k: (n, max(0, n - before.get(k, 0))) for k, n in totals.items()}
+
+
 def build():
+    counts = download_counts()
     errors, apps = [], []
     for folder in sorted(p for p in APPS.iterdir() if p.is_dir()):
         where = f"apps/{folder.name}"
@@ -78,6 +104,8 @@ def build():
             "files": files,
             "size": size,
             "sha256": hashlib.sha256(index.read_bytes()).hexdigest(),
+            "downloads": counts.get(meta["id"], (0, 0))[0],
+            "trending": counts.get(meta["id"], (0, 0))[1],
         })
     # Newest first; Acornix sorts and filters on its side too.
     apps.sort(key=lambda a: (a["added"], a["featured"], a["name"]), reverse=True)

@@ -2,7 +2,7 @@
   "id": "bmi",
   "name": "BMI",
   "emoji": "⚖️",
-  "category": "tools",
+  "category": "health-fitness",
   "description": "Body mass index with a gauge, the healthy range and a progress chart.",
   "prompt": "",
   "author": "gonzaroman",

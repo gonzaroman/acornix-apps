@@ -2,7 +2,7 @@
   "id": "notes",
   "name": "Notes",
   "emoji": "📝",
-  "category": "tools",
+  "category": "productivity",
   "description": "Notes with checklists, pinned notes, color labels and search.",
   "prompt": "A professional notes app: write notes with a title and text, checklists, pin important notes, color labels and search, with a clean and elegant design.",
   "author": "gonzaroman",
