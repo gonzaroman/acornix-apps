@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f6f8f2">
+<title>Polen · Respira con calma</title>
+<style>
+:root{--bg:#f6f8f2;--ink:#193b35;--muted:#73837c;--green:#24765b;--line:#e3e9df;--low:#318964;--mod:#b98514;--high:#d47632;--very:#c45465}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.55}button,a,input{outline-offset:4px}button{color:inherit}main{max-width:760px;margin:auto;padding:22px 20px calc(35px + env(safe-area-inset-bottom));}header{display:flex;justify-content:space-between;align-items:center;padding-top:env(safe-area-inset-top);margin-bottom:25px}.brand{display:flex;align-items:center;gap:10px}.logo{display:grid;place-items:center;width:43px;height:43px;border-radius:16px;background:#e0eccf;font-size:27px}.brand strong{display:block;font-size:24px;letter-spacing:-1px}.brand small{font-size:11px;color:var(--muted)}.round{border:1px solid var(--line);border-radius:50%;background:#fff;width:44px;height:44px;font-size:21px;display:grid;place-items:center}.round.busy{animation:spin 1.5s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}h1,h2,h3,p{margin:0}h1{font-size:29px;letter-spacing:-1px;line-height:1.16}h2{font-size:19px;letter-spacing:-.5px}h3{font-size:15px}.eyebrow{font-size:11px;letter-spacing:1.5px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:9px}.subtitle{font-size:13px;color:var(--muted);line-height:1.6;margin-top:7px}.location-wrap{position:relative;margin:19px 0 21px}.searchbar{display:flex;align-items:center;padding:5px 6px 5px 14px;background:white;border:1px solid var(--line);border-radius:17px;gap:9px;box-shadow:0 4px 18px #203e3505}.searchbar input{width:0;flex:1;min-width:0;border:0;background:transparent;padding:12px 0;font-size:14px;color:var(--ink)}.searchbar input:focus{outline:none}.locate{border:0;background:#eef4e9;color:var(--green);border-radius:12px;width:43px;height:43px;font-size:23px}.suggestions{position:absolute;z-index:15;top:62px;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 35px #183c3520;overflow:hidden}.suggestions button{display:block;text-align:left;width:100%;border:0;background:white;padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px}.suggestions button:last-child{border-bottom:0}.suggestions small{display:block;color:var(--muted);font-size:12px;margin-top:3px}.searchnote{padding:16px;color:var(--muted);font-size:13px}.notice{padding:13px 15px;border-radius:14px;background:#fff0d6;color:#775b27;font-size:13px;line-height:1.5;margin:12px 0}.notice button{border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;padding:7px 4px}.hero{position:relative;overflow:hidden;border-radius:25px;background:#e4edd7;padding:24px;min-height:183px;margin:0 0 22px}.hero:after{content:"";position:absolute;width:170px;height:170px;border:1px solid #ffffff60;border-radius:50%;right:-20px;top:35px;pointer-events:none}.hero:before{content:"";position:absolute;width:230px;height:230px;border:1px solid #ffffff60;border-radius:50%;right:-49px;top:5px;pointer-events:none}.hero.low{background:#e1eedc}.hero.moderate{background:#f6edcc}.hero.high{background:#f9e2cd}.hero.very{background:#f4dce2}.hero .eyebrow{color:inherit;opacity:.65}.hero h2{font-size:35px;letter-spacing:-1px;margin:3px 0 8px;position:relative;z-index:1}.hero p{font-size:13px;line-height:1.6;max-width:78%;position:relative;z-index:1}.hero-icon{position:absolute;right:20px;top:54px;font-size:58px;transform:rotate(-12deg)}.hero-meta{font-size:10px!important;margin-top:14px;opacity:.65}.section-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:23px 0 13px}.section-top span{color:var(--muted);font-size:11px}.allergy-panel{background:#fff;border:1px solid var(--line);border-radius:21px;padding:17px}.allergy-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.allergy-head small{color:var(--muted);font-size:11px}.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.chip{border:1px solid var(--line);border-radius:13px;padding:11px 5px;background:#fafbf8;font-size:12px;display:flex;align-items:center;justify-content:center;gap:5px;min-height:44px;transition:.2s}.chip[aria-pressed=true]{background:#e9f3e5;border-color:#a7c59d;color:#245f43;font-weight:700}.chip .tick{font-size:10px;opacity:.7}.cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}.pollen-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;animation:appear .25s ease}.pollen-head{display:flex;gap:9px;align-items:center;font-size:13px;font-weight:650}.plant{font-size:25px;width:36px;height:36px;display:grid;place-items:center;background:#f3f5ee;border-radius:12px}.pollen-value{font-size:24px;font-weight:750;letter-spacing:-.8px;margin:13px 0 8px}.pollen-value small{font-size:10px;letter-spacing:0;color:var(--muted);font-weight:400;margin-left:4px}.badge{font-size:11px;font-weight:750;display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:5px 8px}.badge:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.badge.low{color:var(--low);background:#eaf4ed}.badge.moderate{color:var(--mod);background:#fcf3d9}.badge.high{color:var(--high);background:#fdf0e4}.badge.very{color:var(--very);background:#fae9ed}.badge.none{color:var(--muted);background:#eff1ed}.chartbox{padding:17px 12px 13px;border:1px solid var(--line);background:#fff;border-radius:21px}.chart-caption{font-size:12px;line-height:1.5;color:var(--muted);padding:0 5px}.day-tabs{display:flex;gap:6px;overflow-x:auto;padding:14px 4px 8px;scrollbar-width:none}.day-tabs::-webkit-scrollbar{display:none}.day-tabs button{flex:1;white-space:nowrap;min-height:38px;padding:8px 10px;background:#f1f4ec;border:0;border-radius:11px;font-size:11px}.day-tabs button.active{background:var(--ink);color:white}.chart-scroll{width:100%;position:relative;touch-action:pan-y}svg{width:100%;display:block;overflow:visible}.chart-detail{margin:8px 4px 3px;min-height:51px;background:#f5f7f0;border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.6}.chart-detail span{color:var(--muted);font-size:11px}.legend{display:flex;justify-content:center;gap:11px;flex-wrap:wrap;font-size:9px;color:var(--muted);padding-top:12px}.legend i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px}.outdoors{display:grid;grid-template-columns:1fr 1fr;gap:11px}.hours-card{border-radius:20px;padding:16px;background:#eaf1e3}.hours-card.worst{background:#f6e9e2}.hours-card h3{font-size:13px;line-height:1.4;margin-bottom:12px}.hour-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-top:1px solid #25433212;gap:5px}.hour-row small{font-size:10px;color:var(--muted)}.hour-row strong{font-size:12px}.tips{border:1px solid var(--line);border-radius:21px;background:#fff;padding:4px 17px}.tip{padding:15px 0;display:flex;gap:12px;border-bottom:1px solid var(--line)}.tip:last-child{border-bottom:0}.tip-icon{font-size:21px}.tip p{font-size:12px;line-height:1.65;color:#66766d}.tip strong{display:block;font-size:13px;margin-bottom:3px}.footer{font-size:10px;line-height:1.9;text-align:center;color:var(--muted);margin-top:24px}.footer a{color:var(--green)}.empty{padding:28px 18px;text-align:center;border:1px dashed #ccd8c5;border-radius:20px;font-size:13px;color:var(--muted);line-height:1.7}.empty b{color:var(--ink);display:block;font-size:17px;margin-bottom:6px}.loading{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);padding:14px 3px}.spinner{height:16px;width:16px;border:2px solid #dce5d4;border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}.toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#193b35;color:#fff;border-radius:14px;padding:13px 18px;max-width:90%;width:max-content;z-index:50;font-size:12px;box-shadow:0 8px 25px #193b3530}.hidden{display:none!important}dialog{border:0;border-radius:23px;padding:25px;color:var(--ink);max-width:calc(100% - 36px);width:440px;background:var(--bg)}dialog::backdrop{background:#193b3580;backdrop-filter:blur(4px)}dialog p{font-size:13px;line-height:1.8;color:#66766d;margin:12px 0}dialog button{border:0;background:var(--green);color:white;border-radius:13px;min-height:46px;width:100%;margin-top:10px}.info-btn{font-size:12px;border:0;background:transparent;color:var(--green);text-decoration:underline;padding:12px}.updated{font-size:10px;color:var(--muted);margin-top:11px;text-align:right}@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media(min-width:600px){main{padding-left:30px;padding-right:30px}.cards{grid-template-columns:repeat(3,1fr)}.chips{grid-template-columns:repeat(6,1fr)}.hero{padding:28px}.hero-icon{right:45px}.hero p{max-width:75%}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand"><div class="logo">✿</div><div><strong>polen</strong><small>Un respiro para tu día</small></div></div><button id="refresh" class="round" aria-label="Actualizar pronóstico">↻</button></header>
+<div class="eyebrow" id="dateLabel">TU PRONÓSTICO PERSONAL</div>
+<h1>Sal con más calma.</h1>
+<p class="subtitle">Conoce el polen antes de abrir la puerta.</p>
+<div class="location-wrap">
+<form class="searchbar" id="searchForm" autocomplete="off"><span aria-hidden="true">⌕</span><input id="citySearch" type="search" placeholder="Buscar una ciudad" aria-label="Buscar una ciudad" enterkeyhint="search"><button type="button" id="locate" class="locate" aria-label="Usar mi ubicación">⌖</button></form>
+<div id="suggestions" class="suggestions hidden" aria-live="polite"></div>
+</div>
+<div id="notice" class="notice hidden" role="status"></div>
+<div id="loading" class="loading hidden"><span class="spinner"></span>Consultando el aire de tu ciudad…</div>
+<section class="hero" id="hero" aria-live="polite"><div class="eyebrow" id="place">PREPARANDO TU PRONÓSTICO</div><h2 id="heroLevel">Un momento…</h2><p id="heroText">Estamos buscando los niveles de polen.</p><div class="hero-icon" id="heroIcon" aria-hidden="true">🌿</div><p class="hero-meta" id="heroMeta"></p></section>
+<section class="allergy-panel">
+<div class="allergy-head"><h3>Mis alergias</h3><small>Toca para elegir</small></div>
+<div class="chips" id="chips"></div>
+</section>
+<div class="section-top"><h2>Polen ahora</h2><span id="currentTime"></span></div>
+<div id="cards" class="cards"></div>
+<div id="dataSections">
+<div class="section-top"><h2>Las próximas horas</h2><span>4 días</span></div>
+<section class="chartbox">
+<p class="chart-caption">Nivel más alto entre tus pólenes seleccionados.<br>Toca el gráfico para ver cada hora.</p>
+<div id="dayTabs" class="day-tabs" aria-label="Días del pronóstico"></div>
+<div class="chart-scroll" id="chartTouch"><svg id="chart" viewBox="0 0 340 190" role="img" aria-label="Pronóstico horario de polen"></svg></div>
+<div class="chart-detail" id="chartDetail" aria-live="polite"></div>
+<div class="legend"><span><i style="background:var(--low)"></i>Bajo</span><span><i style="background:var(--mod)"></i>Moderado</span><span><i style="background:var(--high)"></i>Alto</span><span><i style="background:var(--very)"></i>Muy alto</span></div>
+</section>
+<div class="section-top"><h2>Tu momento para salir</h2><span>Próximas 24 h</span></div>
+<div class="outdoors"><section class="hours-card"><h3>↗ Horas con menos polen</h3><div id="bestHours"></div></section><section class="hours-card worst"><h3>↘ Horas con más polen</h3><div id="worstHours"></div></section></div>
+<p class="subtitle" style="font-size:10px;margin:9px 3px">Comparación relativa a tus alergias; menos polen no significa ausencia de síntomas.</p>
+</div>
+<div class="section-top"><h2>Pequeños gestos, más alivio</h2><span>Para cuidarte</span></div>
+<section class="tips" id="tips"></section>
+<div class="updated" id="updated"></div>
+<footer class="footer">Pronóstico, no medición en tiempo real. Valores en granos/m³.<br>Datos de <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener">Open-Meteo</a> · CAMS ENSEMBLE · Geocodificación: GeoNames.<br>Cobertura de polen disponible solo en Europa.<br><button class="info-btn" id="info">Cómo interpretamos los niveles</button></footer>
+</main>
+<dialog id="infoDialog"><h2>Tu guía del polen</h2><p>Los niveles son una orientación, no un diagnóstico. La sensibilidad varía según la persona y la especie. Sigue las indicaciones de tu profesional sanitario.</p><p>Umbrales usados (granos/m³): bajo / moderado / alto / muy alto.</p><p>🌳 Aliso, 🌿 abedul, 🌱 artemisa y 🫒 olivo: &lt;10 / 10–49 / 50–199 / ≥200.<br>🌾 Gramíneas: &lt;5 / 5–19 / 20–49 / ≥50.<br>🌼 Ambrosía: &lt;5 / 5–9 / 10–49 / ≥50.</p><p>Estos umbrales orientativos no son categorías oficiales de Open-Meteo. El resumen y el gráfico usan el nivel más alto de tus selecciones; no sumamos concentraciones. Los datos ausentes no se consideran cero. Las horas se muestran en la zona horaria del lugar consultado.</p><button id="closeInfo">Entendido</button></dialog>
+<div id="toast" class="toast hidden" role="status"></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const plants=[
+ {id:'alder_pollen',name:'Aliso',emoji:'🌳',t:[10,50,200]},
+ {id:'birch_pollen',name:'Abedul',emoji:'🌿',t:[10,50,200]},
+ {id:'grass_pollen',name:'Gramíneas',emoji:'🌾',t:[5,20,50]},
+ {id:'mugwort_pollen',name:'Artemisa',emoji:'🌱',t:[10,50,200]},
+ {id:'olive_pollen',name:'Olivo',emoji:'🫒',t:[10,50,200]},
+ {id:'ragweed_pollen',name:'Ambrosía',emoji:'🌼',t:[5,10,50]}
+];
+const names=['Bajo','Moderado','Alto','Muy alto'],classes=['low','moderate','high','very'],colors=['#318964','#b98514','#d47632','#c45465'];
+const fallback={async get(k){try{return JSON.parse(localStorage.getItem('polen_'+k))}catch{return null}},async set(k,v){localStorage.setItem('polen_'+k,JSON.stringify(v))}};
+const db=window.Acornix?.db||fallback;
+let selected=plants.map(p=>p.id),location={name:'Madrid',country:'España',latitude:40.4165,longitude:-3.7026},data=null,loading=false,day='all',activeIndex=-1,chartIndices=[],requestId=0,searchSeq=0,searchTimer,controller,toastTimer,writeQueue=Promise.resolve();
+function persist(k,v){writeQueue=writeQueue.catch(()=>{}).then(()=>db.set(k,v)).catch(()=>toast('No se pudo guardar. Revisa el espacio de almacenamiento.'));return writeQueue}
+function toast(t){$('toast').textContent=t;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),4200)}
+function notice(t,retry=false){$('notice').replaceChildren();$('notice').classList.toggle('hidden',!t);if(!t)return;$('notice').append(document.createTextNode(t));if(retry){let b=document.createElement('button');b.textContent='Reintentar';b.onclick=()=>fetchForecast();$('notice').append(b)}}
+function level(v,p){if(v===null||v===undefined||!Number.isFinite(v))return -1;return v<p.t[0]?0:v<p.t[1]?1:v<p.t[2]?2:3}
+function value(i,p){const v=data?.hourly?.[p.id]?.[i];return typeof v==='number'&&Number.isFinite(v)?Math.max(0,v):null}
+function chosen(){return plants.filter(p=>selected.includes(p.id))}
+function score(i){let rank=-1,raw=-1,missing=0;for(const p of chosen()){const v=value(i,p),l=level(v,p);if(l<0){missing++;continue}rank=Math.max(rank,l);let s;if(l===0)s=.25+.65*(v/p.t[0]);else if(l<3)s=l+.15+.75*(v-p.t[l-1])/(p.t[l]-p.t[l-1]);else s=3.15+Math.min(.7,.7*(v-p.t[2])/p.t[2]);raw=Math.max(raw,s)}return {rank,raw,missing}}
+function nowKey(){try{const parts=new Intl.DateTimeFormat('sv-SE',{timeZone:data?.timezone||'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t)?.value;return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:00`}catch{return new Date(Date.now()+(data?.utc_offset_seconds||0)*1000).toISOString().slice(0,13)+':00'}}
+function currentIndex(){if(!data?.hourly?.time)return -1;const k=nowKey();let ix=data.hourly.time.findIndex(t=>t>=k);return ix}
+function localDate(t,opts={}){return new Date(t+'Z').toLocaleDateString('es-ES',{timeZone:'UTC',...opts})}
+function timeLabel(i){let t=data.hourly.time[i];return t.slice(11,16)}
+function dayWord(i){let t=data.hourly.time[i].slice(0,10);let now=nowKey().slice(0,10);return t===now?'Hoy':localDate(t+'T12:00',{weekday:'short'}).replace('.','')}
+function buildChips(){$('chips').replaceChildren();plants.forEach(p=>{const b=document.createElement('button');b.className='chip';b.setAttribute('aria-pressed',selected.includes(p.id));b.innerHTML=`<span>${p.emoji}</span> ${p.name}<span class="tick">${selected.includes(p.id)?'✓':'+'}</span>`;b.onclick=()=>{selected=selected.includes(p.id)?selected.filter(x=>x!==p.id):[...selected,p.id];persist('allergies',selected);buildChips();render()};$('chips').append(b)})}
+async function fetchForecast(){
+ const id=++requestId;controller?.abort();controller=new AbortController();loading=true;$('loading').classList.remove('hidden');$('refresh').classList.add('busy');$('refresh').disabled=true;notice('');render();
+ const timer=setTimeout(()=>controller?.abort(),22000);
+ try{
+ const query=new URLSearchParams({latitude:location.latitude,longitude:location.longitude,hourly:plants.map(p=>p.id).join(','),forecast_days:'4',timezone:'auto'});
+ const r=await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+query,{signal:controller.signal});
+ if(!r.ok)throw new Error('http');
+ const d=await r.json();if(!Array.isArray(d.hourly?.time)||!d.hourly.time.length)throw new Error('invalid');
+ if(id!==requestId)return;
+ data={...d,fetchedAt:Date.now(),placeKey:placeKey(location)};day='all';activeIndex=currentIndex();persist('forecast',data);
+ }catch(e){if(id!==requestId)return;notice(data?'No pudimos actualizar el pronóstico. Se muestran los últimos datos guardados.':'No pudimos consultar el pronóstico. Comprueba tu conexión e inténtalo de nuevo.',true)}
+ finally{clearTimeout(timer);if(id===requestId){loading=false;$('loading').classList.add('hidden');$('refresh').classList.remove('busy');$('refresh').disabled=false;render()}}
+}
+function placeKey(l){return `${Number(l.latitude).toFixed(3)},${Number(l.longitude).toFixed(3)}`}
+function available(){return data&&plants.some(p=>data.hourly[p.id]?.some(v=>typeof v==='number'&&Number.isFinite(v)))}
+function render(){
+ $('place').textContent='⌖ '+location.name+(location.country?' · '+location.country:'');
+ const ci=currentIndex(),has=available(),sel=chosen();
+ $('dateLabel').textContent=data?localDate(nowKey(),{weekday:'long',day:'numeric',month:'long'}):'TU PRONÓSTICO PERSONAL';
+ $('hero').className='hero';
+ $('heroMeta').textContent=data?'Hora local del lugar · '+(data.timezone||''):loading?'Consultando Open-Meteo':'Elige una ciudad o usa tu ubicación';
+ $('currentTime').textContent=ci>=0?'Hoy · '+timeLabel(ci):'';
+ if(!data){$('heroLevel').textContent=loading?'Buscando aire…':'Tu aire, a un toque';$('heroText').textContent=loading?'Estamos consultando el pronóstico de tu ciudad.':'Busca una ciudad o toca ⌖ para usar tu ubicación.';$('heroIcon').textContent='🌿'}
+ else if(!has){$('heroLevel').textContent='Sin datos de polen';$('heroText').textContent='Los datos de polen solo están disponibles en Europa. No hay datos para este lugar o periodo.';$('heroIcon').textContent='🌍'}
+ else if(!sel.length){$('heroLevel').textContent='A tu medida';$('heroText').textContent='Selecciona tus alergias para ver tu pronóstico personalizado.';$('heroIcon').textContent='🌿'}
+ else if(ci<0){$('heroLevel').textContent='Pronóstico anterior';$('heroText').textContent='Actualiza para consultar los niveles de este momento.';$('heroIcon').textContent='🕒'}
+ else{const s=score(ci);if(s.rank<0){$('heroLevel').textContent='Sin datos ahora';$('heroText').textContent='No hay valores para tus alergias en esta hora. Puedes revisar el resto del pronóstico.';$('heroIcon').textContent='☁️'}else{$('hero').classList.add(classes[s.rank]);$('heroLevel').textContent='Nivel '+names[s.rank].toLowerCase();$('heroText').textContent=['Buen momento para disfrutar fuera, según tus alergias seleccionadas.','Algo de polen en el aire. Planifica tus salidas y escucha a tu cuerpo.','Hay bastante polen. Prioriza las horas con menor concentración.','Polen muy elevado. Si puedes, reduce la exposición al aire libre.'][s.rank]+(s.missing?' Faltan datos de algunas de tus selecciones.':'');$('heroIcon').textContent=['🌿','🌤️','🌾','🌼'][s.rank]}}
+ $('cards').replaceChildren();
+ if(!sel.length){$('cards').innerHTML='<div class="empty" style="grid-column:1/-1"><b>¿Qué te hace estornudar?</b>Elige al menos un polen en «Mis alergias».</div>'}
+ else if(data&&has){sel.forEach(p=>{const v=ci>=0?value(ci,p):null,l=level(v,p),el=document.createElement('article');el.className='pollen-card';el.innerHTML=`<div class="pollen-head"><span class="plant">${p.emoji}</span>${p.name}</div><div class="pollen-value">${v===null?'—':new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(v)}<small>granos/m³</small></div><span class="badge ${l<0?'none':classes[l]}">${l<0?'Sin datos':names[l]}</span>`;$('cards').append(el)})}
+ else{$('cards').innerHTML=`<div class="empty" style="grid-column:1/-1"><b>${loading?'Consultando el pronóstico…':data?'Aquí aún no hay cobertura':'Tu pronóstico aparecerá aquí'}</b>${data&&!has?'Los datos de polen solo están disponibles en Europa. Prueba con otra ciudad.':loading?'Un instante, estamos conectando con Open-Meteo.':'Busca un lugar para empezar.'}</div>`}
+ $('dataSections').classList.toggle('hidden',!has||!sel.length);
+ if(has&&sel.length){renderTabs();renderChart();renderHours()}
+ renderTips(ci);
+ $('updated').textContent=data?'Actualizado el '+new Date(data.fetchedAt).toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+(Date.now()-data.fetchedAt>3600000?' · Datos guardados':''):'';
+}
+function renderTabs(){
+ const dates=[...new Set(data.hourly.time.map(t=>t.slice(0,10)))];
+ if(day!=='all'&&!dates.includes(day))day='all';
+ $('dayTabs').replaceChildren();
+ [{id:'all',label:'4 días'},...dates.map((d,i)=>({id:d,label:i===0?'Hoy':localDate(d+'T12:00',{weekday:'short',day:'numeric'}).replace('.','')}))].forEach(d=>{
+ const b=document.createElement('button');b.textContent=d.label;b.className=d.id===day?'active':'';b.setAttribute('aria-pressed',d.id===day);b.onclick=()=>{day=d.id;activeIndex=-1;renderTabs();renderChart()};$('dayTabs').append(b)
+ })
+}
+function renderChart(){
+ chartIndices=data.hourly.time.map((t,i)=>i).filter(i=>day==='all'||data.hourly.time[i].startsWith(day));
+ const svg=$('chart'),left=48,right=330,top=13,bottom=149,n=chartIndices.length;
+ const x=j=>left+(right-left)*j/Math.max(1,n-1), y=s=>bottom-s/4*(bottom-top);
+ let out='<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#83b68b" stop-opacity=".3"/><stop offset="100%" stop-color="#83b68b" stop-opacity=".025"/></linearGradient></defs>';
+ [0,1,2,3].forEach(l=>{const yy=y(l+.5);out+=`<line x1="${left}" y1="${yy}" x2="${right}" y2="${yy}" stroke="#e9eee5" stroke-dasharray="3 4"/><text x="1" y="${yy+3}" fill="#829083" font-size="8.7" font-family="system-ui">${names[l]}</text>`});
+ let segments=[],seg=[];
+ chartIndices.forEach((i,j)=>{const s=score(i);if(s.rank<0){if(seg.length)segments.push(seg);seg=[]}else seg.push([x(j),y(s.raw),s.rank,i])});if(seg.length)segments.push(seg);
+ segments.forEach(points=>{let path=points.map((p,k)=>(k?'L':'M')+p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ');out+=`<path d="${path} L${points.at(-1)[0]},${bottom} L${points[0][0]},${bottom} Z" fill="url(#fill)"/><path d="${path}" fill="none" stroke="#438866" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;points.forEach((p,k)=>{if(k<points.length-1){let q=points[k+1];out+=`<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${colors[Math.max(p[2],q[2])]}" stroke-width="2.3" stroke-linecap="round"/>`}else if(points.length===1)out+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${colors[p[2]]}"/>`})});
+ if(day==='all'){const dates=[...new Set(chartIndices.map(i=>data.hourly.time[i].slice(0,10)))];dates.forEach(d=>{const j=chartIndices.findIndex(i=>data.hourly.time[i].startsWith(d)),xx=x(j);out+=`<line x1="${xx}" y1="${top}" x2="${xx}" y2="${bottom}" stroke="#e8ede3"/><text x="${Math.min(right-8,xx+28)}" y="173" text-anchor="middle" fill="#7c897e" font-size="9" font-family="system-ui">${localDate(d+'T12:00',{weekday:'short',day:'numeric'}).replace('.','')}</text>`})}
+ else{[0,6,12,18,23].forEach(j=>{if(j<n)out+=`<text x="${x(j)}" y="173" text-anchor="middle" fill="#7c897e" font-size="9" font-family="system-ui">${timeLabel(chartIndices[j])}</text>`})}
+ if(!chartIndices.includes(activeIndex))activeIndex=chartIndices.includes(currentIndex())?currentIndex():chartIndices[0];
+ const pos=chartIndices.indexOf(activeIndex),s=score(activeIndex);
+ out+=`<line x1="${x(pos)}" y1="${top}" x2="${x(pos)}" y2="${bottom}" stroke="#315a43" stroke-dasharray="3 3"/>`;
+ if(s.rank>=0)out+=`<circle cx="${x(pos)}" cy="${y(s.raw)}" r="5" fill="${colors[s.rank]}" stroke="white" stroke-width="2"/>`;
+ svg.innerHTML=out;
+ const detail=$('chartDetail');detail.replaceChildren();const b=document.createElement('strong');b.textContent=`${localDate(data.hourly.time[activeIndex],{weekday:'short',day:'numeric',month:'short'})} · ${timeLabel(activeIndex)} · ${s.rank<0?'Sin datos':names[s.rank]}`;detail.append(b,document.createElement('br'));const sp=document.createElement('span');sp.textContent=chosen().map(p=>{const v=value(activeIndex,p);return p.emoji+' '+p.name+': '+(v===null?'sin datos':new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(v))}).join(' · ');detail.append(sp);
+}
+function chartPoint(e){if(!chartIndices.length)return;const r=$('chart').getBoundingClientRect(),xx=(e.clientX-r.left)/r.width*340,j=Math.max(0,Math.min(chartIndices.length-1,Math.round((xx-48)/(330-48)*(chartIndices.length-1))));activeIndex=chartIndices[j];renderChart()}
+$('chartTouch').addEventListener('pointerdown',e=>{chartPoint(e);$('chartTouch').setPointerCapture(e.pointerId)});
+$('chartTouch').addEventListener('pointermove',e=>{if(e.buttons===1)chartPoint(e)});
+function renderHours(){
+ const ci=currentIndex();let all=ci<0?[]:data.hourly.time.map((t,i)=>i).filter(i=>i>=ci&&i<ci+24).map(i=>({i,...score(i)})).filter(s=>s.rank>=0&&s.missing===0);
+ if(!all.length){$('bestHours').innerHTML='<p class="subtitle">No hay datos completos para comparar.</p>';$('worstHours').innerHTML='<p class="subtitle">Prueba a actualizar más tarde.</p>';return}
+ const sorted=[...all].sort((a,b)=>a.raw-b.raw||a.i-b.i),best=sorted.slice(0,3),bestIds=best.map(s=>s.i),worst=[...all].filter(s=>!bestIds.includes(s.i)).sort((a,b)=>b.raw-a.raw||a.i-b.i).slice(0,3);
+ function rows(items,id){$(id).replaceChildren();if(!items.length){$(id).textContent='Faltan horas para comparar.';return}items.forEach(s=>{let d=document.createElement('div');d.className='hour-row';d.innerHTML=`<div><strong>${timeLabel(s.i)}</strong><br><small>${dayWord(s.i)}</small></div><strong style="color:${colors[s.rank]}">${names[s.rank]}</strong>`;$(id).append(d)})}
+ rows(best,'bestHours');rows(worst,'worstHours');
+}
+function renderTips(ci){
+ let rank=ci>=0&&data?score(ci).rank:-1;
+ const tips=rank>=2?[
+ ['😷','Reduce la exposición','Si tienes que salir con niveles altos, una mascarilla bien ajustada y gafas pueden ayudarte a reducir el contacto con el polen.'],
+ ['🪟','Ventila con intención','Consulta las horas con menos polen y aprovecha una ventilación breve. Evita abrir cuando los niveles sean altos.'],
+ ['🚿','De vuelta a casa','Cámbiate de ropa y enjuaga cara y cabello para no llevar el polen a tu zona de descanso.']
+ ]:[
+ ['🕒','Elige tu mejor hora','Revisa el gráfico antes de salir. El polen cambia durante el día; no siempre hay menos por la mañana.'],
+ ['🧺','Un dormitorio con menos polen','Evita secar la ropa de cama al aire libre en días con mucho polen y cambia la ropa al llegar a casa.'],
+ ['🌿','Tu cuerpo tiene la última palabra','Incluso con niveles bajos puedes notar síntomas. Sigue tu tratamiento pautado y consulta si empeoras.']
+ ];
+ $('tips').replaceChildren();tips.forEach(([emoji,title,text])=>{let d=document.createElement('div');d.className='tip';d.innerHTML=`<span class="tip-icon">${emoji}</span><div><strong>${title}</strong><p>${text}</p></div>`;$('tips').append(d)})
+}
+async function selectPlace(l){
+ searchSeq++;clearTimeout(searchTimer);$('suggestions').classList.add('hidden');$('citySearch').value='';const different=placeKey(location)!==placeKey(l);location=l;persist('location',l);if(different){data=null;persist('forecast',null)}day='all';activeIndex=-1;render();await fetchForecast()
+}
+async function search(){
+ const q=$('citySearch').value.trim(),seq=++searchSeq;if(q.length<2){$('suggestions').classList.add('hidden');return}
+ const box=$('suggestions');box.classList.remove('hidden');box.innerHTML='<div class="searchnote">Buscando ciudades…</div>';
+ try{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?'+new URLSearchParams({name:q,count:6,language:'es',format:'json'}),{signal:AbortSignal.timeout(15000)});if(!r.ok)throw Error();const d=await r.json();if(seq!==searchSeq)return;box.replaceChildren();if(!d.results?.length){box.innerHTML='<div class="searchnote">No encontramos esa ciudad. Prueba con otro nombre.</div>';return}d.results.forEach(c=>{let b=document.createElement('button'),name=document.createElement('strong'),meta=document.createElement('small');b.type='button';name.textContent=c.name;meta.textContent=[c.admin1,c.country].filter(Boolean).join(' · ');b.append(name,meta);b.onclick=()=>selectPlace({name:c.name,country:c.country||'',latitude:c.latitude,longitude:c.longitude});box.append(b)})}
+ catch{if(seq===searchSeq)box.innerHTML='<div class="searchnote">No se pudo buscar. Revisa tu conexión y vuelve a intentarlo.</div>'}
+}
+$('citySearch').addEventListener('input',()=>{clearTimeout(searchTimer);searchSeq++;if($('citySearch').value.trim().length<2){$('suggestions').classList.add('hidden');return}searchTimer=setTimeout(search,400)});
+$('citySearch').addEventListener('focus',()=>{if($('citySearch').value.trim().length>=2)search()});
+$('searchForm').addEventListener('submit',e=>{e.preventDefault();clearTimeout(searchTimer);search()});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.location-wrap')){searchSeq++;$('suggestions').classList.add('hidden')}});
+$('locate').onclick=()=>{
+ if(!navigator.geolocation){toast('Tu dispositivo no ofrece ubicación. Busca una ciudad.');return}
+ const btn=$('locate');btn.disabled=true;btn.textContent='…';toast('Buscando tu ubicación…');
+ navigator.geolocation.getCurrentPosition(async pos=>{
+ const lat=pos.coords.latitude,lon=pos.coords.longitude;
+ btn.disabled=false;btn.textContent='⌖';
+ await selectPlace({name:'Mi ubicación',country:`${lat.toFixed(2)}°, ${lon.toFixed(2)}°`,latitude:lat,longitude:lon});
+ },e=>{btn.disabled=false;btn.textContent='⌖';toast(e.code===1?'Permite el acceso a tu ubicación o busca una ciudad.':'No se pudo obtener tu ubicación. Prueba a buscar una ciudad.')},{enableHighAccuracy:false,timeout:15000,maximumAge:300000})
+};
+$('refresh').onclick=()=>fetchForecast();
+$('info').onclick=()=>$('infoDialog').showModal();
+$('closeInfo').onclick=()=>$('infoDialog').close();
+$('infoDialog').addEventListener('click',e=>{if(e.target===$('infoDialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});
+async function reload(external=false){
+ try{const [s,l,d]=await Promise.all([db.get('allergies'),db.get('location'),db.get('forecast')]);if(Array.isArray(s))selected=s.filter(id=>plants.some(p=>p.id===id));if(l&&Number.isFinite(l.latitude)&&Number.isFinite(l.longitude))location=l;data=d?.hourly?.time&&d.placeKey===placeKey(location)?d:null;day='all';activeIndex=-1;buildChips();render();if(!external&&(!data||Date.now()-data.fetchedAt>1800000))fetchForecast()}
+ catch{buildChips();render();toast('No pudimos leer tus preferencias guardadas.');if(!external)fetchForecast()}
+}
+window.addEventListener('acornixdata',()=>reload(true));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(data&&Date.now()-data.fetchedAt>1800000&&!loading)fetchForecast();else render()}});
+buildChips();reload();
+})();
+</script>
+</body>
+</html>

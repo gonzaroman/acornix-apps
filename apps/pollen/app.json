@@ -1,0 +1,15 @@
+{
+  "id": "pollen",
+  "name": "Pollen",
+  "emoji": "🌰",
+  "category": "weather",
+  "description": "Pollen forecast for alder, birch, grass, olive, mugwort and ragweed, with the ones you're allergic to first and the best hours to go out.",
+  "prompt": "A pollen forecast app for allergy sufferers using the free Open-Meteo air quality API with no key, which has pollen for Europe: alder, birch, grass, mugwort, olive and ragweed. Use my location or a searched city. Let me pick which pollens I am allergic to. Show today's level for each as low, moderate, high or very high with colours and plant emoji, an hourly chart for the next 4 days, the best and worst hours to go outside, and tips. If there is no data for the place, say pollen data is only ava",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 11
+}
