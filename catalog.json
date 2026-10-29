@@ -126,6 +126,31 @@
       "trending": 0
     },
     {
+      "id": "will-it-rain",
+      "name": "Will It Rain",
+      "emoji": "🌦️",
+      "category": "weather",
+      "description": "Find out at a glance whether you need an umbrella today, with the chance of rain hour by hour and the next 7 days.",
+      "prompt": "A weather app that answers one question: will it rain today and in the next hours. Use the free Open-Meteo API with no key, ask for the location or let me search a city, show a big friendly answer with an umbrella or sun, the chance of rain hour by hour as a chart for the next 24 hours, and the next 7 days. Texts in Spanish if the phone is in Spanish, otherwise in English. Save my last city.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 23022,
+      "sha256": "ba3ae4ab7196eb76ab8c7e39f6a5ab6c92633de97cf1b76d8a934e2f9b6539ae",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "unit-converter",
       "name": "Unit Converter",
       "emoji": "📏",
