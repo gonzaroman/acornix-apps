@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#111c30">
+<title>Soluna · Tu cielo de hoy</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1424;--card:#152137;--line:#29344a;--text:#f4f5fc;--muted:#a0aec6;--gold:#ffcf7e;--blue:#a6bbff}
+*{box-sizing:border-box}html{background:var(--bg);overflow-x:hidden}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(ellipse at 90% 0%,#25314b66,transparent 45%),var(--bg);min-height:100dvh;-webkit-tap-highlight-color:transparent}button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:4px}button{color:inherit}button:disabled{opacity:.5;cursor:wait}svg{display:block}button svg{width:21px;height:21px;flex:none}button{border:0}main{max-width:720px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 20px calc(26px + env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.brand{font-size:23px;font-weight:760;letter-spacing:-1px;display:flex;align-items:center;gap:9px}.brand-mark{color:var(--gold);font-size:29px}.icon-btn{background:#ffffff09;border:1px solid var(--line);width:46px;height:46px;border-radius:50%;display:grid;place-items:center}.header-actions{display:flex;gap:8px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}h1,h2,p{margin:0}h1{font-size:29px;line-height:1.2;letter-spacing:-.9px}h2{font-size:19px;letter-spacing:-.4px}.location-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.place-btn{background:none;text-align:left;padding:0;min-height:50px;display:flex;align-items:center;gap:9px;max-width:100%}.place-btn h1{overflow-wrap:anywhere}.chevron{color:var(--muted);font-size:20px}.sub{font-size:13px;color:var(--muted);line-height:1.55}.date{margin-top:6px}.pill{font-size:11px;padding:7px 10px;border-radius:30px;white-space:nowrap;background:#ffd58b14;color:var(--gold);border:1px solid #ffd58b23}.card{border:1px solid var(--line);border-radius:25px;overflow:hidden;background:linear-gradient(135deg,#1b2940,#142035);margin-bottom:16px}.sun-card{position:relative;background:radial-gradient(ellipse at 50% 52%,#bd703b20,transparent 65%),linear-gradient(155deg,#25364e,#17233a 65%)}.sun-top{padding:23px 23px 0;display:flex;justify-content:space-between;gap:10px;align-items:start}.sun-top h2{margin-top:5px;font-size:20px}.clock{font-size:27px;letter-spacing:-1px;font-weight:650;font-variant-numeric:tabular-nums}.clock-label{text-align:right;font-size:10px;color:var(--muted);margin-top:2px}.sky{width:100%;height:auto;margin-top:2px}.sky text{font-family:inherit}.sun-bottom{display:grid;grid-template-columns:1fr 1fr;padding:0 24px 22px;gap:18px}.solar-time{font-size:27px;font-weight:650;letter-spacing:-.8px;margin-top:5px;font-variant-numeric:tabular-nums}.sun-bottom>div:last-child{text-align:right}.small-label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}.sun-bottom>div:last-child .small-label{justify-content:flex-end}.small-label svg{width:17px;height:17px;color:var(--gold)}.day-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 21px}.duration{font-size:22px;letter-spacing:-.6px;font-weight:680;margin-top:5px}.change{font-size:12px;font-weight:650;color:#b7e1ca;text-align:right;line-height:1.6}.change.loss{color:#f1b8a1}.section-title{display:flex;justify-content:space-between;align-items:center;margin:27px 2px 13px}.tag{font-size:11px;color:var(--gold);padding:6px 9px;background:#ffce7d13;border-radius:7px}.photo-card{padding:20px}.photo-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:17px;border-bottom:1px solid var(--line)}.photo-title{display:flex;align-items:center;gap:11px;font-size:15px;font-weight:650}.swatch{width:35px;height:35px;background:linear-gradient(140deg,#ffd27f,#dc895f);border-radius:12px;display:grid;place-items:center;color:#714522}.swatch svg{width:20px;height:20px}.swatch.blue{background:linear-gradient(140deg,#b2bbff,#778ed9);color:#354d92}.range{color:var(--muted);font-size:11px}.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:16px}.photo-grid>div+div{border-left:1px solid var(--line);padding-left:18px}.slot{font-size:11px;color:var(--muted);margin-bottom:5px}.interval{font-size:18px;font-weight:650;letter-spacing:-.4px;font-variant-numeric:tabular-nums}.photo-note{color:var(--muted);font-size:11px;line-height:1.6;padding:0 4px}.moon-card{padding:23px;background:radial-gradient(ellipse at 95% 20%,#6275b326,transparent 60%),linear-gradient(135deg,#1b2940,#142035)}.moon-main{display:flex;gap:22px;align-items:center;margin:20px 0 24px}.moon-drawing{width:102px;height:102px;flex:none;filter:drop-shadow(0 0 19px #cbd8ff1c)}.moon-name{font-size:22px;font-weight:650;line-height:1.2;letter-spacing:-.5px;margin:5px 0 7px}.illumination{font-size:13px;color:#b9c5dc}.moon-events{border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-top:18px}.event-title{font-size:12px;color:var(--muted);margin-bottom:6px}.event-date{font-size:15px;font-weight:650}.event-count{font-size:11px;color:var(--muted);margin-top:5px}.footer{color:var(--muted);text-align:center;font-size:11px;line-height:1.8;margin-top:23px}.footer a{color:#bcc9e1;text-decoration:none}.text-button{background:none;color:var(--blue);font-size:12px;padding:12px;min-height:44px}.primary{min-height:52px;border-radius:16px;background:var(--gold);color:#342817;font-weight:750;padding:14px 20px;display:flex;gap:10px;align-items:center;justify-content:center}.secondary{min-height:50px;border-radius:16px;background:#ffffff09;border:1px solid var(--line);font-weight:650;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:9px}.welcome{padding:20px 5px 15px;text-align:center}.welcome-art{width:100%;max-width:350px;margin:0 auto 16px}.welcome h1{font-size:36px;line-height:1.13;letter-spacing:-1.5px}.welcome p{max-width:340px;margin:18px auto 29px;line-height:1.7;color:var(--muted);font-size:15px}.welcome .primary,.welcome .secondary{width:100%;max-width:360px;margin:12px auto}.welcome-note{font-size:11px!important;margin-top:22px!important}.banner{border:1px solid #e7b47644;background:#d7a76c13;color:#efd4ac;border-radius:14px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;line-height:1.5;font-size:12px}.banner span{flex:1}.banner button{background:none;color:var(--gold);padding:8px;font-size:12px;font-weight:700;min-height:40px}.loading{color:var(--blue);background:#a6bbff0b;border-color:#a6bbff25}.spinner{width:17px;height:17px;border:2px solid #a6bbff33;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;flex:none}@keyframes spin{to{transform:rotate(360deg)}}[hidden]{display:none!important}dialog{border:1px solid #35425b;background:#142137;color:var(--text);padding:0;width:calc(100% - 20px);max-width:540px;max-height:88dvh;border-radius:28px;margin:auto auto max(10px,env(safe-area-inset-bottom));box-shadow:0 24px 100px #0008}dialog::backdrop{background:#050a14b8;backdrop-filter:blur(6px)}.sheet{padding:24px;overflow:auto;max-height:86dvh}.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.sheet-head .icon-btn{width:40px;height:40px}.sheet>.primary{width:100%}.divider{display:flex;align-items:center;gap:13px;color:var(--muted);font-size:12px;margin:20px 0}.divider:before,.divider:after{content:"";height:1px;flex:1;background:var(--line)}.search-box{display:flex;align-items:center;gap:10px;background:#0c1628;border:1px solid #3b4962;border-radius:15px;padding:0 14px}.search-box svg{width:20px;height:20px;color:var(--muted);flex:none}.search-box input{border:0;background:none;color:var(--text);width:100%;height:54px;outline:none;font-size:16px}.search-status{font-size:12px;color:var(--muted);line-height:1.6;margin-top:13px}.results{margin-top:12px;display:grid;gap:8px}.result{border:1px solid var(--line);background:#ffffff04;border-radius:13px;text-align:left;padding:13px 15px;min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:10px}.result strong{display:block;font-size:15px}.result small{display:block;color:var(--muted);font-size:12px;margin-top:4px}.info-copy p{font-size:13px;color:#b6c3d9;line-height:1.8;margin:0 0 19px}.info-copy h3{font-size:15px;margin:20px 0 6px}.fade{animation:appear .35s ease}@keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}@media(min-width:600px){main{padding-left:32px;padding-right:32px}.photos{display:grid;grid-template-columns:1fr 1fr;gap:14px}.photo-card{padding:18px}.interval{font-size:16px}.photo-grid>div+div{padding-left:12px}.photo-head{gap:8px}.range{font-size:10px}dialog{margin:auto}.welcome{padding-top:25px}}@media(max-width:355px){main{padding-left:14px;padding-right:14px}.interval{font-size:16px}.moon-main{gap:15px}.moon-name{font-size:20px}.sun-top{padding-left:20px;padding-right:20px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="brand"><span class="brand-mark">☼</span> soluna</div>
+<div class="header-actions">
+<button class="icon-btn" id="refresh" aria-label="Actualizar datos" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></svg></button>
+<button class="icon-btn" id="infoBtn" aria-label="Información de los cálculos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v2"/></svg></button>
+</div>
+</header>
+<div id="loading" class="banner loading" role="status" hidden><div class="spinner"></div><span id="loadingText">Consultando el cielo…</span></div>
+<div id="error" class="banner" role="status" hidden><span id="errorText"></span><button id="retry">Reintentar</button></div>
+<section id="welcome" class="welcome" hidden>
+<div class="eyebrow">Sol, luna y momentos de luz</div>
+<svg class="welcome-art" viewBox="0 0 340 235" aria-hidden="true">
+<defs><radialGradient id="welcomeGlow"><stop stop-color="#ffcc77" stop-opacity=".25"/><stop offset="1" stop-color="#ffcc77" stop-opacity="0"/></radialGradient><linearGradient id="welcomeLine"><stop stop-color="#789ce0"/><stop offset=".55" stop-color="#ffcc7b"/><stop offset="1" stop-color="#de956e"/></linearGradient></defs>
+<circle cx="170" cy="120" r="110" fill="url(#welcomeGlow)"/><path d="M35 190Q170-65 305 190" fill="none" stroke="#39455a" stroke-width="1.5" stroke-dasharray="4 7"/><path d="M35 190Q90 86 142 66" fill="none" stroke="url(#welcomeLine)" stroke-width="3"/>
+<circle cx="144" cy="68" r="31" fill="#ffcf7e" opacity=".08"/><circle cx="144" cy="68" r="22" fill="#ffcf7e" opacity=".12"/><circle cx="144" cy="68" r="14" fill="#ffda95"/>
+<path d="M22 190H318" stroke="#576179" stroke-width="1"/><path d="M22 206Q100 184 169 203T318 202" fill="none" stroke="#334058"/><circle cx="260" cy="65" r="17" fill="#bdc9ef"/><circle cx="268" cy="59" r="17" fill="#111c2f"/><circle cx="82" cy="70" r="2" fill="#8d9cbe"/><circle cx="222" cy="30" r="1.5" fill="#8d9cbe"/>
+</svg>
+<h1>Tu día, al ritmo<br>del cielo.</h1>
+<p>Encuentra la mejor luz, sigue al sol y descubre la luna desde cualquier lugar.</p>
+<button class="primary" id="welcomeGeo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>Usar mi ubicación</button>
+<button class="secondary" id="welcomeSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>Buscar una ciudad</button>
+<p class="welcome-note">Sin cuentas ni claves. Tu última ubicación queda guardada solo en esta aplicación.</p>
+</section>
+<div id="dashboard" hidden>
+<div class="location-row">
+<div>
+<div class="eyebrow">Tu cielo de hoy</div>
+<button class="place-btn" id="changePlace" aria-label="Cambiar ubicación"><h1 id="city"></h1><span class="chevron">⌄</span></button>
+<div class="sub date" id="dateLabel"></div>
+</div>
+</div>
+<section class="card sun-card">
+<div class="sun-top"><div><div class="eyebrow">El recorrido del sol</div><h2 id="sunStatus">La luz de hoy</h2></div><div><div class="clock" id="clock">--:--</div><div class="clock-label">HORA LOCAL</div></div></div>
+<svg class="sky" viewBox="0 0 360 205" role="img" aria-label="Arco del recorrido solar de hoy">
+<defs>
+<linearGradient id="arcGradient" x1="0" x2="1"><stop stop-color="#edaa7c"/><stop offset=".5" stop-color="#ffe0a0"/><stop offset="1" stop-color="#e7aa7c"/></linearGradient>
+<linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#ffd188" stop-opacity=".12"/><stop offset="1" stop-color="#ffd188" stop-opacity="0"/></linearGradient>
+<radialGradient id="sunGlow"><stop stop-color="#ffd17d" stop-opacity=".35"/><stop offset="1" stop-color="#ffd17d" stop-opacity="0"/></radialGradient>
+<clipPath id="arcClip"><rect id="arcRect" x="0" y="0" width="0" height="190"/></clipPath>
+</defs>
+<path d="M32 161Q180-79 328 161Z" fill="url(#areaGradient)"/>
+<path d="M32 161Q180-79 328 161" stroke="#73809a" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="3 6" fill="none"/>
+<path d="M32 161Q180-79 328 161" stroke="url(#arcGradient)" stroke-width="2.5" fill="none" clip-path="url(#arcClip)"/>
+<path d="M18 162H342" stroke="#8492aa" stroke-opacity=".4"/>
+<circle cx="32" cy="162" r="3.5" fill="#e4ba88"/><circle cx="328" cy="162" r="3.5" fill="#e4ba88"/>
+<g id="sunDot"><circle r="36" fill="url(#sunGlow)"/><circle r="15" fill="#ffda8d" opacity=".12"/><circle r="9" fill="#ffdb94"/><path d="M0-19v-3M0 19v3M19 0h3M-19 0h-3M13.5-13.5l2-2M-13.5 13.5l-2 2M13.5 13.5l2 2M-13.5-13.5l-2-2" stroke="#ffda8d" stroke-width="1.5" stroke-linecap="round"/></g>
+<text id="arcCaption" x="180" y="191" text-anchor="middle" fill="#bac5d7" font-size="11">El cielo cambia a cada instante</text>
+</svg>
+<div class="sun-bottom">
+<div><div class="small-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 19h20M5 15a7 7 0 0 1 14 0M12 2v7m-3-3 3-3 3 3M3 9l2 2m16-2-2 2"/></svg>Amanecer</div><div class="solar-time" id="sunrise">--:--</div></div>
+<div><div class="small-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 19h20M5 15a7 7 0 0 1 14 0M12 2v7m-3-3 3 3 3-3M3 9l2 2m16-2-2 2"/></svg>Atardecer</div><div class="solar-time" id="sunset">--:--</div></div>
+</div>
+</section>
+<section class="card day-summary"><div><div class="eyebrow">Duración del día</div><div class="duration" id="dayLength"></div></div><div class="change" id="dayChange"></div></section>
+<div class="section-title"><h2>La luz perfecta</h2><span class="tag">Fotografía</span></div>
+<div class="photos">
+<section class="card photo-card">
+<div class="photo-head"><div class="photo-title"><span class="swatch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg></span>Hora dorada</div><span class="range">−4° a 6°</span></div>
+<div class="photo-grid"><div><div class="slot">MAÑANA</div><div class="interval" id="goldAM">—</div></div><div><div class="slot">TARDE</div><div class="interval" id="goldPM">—</div></div></div>
+</section>
+<section class="card photo-card">
+<div class="photo-head"><div class="photo-title"><span class="swatch blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M19 15A8 8 0 0 1 9 5a8 8 0 1 0 10 10Z"/><path d="M18 3v4m-2-2h4"/></svg></span>Hora azul</div><span class="range">−6° a −4°</span></div>
+<div class="photo-grid"><div><div class="slot">MAÑANA</div><div class="interval" id="blueAM">—</div></div><div><div class="slot">TARDE</div><div class="interval" id="bluePM">—</div></div></div>
+</section>
+</div>
+<p class="photo-note">Horarios estimados por la altura del sol. Las nubes, el relieve y los edificios pueden cambiar la luz.</p>
+<div class="section-title"><h2>Esta noche, mira arriba</h2><span class="pill">Ciclo lunar</span></div>
+<section class="card moon-card">
+<div class="eyebrow">La luna de hoy</div>
+<div class="moon-main">
+<svg class="moon-drawing" viewBox="0 0 110 110" role="img" aria-label="Fase actual de la luna">
+<defs><radialGradient id="moonBase" cx=".35" cy=".3"><stop stop-color="#e8edf9"/><stop offset="1" stop-color="#b6c2dc"/></radialGradient><clipPath id="litClip"><path id="moonClipPath"/></clipPath></defs>
+<circle cx="55" cy="55" r="47" fill="#28344c"/>
+<g clip-path="url(#litClip)"><circle cx="55" cy="55" r="47" fill="url(#moonBase)"/><g fill="#8d9bb9" opacity=".25"><circle cx="37" cy="34" r="10"/><circle cx="69" cy="43" r="14"/><circle cx="45" cy="67" r="12"/><circle cx="70" cy="81" r="7"/><circle cx="31" cy="78" r="5"/><circle cx="80" cy="24" r="5"/></g></g>
+<circle cx="55" cy="55" r="47" fill="none" stroke="#c7d6f7" stroke-opacity=".12"/>
+</svg>
+<div><div class="eyebrow" id="moonAge"></div><div class="moon-name" id="moonPhase"></div><div class="illumination" id="illumination"></div></div>
+</div>
+<div class="moon-events"><div><div class="event-title">○ Próxima luna llena</div><div class="event-date" id="fullDate"></div><div class="event-count" id="fullCount"></div></div><div><div class="event-title">● Próxima luna nueva</div><div class="event-date" id="newDate"></div><div class="event-count" id="newCount"></div></div></div>
+</section>
+<div class="footer"><div id="updated"></div><div>Datos solares de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Luna calculada en tu dispositivo</div><button class="text-button" id="moreInfo">Cómo calculamos tu cielo</button></div>
+</div>
+</main>
+
+<dialog id="locationDialog">
+<div class="sheet">
+<div class="sheet-head"><h2>¿Desde dónde miramos?</h2><button class="icon-btn" data-close="locationDialog" aria-label="Cerrar">✕</button></div>
+<button class="primary" id="geoButton"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg><span id="geoLabel">Usar mi ubicación</span></button>
+<div class="divider">o elige una ciudad</div>
+<form id="searchForm" role="search"><label class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" aria-label="Nombre de la ciudad" placeholder="Ciudad o localidad" autocomplete="off" enterkeyhint="search" maxlength="100"></label></form>
+<div id="searchStatus" class="search-status" role="status">Escribe al menos 2 letras para buscar.</div>
+<div class="results" id="results"></div>
+</div>
+</dialog>
+<dialog id="infoDialog"><div class="sheet info-copy"><div class="sheet-head"><h2>Un cielo, varios cálculos</h2><button class="icon-btn" data-close="infoDialog" aria-label="Cerrar">✕</button></div>
+<h3>Sol y hora local</h3><p>Open-Meteo proporciona el amanecer, el atardecer y la duración del día sin necesidad de una clave. Todos los horarios se muestran en la zona horaria del lugar elegido, incluido su horario de verano. La variación compara hoy con ayer.</p>
+<h3>Un arco que vive contigo</h3><p>La posición del icono se actualiza en tiempo real según el tiempo transcurrido entre el amanecer y el atardecer. El arco es ilustrativo: no representa la altura ni la orientación exactas del sol.</p>
+<h3>Luz para fotografiar</h3><p>Calculamos localmente la altura geométrica del sol: hora dorada entre −4° y +6°, y hora azul entre −6° y −4°. Son intervalos orientativos, no necesariamente de una hora. Un guion indica que no hay un intervalo completo dentro de ese día, algo posible cerca de los polos.</p>
+<h3>La luna, sin conexión</h3><p>La fase y las próximas lunas nuevas y llenas se calculan con un modelo astronómico local de ciclos lunares y sus principales correcciones. Las fechas son estimaciones, no efemérides de precisión. El dibujo muestra la iluminación con el norte hacia arriba; la orientación observada puede variar según el lugar y la hora.</p>
+<h3>Ubicación y privacidad</h3><p>Solo pedimos tu ubicación cuando pulsas el botón. Las coordenadas se envían a Open-Meteo para consultar el sol. La ciudad, las coordenadas y la última consulta se guardan en la base privada de esta aplicación para que puedas volver a verlas incluso sin conexión. La búsqueda de ciudades también usa Open-Meteo.</p>
+</div></dialog>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const DAY=86400000, RAD=Math.PI/180;
+const store={
+ async get(){if(window.Acornix?.db)return Acornix.db.get('soluna.state');try{return JSON.parse(localStorage.getItem('soluna.state')||'null')}catch{return null}},
+ async set(value){if(window.Acornix?.db)return Acornix.db.set('soluna.state',value);localStorage.setItem('soluna.state',JSON.stringify(value))}
+};
+let state=null,requestId=0,busy=false,lastAttempt=null,solarTimes=null,solarKey='',searchTimer,searchController,searchVersion=0,geoBusy=false,lastAuto=0;
+const fmtCache=new Map();
+function formatter(tz,options){const key=tz+JSON.stringify(options);if(!fmtCache.has(key))fmtCache.set(key,new Intl.DateTimeFormat('es-ES',{timeZone:tz,...options}));return fmtCache.get(key)}
+function time(ms){return Number.isFinite(ms)?formatter(state.data.timezone,{hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(ms):'—'}
+function dateKey(ms,tz){
+ const parts=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(ms);
+ const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;
+}
+function epoch(local,tz){
+ if(!local)return NaN;
+ const a=local.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);if(!a)return NaN;
+ const target=Date.UTC(+a[1],+a[2]-1,+a[3],+a[4],+a[5],+(a[6]||0));let guess=target;
+ for(let i=0;i<3;i++){
+ const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(guess).map(x=>[x.type,x.value]));
+ const represented=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second);
+ const adjust=target-represented;guess+=adjust;if(!adjust)break;
+ }return guess;
+}
+function nextDate(key){const d=new Date(key+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10)}
+function setError(message,retry=true){$('errorText').textContent=message;$('error').hidden=false;$('retry').hidden=!retry}
+function setLoading(value,text='Consultando el cielo…'){busy=value;$('loading').hidden=!value;$('loadingText').textContent=text;$('refresh').disabled=value}
+async function fetchJSON(url,signal){
+ const controller=new AbortController();const abort=()=>controller.abort();if(signal)signal.addEventListener('abort',abort,{once:true});
+ const timeout=setTimeout(()=>controller.abort(),18000);
+ try{const r=await fetch(url,{signal:controller.signal});if(!r.ok)throw new Error('consulta');return await r.json()}
+ finally{clearTimeout(timeout);if(signal)signal.removeEventListener('abort',abort)}
+}
+async function selectPlace(place){
+ const token=++requestId;lastAttempt=place;$('error').hidden=true;setLoading(true);
+ if($('locationDialog').open)$('locationDialog').close();
+ try{
+ const url=new URL('https://api.open-meteo.com/v1/forecast');
+ const params={latitude:place.lat,longitude:place.lon,daily:'sunrise,sunset,daylight_duration',timezone:'auto',past_days:1,forecast_days:2};
+ Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+ const data=await fetchJSON(url);
+ if(token!==requestId)return;
+ if(!data.daily?.time?.length||!data.timezone)throw new Error('datos');
+ state={place,data,updated:Date.now()};solarKey='';render();
+ try{await store.set(state)}catch{setError('No pudimos guardar esta consulta en el dispositivo.',false)}
+ }catch(e){if(token!==requestId)return;setError(state?'No pudimos actualizar el cielo. Sigues viendo la última consulta guardada.':'No pudimos consultar el cielo. Comprueba tu conexión e inténtalo de nuevo.')}
+ finally{if(token===requestId)setLoading(false)}
+}
+function openLocation(focus=false){if(!$('locationDialog').open)$('locationDialog').showModal();if(focus)setTimeout(()=>$('search').focus(),150)}
+async function locate(){
+ if(geoBusy)return;
+ openLocation();$('searchStatus').textContent='Buscando tu posición…';
+ if(!navigator.geolocation){$('searchStatus').textContent='Este dispositivo no permite obtener la ubicación. Busca una ciudad.';return}
+ geoBusy=true;$('geoButton').disabled=true;$('geoLabel').textContent='Localizando…';
+ navigator.geolocation.getCurrentPosition(
+ p=>{finishGeo();$('searchStatus').textContent='Puedes buscar otra ciudad cuando quieras.';selectPlace({name:'Mi ubicación',detail:`${p.coords.latitude.toFixed(3)}°, ${p.coords.longitude.toFixed(3)}°`,lat:p.coords.latitude,lon:p.coords.longitude})},
+ e=>{finishGeo();$('searchStatus').textContent=e.code===1?'No se ha permitido el acceso a tu ubicación. Puedes activarlo en los permisos de la aplicación o buscar una ciudad.':'No pudimos localizarte. Activa la ubicación del dispositivo o busca una ciudad.'},
+ {enableHighAccuracy:false,timeout:15000,maximumAge:300000}
+ );
+}
+function finishGeo(){geoBusy=false;$('geoButton').disabled=false;$('geoLabel').textContent='Usar mi ubicación'}
+async function searchCities(){
+ clearTimeout(searchTimer);
+ const query=$('search').value.trim(),version=++searchVersion;
+ if(searchController)searchController.abort();
+ $('results').replaceChildren();
+ if(query.length<2){$('searchStatus').textContent='Escribe al menos 2 letras para buscar.';return}
+ searchController=new AbortController();$('searchStatus').textContent='Buscando ciudades…';
+ try{
+ const url='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(query)+'&count=8&language=es&format=json';
+ const data=await fetchJSON(url,searchController.signal);
+ if(version!==searchVersion)return;
+ $('searchStatus').textContent=data.results?.length?'Elige tu ubicación en los resultados.':'No encontramos esa ciudad. Prueba otro nombre o una localidad cercana.';
+ (data.results||[]).forEach(p=>{
+ const b=document.createElement('button');b.className='result';b.type='button';
+ const wrap=document.createElement('span'),strong=document.createElement('strong'),small=document.createElement('small'),arrow=document.createElement('span');
+ strong.textContent=p.name;small.textContent=[p.admin1,p.country].filter(Boolean).join(' · ');arrow.textContent='↗';
+ wrap.append(strong,small);b.append(wrap,arrow);
+ b.onclick=()=>selectPlace({name:p.name,detail:small.textContent,lat:p.latitude,lon:p.longitude});$('results').append(b);
+ });
+ }catch(e){if(version!==searchVersion)return;$('searchStatus').textContent='No pudimos buscar. Comprueba la conexión y vuelve a escribir o pulsa buscar.'}
+}
+function solarAltitude(ms,lat,lon){
+ const d=ms/DAY+2440587.5-2451545;
+ const M=RAD*(357.5291+.98560028*d);
+ const C=RAD*(1.9148*Math.sin(M)+.02*Math.sin(2*M)+.0003*Math.sin(3*M));
+ const L=M+C+RAD*102.9372+Math.PI,ob=RAD*23.4397;
+ const dec=Math.asin(Math.sin(L)*Math.sin(ob)),ra=Math.atan2(Math.sin(L)*Math.cos(ob),Math.cos(L));
+ const H=RAD*(280.16+360.9856235*d+lon)-ra,phi=lat*RAD;
+ return Math.asin(Math.sin(phi)*Math.sin(dec)+Math.cos(phi)*Math.cos(dec)*Math.cos(H))/RAD;
+}
+function calculatePhoto(key){
+ const tz=state.data.timezone,start=epoch(key+'T00:00',tz),end=epoch(nextDate(key)+'T00:00',tz);
+ const result={};[-6,-4,6].forEach(threshold=>result[threshold]={up:null,down:null});
+ let t0=start,a0=solarAltitude(start,state.place.lat,state.place.lon);
+ for(let t=start+300000;t<=end+300000;t+=300000){
+ const t1=Math.min(t,end),a1=solarAltitude(t1,state.place.lat,state.place.lon);
+ for(const target of [-6,-4,6]){
+ if((a0<target&&a1>=target)||(a0>target&&a1<=target)){
+ const direction=a1>a0?'up':'down';let lo=t0,hi=t1;
+ for(let n=0;n<17;n++){const mid=(lo+hi)/2,a=solarAltitude(mid,state.place.lat,state.place.lon);if((direction==='up'&&a<target)||(direction==='down'&&a>target))lo=mid;else hi=mid}
+ result[target][direction]=(lo+hi)/2;
+ }}
+ t0=t1;a0=a1;if(t1===end)break;
+ }return result;
+}
+function formatInterval(a,b){return Number.isFinite(a)&&Number.isFinite(b)&&b>a?`${time(a)}–${time(b)}`:'—'}
+function duration(ms){const minutes=Math.round(ms/60000);return `${Math.floor(minutes/60)} h ${String(minutes%60).padStart(2,'0')} min`}
+function render(){
+ if(!state?.data?.daily)return;
+ $('welcome').hidden=true;$('dashboard').hidden=false;$('refresh').hidden=false;
+ $('city').textContent=state.place.name;
+ $('changePlace').title=state.place.detail||'Cambiar ubicación';
+ $('updated').textContent='Última consulta: '+formatter(state.data.timezone,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(state.updated);
+ tick();
+}
+function tick(){
+ if(!state)return;
+ const now=Date.now(),tz=state.data.timezone,key=dateKey(now,tz),d=state.data.daily,i=d.time.indexOf(key);
+ $('clock').textContent=time(now);
+ $('dateLabel').textContent=formatter(tz,{weekday:'long',day:'numeric',month:'long'}).format(now)+' · '+tz.replaceAll('_',' ');
+ updateMoon(now);
+ if(i<0){
+ $('sunStatus').textContent='Hace falta actualizar';$('sunrise').textContent='—';$('sunset').textContent='—';$('dayLength').textContent='—';$('dayChange').textContent='Sin datos para hoy';$('sunDot').style.display='none';$('arcRect').setAttribute('width','0');$('arcCaption').textContent='Actualiza para ver el sol de hoy';
+ ['goldAM','goldPM','blueAM','bluePM'].forEach(id=>$(id).textContent='—');
+ }else{
+ const seconds=d.daylight_duration[i],rise=epoch(d.sunrise[i],tz),set=epoch(d.sunset[i],tz);
+ const polarDay=seconds>=86340,polarNight=seconds<=60;
+ $('sunrise').textContent=polarDay?'No se pone':polarNight?'No sale':time(rise);
+ $('sunset').textContent=polarDay?'No se pone':polarNight?'No sale':time(set);
+ if(polarDay||polarNight){$('sunrise').style.fontSize='21px';$('sunset').style.fontSize='21px'}else{$('sunrise').style.fontSize='';$('sunset').style.fontSize=''}
+ $('dayLength').textContent=Number.isFinite(seconds)?duration(seconds*1000):'—';
+ if(i>0&&Number.isFinite(d.daylight_duration[i-1])&&Number.isFinite(seconds)){
+ const diff=seconds-d.daylight_duration[i-1],mins=Math.abs(diff)/60;
+ $('dayChange').className='change'+(diff<0?' loss':'');
+ $('dayChange').textContent=mins<.5?'≈ Igual que ayer':`${diff>0?'↗ +':'↘ −'}${Math.max(1,Math.round(mins))} min de luz\nrespecto a ayer`;
+ $('dayChange').style.whiteSpace='pre-line';
+ }else $('dayChange').textContent='Sin comparación disponible';
+ const inDay=now>=rise&&now<set&&!polarNight&&!polarDay;
+ const fraction=Number.isFinite(rise)&&set>rise?Math.max(0,Math.min(1,(now-rise)/(set-rise))):0;
+ const x=32+296*fraction,y=161-480*fraction*(1-fraction);
+ $('sunDot').style.display=inDay?'':'none';$('sunDot').setAttribute('transform',`translate(${x},${y})`);
+ $('arcRect').setAttribute('width',polarDay?360:polarNight?0:now>=set?360:now<rise?0:x);
+ if(polarDay){$('sunStatus').textContent='Luz durante todo el día';$('arcCaption').textContent='El sol no cruza el horizonte hoy'}
+ else if(polarNight){$('sunStatus').textContent='Noche polar';$('arcCaption').textContent='El sol permanece bajo el horizonte'}
+ else if(inDay){$('sunStatus').textContent='El sol está en el cielo';$('arcCaption').textContent=`Quedan ${duration(set-now)} de luz`}
+ else if(now<rise){$('sunStatus').textContent='El día está por llegar';$('arcCaption').textContent=`El sol sale en ${duration(rise-now)}`}
+ else{$('sunStatus').textContent='El cielo entra en calma';$('arcCaption').textContent='El sol ya se ha despedido por hoy'}
+ const cacheKey=key+state.place.lat+','+state.place.lon+tz;
+ if(solarKey!==cacheKey){
+ solarTimes=calculatePhoto(key);solarKey=cacheKey;
+ $('goldAM').textContent=formatInterval(solarTimes[-4].up,solarTimes[6].up);
+ $('goldPM').textContent=formatInterval(solarTimes[6].down,solarTimes[-4].down);
+ $('blueAM').textContent=formatInterval(solarTimes[-6].up,solarTimes[-4].up);
+ $('bluePM').textContent=formatInterval(solarTimes[-4].down,solarTimes[-6].down);
+ }
+ }
+ if((i<0||Date.now()-state.updated>1800000)&&!busy&&now-lastAuto>300000){lastAuto=now;selectPlace(state.place)}
+}
+// Principales términos periódicos del modelo de fases de Meeus.
+function moonEvent(k){
+ const T=k/1236.85,T2=T*T,T3=T2*T,T4=T3*T;
+ let jde=2451550.09765+29.530588853*k+.0001337*T2-.000000150*T3+.00000000073*T4;
+ const E=1-.002516*T-.0000074*T2;
+ const M=(2.5534+29.10535670*k-.0000014*T2-.00000011*T3)*RAD;
+ const P=(201.5643+385.81693528*k+.0107582*T2+.00001238*T3-.000000058*T4)*RAD;
+ const F=(160.7108+390.67050284*k-.0016118*T2-.00000227*T3+.000000011*T4)*RAD;
+ const O=(124.7746-1.56375580*k+.0020672*T2+.00000215*T3)*RAD;
+ const full=Math.abs(k-Math.floor(k)-.5)<.01;
+ let c=(full?-.40614:-.40720)*Math.sin(P)+(full?.17241:.17241)*E*Math.sin(M)+(full?.01614:.01608)*Math.sin(2*P)+(full?.01043:.01039)*Math.sin(2*F)+(full?.00734:.00739)*E*Math.sin(P-M)-(full?.00515:.00514)*E*Math.sin(P+M)+.00209*E*E*Math.sin(2*M)-.00111*Math.sin(P-2*F)-.00057*Math.sin(P+2*F)+.00056*E*Math.sin(2*P+M)-.00042*Math.sin(3*P)+.00042*E*Math.sin(M+2*F)+.00038*E*Math.sin(M-2*F)-.00024*E*Math.sin(2*P-M)-.00017*Math.sin(O)-.00007*Math.sin(P+2*M)+.00004*Math.sin(2*P-2*F)+.00004*Math.sin(3*M)+.00003*Math.sin(P+M-2*F)+.00003*Math.sin(2*P+2*F)-.00003*Math.sin(P+M+2*F)+.00003*Math.sin(P-M+2*F)-.00002*Math.sin(P-M-2*F)-.00002*Math.sin(3*P+M)+.00002*Math.sin(4*P);
+ c+=.000325*Math.sin((299.77+.107408*k-.009173*T2)*RAD)+.000165*Math.sin((251.88+.016321*k)*RAD)+.000164*Math.sin((251.83+26.651886*k)*RAD)+.000126*Math.sin((349.42+36.412478*k)*RAD)+.000110*Math.sin((84.66+18.206239*k)*RAD);
+ return (jde+c-2440587.5)*DAY-74000;
+}
+function moonData(now){
+ const approx=Math.floor((now/DAY+2440587.5-2451550.09765)/29.530588853);
+ const news=[],fulls=[];for(let n=approx-2;n<=approx+3;n++){news.push(moonEvent(n));fulls.push(moonEvent(n+.5))}
+ const prev=news.filter(v=>v<=now).pop(),next=news.find(v=>v>now),full=fulls.find(v=>v>now);
+ return{p:(now-prev)/(next-prev),age:(now-prev)/DAY,newMoon:next,fullMoon:full};
+}
+function updateMoon(now){
+ const m=moonData(now),p=m.p,illum=(1-Math.cos(2*Math.PI*p))/2;
+ let name=p<.5?'Luna creciente':'Luna menguante';
+ if(p<.025||p>.975)name='Luna nueva';
+ else if(p<.225)name='Luna creciente';
+ else if(p<.275)name='Cuarto creciente';
+ else if(p<.475)name='Gibosa creciente';
+ else if(p<.525)name='Luna llena';
+ else if(p<.725)name='Gibosa menguante';
+ else if(p<.775)name='Cuarto menguante';
+ $('moonPhase').textContent=name;
+ $('moonAge').textContent=`Día ${Math.floor(m.age)+1} del ciclo`;
+ $('illumination').textContent=`${Math.round(illum*100)} % de iluminación`;
+ const points=[],r=47,c=55,cos=Math.cos(2*Math.PI*p),wax=p<=.5;
+ for(let n=0;n<=90;n++){const y=-r+2*r*n/90,x=Math.sqrt(Math.max(0,r*r-y*y));points.push([c+(wax?x:-x),c+y])}
+ for(let n=90;n>=0;n--){const y=-r+2*r*n/90,x=Math.sqrt(Math.max(0,r*r-y*y));points.push([c+(wax?cos*x:-cos*x),c+y])}
+ $('moonClipPath').setAttribute('d','M'+points.map(a=>a.map(v=>v.toFixed(2)).join(',')).join('L')+'Z');
+ const tz=state.data.timezone;
+ for(const [prefix,value] of [['full',m.fullMoon],['new',m.newMoon]]){
+ $(prefix+'Date').textContent=formatter(tz,{day:'numeric',month:'long'}).format(value);
+ const days=Math.round((Date.parse(dateKey(value,tz)+'T12:00Z')-Date.parse(dateKey(now,tz)+'T12:00Z'))/DAY);
+ $(prefix+'Count').textContent=(days===0?'Hoy':days===1?'Mañana':`En ${days} días`)+' · '+time(value);
+ }
+}
+$('welcomeGeo').onclick=locate;$('geoButton').onclick=locate;
+$('welcomeSearch').onclick=()=>openLocation(true);$('changePlace').onclick=()=>openLocation();
+$('refresh').onclick=()=>{if(state)selectPlace(state.place)};
+$('retry').onclick=()=>{if(lastAttempt||state?.place)selectPlace(lastAttempt||state.place)};
+$('infoBtn').onclick=$('moreInfo').onclick=()=>$('infoDialog').showModal();
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close()}}));
+$('search').addEventListener('input',()=>{clearTimeout(searchTimer);searchVersion++;if(searchController)searchController.abort();searchTimer=setTimeout(searchCities,400)});
+$('searchForm').onsubmit=e=>{e.preventDefault();searchCities();$('search').blur()};
+async function reload(initial=false){
+ try{
+ const saved=await store.get();
+ if(saved?.place&&saved?.data?.daily?.time?.length){state=saved;solarKey='';render();if(initial&&Date.now()-saved.updated>1800000&&!busy){lastAuto=Date.now();selectPlace(saved.place)}}
+ else if(!busy){state=null;$('welcome').hidden=false;$('dashboard').hidden=true;$('refresh').hidden=true}
+ }catch{$('welcome').hidden=false;setError('No pudimos leer los datos guardados. Puedes elegir una ubicación de nuevo.',false)}
+}
+window.addEventListener('acornixdata',()=>reload());
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+setInterval(()=>{if(!document.hidden)tick()},15000);
+reload(true);
+</script>
+</body>
+</html>
