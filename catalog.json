@@ -606,7 +606,7 @@
     {
       "id": "sun-and-moon",
       "name": "Sun and Moon",
-      "emoji": "🧮",
+      "emoji": "🌗",
       "category": "weather",
       "description": "Sunrise, sunset, golden and blue hour with the sun moving along today's arc, plus the moon phase and the next full moon.",
       "prompt": "A sun and moon app using the free Open-Meteo API with no key for sunrise and sunset, with my location or a searched city. Draw today's sun path as an arc with the sun moving along it in real time, show sunrise, sunset, day length, golden hour and blue hour for photographers, and how many minutes the day grows or shrinks. Calculate the moon phase locally and draw it, with the next full moon and new moon dates.",
