@@ -26,8 +26,8 @@
 </div>
 <script>
 const ES = (navigator.language || '').toLowerCase().startsWith('es');
-const T = ES ? { move:'✋ Mover', draw:'✏️ Flecha', run:'〰️ Carrera', undo:'↶', clear:'🧹 Borrar trazos', rival:'👥 Rival', snap:'📷 Guardar', saved:'Guardado en Archivos' }
- : { move:'✋ Move', draw:'✏️ Arrow', run:'〰️ Run', undo:'↶', clear:'🧹 Clear lines', rival:'👥 Opponent', snap:'📷 Save', saved:'Saved to Files' };
+const T = ES ? { move:'✋ Mover', draw:'✏️ Flecha', run:'〰️ Carrera', undo:'↶', clear:'🧹 Borrar trazos', rival:'👥 Rival', snap:'📷 Guardar', saved:'Guardado en esta app' }
+ : { move:'✋ Move', draw:'✏️ Arrow', run:'〰️ Run', undo:'↶', clear:'🧹 Clear lines', rival:'👥 Opponent', snap:'📷 Save', saved:'Saved in this app' };
 // Formations as rows from defence to attack (goalkeeper added automatically).
 const FORMS = { '4-4-2': [4, 4, 2], '4-3-3': [4, 3, 3], '3-5-2': [3, 5, 2], '4-2-3-1': [4, 2, 3, 1], '5-3-2': [5, 3, 2], '3-4-3': [3, 4, 3], '7 (2-3-1)': [2, 3, 1] };
 const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
