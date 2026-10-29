@@ -2,6 +2,28 @@
   "version": 1,
   "apps": [
     {
+      "id": "camtest",
+      "name": "Camtest",
+      "emoji": "🌰",
+      "category": "tools",
+      "description": "Test app: take a photo with the camera or pick one from the gallery.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 962,
+      "sha256": "71c589c5e54e5215cd30c3fef13b781927d10143afa9dc7fc83e9787d5af70ee"
+    },
+    {
       "id": "reef-aquarium",
       "name": "Reef Aquarium",
       "emoji": "🐠",

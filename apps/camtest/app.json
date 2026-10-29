@@ -1,0 +1,15 @@
+{
+  "id": "camtest",
+  "name": "Camtest",
+  "emoji": "🌰",
+  "category": "tools",
+  "description": "Test app: take a photo with the camera or pick one from the gallery.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 1
+}

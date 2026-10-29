@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Camera Test</title><style>body{font-family:sans-serif;padding:20px;font-size:20px}label{display:block;margin:20px 0;padding:24px;background:#4a7;color:#fff;border-radius:12px;text-align:center}img{max-width:100%}</style></head><body>
+<h2>Camera Test</h2>
+<label>📷 Capture<input id="a" type="file" accept="image/*" capture="environment" hidden></label>
+<label style="background:#47a">🖼️ Photo (no capture)<input id="b" type="file" accept="image/*" hidden></label>
+<p id="s">Nothing yet</p><img id="i">
+<script>
+for (const id of ['a','b']) document.getElementById(id).onchange = e => {
+  const f = e.target.files[0];
+  document.getElementById('s').textContent = f ? (id + ': ' + f.name + ' ' + f.size + ' bytes') : (id + ': cancelled');
+  if (f) document.getElementById('i').src = URL.createObjectURL(f);
+};
+</script></body></html>
