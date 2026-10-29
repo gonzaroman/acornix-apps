@@ -1612,6 +1612,31 @@
       "trending": 0
     },
     {
+      "id": "pixel-photo",
+      "name": "Pixel Photo",
+      "emoji": "📷",
+      "category": "photo-video",
+      "description": "Turn any photo into pixel art with retro palettes like Game Boy, PICO-8, NES and CGA, adjustable pixel size and dithering.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 7755,
+      "sha256": "4e20eb11267d42ab2a620d78d2c4f7d64e7a6dfab9cab043a903549ef17a171c",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pitch-writer-ai",
       "name": "Pitch Writer",
       "emoji": "🎤",
