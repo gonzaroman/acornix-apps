@@ -1,0 +1,14 @@
+{
+  "id": "battery-info",
+  "name": "Battery & Device",
+  "emoji": "🔋",
+  "category": "utilities",
+  "description": "Your battery level, charging state and temperature, plus details about your phone and screen.",
+  "prompt": "A battery and device info app showing the battery level in a big battery icon, charging status and temperature, device model and Android version, screen, network, language, time zone and storage, with tips to look after the battery.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

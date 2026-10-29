@@ -1,0 +1,14 @@
+{
+  "id": "timer-stopwatch",
+  "name": "Timer & Stopwatch",
+  "emoji": "⏱️",
+  "category": "utilities",
+  "description": "A precise stopwatch with laps and a countdown timer with presets, alarm and notification.",
+  "prompt": "A stopwatch with laps that marks the fastest and slowest, and a countdown timer with quick presets, a ring that empties, an alarm sound, vibration and a notification when time is up.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

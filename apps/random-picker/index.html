@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Random Picker</title>
+<style>
+  :root { --bg:#fff7ef; --card:#fff; --ink:#2c2340; --muted:#8f86a3; --a:#ff7a45; --line:#f1e4d6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:520px; margin:0 auto; min-height:100%; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  .tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .tab { padding:12px 4px; border-radius:16px; background:var(--card); font-weight:800; font-size:13px; box-shadow:0 3px 0 var(--line); }
+  .tab span { display:block; font-size:24px; }
+  .tab.on { background:var(--a); color:#fff; box-shadow:0 3px 0 #c9501f; }
+  .stage { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; min-height:300px; }
+  .result { font-size:clamp(54px,18vw,96px); font-weight:900; text-align:center; line-height:1.05; word-break:break-word; }
+  .result.roll { animation:roll .5s; }
+  @keyframes roll { 0% { transform:scale(.4) rotate(-20deg); opacity:0; } 60% { transform:scale(1.15) rotate(6deg); } }
+  .dice { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+  .die { width:84px; height:84px; border-radius:18px; background:#fff; box-shadow:0 6px 0 #e7d3c0, 0 10px 20px #0001; display:grid; grid-template:repeat(3,1fr)/repeat(3,1fr); padding:12px; }
+  .die i { width:14px; height:14px; border-radius:50%; background:var(--ink); place-self:center; visibility:hidden; }
+  .die i.on { visibility:visible; }
+  .die.roll { animation:shake .55s; }
+  @keyframes shake { 20% { transform:rotate(-25deg) translateY(-14px); } 50% { transform:rotate(18deg) translateY(4px); } 80% { transform:rotate(-8deg); } }
+  .coin { width:150px; height:150px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff3b0,#f2c230 55%,#b98a00); box-shadow:0 8px 0 #9a7400, 0 14px 24px #0002; display:grid; place-items:center; font-size:40px; font-weight:900; color:#7a5a00; }
+  .coin.flip { animation:flip .9s ease-out; }
+  @keyframes flip { 0% { transform:rotateX(0) translateY(0); } 50% { transform:rotateX(900deg) translateY(-90px); } 100% { transform:rotateX(1800deg) translateY(0); } }
+  .opts { display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .opts input { width:84px; padding:10px; border-radius:12px; background:var(--card); text-align:center; font-weight:800; border:1px solid var(--line); }
+  .opts button { padding:9px 14px; border-radius:12px; background:var(--card); font-weight:800; border:1px solid var(--line); }
+  .opts button.on { background:var(--ink); color:#fff; }
+  textarea { width:100%; min-height:120px; padding:12px; border-radius:16px; background:var(--card); border:1px solid var(--line); resize:vertical; outline:none; }
+  .go { width:100%; padding:17px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:18px; box-shadow:0 5px 0 #c9501f; }
+  .go:active { transform:translateY(3px); box-shadow:0 2px 0 #c9501f; }
+  .hist { color:var(--muted); font-size:13px; text-align:center; min-height:18px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="tabs" id="tabs"></div>
+  <div class="stage" id="stage"></div>
+  <button class="go" id="go"></button>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { tabs:[['🎲','Dados'],['🪙','Moneda'],['🔢','Número'],['📝','Lista']], roll:'¡Tirar!', flip:'¡Lanzar!', pick:'¡Elegir!', heads:'CARA', tails:'CRUZ', min:'Mín', max:'Máx', list:'Una opción por línea', listDefault:'Pizza\nSushi\nTacos\nPasta', last:'Últimos', total:'Total', unique:'Sin repetir' }
+ : { tabs:[['🎲','Dice'],['🪙','Coin'],['🔢','Number'],['📝','List']], roll:'Roll!', flip:'Flip!', pick:'Pick!', heads:'HEADS', tails:'TAILS', min:'Min', max:'Max', list:'One option per line', listDefault:'Pizza\nSushi\nTacos\nPasta', last:'Last', total:'Total', unique:'No repeats' };
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const $ = id => document.getElementById(id);
+let tab = store.get('tab', 0), dice = store.get('dice', 2), range = store.get('range', [1, 100]), list = store.get('list', T.listDefault), history = [], usedNums = new Set();
+const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+const rnd = n => crypto.getRandomValues(new Uint32Array(1))[0] % n;
+T.tabs.forEach(([e, n], i) => { const b = document.createElement('button'); b.className = 'tab'; b.innerHTML = `<span>${e}</span>${n}`; b.onclick = () => { tab = i; store.set('tab', i); history = []; render(); }; $('tabs').appendChild(b); });
+function dieHtml(v) { return `<div class="die">${[...Array(9)].map((_, i) => `<i class="${PIPS[v].includes(i) ? 'on' : ''}"></i>`).join('')}</div>`; }
+function render() {
+  document.querySelectorAll('.tab').forEach((b, i) => b.classList.toggle('on', i === tab));
+  const st = $('stage');
+  if (tab === 0) {
+    st.innerHTML = `<div class="dice" id="dice">${[...Array(dice)].map(() => dieHtml(6)).join('')}</div><div class="result" id="res" style="font-size:40px"></div><div class="opts">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${n === dice ? 'on' : ''}">${n} 🎲</button>`).join('')}</div>`;
+    st.querySelectorAll('.opts button').forEach(b => b.onclick = () => { dice = +b.dataset.n; store.set('dice', dice); render(); });
+    $('go').textContent = T.roll;
+  } else if (tab === 1) {
+    st.innerHTML = `<div class="coin" id="coin">?</div><div class="hist" id="hist"></div>`; $('go').textContent = T.flip;
+  } else if (tab === 2) {
+    st.innerHTML = `<div class="result" id="res">?</div><div class="opts">${T.min}<input id="min" inputmode="numeric" value="${range[0]}">${T.max}<input id="max" inputmode="numeric" value="${range[1]}"><button id="uniq">${T.unique}</button></div><div class="hist" id="hist"></div>`;
+    ['min', 'max'].forEach(id => $(id).oninput = () => { range = [parseInt($('min').value) || 0, parseInt($('max').value) || 0]; usedNums.clear(); store.set('range', range); });
+    $('uniq').onclick = e => { e.target.classList.toggle('on'); usedNums.clear(); };
+    $('go').textContent = T.pick;
+  } else {
+    st.innerHTML = `<div class="result" id="res" style="font-size:44px">?</div><textarea id="list" placeholder="${T.list}"></textarea><div class="hist" id="hist"></div>`;
+    $('list').value = list; $('list').oninput = () => { list = $('list').value; store.set('list', list); };
+    $('go').textContent = T.pick;
+  }
+}
+function go() {
+  buzz(20);
+  if (tab === 0) {
+    const vals = [...Array(dice)].map(() => 1 + rnd(6));
+    $('dice').innerHTML = vals.map(dieHtml).join('');
+    $('dice').querySelectorAll('.die').forEach((d, i) => { d.style.animationDelay = i * 60 + 'ms'; d.classList.add('roll'); });
+    $('res').textContent = dice > 1 ? T.total + ': ' + vals.reduce((a, b) => a + b, 0) : '';
+  } else if (tab === 1) {
+    const c = $('coin'); c.classList.remove('flip'); void c.offsetWidth; c.classList.add('flip'); c.textContent = '';
+    const v = rnd(2) ? T.heads : T.tails;
+    setTimeout(() => { c.textContent = v; history.unshift(v === T.heads ? '😀' : '🦅'); $('hist').textContent = T.last + ': ' + history.slice(0, 12).join(' '); }, 900);
+  } else if (tab === 2) {
+    let [a, b] = range; if (a > b) [a, b] = [b, a];
+    const uniq = $('uniq').classList.contains('on'), span = b - a + 1;
+    if (uniq && usedNums.size >= span) usedNums.clear();
+    let v; do { v = a + rnd(span); } while (uniq && usedNums.has(v));
+    usedNums.add(v); history.unshift(v);
+    const r = $('res'); r.textContent = v; r.classList.remove('roll'); void r.offsetWidth; r.classList.add('roll');
+    $('hist').textContent = T.last + ': ' + history.slice(1, 10).join(', ');
+  } else {
+    const items = list.split('\n').map(s => s.trim()).filter(Boolean); if (!items.length) return;
+    const r = $('res'); let n = 0;
+    const spin = setInterval(() => { r.textContent = items[rnd(items.length)]; if (++n > 12) { clearInterval(spin); const v = items[rnd(items.length)]; r.textContent = '🎉 ' + v; r.classList.remove('roll'); void r.offsetWidth; r.classList.add('roll'); buzz([20, 30, 40]); } }, 70);
+  }
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('go').onclick = go;
+let lastShake = 0;
+addEventListener('devicemotion', e => { const a = e.accelerationIncludingGravity; if (!a) return; if (Math.abs(a.x) + Math.abs(a.y) + Math.abs(a.z) > 34 && Date.now() - lastShake > 1200) { lastShake = Date.now(); go(); } });
+render();
+</script>
+</body>
+</html>

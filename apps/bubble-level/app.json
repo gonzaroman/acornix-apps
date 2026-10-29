@@ -1,0 +1,14 @@
+{
+  "id": "bubble-level",
+  "name": "Bubble Level",
+  "emoji": "📐",
+  "category": "utilities",
+  "description": "A spirit level that uses your phone's sensors, with degrees, calibration and a buzz when it's level.",
+  "prompt": "A bubble level app with a green vial and a bubble that moves with the phone's tilt sensors, X and Y degrees, calibration, hold reading and a vibration when it is perfectly level.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

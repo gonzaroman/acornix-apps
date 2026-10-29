@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Magnifier</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; background:#000; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; touch-action:none; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #view { position:fixed; inset:0; overflow:hidden; }
+  video, canvas#frozen { position:absolute; left:50%; top:50%; min-width:100%; min-height:100%; transform-origin:center; object-fit:cover; }
+  canvas#frozen { display:none; }
+  .f-contrast video, .f-contrast #frozen { filter:grayscale(1) contrast(2.2) brightness(1.1); }
+  .f-invert video, .f-invert #frozen { filter:grayscale(1) invert(1) contrast(2); }
+  .f-yellow video, .f-yellow #frozen { filter:grayscale(1) contrast(2) sepia(1) saturate(6) hue-rotate(5deg); }
+  .bar { position:fixed; left:0; right:0; bottom:0; padding:14px 16px calc(env(safe-area-inset-bottom) + 16px); background:linear-gradient(#0000,#000c); display:flex; flex-direction:column; gap:14px; }
+  .zoom { display:flex; align-items:center; gap:12px; font-weight:800; }
+  .zoom input { flex:1; accent-color:#ffd23f; height:30px; }
+  .zoom b { width:52px; text-align:right; font-variant-numeric:tabular-nums; }
+  .btns { display:flex; gap:10px; justify-content:space-between; }
+  .btns button { flex:1; padding:14px 6px; border-radius:16px; background:#ffffff22; font-weight:800; font-size:14px; backdrop-filter:blur(8px); }
+  .btns button.on { background:#ffd23f; color:#221a00; }
+  .top { position:fixed; top:calc(env(safe-area-inset-top) + 10px); left:12px; right:12px; display:flex; justify-content:space-between; align-items:center; font-weight:800; text-shadow:0 1px 4px #000; }
+  .msg { position:fixed; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:30px; font-size:17px; line-height:1.5; }
+  .msg.on { display:flex; }
+</style>
+</head>
+<body>
+<div id="view"><video id="video" playsinline muted autoplay></video><canvas id="frozen"></canvas></div>
+<div class="top"><span>🔍 <span id="ttl"></span></span><span id="frozenTag"></span></div>
+<div class="msg" id="msg"></div>
+<div class="bar">
+  <div class="zoom">➖<input type="range" id="zoom" min="1" max="8" step="0.1" value="2">➕<b id="zv">2.0×</b></div>
+  <div class="btns"><button id="freeze"></button><button id="light"></button><button id="filter"></button></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Lupa', freeze:'⏸ Congelar', live:'▶ En vivo', light:'💡 Luz', filter:'🎨 Normal', filters:['🎨 Normal','⚫ Contraste','🔄 Negativo','🟡 Amarillo'], frozen:'IMAGEN CONGELADA', noCam:'No hay acceso a la cámara. Permítelo para usar la lupa.' }
+ : { title:'Magnifier', freeze:'⏸ Freeze', live:'▶ Live', light:'💡 Light', filter:'🎨 Normal', filters:['🎨 Normal','⚫ Contrast','🔄 Invert','🟡 Yellow'], frozen:'FROZEN', noCam:'No access to the camera. Allow it to use the magnifier.' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('freeze').textContent = T.freeze; $('light').textContent = T.light; $('filter').textContent = T.filters[0];
+const video = $('video'), frozen = $('frozen');
+let track, frozenOn = false, torch = false, filter = 0, zoom = 2, hwZoom = null, pan = { x: 0, y: 0 };
+async function start() {
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } });
+    video.srcObject = s; track = s.getVideoTracks()[0];
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (caps.zoom) hwZoom = caps.zoom;
+    if (!caps.torch) $('light').style.display = 'none';
+    applyZoom();
+  } catch (e) { $('msg').textContent = T.noCam; $('msg').classList.add('on'); }
+}
+function applyZoom() {
+  $('zv').textContent = zoom.toFixed(1) + '×';
+  let digital = zoom;
+  if (hwZoom && !frozenOn) {
+    const z = Math.min(hwZoom.max, Math.max(hwZoom.min, zoom));
+    track.applyConstraints({ advanced: [{ zoom: z }] }).catch(() => {});
+    digital = zoom / z;
+  }
+  const t = `translate(calc(-50% + ${pan.x}px), calc(-50% + ${pan.y}px)) scale(${frozenOn ? zoom : digital})`;
+  video.style.transform = t; frozen.style.transform = t;
+}
+$('zoom').oninput = e => { zoom = +e.target.value; applyZoom(); };
+$('freeze').onclick = () => {
+  frozenOn = !frozenOn;
+  if (frozenOn && video.videoWidth) { frozen.width = video.videoWidth; frozen.height = video.videoHeight; frozen.getContext('2d').drawImage(video, 0, 0); frozen.style.width = video.clientWidth + 'px'; frozen.style.height = video.clientHeight + 'px'; }
+  frozen.style.display = frozenOn ? 'block' : 'none'; video.style.visibility = frozenOn ? 'hidden' : 'visible';
+  $('freeze').textContent = frozenOn ? T.live : T.freeze; $('freeze').classList.toggle('on', frozenOn); $('frozenTag').textContent = frozenOn ? T.frozen : '';
+  if (!frozenOn) pan = { x: 0, y: 0 };
+  try { if (window.Acornix) Acornix.vibrate(20); } catch (e) {}
+  applyZoom();
+};
+$('light').onclick = () => { torch = !torch; track && track.applyConstraints({ advanced: [{ torch }] }).catch(() => {}); $('light').classList.toggle('on', torch); };
+$('filter').onclick = () => { filter = (filter + 1) % 4; document.body.className = ['', 'f-contrast', 'f-invert', 'f-yellow'][filter]; $('filter').textContent = T.filters[filter]; $('filter').classList.toggle('on', filter > 0); };
+// Pinch to zoom, drag to look around a frozen picture.
+const pts = new Map(); let startDist = 0, startZoom = 2, last = null;
+$('view').addEventListener('pointerdown', e => { pts.set(e.pointerId, e); if (pts.size === 2) { const [a, b] = [...pts.values()]; startDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); startZoom = zoom; } last = { x: e.clientX, y: e.clientY }; });
+$('view').addEventListener('pointermove', e => {
+  if (!pts.has(e.pointerId)) return; pts.set(e.pointerId, e);
+  if (pts.size === 2) { const [a, b] = [...pts.values()]; zoom = Math.max(1, Math.min(8, startZoom * Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) / startDist)); $('zoom').value = zoom; applyZoom(); }
+  else if (frozenOn && last) { pan.x += e.clientX - last.x; pan.y += e.clientY - last.y; last = { x: e.clientX, y: e.clientY }; applyZoom(); }
+});
+['pointerup', 'pointercancel'].forEach(ev => $('view').addEventListener(ev, e => { pts.delete(e.pointerId); last = null; }));
+start();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "event-countdown",
+  "name": "Countdowns",
+  "emoji": "⏳",
+  "category": "utilities",
+  "description": "Count down the days, hours and minutes to holidays, birthdays and everything you look forward to.",
+  "prompt": "A countdown app for my upcoming events with emoji, colourful cards, days, hours, minutes and seconds ticking, and past events shown as time since.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

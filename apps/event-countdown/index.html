@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Countdowns</title>
+<style>
+  :root { --bg:#f4f1ff; --ink:#221b3d; --muted:#7f78a0; --card:#fff; --line:#e6e0fb; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { max-width:540px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  h1 { margin:0; font-size:26px; }
+  .ev { position:relative; border-radius:24px; padding:18px; margin-bottom:12px; color:#fff; overflow:hidden; box-shadow:0 10px 24px #221b3d22; }
+  .ev .top { display:flex; align-items:center; gap:10px; }
+  .ev .emoji { font-size:34px; }
+  .ev h2 { margin:0; font-size:19px; flex:1; }
+  .ev .date { font-size:13px; opacity:.85; }
+  .ev .count { display:flex; gap:8px; margin-top:14px; }
+  .ev .count div { flex:1; background:#ffffff26; border-radius:14px; padding:8px 4px; text-align:center; }
+  .ev .count b { display:block; font-size:28px; font-variant-numeric:tabular-nums; }
+  .ev .count small { font-size:11px; opacity:.85; text-transform:uppercase; letter-spacing:1px; }
+  .ev .del { position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%; background:#ffffff33; color:#fff; font-size:14px; }
+  .ev.past .count { opacity:.75; }
+  .empty { text-align:center; color:var(--muted); padding:50px 20px; line-height:1.5; }
+  .fab { position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom) + 18px); padding:16px 22px; border-radius:20px; background:var(--ink); color:#fff; font-weight:800; box-shadow:0 10px 24px #221b3d55; }
+  #sheet { position:fixed; inset:0; background:#221b3d88; display:none; align-items:flex-end; z-index:5; }
+  #sheet.on { display:flex; }
+  .form { width:100%; max-width:540px; margin:0 auto; background:var(--card); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); display:flex; flex-direction:column; gap:10px; }
+  .form h3 { margin:0 0 4px; }
+  .form input { padding:13px; border-radius:14px; background:var(--bg); outline:none; }
+  .emojis, .colors { display:flex; gap:8px; flex-wrap:wrap; }
+  .emojis button { width:42px; height:42px; border-radius:12px; background:var(--bg); font-size:22px; }
+  .emojis button.on { outline:3px solid var(--ink); }
+  .colors button { width:34px; height:34px; border-radius:50%; }
+  .colors button.on { outline:3px solid var(--ink); outline-offset:2px; }
+  .row { display:flex; gap:10px; }
+  .row button { flex:1; padding:14px; border-radius:14px; background:var(--bg); font-weight:800; }
+  .row .save { background:var(--ink); color:#fff; }
+</style>
+</head>
+<body>
+<div id="app"><header><h1>⏳ <span id="ttl"></span></h1></header><div id="list"></div></div>
+<button class="fab" id="add"></button>
+<div id="sheet"><form class="form" id="form"><h3 id="newTitle"></h3><input id="name" maxlength="40" required><input id="date" type="datetime-local" required>
+  <div class="emojis" id="emojis"></div><div class="colors" id="colors"></div><div class="row"><button type="button" id="cancel"></button><button class="save" id="save"></button></div></form></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Cuentas atrás', add:'＋ Nueva', newT:'Nueva cuenta atrás', name:'¿Qué esperas? (vacaciones, cumple…)', cancel:'Cancelar', save:'Guardar', d:'días', h:'horas', m:'min', s:'seg', ago:'Hace', empty:'Añade el día que estás esperando: unas vacaciones, un cumpleaños, un concierto…', today:'¡Es hoy! 🎉',
+  samples:[['Vacaciones','🏖️',40],['Mi cumpleaños','🎂',120]] }
+ : { title:'Countdowns', add:'＋ New', newT:'New countdown', name:'What are you waiting for? (holiday, birthday…)', cancel:'Cancel', save:'Save', d:'days', h:'hours', m:'min', s:'sec', ago:'Ago', empty:'Add the day you\'re looking forward to: a holiday, a birthday, a concert…', today:'It\'s today! 🎉',
+  samples:[['Summer holiday','🏖️',40],['My birthday','🎂',120]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('add').textContent = T.add; $('newTitle').textContent = T.newT; $('name').placeholder = T.name; $('cancel').textContent = T.cancel; $('save').textContent = T.save;
+const EMOJIS = ['🎉','🏖️','🎂','✈️','🎄','💍','🎓','🎸','⚽','🏠','👶','🎮'];
+const COLORS = ['linear-gradient(135deg,#7c3aed,#db2777)','linear-gradient(135deg,#0ea5e9,#6366f1)','linear-gradient(135deg,#f97316,#facc15)','linear-gradient(135deg,#10b981,#0ea5e9)','linear-gradient(135deg,#ef4444,#f97316)','linear-gradient(135deg,#334155,#64748b)'];
+let events = [], pick = { emoji: '🎉', color: 0 };
+EMOJIS.forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => { pick.emoji = e; marks(); }; $('emojis').appendChild(b); });
+COLORS.forEach((c, i) => { const b = document.createElement('button'); b.type = 'button'; b.style.background = c; b.onclick = () => { pick.color = i; marks(); }; $('colors').appendChild(b); });
+function marks() { [...$('emojis').children].forEach(b => b.classList.toggle('on', b.textContent === pick.emoji)); [...$('colors').children].forEach((b, i) => b.classList.toggle('on', i === pick.color)); }
+function parts(ms) { const a = Math.abs(ms); return [Math.floor(a / 864e5), Math.floor(a / 36e5) % 24, Math.floor(a / 6e4) % 60, Math.floor(a / 1e3) % 60]; }
+function countHtml(at) {
+  const diff = at - Date.now();
+  if (diff >= 0 && new Date(at).toDateString() === new Date().toDateString() && diff < 864e5) return `<div><b>${T.today}</b></div>`;
+  return parts(diff).map((v, i) => `<div><b>${v}</b><small>${[T.d, T.h, T.m, T.s][i]}</small></div>`).join('');
+}
+// Only the numbers change every second, so taps on the list are never lost to a redraw.
+function tick() { document.querySelectorAll('.count[data-at]').forEach(c => { c.innerHTML = countHtml(+c.dataset.at); }); }
+function render() {
+  const now = Date.now(), box = $('list');
+  if (!events.length) { box.innerHTML = `<div class="empty">⏳<br>${T.empty}</div>`; return; }
+  events.sort((a, b) => (a.at < now) - (b.at < now) || (a.at < now ? b.at - a.at : a.at - b.at));
+  box.innerHTML = '';
+  events.forEach(ev => {
+    const past = ev.at - now < 0;
+    const d = document.createElement('div'); d.className = 'ev' + (past ? ' past' : ''); d.style.background = COLORS[ev.color];
+    d.innerHTML = `<button class="del">✕</button><div class="top"><span class="emoji">${ev.emoji}</span><div style="flex:1"><h2></h2><div class="date">${new Date(ev.at).toLocaleString([], { dateStyle: 'full', timeStyle: 'short' })}</div></div></div>
+      <div class="count" data-at="${ev.at}">${countHtml(ev.at)}</div>${past ? `<div class="date" style="margin-top:8px">${T.ago}</div>` : ''}`;
+    d.querySelector('h2').textContent = ev.name;
+    d.querySelector('.del').onclick = () => { events = events.filter(x => x !== ev); store.set('events', events); render(); };
+    box.appendChild(d);
+  });
+}
+$('add').onclick = () => { $('form').reset(); pick = { emoji: '🎉', color: Math.floor(Math.random() * COLORS.length) }; marks(); const t = new Date(Date.now() + 7 * 864e5); t.setMinutes(t.getMinutes() - t.getTimezoneOffset()); $('date').value = t.toISOString().slice(0, 16); $('sheet').classList.add('on'); $('name').focus(); };
+$('cancel').onclick = () => $('sheet').classList.remove('on');
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); };
+$('form').onsubmit = e => { e.preventDefault(); const at = new Date($('date').value).getTime(); if (!at) return; events.push({ name: $('name').value.trim(), at, emoji: pick.emoji, color: pick.color }); store.set('events', events); $('sheet').classList.remove('on'); render(); };
+setInterval(tick, 1000);
+(async () => {
+  events = await store.get('events', null);
+  if (!events) { events = T.samples.map(([name, emoji, days], i) => ({ name, emoji, color: i, at: Date.now() + days * 864e5 })); store.set('events', events); }
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "id": "snap-translate-ai",
+  "name": "Snap Translate",
+  "emoji": "🌐",
+  "category": "utilities",
+  "description": "Take a photo of a sign, menu or label and your AI translates it into your language, with notes.",
+  "prompt": "A camera translator: I frame any text like a sign, a menu or instructions, take a photo and my AI reads it and translates it into the language I choose, keeping the layout, with cultural notes, listen and copy buttons, and I can also type text.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Torch & SOS</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:#0d0f14; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 20px); transition:background .15s; }
+  #app.screen { background:var(--screen,#fff); color:#111; }
+  h1 { margin:0; font-size:20px; letter-spacing:1px; opacity:.85; }
+  #power { position:relative; width:min(62vw,250px); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 50% 40%,#2b3040,#161922); box-shadow:inset 0 -8px 20px #0008, 0 14px 30px #0008; display:grid; place-items:center; font-size:72px; transition:box-shadow .3s, background .3s; }
+  #power.on { background:radial-gradient(circle at 50% 40%,#fff6c9,#ffd23f 60%,#f5a400); box-shadow:0 0 80px #ffd23faa, 0 0 160px #ffd23f55; }
+  #state { font-weight:800; letter-spacing:3px; opacity:.7; margin-top:-8px; }
+  .modes { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:100%; max-width:420px; }
+  .mode { padding:16px 10px; border-radius:18px; background:#1b1f2a; border:2px solid transparent; font-weight:800; font-size:15px; }
+  .mode span { display:block; font-size:26px; margin-bottom:4px; }
+  .mode.on { border-color:#ffd23f; background:#2a2715; }
+  #app.screen .mode { background:#0000000f; }
+  .speed { width:100%; max-width:420px; display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; opacity:.85; }
+  .speed input { flex:1; accent-color:#ffd23f; }
+  .colors { display:flex; gap:10px; }
+  .colors button { width:36px; height:36px; border-radius:50%; border:3px solid #fff4; }
+  .note { font-size:12px; opacity:.6; text-align:center; max-width:340px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🔦 <span id="ttl"></span></h1>
+  <button id="power" aria-label="Power">⏻</button>
+  <div id="state"></div>
+  <div class="modes" id="modes"></div>
+  <div class="speed" id="speedRow"><span id="lSpeed"></span><input type="range" id="speed" min="1" max="15" value="6"></div>
+  <div class="colors" id="colors"></div>
+  <div class="note" id="note"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Linterna y SOS', on:'ENCENDIDA', off:'APAGADA', modes:[['🔦','Linterna'],['🆘','SOS'],['⚡','Estroboscópica'],['💡','Pantalla']], speed:'Velocidad', noTorch:'Fuera de Acornix no hay acceso a la linterna: se usa la pantalla.', sos:'SOS en código Morse: · · · — — — · · ·' }
+ : { title:'Torch & SOS', on:'ON', off:'OFF', modes:[['🔦','Torch'],['🆘','SOS'],['⚡','Strobe'],['💡','Screen']], speed:'Speed', noTorch:'Outside Acornix there is no access to the flashlight, so the screen is used.', sos:'SOS in Morse code: · · · — — — · · ·' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('lSpeed').textContent = T.speed;
+const hasTorch = !!window.Acornix;
+if (!hasTorch) $('note').textContent = T.noTorch;
+let mode = 0, on = false, timer = null, lightOn = false, screenColor = '#ffffff';
+T.modes.forEach(([e, n], i) => { const b = document.createElement('button'); b.className = 'mode'; b.innerHTML = `<span>${e}</span>${n}`; b.onclick = () => { mode = i; if (on) { stop(); start(); } render(); }; $('modes').appendChild(b); });
+['#ffffff', '#ffd9a0', '#ff4d4d', '#4dff88', '#4da6ff'].forEach(c => { const b = document.createElement('button'); b.style.background = c; b.onclick = () => { screenColor = c; document.documentElement.style.setProperty('--screen', c); }; $('colors').appendChild(b); });
+function light(v) {
+  lightOn = v;
+  if (mode === 3 || !hasTorch) $('app').classList.toggle('screen', v);
+  else { try { Acornix.flashlight(v); } catch (e) {} }
+  $('power').classList.toggle('on', v);
+}
+// SOS: dot = 1 unit, dash = 3, gaps of 1 inside a letter, 3 between letters, 7 after the word.
+const SOS = [1, 1, 1, 1, 1, 3, 3, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 7];
+function start() {
+  on = true;
+  if (mode === 0 || mode === 3) light(true);
+  else if (mode === 1) { let i = 0; const unit = () => 520 - $('speed').value * 25; const step = () => { if (!on) return; light(i % 2 === 0); timer = setTimeout(step, SOS[i] * unit()); i = (i + 1) % SOS.length; }; step(); }
+  else { const step = () => { if (!on) return; light(!lightOn); timer = setTimeout(step, 1000 / ($('speed').value * 1.5)); }; step(); }
+  try { if (window.Acornix) Acornix.vibrate(30); } catch (e) {}
+  render();
+}
+function stop() { on = false; clearTimeout(timer); light(false); render(); }
+function render() {
+  document.querySelectorAll('.mode').forEach((b, i) => b.classList.toggle('on', i === mode));
+  $('state').textContent = on ? T.on : T.off;
+  $('speedRow').style.visibility = mode === 1 || mode === 2 ? 'visible' : 'hidden';
+  $('colors').style.display = mode === 3 || !hasTorch ? 'flex' : 'none';
+  $('note').textContent = mode === 1 ? T.sos : hasTorch ? '' : T.noTorch;
+}
+$('power').onclick = () => on ? stop() : start();
+document.addEventListener('visibilitychange', () => { if (document.hidden && on && mode !== 0) stop(); });
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Battery & Device</title>
+<style>
+  :root { --bg:#0b1411; --card:#13221d; --line:#1f3830; --ink:#e7fff5; --muted:#86b3a2; --g:#2ee59d; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  #app { max-width:520px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  h1 { margin:0 0 14px; font-size:22px; }
+  .bat { display:flex; align-items:center; gap:18px; background:var(--card); border-radius:24px; padding:20px; }
+  .cell { position:relative; width:86px; height:150px; border:5px solid var(--ink); border-radius:16px; padding:5px; flex:none; }
+  .cell::before { content:''; position:absolute; left:50%; top:-14px; width:30px; height:9px; border-radius:4px 4px 0 0; background:var(--ink); transform:translateX(-50%); }
+  .fill { position:absolute; left:5px; right:5px; bottom:5px; border-radius:9px; background:var(--g); transition:height .6s, background .6s; }
+  .bolt { position:absolute; inset:0; display:grid; place-items:center; font-size:38px; text-shadow:0 2px 6px #0008; }
+  .bat .pct { font-size:56px; font-weight:200; font-variant-numeric:tabular-nums; }
+  .bat .st { color:var(--muted); font-weight:700; margin-top:4px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .tile { background:var(--card); border-radius:18px; padding:14px; min-height:84px; }
+  .tile small { display:block; color:var(--muted); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .tile b { font-size:17px; word-break:break-word; }
+  .tile.wide { grid-column:1/-1; }
+  .barline { height:8px; border-radius:4px; background:var(--line); margin-top:8px; overflow:hidden; }
+  .barline i { display:block; height:100%; background:var(--g); }
+  .tips { margin-top:12px; background:var(--card); border-radius:18px; padding:14px; color:#cdeee0; line-height:1.5; font-size:14px; }
+  .note { color:var(--muted); font-size:12px; text-align:center; margin-top:14px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🔋 <span id="ttl"></span></h1>
+  <div class="bat"><div class="cell"><div class="fill" id="fill" style="height:0"></div><div class="bolt" id="bolt"></div></div><div><div class="pct" id="pct">--%</div><div class="st" id="st"></div></div></div>
+  <div class="grid" id="grid"></div>
+  <div class="tips" id="tips"></div>
+  <div class="note" id="note"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Batería y dispositivo', charging:'Cargando', discharging:'Usando batería', full:'Cargada', unknown:'Batería no disponible', screen:'Pantalla', network:'Red', online:'Conectado', offline:'Sin conexión', lang:'Idioma', tz:'Zona horaria', storage:'Almacenamiento de esta app', cores:'Núcleos de CPU', mem:'Memoria', device:'Dispositivo', note:'Abierta en Acornix muestra más datos del móvil.',
+  tips:{ low:'🔌 Batería baja: activa el ahorro de energía y baja el brillo.', high:'🌡️ Mientras carga, evita dejar el móvil al sol o bajo la almohada.', ok:'💡 Cargar entre el 20 % y el 80 % ayuda a que la batería dure más años.' } }
+ : { title:'Battery & Device', charging:'Charging', discharging:'On battery', full:'Fully charged', unknown:'Battery not available', screen:'Screen', network:'Network', online:'Online', offline:'Offline', lang:'Language', tz:'Time zone', storage:'This app\'s storage', cores:'CPU cores', mem:'Memory', device:'Device', note:'Opened in Acornix it shows more about your phone.',
+  tips:{ low:'🔌 Low battery: turn on battery saver and lower the brightness.', high:'🌡️ While charging, keep the phone out of the sun and from under pillows.', ok:'💡 Keeping the charge between 20% and 80% helps the battery last for years.' } };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title;
+function tile(label, value, wide, bar) { const d = document.createElement('div'); d.className = 'tile' + (wide ? ' wide' : ''); d.innerHTML = '<small></small><b></b>' + (bar != null ? `<div class="barline"><i style="width:${bar}%"></i></div>` : ''); d.firstChild.textContent = label; d.children[1].textContent = value; $('grid').appendChild(d); }
+function showBattery(level, charging) {
+  const p = Math.round(level * 100);
+  $('pct').textContent = p + '%'; $('fill').style.height = `calc(${p}% - 10px)`;
+  $('fill').style.background = p <= 15 ? '#ff5a5f' : p <= 35 ? '#ffc23d' : '#2ee59d';
+  $('bolt').textContent = charging ? '⚡' : '';
+  $('st').textContent = charging ? (p >= 100 ? T.full : T.charging) : T.discharging;
+  $('tips').textContent = p <= 20 && !charging ? T.tips.low : charging ? T.tips.high : T.tips.ok;
+}
+// Acornix.deviceInfo() keys worth showing; screen, language and cores come from the browser below.
+const LABELS = { manufacturer: ES ? 'Fabricante' : 'Manufacturer', model: T.device, android: 'Android', sdk: 'API (SDK)', hasFlashlight: ES ? 'Linterna' : 'Flashlight', hasTelephony: ES ? 'Teléfono' : 'Phone calls' };
+function nice(k, v) { if (typeof v === 'boolean') return v ? '✓' : '✗'; if (typeof v === 'number' && /memory|storage|bytes/i.test(k)) return v > 1e9 ? (v / 1e9).toFixed(1) + ' GB' : (v / 1e6).toFixed(0) + ' MB'; return String(v); }
+async function load() {
+  $('grid').innerHTML = '';
+  if (window.Acornix) {
+    try { const b = await Acornix.battery(); showBattery(b.level / 100, !!b.charging); if (b.temperature) tile(ES ? 'Temperatura' : 'Temperature', Number(b.temperature).toFixed(1) + ' °C'); } catch (e) { $('st').textContent = T.unknown; }
+    try { const info = await Acornix.deviceInfo(); Object.entries(info).filter(([k]) => LABELS[k]).forEach(([k, v]) => tile(LABELS[k], nice(k, v), String(v).length > 18)); } catch (e) {}
+  } else {
+    $('note').textContent = T.note;
+    if (navigator.getBattery) { const b = await navigator.getBattery(); const upd = () => showBattery(b.level, b.charging); upd(); b.onlevelchange = upd; b.onchargingchange = upd; }
+    else $('st').textContent = T.unknown;
+  }
+  tile(T.screen, `${screen.width}×${screen.height} · ${Math.round(devicePixelRatio * 100) / 100}x`);
+  const c = navigator.connection; tile(T.network, (navigator.onLine ? T.online : T.offline) + (c && c.effectiveType ? ' · ' + c.effectiveType.toUpperCase() : ''));
+  tile(T.lang, navigator.language); tile(T.tz, Intl.DateTimeFormat().resolvedOptions().timeZone);
+  if (navigator.hardwareConcurrency) tile(T.cores, navigator.hardwareConcurrency);
+  if (navigator.deviceMemory) tile(T.mem, '≥ ' + navigator.deviceMemory + ' GB');
+  if (navigator.storage && navigator.storage.estimate) { const e = await navigator.storage.estimate(); tile(T.storage, (e.usage / 1e6).toFixed(1) + ' MB / ' + (e.quota / 1e9).toFixed(1) + ' GB', true, Math.max(1, e.usage / e.quota * 100)); }
+}
+load(); setInterval(() => { if (window.Acornix) Acornix.battery().then(b => showBattery(b.level / 100, !!b.charging)).catch(() => {}); }, 15000);
+</script>
+</body>
+</html>

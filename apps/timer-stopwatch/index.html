@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Timer & Stopwatch</title>
+<style>
+  :root { --bg:#0f1220; --card:#1a1f33; --line:#2a3150; --ink:#eef1ff; --muted:#8d95b8; --a:#5b8cff; --b:#ff6b9a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  .tabs { display:flex; background:var(--card); border-radius:16px; padding:4px; }
+  .tab { flex:1; padding:11px; border-radius:12px; font-weight:800; color:var(--muted); }
+  .tab.on { background:var(--a); color:#fff; }
+  section { display:none; flex:1; flex-direction:column; align-items:center; min-height:0; }
+  section.on { display:flex; }
+  .ring { position:relative; width:min(78vw,300px); aspect-ratio:1; margin:22px 0 14px; }
+  .ring svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .ring .big { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-variant-numeric:tabular-nums; }
+  .ring .big b { font-size:clamp(40px,13vw,60px); font-weight:300; letter-spacing:-1px; }
+  .ring .big small { color:var(--muted); font-size:18px; }
+  .controls { display:flex; gap:16px; margin-bottom:14px; }
+  .circle { width:76px; height:76px; border-radius:50%; font-weight:800; font-size:15px; background:var(--card); border:1px solid var(--line); }
+  .circle.go { background:var(--a); border:0; color:#fff; }
+  .circle.stop { background:var(--b); border:0; color:#fff; }
+  .laps { width:100%; max-width:440px; overflow-y:auto; flex:1; }
+  .lap { display:flex; justify-content:space-between; padding:11px 6px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  .lap.best { color:#5fe3a1; } .lap.worst { color:#ff8f8f; }
+  .presets { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:440px; }
+  .preset { padding:10px 14px; border-radius:999px; background:var(--card); border:1px solid var(--line); font-weight:700; }
+  .pickers { display:flex; gap:8px; align-items:center; margin:8px 0; }
+  .pickers input { width:72px; text-align:center; font-size:30px; font-weight:300; background:var(--card); border-radius:14px; padding:8px 0; border:1px solid var(--line); outline:none; user-select:text; -webkit-user-select:text; }
+  .pickers span { font-size:28px; color:var(--muted); }
+  .done { animation:blink .6s infinite; }
+  @keyframes blink { 50% { opacity:.3; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="tabs"><button class="tab on" data-t="sw" id="tabSw"></button><button class="tab" data-t="tm" id="tabTm"></button></div>
+  <section class="on" id="sw">
+    <div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#1a1f33" stroke-width="5"/><circle id="swArc" cx="50" cy="50" r="46" fill="none" stroke="#5b8cff" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289"/></svg>
+      <div class="big"><b id="swTime">00:00.00</b><small id="swLap"></small></div></div>
+    <div class="controls"><button class="circle" id="swLapBtn"></button><button class="circle go" id="swGo"></button></div>
+    <div class="laps" id="laps"></div>
+  </section>
+  <section id="tm">
+    <div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#1a1f33" stroke-width="5"/><circle id="tmArc" cx="50" cy="50" r="46" fill="none" stroke="#ff6b9a" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="0"/></svg>
+      <div class="big"><b id="tmTime">05:00</b><small id="tmEnd"></small></div></div>
+    <div class="pickers" id="pickers"><input id="mm" inputmode="numeric" maxlength="3" value="5"><span>:</span><input id="ss" inputmode="numeric" maxlength="2" value="00"></div>
+    <div class="presets" id="presets"></div>
+    <div class="controls" style="margin-top:14px"><button class="circle" id="tmReset"></button><button class="circle go" id="tmGo"></button></div>
+  </section>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { sw:'Cronómetro', tm:'Temporizador', start:'Iniciar', stop:'Parar', lap:'Vuelta', reset:'Reiniciar', resume:'Seguir', pause:'Pausa', lapN:'Vuelta', ends:'Termina a las', done:'¡Tiempo!', notifyTitle:'⏰ Temporizador', notifyBody:'¡Se acabó el tiempo!' }
+ : { sw:'Stopwatch', tm:'Timer', start:'Start', stop:'Stop', lap:'Lap', reset:'Reset', resume:'Resume', pause:'Pause', lapN:'Lap', ends:'Ends at', done:'Time\'s up!', notifyTitle:'⏰ Timer', notifyBody:'Time is up!' };
+const $ = id => document.getElementById(id);
+$('tabSw').textContent = T.sw; $('tabTm').textContent = T.tm;
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b)); document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.t)); });
+const fmt = (ms, cs = true) => { const t = Math.max(0, ms), m = Math.floor(t / 60000), s = Math.floor(t / 1000) % 60, c = Math.floor(t / 10) % 100; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + (cs ? '.' + String(c).padStart(2, '0') : ''); };
+// Stopwatch: keeps counting from a start timestamp, so it's exact even if the screen sleeps.
+let swStart = 0, swAcc = 0, swRun = false, laps = [];
+function swNow() { return swAcc + (swRun ? Date.now() - swStart : 0); }
+function swRender() {
+  const t = swNow(); $('swTime').textContent = fmt(t);
+  $('swArc').setAttribute('stroke-dashoffset', 289 - (t % 60000) / 60000 * 289);
+  const lastLap = laps.length ? laps[laps.length - 1].at : 0; $('swLap').textContent = laps.length ? T.lapN + ' ' + (laps.length + 1) + ' · ' + fmt(t - lastLap) : '';
+  $('swGo').textContent = swRun ? T.stop : swAcc ? T.resume : T.start; $('swGo').className = 'circle ' + (swRun ? 'stop' : 'go');
+  $('swLapBtn').textContent = swRun || !swAcc ? T.lap : T.reset;
+}
+function renderLaps() {
+  const durs = laps.map((l, i) => l.at - (i ? laps[i - 1].at : 0)), min = Math.min(...durs), max = Math.max(...durs);
+  $('laps').innerHTML = laps.map((l, i) => `<div class="lap ${laps.length > 2 && durs[i] === min ? 'best' : laps.length > 2 && durs[i] === max ? 'worst' : ''}"><span>${T.lapN} ${i + 1}</span><span>${fmt(durs[i])}</span><span>${fmt(l.at)}</span></div>`).reverse().join('');
+}
+$('swGo').onclick = () => { if (swRun) { swAcc += Date.now() - swStart; swRun = false; } else { swStart = Date.now(); swRun = true; } buzz(15); swRender(); };
+$('swLapBtn').onclick = () => { if (swRun) { laps.push({ at: swNow() }); renderLaps(); buzz(10); } else { swAcc = 0; laps = []; renderLaps(); swRender(); } };
+// Timer.
+let tmTotal = 300000, tmEnd = 0, tmLeft = 300000, tmRun = false, ringing = null;
+[[1, '1 min'], [3, '3 min'], [5, '5 min'], [10, '10 min'], [15, '15 min'], [25, '25 min'], [45, '45 min'], [60, '1 h']].forEach(([m, l]) => { const b = document.createElement('button'); b.className = 'preset'; b.textContent = l; b.onclick = () => setTimer(m * 60000); $('presets').appendChild(b); });
+function setTimer(ms) { stopRing(); tmRun = false; tmTotal = tmLeft = ms; $('mm').value = Math.floor(ms / 60000); $('ss').value = String(Math.floor(ms / 1000) % 60).padStart(2, '0'); tmRender(); }
+['mm', 'ss'].forEach(id => $(id).oninput = () => { if (tmRun) return; const ms = ((parseInt($('mm').value) || 0) * 60 + Math.min(59, parseInt($('ss').value) || 0)) * 1000; tmTotal = tmLeft = ms; tmRender(); });
+function tmRender() {
+  if (tmRun) tmLeft = tmEnd - Date.now();
+  $('tmTime').textContent = fmt(Math.ceil(tmLeft / 1000) * 1000, false);
+  $('tmArc').setAttribute('stroke-dashoffset', 289 - Math.max(0, tmLeft) / (tmTotal || 1) * 289);
+  $('tmEnd').textContent = tmRun ? T.ends + ' ' + new Date(tmEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+  $('tmGo').textContent = tmRun ? T.pause : tmLeft < tmTotal && tmLeft > 0 ? T.resume : T.start; $('tmGo').className = 'circle ' + (tmRun ? 'stop' : 'go');
+  $('tmReset').textContent = T.reset; $('pickers').style.visibility = tmRun ? 'hidden' : 'visible';
+  if (tmRun && tmLeft <= 0) { tmRun = false; tmLeft = 0; ring(); }
+}
+function ring() {
+  $('tmTime').textContent = T.done; $('tmTime').classList.add('done');
+  try { if (window.Acornix) { Acornix.notify(T.notifyTitle, T.notifyBody); Acornix.vibrate([400, 200, 400, 200, 400]); } else if (navigator.vibrate) navigator.vibrate([400, 200, 400]); } catch (e) {}
+  let n = 0; const beep = () => { try { const a = new AudioContext(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; g.gain.value = .15; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + .25); } catch (e) {} };
+  beep(); ringing = setInterval(() => { beep(); if (++n > 20) stopRing(); }, 700);
+}
+function stopRing() { clearInterval(ringing); ringing = null; $('tmTime').classList.remove('done'); }
+$('tmGo').onclick = () => { stopRing(); if (tmRun) { tmLeft = tmEnd - Date.now(); tmRun = false; } else { if (tmLeft <= 0) tmLeft = tmTotal; if (!tmLeft) return; tmEnd = Date.now() + tmLeft; tmRun = true; } buzz(15); tmRender(); };
+$('tmReset').onclick = () => setTimer(tmTotal);
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+setInterval(() => { if (swRun) swRender(); if (tmRun) tmRender(); }, 37);
+swRender(); tmRender();
+</script>
+</body>
+</html>

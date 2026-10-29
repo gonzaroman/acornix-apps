@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Snap Translate</title>
+<style>
+  :root { --bg:#06121d; --card:#0f2233; --line:#1f3a52; --text:#eaf6ff; --muted:#8fb0c8; --accent:#2ee6c5; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button, select, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #cam { position:fixed; inset:0; background:#000; }
+  video, #still { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #still { display:none; }
+  .frame { position:absolute; left:8%; right:8%; top:24%; bottom:34%; border-radius:22px; border:2px solid #ffffff66; box-shadow:0 0 0 2000px #0006; pointer-events:none; }
+  .frame span { position:absolute; left:50%; top:-34px; transform:translateX(-50%); white-space:nowrap; font-size:14px; font-weight:700; color:#fff; text-shadow:0 1px 4px #000; }
+  .top { position:absolute; left:0; right:0; top:0; padding:calc(env(safe-area-inset-top) + 12px) 14px; display:flex; align-items:center; gap:8px; z-index:2; }
+  .top b { flex:1; font-size:18px; }
+  .lang { display:flex; align-items:center; gap:6px; background:#000a; border:1px solid #ffffff33; border-radius:999px; padding:6px 10px; backdrop-filter:blur(8px); }
+  .lang select { background:transparent; font-weight:800; color:#fff; outline:none; max-width:150px; }
+  .lang option { color:#000; }
+  .bottom { position:absolute; left:0; right:0; bottom:0; padding:18px 28px calc(env(safe-area-inset-bottom) + 22px); display:flex; justify-content:space-between; align-items:center; z-index:2; }
+  .round { width:52px; height:52px; border-radius:50%; background:#ffffff26; font-size:22px; backdrop-filter:blur(8px); }
+  .shutter { width:76px; height:76px; border-radius:50%; border:5px solid #fff; background:radial-gradient(circle,var(--accent) 0 55%,#fff0 56%); }
+  #sheet { position:fixed; left:0; right:0; bottom:0; max-height:76%; z-index:5; background:var(--bg); border-radius:24px 24px 0 0; transform:translateY(105%); transition:transform .35s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; }
+  #sheet.open { transform:none; }
+  .grab { width:42px; height:5px; border-radius:3px; background:var(--line); margin:10px auto 6px; }
+  .body { overflow-y:auto; padding:6px 18px 10px; }
+  .from { color:var(--muted); font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+  .orig { color:var(--muted); font-size:15px; line-height:1.45; margin:6px 0 14px; white-space:pre-wrap; }
+  .trans { font-size:22px; font-weight:700; line-height:1.4; white-space:pre-wrap; }
+  .notes { margin-top:12px; padding:12px; border-radius:14px; background:var(--card); color:#cfe6f5; font-size:14px; line-height:1.45; }
+  .acts { display:flex; gap:10px; padding:10px 16px calc(env(safe-area-inset-bottom) + 14px); border-top:1px solid var(--line); }
+  .acts button { flex:1; padding:13px; border-radius:14px; background:var(--card); font-weight:800; }
+  .acts .main { background:var(--accent); color:#022; }
+  .shimmer { height:22px; border-radius:8px; margin:10px 0; background:linear-gradient(90deg,#0f2233,#1d3a52,#0f2233); background-size:200% 100%; animation:sh 1.2s infinite; }
+  @keyframes sh { to { background-position:-200% 0; } }
+  .typebox { position:fixed; inset:0; z-index:6; background:var(--bg); display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px); gap:10px; }
+  .typebox.on { display:flex; }
+  .typebox textarea { flex:1; max-height:40vh; padding:14px; border-radius:16px; background:var(--card); outline:none; font-size:17px; }
+  input[type=file] { display:none; }
+</style>
+</head>
+<body>
+<div id="cam">
+  <video id="video" playsinline muted autoplay></video><img id="still" alt="">
+  <div class="frame"><span id="frameTxt"></span></div>
+  <div class="top"><b>🌐 Snap Translate</b><label class="lang">➜ <select id="to"></select></label></div>
+  <div class="bottom"><button class="round" id="pickBtn">🖼️</button><button class="shutter" id="snap"></button><button class="round" id="typeBtn">⌨️</button></div>
+</div>
+<div id="sheet"><div class="grab"></div><div class="body" id="body"></div><div class="acts"><button id="speak"></button><button id="copy"></button><button class="main" id="again"></button></div></div>
+<div class="typebox" id="typebox"><b id="typeTitle"></b><textarea id="typed"></textarea><div class="acts" style="padding:0;border:0"><button id="typeCancel"></button><button class="main" id="typeGo"></button></div></div>
+<input type="file" id="file" accept="image/*">
+<canvas id="canvas" hidden></canvas>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { frame:'Encuadra el texto y pulsa', speak:'🔊 Escuchar', copy:'📋 Copiar', copied:'✓ Copiado', again:'📷 Otra', from:'Detectado', type:'Escribe o pega el texto', cancel:'Cancelar', go:'Traducir', noAi:'Abre esta app en Acornix y conecta tu IA para traducir.', failed:'No he podido traducirlo', none:'No veo texto en la foto. Acércate un poco más.', lang:'Spanish' }
+ : { frame:'Frame the text and tap', speak:'🔊 Listen', copy:'📋 Copy', copied:'✓ Copied', again:'📷 Again', from:'Detected', type:'Type or paste the text', cancel:'Cancel', go:'Translate', noAi:'Open this app in Acornix and connect your AI to translate.', failed:'I couldn\'t translate it', none:'I can\'t see any text. Get a bit closer.', lang:'English' };
+const LANGS = [['es','Español','es-ES'],['en','English','en-GB'],['fr','Français','fr-FR'],['de','Deutsch','de-DE'],['it','Italiano','it-IT'],['pt','Português','pt-PT'],['nl','Nederlands','nl-NL'],['ja','日本語','ja-JP'],['zh','中文','zh-CN'],['ko','한국어','ko-KR'],['ar','العربية','ar-SA'],['ru','Русский','ru-RU']];
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const $ = id => document.getElementById(id);
+$('frameTxt').textContent = T.frame; $('speak').textContent = T.speak; $('copy').textContent = T.copy; $('again').textContent = T.again;
+$('typeTitle').textContent = T.type; $('typeCancel').textContent = T.cancel; $('typeGo').textContent = T.go;
+$('to').innerHTML = LANGS.map(([c, n]) => `<option value="${c}">${n}</option>`).join('');
+$('to').value = store.get('to', ES ? 'es' : 'en'); $('to').onchange = () => store.set('to', $('to').value);
+const video = $('video'); let last = null;
+navigator.mediaDevices && navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 } } }).then(s => video.srcObject = s).catch(() => {});
+function grab(src, w, h) { const c = $('canvas'), s = Math.min(1, 1400 / Math.max(w, h)); c.width = w * s; c.height = h * s; c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .9); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function open(html) { $('body').innerHTML = html; $('sheet').classList.add('open'); }
+async function translate(payload) {
+  const lang = LANGS.find(l => l[0] === $('to').value);
+  open('<div class="shimmer" style="width:40%"></div><div class="shimmer"></div><div class="shimmer" style="width:80%"></div>');
+  if (!window.Acornix) return open(`<p>🧠 ${T.noAi}</p>`);
+  try {
+    const r = await Acornix.askAI(
+      (payload.image ? 'Read all the text in this photo' : 'Translate this text: ' + payload.text) + `. Translate it into ${lang[1]} (${lang[0]}), keeping the layout (lines, prices, lists).`,
+      { images: payload.image ? [payload.image] : undefined, json: true, quick: true,
+        system: `You are a careful translator. Reply only with JSON: {"language":"detected source language, in ${T.lang}","original":"the text as written","translation":"the translation","notes":"in ${T.lang}: one or two short helpful notes about meaning, culture or pronunciation, or empty"}. If there is no text, set "original" to "".` });
+    if (!r.original && !r.translation) return open(`<p>🔍 ${T.none}</p>`);
+    last = { text: r.translation, lang: lang[2] };
+    open(`<div class="from">${T.from}: ${esc(r.language)}</div><div class="orig">${esc(r.original)}</div><div class="trans">${esc(r.translation)}</div>${r.notes ? `<div class="notes">💡 ${esc(r.notes)}</div>` : ''}`);
+    try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { open(`<p>😕 ${T.failed}${e && e.message ? ': ' + esc(e.message) : ''}</p>`); }
+}
+$('snap').onclick = () => {
+  if (!video.videoWidth) return $('file').click();
+  const img = grab(video, video.videoWidth, video.videoHeight); $('still').src = img; $('still').style.display = 'block'; translate({ image: img });
+};
+$('pickBtn').onclick = () => $('file').click();
+$('file').onchange = e => { const f = e.target.files[0]; if (!f) return; const im = new Image(); im.onload = () => { const d = grab(im, im.width, im.height); $('still').src = d; $('still').style.display = 'block'; translate({ image: d }); }; im.src = URL.createObjectURL(f); e.target.value = ''; };
+$('typeBtn').onclick = () => { $('typebox').classList.add('on'); $('typed').focus(); };
+$('typeCancel').onclick = () => $('typebox').classList.remove('on');
+$('typeGo').onclick = () => { const t = $('typed').value.trim(); if (!t) return; $('typebox').classList.remove('on'); translate({ text: t }); };
+$('again').onclick = () => { $('sheet').classList.remove('open'); $('still').style.display = 'none'; };
+$('speak').onclick = () => { if (!last) return; try { if (window.Acornix) Acornix.speak(last.text, last.lang); else speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance(last.text), { lang: last.lang })); } catch (e) {} };
+$('copy').onclick = async () => { if (!last) return; try { await navigator.clipboard.writeText(last.text); $('copy').textContent = T.copied; setTimeout(() => $('copy').textContent = T.copy, 1500); } catch (e) {} };
+</script>
+</body>
+</html>

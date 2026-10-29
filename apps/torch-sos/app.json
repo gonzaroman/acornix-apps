@@ -1,0 +1,14 @@
+{
+  "id": "torch-sos",
+  "name": "Torch & SOS",
+  "emoji": "🔦",
+  "category": "utilities",
+  "description": "Turn on your phone's flashlight, send SOS in Morse code, use a strobe or light up the screen.",
+  "prompt": "A flashlight app that uses my phone's real torch through Acornix, with a big power button, SOS in Morse code, an adjustable strobe and a coloured screen light.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

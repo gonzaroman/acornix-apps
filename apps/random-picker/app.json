@@ -1,0 +1,14 @@
+{
+  "id": "random-picker",
+  "name": "Random Picker",
+  "emoji": "🎲",
+  "category": "utilities",
+  "description": "Roll dice, flip a coin, pick a number or choose from your own list. Shake to roll.",
+  "prompt": "A random picker with four modes: up to five dice with total, a flipping coin, a random number in a range without repeats, and picking from my own list, with shake to roll.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "unit-converter",
+  "name": "Unit Converter",
+  "emoji": "📏",
+  "category": "utilities",
+  "description": "Convert length, weight, temperature, volume, speed, area, data, time and fuel consumption instantly.",
+  "prompt": "A clean unit converter with categories for length, weight, temperature, volume, speed, area, data, time and fuel consumption, a swap button and every other unit listed below.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

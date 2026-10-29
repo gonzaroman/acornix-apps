@@ -1,0 +1,14 @@
+{
+  "id": "noise-meter",
+  "name": "Noise Meter",
+  "emoji": "🔊",
+  "category": "utilities",
+  "description": "Measure how loud it is around you with a gauge, min, average, max and a live chart.",
+  "prompt": "A sound level meter using the microphone that shows approximate decibels on a gauge with a needle, a label like library or traffic, min, average and max, and a live chart.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

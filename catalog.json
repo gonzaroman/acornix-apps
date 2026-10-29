@@ -126,6 +126,29 @@
       "trending": 0
     },
     {
+      "id": "unit-converter",
+      "name": "Unit Converter",
+      "emoji": "📏",
+      "category": "utilities",
+      "description": "Convert length, weight, temperature, volume, speed, area, data, time and fuel consumption instantly.",
+      "prompt": "A clean unit converter with categories for length, weight, temperature, volume, speed, area, data, time and fuel consumption, a swap button and every other unit listed below.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7828,
+      "sha256": "4fc467e56c88f6ed31aa89271718b8e5136a1e574f2ec94ff960c2db609a4436",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "truth-or-dare",
       "name": "Truth or Dare",
       "emoji": "🎲",
@@ -168,6 +191,56 @@
       ],
       "size": 21210,
       "sha256": "44f31ba6d1f0d28aec200536c25f7dd3631a662f921bbecff1290e0db4b4a6f7",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "torch-sos",
+      "name": "Torch & SOS",
+      "emoji": "🔦",
+      "category": "utilities",
+      "description": "Turn on your phone's flashlight, send SOS in Morse code, use a strobe or light up the screen.",
+      "prompt": "A flashlight app that uses my phone's real torch through Acornix, with a big power button, SOS in Morse code, an adjustable strobe and a coloured screen light.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 5665,
+      "sha256": "34bbda2a76882b081f51ffacbc34ae2c81ce3519e07a8cd489fe8261b3de13ec",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "timer-stopwatch",
+      "name": "Timer & Stopwatch",
+      "emoji": "⏱️",
+      "category": "utilities",
+      "description": "A precise stopwatch with laps and a countdown timer with presets, alarm and notification.",
+      "prompt": "A stopwatch with laps that marks the fastest and slowest, and a countdown timer with quick presets, a ring that empties, an alarm sound, vibration and a notification when time is up.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9927,
+      "sha256": "dd6aa786e817ff8be5c29836a6a9eca78391b2e3f508521ca8b6a74d9b369912",
       "downloads": 0,
       "trending": 0
     },
@@ -266,6 +339,33 @@
       "trending": 0
     },
     {
+      "id": "snap-translate-ai",
+      "name": "Snap Translate",
+      "emoji": "🌐",
+      "category": "utilities",
+      "description": "Take a photo of a sign, menu or label and your AI translates it into your language, with notes.",
+      "prompt": "A camera translator: I frame any text like a sign, a menu or instructions, take a photo and my AI reads it and translates it into the language I choose, keeping the layout, with cultural notes, listen and copy buttons, and I can also type text.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "phone",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10350,
+      "sha256": "1100a732416c7b11e781205d8d3168e780a3e8073895bd0398a74cbba03c5a6f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "sky-hopper",
       "name": "Sky Hopper",
       "emoji": "🐤",
@@ -285,6 +385,54 @@
       ],
       "size": 10371,
       "sha256": "cfbfaae621006353a60fb00eed708ae250cf88ca5679469ea189e8cadd05b614",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "random-picker",
+      "name": "Random Picker",
+      "emoji": "🎲",
+      "category": "utilities",
+      "description": "Roll dice, flip a coin, pick a number or choose from your own list. Shake to roll.",
+      "prompt": "A random picker with four modes: up to five dice with total, a flipping coin, a random number in a range without repeats, and picking from my own list, with shake to roll.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9259,
+      "sha256": "2b9c9172a5b3190144f35ac975a892da9ad33914b67bbd33e64f1997174b8e78",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "noise-meter",
+      "name": "Noise Meter",
+      "emoji": "🔊",
+      "category": "utilities",
+      "description": "Measure how loud it is around you with a gauge, min, average, max and a live chart.",
+      "prompt": "A sound level meter using the microphone that shows approximate decibels on a gauge with a needle, a label like library or traffic, min, average and max, and a live chart.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "microphone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 6777,
+      "sha256": "57168949a21c183895ab4ff1dfd8930a28e71f9b549834625e7a0cc53c5b132b",
       "downloads": 0,
       "trending": 0
     },
@@ -354,6 +502,31 @@
       ],
       "size": 10613,
       "sha256": "2b27bf5f7cd2fefd118058db69e37b0f8515c2962ef810e50f3c11e04cb7d575",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "magnifier",
+      "name": "Magnifier",
+      "emoji": "🔍",
+      "category": "utilities",
+      "description": "Zoom in on small print with your camera, freeze the image, turn on the light and boost contrast.",
+      "prompt": "A magnifying glass app using the camera with zoom up to 8x, pinch to zoom, freeze the picture to read it calmly, the camera light, and high contrast, inverted and yellow filters for reading.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 6759,
+      "sha256": "b57b9981f1926f0de48f2485e0576af404e5f50f02718b18f06b32bc47092ae6",
       "downloads": 0,
       "trending": 0
     },
@@ -475,6 +648,29 @@
       "trending": 0
     },
     {
+      "id": "event-countdown",
+      "name": "Countdowns",
+      "emoji": "⏳",
+      "category": "utilities",
+      "description": "Count down the days, hours and minutes to holidays, birthdays and everything you look forward to.",
+      "prompt": "A countdown app for my upcoming events with emoji, colourful cards, days, hours, minutes and seconds ticking, and past events shown as time since.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8855,
+      "sha256": "fcd814d02e21fddc627beac43bd4015cef61ad716c9253585d06139038ffccac",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "charades",
       "name": "Charades",
       "emoji": "🎭",
@@ -494,6 +690,29 @@
       ],
       "size": 11062,
       "sha256": "9e8b6cdbc809d8b94819500963b2d6755f6aab512455b8dc6bbc71d3e0340208",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "bubble-level",
+      "name": "Bubble Level",
+      "emoji": "📐",
+      "category": "utilities",
+      "description": "A spirit level that uses your phone's sensors, with degrees, calibration and a buzz when it's level.",
+      "prompt": "A bubble level app with a green vial and a bubble that moves with the phone's tilt sensors, X and Y degrees, calibration, hold reading and a vibration when it is perfectly level.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 5552,
+      "sha256": "fccafd8ef148ab2dee559d1fbb59dfaa03f3f464a635c54f887405056c007e4e",
       "downloads": 0,
       "trending": 0
     },
@@ -542,6 +761,31 @@
       "sha256": "26056a5995f5927daaef0341639d6cfca9f367ce4cdec92157360737f16c8d40",
       "downloads": 1,
       "trending": 1
+    },
+    {
+      "id": "battery-info",
+      "name": "Battery & Device",
+      "emoji": "🔋",
+      "category": "utilities",
+      "description": "Your battery level, charging state and temperature, plus details about your phone and screen.",
+      "prompt": "A battery and device info app showing the battery level in a big battery icon, charging status and temperature, device model and Android version, screen, network, language, time zone and storage, with tips to look after the battery.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 7279,
+      "sha256": "8856c2e3704fb9d73c507c1bb54616f7c2f7517b96e9163ca3f5ca1022467ba9",
+      "downloads": 0,
+      "trending": 0
     },
     {
       "id": "merge-2048",

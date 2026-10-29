@@ -1,0 +1,14 @@
+{
+  "id": "magnifier",
+  "name": "Magnifier",
+  "emoji": "🔍",
+  "category": "utilities",
+  "description": "Zoom in on small print with your camera, freeze the image, turn on the light and boost contrast.",
+  "prompt": "A magnifying glass app using the camera with zoom up to 8x, pinch to zoom, freeze the picture to read it calmly, the camera light, and high contrast, inverted and yellow filters for reading.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

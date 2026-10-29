@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Bubble Level</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; background:#10241a; color:#eafff2; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; transition:background .3s; }
+  body.level { background:#0d3a22; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 20px); }
+  h1 { margin:0; font-size:20px; opacity:.85; }
+  #dial { position:relative; width:min(82vw,330px); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,#d8ff6a 0,#9ee03c 55%,#5a9a1c 100%); box-shadow:inset 0 0 40px #0008, 0 0 0 10px #0b1a12, 0 0 0 12px #3b6b4a; overflow:hidden; }
+  #dial::before, #dial::after { content:''; position:absolute; left:50%; top:50%; border:2px solid #0b1a1299; border-radius:50%; transform:translate(-50%,-50%); }
+  #dial::before { width:22%; height:22%; } #dial::after { width:56%; height:56%; }
+  .cross { position:absolute; background:#0b1a1255; } .cross.h { left:0; right:0; top:50%; height:2px; } .cross.v { top:0; bottom:0; left:50%; width:2px; }
+  #bubble { position:absolute; left:50%; top:50%; width:20%; aspect-ratio:1; border-radius:50%; transform:translate(-50%,-50%); background:radial-gradient(circle at 35% 30%,#ffffff,#f6ffe0 40%,#c8f07a 75%); box-shadow:0 4px 12px #0005, inset 0 -4px 8px #0002; }
+  .read { display:flex; gap:26px; font-variant-numeric:tabular-nums; text-align:center; }
+  .read b { display:block; font-size:38px; font-weight:300; }
+  .read small { font-size:12px; letter-spacing:2px; opacity:.7; }
+  .row { display:flex; gap:10px; }
+  .row button { padding:12px 16px; border-radius:14px; background:#ffffff14; font-weight:700; }
+  .msg { font-size:13px; opacity:.7; text-align:center; max-width:320px; min-height:18px; }
+  #ok { font-weight:900; letter-spacing:3px; color:#7dff9b; opacity:0; transition:opacity .3s; }
+  body.level #ok { opacity:1; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>📐 <span id="ttl"></span></h1>
+  <div id="dial"><div class="cross h"></div><div class="cross v"></div><div id="bubble"></div></div>
+  <div id="ok"></div>
+  <div class="read"><div><b id="x">0.0°</b><small>X</small></div><div><b id="y">0.0°</b><small>Y</small></div></div>
+  <div class="row"><button id="cal"></button><button id="lock"></button></div>
+  <div class="msg" id="msg"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Nivel de burbuja', ok:'NIVELADO', cal:'Calibrar aquí', reset:'Quitar calibración', lock:'Fijar lectura', unlock:'Soltar', wait:'Apoya el móvil sobre una superficie. Si la burbuja no se mueve, este dispositivo no tiene sensor de orientación.', calHelp:'Calibrado: ahora esta posición cuenta como 0°.' }
+ : { title:'Bubble Level', ok:'LEVEL', cal:'Calibrate here', reset:'Clear calibration', lock:'Hold reading', unlock:'Release', wait:'Lay the phone on a surface. If the bubble doesn\'t move, this device has no orientation sensor.', calHelp:'Calibrated: this position now counts as 0°.' };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('ok').textContent = T.ok; $('msg').textContent = T.wait;
+let off = JSON.parse(localStorage.getItem('offset') || '{"x":0,"y":0}'), cur = { x: 0, y: 0 }, shown = { x: 0, y: 0 }, locked = false, wasLevel = false, got = false;
+function labels() { $('cal').textContent = off.x || off.y ? T.reset : T.cal; $('lock').textContent = locked ? T.unlock : T.lock; }
+addEventListener('deviceorientation', e => {
+  if (e.beta == null) return;
+  if (!got) { got = true; $('msg').textContent = ''; }
+  if (locked) return;
+  // Flat on a table: gamma tilts left/right, beta tilts forwards/backwards.
+  cur = { x: Math.max(-45, Math.min(45, e.gamma)) - off.x, y: Math.max(-45, Math.min(45, e.beta)) - off.y };
+});
+function frame() {
+  shown.x += (cur.x - shown.x) * .2; shown.y += (cur.y - shown.y) * .2;
+  const r = Math.min(1, Math.hypot(shown.x, shown.y) / 20), a = Math.atan2(shown.y, shown.x);
+  const px = Math.cos(a) * r * 40, py = Math.sin(a) * r * 40;
+  $('bubble').style.left = 50 - px * .9 + '%'; $('bubble').style.top = 50 - py * .9 + '%';
+  $('x').textContent = shown.x.toFixed(1) + '°'; $('y').textContent = shown.y.toFixed(1) + '°';
+  const level = Math.abs(shown.x) < .6 && Math.abs(shown.y) < .6;
+  document.body.classList.toggle('level', level);
+  if (level && !wasLevel) { try { if (window.Acornix) Acornix.vibrate(25); else if (navigator.vibrate) navigator.vibrate(25); } catch (e) {} }
+  wasLevel = level;
+  requestAnimationFrame(frame);
+}
+$('cal').onclick = () => { if (off.x || off.y) off = { x: 0, y: 0 }; else { off = { x: cur.x + off.x, y: cur.y + off.y }; $('msg').textContent = T.calHelp; } localStorage.setItem('offset', JSON.stringify(off)); labels(); };
+$('lock').onclick = () => { locked = !locked; labels(); };
+if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) document.body.addEventListener('click', () => DeviceOrientationEvent.requestPermission().catch(() => {}), { once: true });
+labels(); frame();
+</script>
+</body>
+</html>

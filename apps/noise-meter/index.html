@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Noise Meter</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:#0c1016; color:#e9f1ff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; gap:14px; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 18px); }
+  h1 { margin:0; font-size:20px; opacity:.85; }
+  #gauge { width:min(88vw,360px); }
+  .db { font-size:64px; font-weight:200; font-variant-numeric:tabular-nums; margin-top:-8px; text-shadow:0 0 20px #0008; }
+  .db small { font-size:20px; opacity:.6; }
+  .label { font-weight:800; font-size:18px; min-height:24px; }
+  .stats { display:flex; gap:10px; width:100%; max-width:420px; }
+  .stats div { flex:1; background:#161c26; border-radius:14px; padding:10px; text-align:center; }
+  .stats small { display:block; font-size:11px; letter-spacing:1px; opacity:.6; text-transform:uppercase; }
+  .stats b { font-size:22px; font-variant-numeric:tabular-nums; }
+  canvas#chart { width:100%; max-width:420px; height:110px; background:#161c26; border-radius:16px; }
+  #start { padding:16px 40px; border-radius:999px; background:#3ddc97; color:#04210f; font-weight:900; font-size:17px; }
+  #start.stop { background:#ff5a6e; color:#fff; }
+  .note { font-size:12px; opacity:.55; text-align:center; max-width:340px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🔊 <span id="ttl"></span></h1>
+  <svg id="gauge" viewBox="0 0 200 120"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#3ddc97"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff4d5e"/></linearGradient></defs>
+    <path d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="#1d2532" stroke-width="16" stroke-linecap="round"/>
+    <path id="arc" d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="url(#g)" stroke-width="16" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+    <line id="needle" x1="100" y1="110" x2="100" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round" transform="rotate(-90 100 110)"/><circle cx="100" cy="110" r="6" fill="#fff"/></svg>
+  <div class="db"><span id="db">--</span><small> dB</small></div>
+  <div class="label" id="label"></div>
+  <div class="stats"><div><small id="lMin"></small><b id="min">--</b></div><div><small id="lAvg"></small><b id="avg">--</b></div><div><small id="lMax"></small><b id="max">--</b></div></div>
+  <canvas id="chart"></canvas>
+  <button id="start"></button>
+  <div class="note" id="note"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Medidor de ruido', min:'Mín', avg:'Media', max:'Máx', start:'Empezar a medir', stop:'Parar', note:'Valores aproximados: el micrófono del móvil no está calibrado como un sonómetro profesional.', denied:'Sin acceso al micrófono. Permítelo para medir.',
+  levels:[[30,'🍃 Muy tranquilo'],[45,'📚 Biblioteca'],[60,'💬 Conversación'],[70,'🚗 Tráfico'],[85,'🏭 Ruidoso'],[100,'🎸 Concierto'],[200,'🚨 Peligroso para los oídos']] }
+ : { title:'Noise Meter', min:'Min', avg:'Avg', max:'Max', start:'Start measuring', stop:'Stop', note:'Approximate values: a phone microphone isn\'t calibrated like a professional sound meter.', denied:'No access to the microphone. Allow it to measure.',
+  levels:[[30,'🍃 Very quiet'],[45,'📚 Library'],[60,'💬 Conversation'],[70,'🚗 Traffic'],[85,'🏭 Loud'],[100,'🎸 Concert'],[200,'🚨 Harmful to your ears']] };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('lMin').textContent = T.min; $('lAvg').textContent = T.avg; $('lMax').textContent = T.max; $('note').textContent = T.note;
+let ctx, analyser, stream, buf, running = false, hist = [], mn = Infinity, mx = -Infinity, sum = 0, n = 0, shown = 0;
+function setBtn() { $('start').textContent = running ? T.stop : T.start; $('start').classList.toggle('stop', running); }
+async function start() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    ctx = new AudioContext(); analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+    ctx.createMediaStreamSource(stream).connect(analyser); buf = new Float32Array(analyser.fftSize);
+    running = true; mn = Infinity; mx = -Infinity; sum = 0; n = 0; hist = []; setBtn(); loop();
+  } catch (e) { $('label').textContent = T.denied; }
+}
+function stop() { running = false; stream && stream.getTracks().forEach(t => t.stop()); ctx && ctx.close(); setBtn(); }
+function loop() {
+  if (!running) return;
+  analyser.getFloatTimeDomainData(buf);
+  let rms = 0; for (const v of buf) rms += v * v; rms = Math.sqrt(rms / buf.length);
+  // dBFS shifted to an approximate SPL scale (typical phone mics read about 94 dB SPL at -26 dBFS).
+  const db = Math.max(20, Math.min(120, 20 * Math.log10(rms || 1e-8) + 100));
+  shown += (db - shown) * .15;
+  mn = Math.min(mn, shown); mx = Math.max(mx, shown); sum += shown; n++;
+  hist.push(shown); if (hist.length > 240) hist.shift();
+  draw(); requestAnimationFrame(loop);
+}
+function draw() {
+  $('db').textContent = Math.round(shown);
+  const f = (shown - 20) / 100;
+  $('arc').setAttribute('stroke-dashoffset', 251.3 * (1 - f));
+  $('needle').setAttribute('transform', `rotate(${-90 + f * 180} 100 110)`);
+  $('label').textContent = T.levels.find(([lim]) => shown < lim)[1];
+  $('min').textContent = Math.round(mn); $('max').textContent = Math.round(mx); $('avg').textContent = Math.round(sum / n);
+  const c = $('chart'), d = devicePixelRatio || 1; c.width = c.clientWidth * d; c.height = c.clientHeight * d;
+  const g = c.getContext('2d'), w = c.width, h = c.height;
+  const gr = g.createLinearGradient(0, h, 0, 0); gr.addColorStop(0, '#3ddc97'); gr.addColorStop(.55, '#ffd23f'); gr.addColorStop(1, '#ff4d5e');
+  g.strokeStyle = gr; g.lineWidth = 2 * d; g.beginPath();
+  hist.forEach((v, i) => { const x = i / 239 * w, y = h - (v - 20) / 100 * h; i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
+  g.lineTo(hist.length ? (hist.length - 1) / 239 * w : 0, h); g.lineTo(0, h); g.fillStyle = '#3ddc9718'; g.fill();
+}
+$('start').onclick = () => running ? stop() : start();
+document.addEventListener('visibilitychange', () => { if (document.hidden && running) stop(); });
+setBtn();
+</script>
+</body>
+</html>

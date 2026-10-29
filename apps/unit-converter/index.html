@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Unit Converter</title>
+<style>
+  :root { --bg:#f2f5fb; --card:#fff; --ink:#1b2440; --muted:#7a84a3; --accent:#3d6bff; --line:#e3e8f5; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, select { font:inherit; color:inherit; }
+  #app { max-width:520px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 20px); }
+  h1 { margin:4px 0 14px; font-size:26px; }
+  .cats { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+  .cats::-webkit-scrollbar { display:none; }
+  .cat { flex:none; padding:10px 14px; border-radius:14px; border:1px solid var(--line); background:var(--card); font-weight:700; font-size:14px; cursor:pointer; }
+  .cat.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .box { background:var(--card); border-radius:22px; padding:16px; margin-top:14px; box-shadow:0 6px 20px #1b244012; }
+  .row { display:flex; flex-direction:column; gap:6px; }
+  .row select { border:0; background:transparent; font-weight:700; color:var(--muted); font-size:14px; padding:2px 0; max-width:100%; }
+  .row input { border:0; outline:none; font-size:34px; font-weight:800; width:100%; background:transparent; padding:0; }
+  .out { font-size:34px; font-weight:800; color:var(--accent); word-break:break-all; min-height:42px; }
+  .swap { display:flex; justify-content:center; margin:6px 0; }
+  .swap button { width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--bg); font-size:20px; cursor:pointer; }
+  .all { margin-top:14px; }
+  .all h3 { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin:0 4px 8px; }
+  .item { display:flex; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:14px; background:var(--card); margin-bottom:6px; font-variant-numeric:tabular-nums; }
+  .item span:last-child { font-weight:700; text-align:right; word-break:break-all; }
+  .copy { font-size:12px; color:var(--accent); font-weight:700; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>📏 <span id="ttl"></span></h1>
+  <div class="cats" id="cats"></div>
+  <div class="box">
+    <div class="row"><select id="from"></select><input id="val" inputmode="decimal" value="1"></div>
+    <div class="swap"><button id="swap" aria-label="Swap">⇅</button></div>
+    <div class="row"><select id="to"></select><div class="out" id="out"></div></div>
+  </div>
+  <div class="all"><h3 id="allTitle"></h3><div id="list"></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { title:'Conversor', all:'Todas las unidades' } : { title:'Unit Converter', all:'All units' };
+// [names EN/ES, units: [name EN, name ES, factor to base] or functions for temperature]
+const CATS = [
+  [['📏 Length','📏 Longitud'], [['Millimetre','Milímetro',.001],['Centimetre','Centímetro',.01],['Metre','Metro',1],['Kilometre','Kilómetro',1000],['Inch','Pulgada',.0254],['Foot','Pie',.3048],['Yard','Yarda',.9144],['Mile','Milla',1609.344],['Nautical mile','Milla náutica',1852]]],
+  [['⚖️ Weight','⚖️ Peso'], [['Milligram','Miligramo',.001],['Gram','Gramo',1],['Kilogram','Kilogramo',1000],['Tonne','Tonelada',1e6],['Ounce','Onza',28.349523125],['Pound','Libra',453.59237],['Stone','Stone',6350.29318]]],
+  [['🌡️ Temperature','🌡️ Temperatura'], 'temp'],
+  [['🧪 Volume','🧪 Volumen'], [['Millilitre','Mililitro',.001],['Litre','Litro',1],['Cubic metre','Metro cúbico',1000],['Teaspoon','Cucharadita',.00492892],['Tablespoon','Cucharada',.0147868],['Cup (US)','Taza (EE. UU.)',.236588],['Fluid ounce (US)','Onza líquida (EE. UU.)',.0295735],['Pint (UK)','Pinta (RU)',.568261],['Gallon (US)','Galón (EE. UU.)',3.78541]]],
+  [['🏎️ Speed','🏎️ Velocidad'], [['km/h','km/h',1],['m/s','m/s',3.6],['mph','mph',1.609344],['Knot','Nudo',1.852]]],
+  [['📐 Area','📐 Superficie'], [['m²','m²',1],['km²','km²',1e6],['Hectare','Hectárea',1e4],['Acre','Acre',4046.8564224],['ft²','pie²',.09290304],['cm²','cm²',.0001]]],
+  [['💾 Data','💾 Datos'], [['Byte','Byte',1],['Kilobyte (KB)','Kilobyte (KB)',1e3],['Megabyte (MB)','Megabyte (MB)',1e6],['Gigabyte (GB)','Gigabyte (GB)',1e9],['Terabyte (TB)','Terabyte (TB)',1e12],['Kibibyte (KiB)','Kibibyte (KiB)',1024],['Mebibyte (MiB)','Mebibyte (MiB)',1048576],['Gibibyte (GiB)','Gibibyte (GiB)',1073741824]]],
+  [['⏱️ Time','⏱️ Tiempo'], [['Second','Segundo',1],['Minute','Minuto',60],['Hour','Hora',3600],['Day','Día',86400],['Week','Semana',604800],['Year','Año',31557600]]],
+  [['⛽ Fuel','⛽ Consumo'], 'fuel']
+];
+const TEMP = [['Celsius','Celsius'],['Fahrenheit','Fahrenheit'],['Kelvin','Kelvin']];
+const FUEL = [['L/100 km','L/100 km'],['km/L','km/L'],['mpg (US)','mpg (EE. UU.)'],['mpg (UK)','mpg (RU)']];
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('allTitle').textContent = T.all;
+let cat = 0, sel = store.get('sel', {});
+function units() { const u = CATS[cat][1]; return u === 'temp' ? TEMP : u === 'fuel' ? FUEL : u; }
+function toBase(v, i) {
+  const u = CATS[cat][1];
+  if (u === 'temp') return i === 0 ? v : i === 1 ? (v - 32) * 5 / 9 : v - 273.15;
+  if (u === 'fuel') return i === 0 ? v : i === 1 ? 100 / v : i === 2 ? 235.214583 / v : 282.480936 / v;
+  return v * u[i][2];
+}
+function fromBase(b, i) {
+  const u = CATS[cat][1];
+  if (u === 'temp') return i === 0 ? b : i === 1 ? b * 9 / 5 + 32 : b + 273.15;
+  if (u === 'fuel') return i === 0 ? b : i === 1 ? 100 / b : i === 2 ? 235.214583 / b : 282.480936 / b;
+  return b / u[i][2];
+}
+function fmt(n) {
+  if (!isFinite(n)) return '—';
+  const a = Math.abs(n);
+  if (a !== 0 && (a < 1e-6 || a >= 1e15)) return n.toExponential(4);
+  return n.toLocaleString(undefined, { maximumFractionDigits: a < 1 ? 8 : 6 });
+}
+function renderCats() {
+  $('cats').innerHTML = '';
+  CATS.forEach((c, i) => { const b = document.createElement('button'); b.className = 'cat' + (i === cat ? ' on' : ''); b.textContent = c[0][L]; b.onclick = () => { cat = i; store.set('cat', i); setup(); }; $('cats').appendChild(b); });
+}
+function setup() {
+  renderCats();
+  const u = units(), s = sel[cat] || [0, Math.min(1, u.length - 1)];
+  [$('from'), $('to')].forEach((el, k) => { el.innerHTML = u.map((x, i) => `<option value="${i}">${x[L]}</option>`).join(''); el.value = s[k]; });
+  convert();
+}
+function convert() {
+  const v = parseFloat($('val').value.replace(',', '.'));
+  const f = +$('from').value, t = +$('to').value;
+  sel[cat] = [f, t]; store.set('sel', sel);
+  if (isNaN(v)) { $('out').textContent = ''; $('list').innerHTML = ''; return; }
+  const base = toBase(v, f);
+  $('out').textContent = fmt(fromBase(base, t));
+  $('list').innerHTML = '';
+  units().forEach((u, i) => { if (i === f) return; const d = document.createElement('div'); d.className = 'item'; d.innerHTML = '<span></span><span></span>'; d.firstChild.textContent = u[L]; d.lastChild.textContent = fmt(fromBase(base, i)); $('list').appendChild(d); });
+}
+$('val').oninput = convert; $('from').onchange = convert; $('to').onchange = convert;
+$('swap').onclick = () => { const f = $('from').value; $('from').value = $('to').value; $('to').value = f; convert(); };
+cat = store.get('cat', 0); setup();
+</script>
+</body>
+</html>
