@@ -1,0 +1,14 @@
+{
+  "id": "neon-drift-3d",
+  "name": "Neon Drift 3D",
+  "emoji": "🏎️",
+  "category": "games",
+  "description": "Race down a synthwave highway at sunset: drag to dodge neon barriers and grab glowing orbs.",
+  "prompt": "A 3D endless racer with three.js in a synthwave style: a neon grid highway, a striped sunset sun, wireframe mountains, a glowing car I steer by dragging, neon barriers to dodge, orbs to collect and speed that keeps rising.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

@@ -1,0 +1,14 @@
+{
+  "id": "hoop-shot-3d",
+  "name": "Hoop Shot 3D",
+  "emoji": "🏀",
+  "category": "games",
+  "description": "Swipe up to shoot hoops on a 3D court: real bounces off the rim, swishes, streaks and a moving hoop.",
+  "prompt": "A 3D basketball shooting game with three.js: swipe up to throw, ball physics that bounce off the rim and backboard, a wooden court and crowd lights, 60 seconds, extra points for swishes and streaks, and the hoop starts moving after 10 points.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

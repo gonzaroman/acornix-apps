@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Stack Tower 3D</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#fff; touch-action:none; }
+  body { background:linear-gradient(180deg,var(--top,#ffb4a2),var(--bottom,#6d6875)); transition:background 1s; }
+  canvas { position:fixed; inset:0; display:block; z-index:0; }
+  #score, #combo, #panel { z-index:2; }
+  #score { position:fixed; top:calc(env(safe-area-inset-top) + 40px); left:0; right:0; text-align:center; font-size:76px; font-weight:900; text-shadow:0 4px 18px #0003; pointer-events:none; font-variant-numeric:tabular-nums; }
+  #combo { position:fixed; top:calc(env(safe-area-inset-top) + 130px); left:0; right:0; text-align:center; font-size:20px; font-weight:800; opacity:0; transition:opacity .3s, transform .3s; pointer-events:none; }
+  #combo.on { opacity:1; transform:translateY(-6px); }
+  #panel { position:fixed; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 70px); text-align:center; pointer-events:none; }
+  #panel h1 { margin:0; font-size:40px; letter-spacing:6px; font-weight:900; text-shadow:0 4px 18px #0003; }
+  #panel p { margin:8px 0 0; font-size:17px; font-weight:700; opacity:.9; animation:pulse 1.4s ease-in-out infinite; }
+  #panel small { display:block; margin-top:10px; font-weight:700; opacity:.8; }
+  @keyframes pulse { 50% { opacity:.45; } }
+  #panel.hide { display:none; }
+</style>
+</head>
+<body>
+<div id="score"></div>
+<div id="combo"></div>
+<div id="panel"><h1>STACK</h1><p id="tap"></p><small id="best"></small></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
+<script>
+// The 3D engine comes from the internet: say so instead of showing a blank screen when offline.
+if (!window.THREE) document.addEventListener('DOMContentLoaded', () => {
+  const es = (navigator.language || '').toLowerCase().startsWith('es');
+  document.body.innerHTML = '<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;font:600 18px system-ui;color:#fff;background:#111">' +
+    (es ? '📡 Este juego en 3D necesita conexión a internet para cargar. Conéctate y vuelve a abrirlo.' : '📡 This 3D game needs an internet connection to load. Connect and open it again.') + '</div>';
+});
+</script>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { tap:'Toca para empezar', again:'Toca para jugar otra vez', best:'Récord', perfect:'¡PERFECTO!', over:'FIN' } : { tap:'Tap to start', again:'Tap to play again', best:'Best', perfect:'PERFECT!', over:'GAME OVER' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const H = 1, START = 3, PERFECT = 0.12;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 200);
+const ambient = new THREE.HemisphereLight(0xffffff, 0x8888aa, 2.2); scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xffffff, 2.6); sun.position.set(6, 14, 8); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 60 });
+scene.add(sun); scene.add(sun.target);
+let stack, falling, current, axis, dir, speed, score, best = 0, combo, hue, state = 'menu', camY = 0, ripples = [], audio;
+
+function color(i) { return new THREE.Color().setHSL(((hue + i * 11) % 360) / 360, 0.75, 0.6); }
+function block(w, d, y, x, z, i) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, H, d), new THREE.MeshStandardMaterial({ color: color(i), roughness: 0.55, metalness: 0.05 }));
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; scene.add(m);
+  return { mesh: m, w, d, x, z, y };
+}
+function resize() {
+  const w = innerWidth, h = innerHeight, aspect = w / h, view = aspect < 1 ? 10 / aspect : 13;
+  renderer.setSize(w, h);
+  camera.left = -view * aspect / 2; camera.right = view * aspect / 2; camera.top = view / 2; camera.bottom = -view / 2;
+  camera.updateProjectionMatrix();
+}
+function place() { camera.position.set(10, camY + 12, 10); camera.lookAt(0, camY + 1.5, 0); sun.position.set(6, camY + 14, 8); sun.target.position.set(0, camY, 0); }
+function setBackground() {
+  const h = (hue + stack.length * 11) % 360;
+  document.body.style.setProperty('--top', `hsl(${(h + 180) % 360},60%,22%)`);
+  document.body.style.setProperty('--bottom', `hsl(${(h + 220) % 360},70%,8%)`);
+}
+function reset() {
+  [...(stack || []), ...(falling || [])].forEach(b => { scene.remove(b.mesh); b.mesh.geometry.dispose(); });
+  if (current) scene.remove(current.mesh);
+  hue = Math.random() * 360; stack = []; falling = []; current = null; score = 0; combo = 0; speed = 0.075; camY = 0;
+  const base = block(START, START, -H * 4, 0, 0, 0); base.mesh.scale.y = 8; stack.push(base);
+  stack.push(block(START, START, 0, 0, 0, 1));
+  setBackground(); place();
+  document.getElementById('score').textContent = '';
+}
+function spawn() {
+  const top = stack[stack.length - 1];
+  axis = stack.length % 2 ? 'x' : 'z'; dir = 1;
+  const b = block(top.w, top.d, top.y + H, axis === 'x' ? -6 : top.x, axis === 'z' ? -6 : top.z, stack.length);
+  current = b;
+}
+function tone(f, t = .12) { try { audio = audio || new AudioContext(); const o = audio.createOscillator(), a = audio.createGain(); o.type = 'sine'; o.frequency.value = f; a.gain.value = .07; o.connect(a); a.connect(audio.destination); a.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + t); o.start(); o.stop(audio.currentTime + t); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+function drop() {
+  const top = stack[stack.length - 1], c = current;
+  const size = axis === 'x' ? top.w : top.d, delta = axis === 'x' ? c.x - top.x : c.z - top.z, overlap = size - Math.abs(delta);
+  if (overlap <= 0) return gameOver(true);
+  if (Math.abs(delta) < PERFECT) {
+    combo++;
+    if (axis === 'x') c.x = top.x; else c.z = top.z;
+    let w = top.w, d = top.d;
+    if (combo >= 3) { if (axis === 'x') w = Math.min(START, w + 0.12); else d = Math.min(START, d + 0.12); }
+    c.mesh.geometry.dispose(); c.mesh.geometry = new THREE.BoxGeometry(w, H, d); c.w = w; c.d = d;
+    c.mesh.position.set(c.x, c.y, c.z);
+    ripple(c); tone(440 * Math.pow(2, Math.min(combo, 12) / 12), .25); buzz(20);
+    const el = document.getElementById('combo'); el.textContent = T.perfect + (combo > 1 ? ' ×' + combo : ''); el.classList.add('on'); setTimeout(() => el.classList.remove('on'), 700);
+  } else {
+    combo = 0; tone(300); buzz(10);
+    const cutW = axis === 'x' ? overlap : c.w, cutD = axis === 'z' ? overlap : c.d;
+    const keepX = axis === 'x' ? top.x + delta / 2 : c.x, keepZ = axis === 'z' ? top.z + delta / 2 : c.z;
+    // The piece that hangs over the edge falls off.
+    const offW = axis === 'x' ? Math.abs(delta) : c.w, offD = axis === 'z' ? Math.abs(delta) : c.d;
+    const offX = axis === 'x' ? keepX + Math.sign(delta) * (cutW / 2 + offW / 2) : c.x, offZ = axis === 'z' ? keepZ + Math.sign(delta) * (cutD / 2 + offD / 2) : c.z;
+    const off = block(offW, offD, c.y, offX, offZ, stack.length); off.mesh.material.color.copy(c.mesh.material.color);
+    off.vy = 0; off.spin = new THREE.Vector3(axis === 'z' ? Math.sign(delta) * .05 : 0, 0, axis === 'x' ? -Math.sign(delta) * .05 : 0); falling.push(off);
+    c.mesh.geometry.dispose(); c.mesh.geometry = new THREE.BoxGeometry(cutW, H, cutD);
+    c.w = cutW; c.d = cutD; c.x = keepX; c.z = keepZ; c.mesh.position.set(keepX, c.y, keepZ);
+  }
+  stack.push(c); current = null; score++;
+  document.getElementById('score').textContent = score;
+  speed = Math.min(0.16, 0.075 + score * 0.0018);
+  setBackground(); spawn();
+}
+function ripple(b) {
+  const g = new THREE.RingGeometry(0.98, 1, 48), m = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .9, side: THREE.DoubleSide });
+  const r = new THREE.Mesh(g, m); r.rotation.x = -Math.PI / 2; r.position.set(b.x, b.y - H / 2 + 0.02, b.z);
+  r.scale.set(b.w * .7, b.d * .7, 1); r.userData.life = 1; scene.add(r); ripples.push(r);
+}
+async function gameOver(miss) {
+  state = 'over';
+  if (miss && current) { current.vy = 0; current.spin = new THREE.Vector3(.04, 0, .04); falling.push(current); current = null; }
+  tone(160, .4); buzz([60, 40, 120]);
+  if (score > best) { best = score; await store.set('best', best); }
+  const p = document.getElementById('panel'); p.querySelector('h1').textContent = score; p.classList.remove('hide');
+  document.getElementById('tap').textContent = T.again; document.getElementById('best').textContent = T.best + ': ' + best;
+  document.getElementById('score').textContent = '';
+}
+function tap() {
+  if (state === 'menu' || state === 'over') {
+    if (state === 'over') reset();
+    state = 'play'; document.getElementById('panel').classList.add('hide');
+    document.getElementById('score').textContent = '0'; spawn(); return;
+  }
+  if (state === 'play' && current) drop();
+}
+let last = performance.now();
+function loop(t) {
+  const k = Math.min(3, (t - last) / 16.67); last = t;
+  if (state === 'play' && current) {
+    const p = axis === 'x' ? 'x' : 'z';
+    current[p] += dir * speed * k; if (Math.abs(current[p]) > 6) { dir *= -1; current[p] = Math.sign(current[p]) * 6; }
+    current.mesh.position[p] = current[p];
+  }
+  falling.forEach(f => { f.vy -= 0.012 * k; f.mesh.position.y += f.vy * k; f.mesh.rotation.x += f.spin.x * k; f.mesh.rotation.z += f.spin.z * k; });
+  falling = falling.filter(f => { if (f.mesh.position.y < camY - 30) { scene.remove(f.mesh); f.mesh.geometry.dispose(); return false; } return true; });
+  ripples.forEach(r => { r.userData.life -= 0.03 * k; r.scale.multiplyScalar(1 + 0.03 * k); r.material.opacity = Math.max(0, r.userData.life); });
+  ripples = ripples.filter(r => { if (r.userData.life <= 0) { scene.remove(r); return false; } return true; });
+  const target = Math.max(0, (stack.length - 2) * H);
+  camY += (target - camY) * 0.06 * k; place();
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+addEventListener('pointerdown', tap);
+addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') tap(); });
+addEventListener('resize', resize);
+(async () => {
+  best = await store.get('best', 0);
+  document.getElementById('tap').textContent = T.tap; document.getElementById('best').textContent = best ? T.best + ': ' + best : '';
+  resize(); reset(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

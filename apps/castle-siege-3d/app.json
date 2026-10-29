@@ -1,0 +1,14 @@
+{
+  "id": "castle-siege-3d",
+  "name": "Castle Siege 3D",
+  "emoji": "🏰",
+  "category": "games",
+  "description": "Defend your castle wall: enemies march up the valley towards you and you shoot them down with your crossbow.",
+  "prompt": "A 3D castle defence game with three.js where I stand on the castle wall looking down a valley, soldiers, goblins, knights, ogres and bosses march towards me along the road, I tap to shoot crossbow bolts, and between waves I buy upgrades like more damage, faster reload, multiple bolts, fire bolts and wall repairs.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

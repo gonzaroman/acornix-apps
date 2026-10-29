@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Neon Drift 3D</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; background:#0b0221; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; touch-action:none; }
+  canvas { position:fixed; inset:0; display:block; z-index:0; }
+  #hud { position:fixed; left:0; right:0; top:0; z-index:2; display:flex; justify-content:space-between; padding:calc(env(safe-area-inset-top) + 12px) 16px; pointer-events:none; font-weight:900; text-shadow:0 0 12px #ff2bd6; }
+  #hud small { display:block; font-size:10px; letter-spacing:3px; color:#ffb3f2; }
+  #hud b { font-size:24px; font-variant-numeric:tabular-nums; }
+  #panel { position:fixed; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; background:linear-gradient(#0b022166,#0b0221aa); }
+  #panel.hide { display:none; }
+  #panel h1 { margin:0; font-size:48px; font-style:italic; letter-spacing:2px; background:linear-gradient(#fff 20%,#ff2bd6 60%,#7a2bff); -webkit-background-clip:text; color:transparent; filter:drop-shadow(0 0 12px #ff2bd6aa); }
+  #panel p { margin:0; color:#d6c7ff; max-width:300px; line-height:1.5; }
+  #panel .big { font-size:54px; font-weight:900; color:#38f9ff; text-shadow:0 0 18px #38f9ff; }
+  #go { margin-top:10px; padding:15px 46px; border:2px solid #38f9ff; border-radius:999px; background:#38f9ff22; color:#fff; font:900 18px system-ui; letter-spacing:2px; box-shadow:0 0 22px #38f9ff88; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="hud"><div><small id="lScore"></small><b id="score">0</b></div><div style="text-align:right"><small id="lSpeed"></small><b id="speed">0</b></div></div>
+<div id="panel"><h1>NEON DRIFT</h1><p id="intro"></p><div class="big" id="final"></div><p id="bestLine"></p><button id="go"></button></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
+<script>
+// The 3D engine comes from the internet: say so instead of showing a blank screen when offline.
+if (!window.THREE) document.addEventListener('DOMContentLoaded', () => {
+  const es = (navigator.language || '').toLowerCase().startsWith('es');
+  document.body.innerHTML = '<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;font:600 18px system-ui;color:#fff;background:#111">' +
+    (es ? '📡 Este juego en 3D necesita conexión a internet para cargar. Conéctate y vuelve a abrirlo.' : '📡 This 3D game needs an internet connection to load. Connect and open it again.') + '</div>';
+});
+</script>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { score:'PUNTOS', speed:'KM/H', intro:'Arrastra a izquierda y derecha para esquivar. Coge los orbes y no choques.', go:'ARRANCAR', again:'OTRA VEZ', best:'Récord' }
+ : { score:'SCORE', speed:'KM/H', intro:'Drag left and right to dodge. Grab the orbs and don\'t crash.', go:'DRIVE', again:'AGAIN', best:'Best' };
+document.getElementById('lScore').textContent = T.score; document.getElementById('lSpeed').textContent = T.speed;
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const ROAD = 12, LEN = 400;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x1a0538, 40, 230);
+scene.background = new THREE.Color(0x0b0221);
+const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 500);
+
+// Sky: a gradient dome and a striped synthwave sun.
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+const skyTex = canvasTex(4, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#05010f'); gr.addColorStop(.55, '#2a0a5e'); gr.addColorStop(.8, '#b0186f'); gr.addColorStop(1, '#ff6a3d'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+const sky = new THREE.Mesh(new THREE.SphereGeometry(300, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false }));
+sky.position.y = -2; scene.add(sky);
+const sunTex = canvasTex(512, 512, (g, w, h) => {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#ffe66d'); gr.addColorStop(.5, '#ff5ec4'); gr.addColorStop(1, '#a01aff');
+  g.fillStyle = gr; g.beginPath(); g.arc(w / 2, h / 2, w / 2 - 4, 0, 7); g.fill();
+  g.globalCompositeOperation = 'destination-out';
+  for (let i = 0; i < 9; i++) { const y = h * .55 + i * i * 3.2 + i * 6; g.fillRect(0, y, w, 4 + i * 1.6); }
+});
+const sunMesh = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), new THREE.MeshBasicMaterial({ map: sunTex, transparent: true, fog: false }));
+sunMesh.position.set(0, 38, -260); scene.add(sunMesh);
+const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(Array.from({ length: 900 }, (_, i) => i % 3 === 1 ? 40 + Math.random() * 200 : (Math.random() - .5) * 500).map((v, i) => i % 3 === 2 ? -100 - Math.abs(v) : v), 3)), new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, fog: false }));
+scene.add(stars);
+
+// Ground: a glowing grid that scrolls, and wireframe mountains on both sides.
+const gridTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#0b0221'; g.fillRect(0, 0, w, h); g.strokeStyle = '#ff2bd6'; g.lineWidth = 6; g.shadowColor = '#ff2bd6'; g.shadowBlur = 12; g.strokeRect(0, 0, w, h); });
+gridTex.wrapS = gridTex.wrapT = THREE.RepeatWrapping; gridTex.repeat.set(60, 100); gridTex.anisotropy = 8;
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(600, 1000), new THREE.MeshBasicMaterial({ map: gridTex }));
+ground.rotation.x = -Math.PI / 2; ground.position.z = -400; scene.add(ground);
+const roadTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#12052e'; g.fillRect(0, 0, w, h); g.fillStyle = '#38f9ff'; g.fillRect(0, 0, 10, h); g.fillRect(w - 10, 0, 10, h); g.fillStyle = '#ffffffaa'; [w / 3, 2 * w / 3].forEach(x => g.fillRect(x - 3, 0, 6, h / 2)); });
+roadTex.wrapS = roadTex.wrapT = THREE.RepeatWrapping; roadTex.repeat.set(1, 60);
+const road = new THREE.Mesh(new THREE.PlaneGeometry(ROAD, 1000), new THREE.MeshBasicMaterial({ map: roadTex }));
+road.rotation.x = -Math.PI / 2; road.position.set(0, 0.02, -400); scene.add(road);
+function mountains(side) {
+  const geo = new THREE.PlaneGeometry(200, 700, 20, 70); geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) { const x = pos.getX(i), d = Math.abs(x + 100 * side); pos.setY(i, Math.max(0, (Math.sin(pos.getZ(i) * .05 + x * .1) + Math.sin(x * .23) + 1.4) * (d / 100) * 14 * Math.random() ** .3)); }
+  geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x7a2bff, wireframe: true, transparent: true, opacity: .55 }));
+  m.position.set(side * 110, 0, -300); scene.add(m); return m;
+}
+const hills = [mountains(-1), mountains(1)];
+
+// The car: low-poly body with glowing edges and tail lights.
+const car = new THREE.Group();
+function glowBox(w, h, d, color, x, y, z, fill = 0.22) {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const body = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: new THREE.Color(0x0b0221).lerp(new THREE.Color(color), fill) }));
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color }));
+  body.add(edges); body.position.set(x, y, z); return body;
+}
+car.add(glowBox(2.2, .55, 4.2, 0x38f9ff, 0, .5, 0, .35));
+car.add(glowBox(1.6, .5, 2, 0x38f9ff, 0, 1.0, .3, .15));
+[-.55, .55].forEach(x => { const s = new THREE.Mesh(new THREE.BoxGeometry(.18, .02, 4.22), new THREE.MeshBasicMaterial({ color: 0xff2bd6 })); s.position.set(x, .79, 0); car.add(s); });
+const under = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 5.4), new THREE.MeshBasicMaterial({ color: 0x38f9ff, transparent: true, opacity: .35, depthWrite: false }));
+under.rotation.x = -Math.PI / 2; under.position.y = .04; car.add(under);
+[[-1.05, .35, -1.3], [1.05, .35, -1.3], [-1.05, .35, 1.3], [1.05, .35, 1.3]].forEach(([x, y, z]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(.38, .38, .3, 16), new THREE.MeshBasicMaterial({ color: 0xff2bd6 })); w.rotation.z = Math.PI / 2; w.position.set(x, y, z); car.add(w); });
+[-.7, .7].forEach(x => { const l = new THREE.Mesh(new THREE.BoxGeometry(.5, .14, .05), new THREE.MeshBasicMaterial({ color: 0xff2040 })); l.position.set(x, .62, 2.12); car.add(l); });
+const trail = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 6), new THREE.MeshBasicMaterial({ color: 0xff2bd6, transparent: true, opacity: .25, depthWrite: false }));
+trail.rotation.x = -Math.PI / 2; trail.position.set(0, .05, 5); car.add(trail);
+scene.add(car);
+
+let obstacles = [], orbs = [], sparks = [], speed, dist, score, best = 0, state = 'menu', targetX = 0, spawnZ, audio, shake = 0;
+const OB_COLORS = [0xff2bd6, 0x38f9ff, 0xffe66d, 0x7a2bff];
+function addObstacle(z) {
+  const lane = Math.floor(Math.random() * 3) - 1, wide = Math.random() < .25;
+  const color = OB_COLORS[Math.floor(Math.random() * OB_COLORS.length)];
+  const o = glowBox(wide ? 7.2 : 3.2, 1.6, 1.2, color, wide ? Math.sign(lane || 1) * 2.4 : lane * 4, .8, z, .45);
+  o.userData = { w: wide ? 7.2 : 3.2 }; scene.add(o); obstacles.push(o);
+  if (Math.random() < .6) {
+    let ol = Math.floor(Math.random() * 3) - 1; if (ol === lane) ol = -lane || 1;
+    const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(.55, 1), new THREE.MeshBasicMaterial({ color: 0xffe66d, wireframe: true }));
+    orb.position.set(ol * 4, 1.2, z - 8); scene.add(orb); orbs.push(orb);
+  }
+}
+function reset() {
+  [...obstacles, ...orbs].forEach(o => scene.remove(o)); obstacles = []; orbs = [];
+  speed = 0.55; dist = 0; score = 0; targetX = 0; car.position.set(0, 0, 0); spawnZ = -60;
+  for (let z = -60; z > -LEN / 2; z -= 26) addObstacle(z);
+  spawnZ = -LEN / 2;
+}
+function tone(f, t = .1, type = 'sawtooth', v = .04) { try { audio = audio || new AudioContext(); const o = audio.createOscillator(), a = audio.createGain(); o.type = type; o.frequency.value = f; a.gain.value = v; o.connect(a); a.connect(audio.destination); a.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + t); o.start(); o.stop(audio.currentTime + t); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+function burst(pos, color, n = 40) {
+  for (let i = 0; i < n; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(.2, .2, .2), new THREE.MeshBasicMaterial({ color })); s.position.copy(pos); s.userData.v = new THREE.Vector3((Math.random() - .5) * .8, Math.random() * .7, (Math.random() - .5) * .8); s.userData.life = 1; scene.add(s); sparks.push(s); }
+}
+async function crash() {
+  state = 'over'; shake = 1; burst(car.position.clone().setY(1), 0x38f9ff, 70); car.visible = false;
+  tone(80, .6, 'sawtooth', .07); buzz([100, 60, 200]);
+  if (score > best) { best = score; await store.set('best', best); }
+  setTimeout(() => panel(true), 900);
+}
+function panel(over) {
+  const p = document.getElementById('panel'); p.classList.remove('hide');
+  document.getElementById('intro').textContent = over ? '' : T.intro;
+  document.getElementById('final').textContent = over ? score : '';
+  document.getElementById('bestLine').textContent = best ? T.best + ': ' + best : '';
+  document.getElementById('go').textContent = over ? T.again : T.go;
+}
+document.getElementById('go').onclick = e => { e.stopPropagation(); reset(); car.visible = true; state = 'play'; document.getElementById('panel').classList.add('hide'); tone(220, .3, 'square', .03); };
+let dragX = null, startTarget = 0;
+addEventListener('pointerdown', e => { dragX = e.clientX; startTarget = targetX; });
+addEventListener('pointermove', e => { if (dragX == null || state !== 'play') return; targetX = Math.max(-ROAD / 2 + 1.3, Math.min(ROAD / 2 - 1.3, startTarget + (e.clientX - dragX) / innerWidth * 22)); });
+addEventListener('pointerup', () => dragX = null);
+addEventListener('keydown', e => { if (e.key === 'ArrowLeft') targetX = Math.max(-4.7, targetX - 4); if (e.key === 'ArrowRight') targetX = Math.min(4.7, targetX + 4); });
+function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.fov = camera.aspect < 1 ? 78 : 62; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize);
+let last = performance.now();
+function loop(t) {
+  const k = Math.min(3, (t - last) / 16.67); last = t;
+  const move = state === 'play' ? speed * k : state === 'menu' ? .35 * k : 0;
+  if (state === 'play') {
+    speed = Math.min(1.6, speed + 0.00035 * k); dist += move; score = Math.floor(dist * 2) + orbScore;
+    document.getElementById('score').textContent = score; document.getElementById('speed').textContent = Math.round(speed * 190);
+    const dx = targetX - car.position.x; car.position.x += dx * .18 * k; car.rotation.y = -dx * .08; car.rotation.z = dx * .03;
+  }
+  gridTex.offset.y += move * 0.1; roadTex.offset.y += move * 0.06;
+  hills.forEach(h => { h.position.z += move; if (h.position.z > 50) h.position.z -= 350; });
+  for (const o of obstacles) {
+    o.position.z += move;
+    if (state === 'play' && o.position.z > -2.4 && o.position.z < 2.4 && Math.abs(o.position.x - car.position.x) < o.userData.w / 2 + 1) { crash(); break; }
+  }
+  for (const orb of orbs) {
+    orb.position.z += move; orb.rotation.y += .05 * k; orb.rotation.x += .03 * k;
+    if (state === 'play' && !orb.userData.got && Math.abs(orb.position.z) < 2 && Math.abs(orb.position.x - car.position.x) < 1.8) { orb.userData.got = true; orb.visible = false; orbScore += 50; burst(orb.position, 0xffe66d, 16); tone(880, .12, 'triangle', .05); buzz(15); }
+  }
+  obstacles = obstacles.filter(o => { if (o.position.z > 20) { scene.remove(o); return false; } return true; });
+  orbs = orbs.filter(o => { if (o.position.z > 20) { scene.remove(o); return false; } return true; });
+  spawnZ += move;
+  while (spawnZ > -LEN / 2) { spawnZ -= Math.max(16, 30 - speed * 8); addObstacle(spawnZ); }
+  sparks.forEach(s => { s.position.add(s.userData.v.clone().multiplyScalar(k)); s.userData.v.y -= .02 * k; s.userData.life -= .02 * k; s.scale.setScalar(Math.max(.01, s.userData.life)); });
+  sparks = sparks.filter(s => { if (s.userData.life <= 0) { scene.remove(s); return false; } return true; });
+  shake *= .9;
+  camera.position.set(car.position.x * .6 + (Math.random() - .5) * shake, 3.6 + (Math.random() - .5) * shake, 9);
+  camera.lookAt(car.position.x * .4, 1.6, -18);
+  sunMesh.position.x = camera.position.x * .9;
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+let orbScore = 0;
+const _reset = reset; reset = function () { orbScore = 0; _reset(); };
+(async () => { best = await store.get('best', 0); resize(); reset(); panel(false); requestAnimationFrame(loop); })();
+</script>
+</body>
+</html>

@@ -28,6 +28,81 @@
       "trending": 0
     },
     {
+      "id": "stack-tower-3d",
+      "name": "Stack Tower 3D",
+      "emoji": "🏗️",
+      "category": "games",
+      "description": "Stack sliding blocks as high as you can: overhangs are cut off and tumble down, perfect drops grow your tower.",
+      "prompt": "A 3D stacking game with three.js: blocks slide in from alternating sides, I tap to drop them, the part that overhangs is cut and falls, perfect drops give combos and grow the block back, rainbow colours and a camera that rises with the tower.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11385,
+      "sha256": "72a8123355b9b98d586e8a3befe6e7d0cad63105181ba4013748863b40e50e35",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "neon-drift-3d",
+      "name": "Neon Drift 3D",
+      "emoji": "🏎️",
+      "category": "games",
+      "description": "Race down a synthwave highway at sunset: drag to dodge neon barriers and grab glowing orbs.",
+      "prompt": "A 3D endless racer with three.js in a synthwave style: a neon grid highway, a striped sunset sun, wireframe mountains, a glowing car I steer by dragging, neon barriers to dodge, orbs to collect and speed that keeps rising.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 15682,
+      "sha256": "53c87b03a1d99cb1c5b9a84b6bb2b96a6d2a7f3779e24dd075d04543135d6d55",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "castle-siege-3d",
+      "name": "Castle Siege 3D",
+      "emoji": "🏰",
+      "category": "games",
+      "description": "Defend your castle wall: enemies march up the valley towards you and you shoot them down with your crossbow.",
+      "prompt": "A 3D castle defence game with three.js where I stand on the castle wall looking down a valley, soldiers, goblins, knights, ogres and bosses march towards me along the road, I tap to shoot crossbow bolts, and between waves I buy upgrades like more damage, faster reload, multiple bolts, fire bolts and wall repairs.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24794,
+      "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "would-you-rather",
       "name": "Would You Rather",
       "emoji": "🤔",
@@ -302,6 +377,31 @@
       ],
       "size": 5866,
       "sha256": "ecedbe79ef1196979347618f786a8ede871de20f32cdd91fb03cf9ff59e6d5c4",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "hoop-shot-3d",
+      "name": "Hoop Shot 3D",
+      "emoji": "🏀",
+      "category": "games",
+      "description": "Swipe up to shoot hoops on a 3D court: real bounces off the rim, swishes, streaks and a moving hoop.",
+      "prompt": "A 3D basketball shooting game with three.js: swipe up to throw, ball physics that bounce off the rim and backboard, a wooden court and crowd lights, 60 seconds, extra points for swishes and streaks, and the hoop starts moving after 10 points.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 15978,
+      "sha256": "d6a9df0386f111d3de07c04615c2e3873946d7f547e3a7372441a2a267f29cea",
       "downloads": 0,
       "trending": 0
     },

@@ -1,0 +1,14 @@
+{
+  "id": "stack-tower-3d",
+  "name": "Stack Tower 3D",
+  "emoji": "🏗️",
+  "category": "games",
+  "description": "Stack sliding blocks as high as you can: overhangs are cut off and tumble down, perfect drops grow your tower.",
+  "prompt": "A 3D stacking game with three.js: blocks slide in from alternating sides, I tap to drop them, the part that overhangs is cut and falls, perfect drops give combos and grow the block back, rainbow colours and a camera that rises with the tower.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

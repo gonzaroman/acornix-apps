@@ -30,6 +30,11 @@
       "base": 0,
       "count": 0
     },
+    "castle-siege-3d": {
+      "asset": 689103921,
+      "base": 0,
+      "count": 0
+    },
     "charades": {
       "asset": 689038539,
       "base": 0,
@@ -60,6 +65,11 @@
       "base": 0,
       "count": 0
     },
+    "hoop-shot-3d": {
+      "asset": 689103893,
+      "base": 0,
+      "count": 0
+    },
     "magic-8-ball": {
       "asset": 689038773,
       "base": 0,
@@ -77,6 +87,11 @@
     },
     "minesweeper": {
       "asset": 688998748,
+      "base": 0,
+      "count": 0
+    },
+    "neon-drift-3d": {
+      "asset": 689103848,
       "base": 0,
       "count": 0
     },
@@ -132,6 +147,11 @@
     },
     "solitaire": {
       "asset": 688999041,
+      "base": 0,
+      "count": 0
+    },
+    "stack-tower-3d": {
+      "asset": 689103786,
       "base": 0,
       "count": 0
     },
