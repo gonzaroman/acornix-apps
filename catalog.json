@@ -151,6 +151,31 @@
       "trending": 0
     },
     {
+      "id": "weather-now",
+      "name": "Weather Now",
+      "emoji": "🌦️",
+      "category": "weather",
+      "description": "Current weather, the next 24 hours and 7 days for your city, with an animated sky that follows the weather.",
+      "prompt": "A beautiful weather app using the free Open-Meteo API with no key. Use my location or let me search a city and save it. Show the current temperature big, feels like, wind, humidity and an animated background that changes with the weather and day or night, a swipeable hourly forecast for 24 hours and the next 7 days with highs and lows. Texts in Spanish if the phone is in Spanish, otherwise in English.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 35586,
+      "sha256": "4fdd87b5c829801775367384fd34a5eff410e9f6e1c048e05574132de175b995",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "unit-converter",
       "name": "Unit Converter",
       "emoji": "📏",
