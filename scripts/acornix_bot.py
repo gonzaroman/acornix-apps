@@ -42,15 +42,14 @@ def event():
     return json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
 
 
-def github(method, path, body=None, raw=False):
+def github(method, path, body=None, raw=False, auth=True):
+    """Calls the GitHub API. Gists are read without the workflow's token, which can't see users' gists."""
     url = path if path.startswith("http") else API + path
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(url, data=data, method=method, headers={
-        "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "acornix-apps-bot",
-    })
+    headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "acornix-apps-bot"}
+    if auth:
+        headers["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+    req = urllib.request.Request(url, data=data, method=method, headers=headers)
     with urllib.request.urlopen(req, timeout=60) as resp:
         payload = resp.read()
     if raw:
@@ -113,12 +112,12 @@ def parse_submission(body):
 
 def fetch_gist(gist_id, revision=None):
     """(owner, revision, {name: text}) of a gist, at a given revision or the latest one."""
-    gist = github("GET", f"/gists/{gist_id}" + (f"/{revision}" if revision else ""))
+    gist = github("GET", f"/gists/{gist_id}" + (f"/{revision}" if revision else ""), auth=False)
     files = {}
     for name, info in (gist.get("files") or {}).items():
         content = info.get("content")
         if info.get("truncated") or content is None:
-            content = github("GET", info["raw_url"], raw=True).decode("utf-8", errors="replace")
+            content = github("GET", info["raw_url"], raw=True, auth=False).decode("utf-8", errors="replace")
         files[name] = content
     owner = (gist.get("owner") or {}).get("login", "")
     version = revision or (gist.get("history") or [{}])[0].get("version", "")
