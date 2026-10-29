@@ -199,6 +199,31 @@
       "trending": 0
     },
     {
+      "id": "uv-index",
+      "name": "UV Index",
+      "emoji": "🌰",
+      "category": "weather",
+      "description": "Today's UV index as a colourful gauge, the hourly curve, the peak hour and how long until you burn for your skin type.",
+      "prompt": "A UV index app with the free Open-Meteo API and no key. Use my location or a searched city. Show today's UV index as a big colourful gauge, the hourly UV curve for today, the peak hour, when it is safe to be in the sun, and advice for sunscreen, hat and sunglasses for each level. Add a skin type picker to estimate minutes until sunburn. Tomorrow's max UV too.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 27508,
+      "sha256": "1a7e29e6af34de41e3642522997c9fdbdfc60a3f401b623cfceb2f31805e9d3a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "truth-or-dare",
       "name": "Truth or Dare",
       "emoji": "🎲",

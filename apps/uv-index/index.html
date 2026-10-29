@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f5f7fa">
+<title>Solaria · Índice UV</title>
+<style>
+:root{--bg:#f5f7fa;--ink:#172a45;--muted:#738096;--line:#e7ecf2;--orange:#ffad42;--blue:#386ce8;--accent:#ef9b20}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:active{transform:scale(.98)}button:disabled{opacity:.55;cursor:wait}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8fb6ff;outline-offset:3px}svg{display:block}main{max-width:540px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{display:flex;gap:10px;align-items:center}.brand-icon{width:43px;height:43px;background:#fff0d3;color:#e89c25;border-radius:15px;display:grid;place-items:center}.brand-name{font-size:24px;font-weight:800;letter-spacing:-1px}.brand-sub{font-size:11px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}.iconbtn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:14px;min-width:44px;height:44px;display:grid;place-items:center}.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.locationbar{display:flex;align-items:center;gap:9px;margin-bottom:14px}.locationbar>.icon{width:19px;color:var(--blue);flex-shrink:0}.place{font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.change{border:0;background:none;color:var(--blue);font-size:13px;font-weight:650;min-height:44px;padding:0 4px}.panel{background:white;border:1px solid var(--line);border-radius:25px;box-shadow:0 6px 22px #253b5610;padding:20px;margin-bottom:15px}.searchbox{padding:16px}.searchrow{display:flex;gap:8px}.searchrow input{width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;padding:12px;background:#f8fafc;color:var(--ink)}.primary{border:0;border-radius:12px;background:var(--blue);color:white;padding:11px 16px;font-weight:650;min-height:46px}.geo{width:100%;border:0;background:#edf3ff;color:var(--blue);border-radius:12px;min-height:46px;margin-top:10px;display:flex;justify-content:center;align-items:center;gap:8px;font-weight:650}.result{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:white;color:var(--ink);padding:13px 4px;min-height:48px}.result small{display:block;color:var(--muted)}.searchnote{font-size:13px;color:var(--muted);padding-top:10px}.hero{padding:20px 20px 16px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#fff9eb 0,white 70%)}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}.herotop{display:flex;justify-content:space-between;align-items:center}.date{font-size:12px;color:var(--muted)}.gauge{height:204px;position:relative;margin:4px auto 0;max-width:340px}.gauge svg{width:100%;height:100%}.readout{position:absolute;inset:68px 0 auto;text-align:center}.uvvalue{font-size:65px;line-height:1.1;font-weight:800;letter-spacing:-4px}.uvunit{font-size:12px;color:var(--muted);margin-top:1px}.level{display:table;margin:10px auto 0;padding:4px 14px;border-radius:30px;font-size:12px;font-weight:750;background:#fff0d7;color:#9c620a}.summary{text-align:center;font-size:13px;color:var(--muted);margin:1px 0 16px}.stats{border-top:1px solid var(--line);padding-top:15px;display:grid;grid-template-columns:1fr 1fr}.stat{text-align:center}.stat+.stat{border-left:1px solid var(--line)}.statlabel{font-size:11px;color:var(--muted);margin-bottom:4px}.statvalue{font-weight:750;font-size:19px}.statvalue small{font-size:12px;font-weight:500;color:var(--muted)}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}h2{font-size:16px;letter-spacing:-.3px;margin:0}.tiny{font-size:11px;color:var(--muted)}.chart{width:100%;height:auto;overflow:visible}.legend{display:flex;gap:13px;align-items:center;font-size:11px;color:var(--muted);margin-top:5px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--orange)}.dash{display:inline-block;width:13px;border-top:2px dashed #a7b9a5;margin-right:5px;vertical-align:middle}.lowbox{display:flex;gap:12px;margin-top:16px;padding:13px;border-radius:15px;background:#eff8f3;color:#286449}.lowbox .icon{flex-shrink:0;margin-top:2px}.lowbox strong{display:block;font-size:13px}.lowbox p{margin:3px 0 0;font-size:12px}.advice{display:grid;gap:13px}.adviceitem{display:flex;align-items:center;gap:12px}.adviceicon{width:39px;height:39px;border-radius:12px;background:#fff6e5;display:grid;place-items:center;flex-shrink:0;color:#c38a2a}.adviceitem strong{font-size:13px}.adviceitem p{margin:0;font-size:12px;color:var(--muted)}.skinintro{font-size:12px;color:var(--muted);margin:0 0 12px}.skinselect{position:relative;display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:12px;background:#f6f8fb;border:1px solid var(--line)}.skincolor{width:22px;height:22px;flex-shrink:0;border:2px solid #ffffff;border-radius:50%;box-shadow:0 0 0 1px #0001}select{width:100%;min-width:0;background:transparent;border:0;color:var(--ink);height:49px;font-size:13px}.burn{display:flex;align-items:center;gap:13px;margin:15px 0 12px}.burn .icon{width:33px;height:33px;color:#ed9b38}.burn strong{font-size:27px;letter-spacing:-1px}.burn span{display:block;font-size:11px;color:var(--muted)}.disclaimer{font-size:11px;line-height:1.6;color:var(--muted);margin:0}.tomorrow{display:flex;align-items:center;gap:13px;background:#edf2ff;border-color:#e0e8ff}.tomorrow>.icon{color:#7e94d9;width:37px;height:37px;flex-shrink:0}.tomorrowtext{flex:1}.tomorrowtext strong{font-size:14px}.tomorrowtext p{font-size:12px;color:var(--muted);margin:2px 0 0}.tomorrowuv{font-size:30px;font-weight:800;letter-spacing:-1px}.tomorrowuv span{display:block;font-size:10px;font-weight:500;letter-spacing:0;text-align:center;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:11px;padding:5px 8px}footer a{color:inherit}.status{padding:11px 14px;background:#eaf1ff;color:#47628c;border-radius:13px;font-size:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px}.status.error{background:#fff1e8;color:#915222}.status button{border:0;color:inherit;background:#ffffffa0;border-radius:8px;min-height:36px;padding:5px 10px;font-weight:700}.empty{text-align:center;padding:33px 18px}.empty .icon{width:65px;height:65px;color:#f1aa3f;margin:0 auto 15px}.empty h2{font-size:22px}.empty p{color:var(--muted);font-size:14px}.hidden{display:none!important}.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:no-preference){.panel{animation:appear .4s ease both}@keyframes appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}} @media(max-width:350px){main{padding-left:12px;padding-right:12px}.panel{padding:16px}.gauge{height:190px}.readout{top:64px}.uvvalue{font-size:57px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 6a8 8 0 0 1 13 2M5 16a8 8 0 0 0 13 2"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+<symbol id="bottle" viewBox="0 0 24 24"><path d="M9 3h6v4H9zM8 7h8l2 4v10H6V11l2-4Z"/><path d="M10 14h4m-2-2v4"/></symbol>
+<symbol id="hat" viewBox="0 0 24 24"><path d="m6 15 2-9c2-2 6-2 8 0l2 9M7 12h10"/><ellipse cx="12" cy="17" rx="10" ry="3"/></symbol>
+<symbol id="glasses" viewBox="0 0 24 24"><path d="M2 12h8v3a4 4 0 0 1-8 0v-3Zm12 0h8v3a4 4 0 0 1-8 0v-3Zm-4 1c1-2 3-2 4 0M2 12l2-5m18 5-2-5"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6m-3 0v3"/></symbol>
+</defs></svg>
+<main>
+<header><div class="brand"><div class="brand-icon"><svg class="icon"><use href="#sun"/></svg></div><div><div class="brand-name">solaria</div><div class="brand-sub">Disfruta el sol, cuídate</div></div></div><button id="refreshBtn" class="iconbtn" aria-label="Actualizar pronóstico"><svg class="icon" id="refreshIcon"><use href="#refresh"/></svg></button></header>
+<div class="locationbar"><svg class="icon"><use href="#pin"/></svg><span class="place" id="place">Elige tu ubicación</span><button class="change" id="changeBtn" aria-expanded="true">Cambiar</button></div>
+<section class="panel searchbox" id="searchPanel">
+<form id="searchForm" class="searchrow"><input id="cityInput" placeholder="Busca una ciudad…" aria-label="Nombre de la ciudad" autocomplete="off" enterkeyhint="search"><button class="primary" id="searchBtn" type="submit">Buscar</button></form>
+<button class="geo" id="geoBtn"><svg class="icon"><use href="#pin"/></svg>Usar mi ubicación</button><div id="results" aria-live="polite"></div>
+</section>
+<div id="status" class="status hidden" role="status"></div>
+<div id="empty" class="panel empty"><svg class="icon"><use href="#sun"/></svg><h2>Tu día, bajo el sol</h2><p>Busca una ciudad o usa tu ubicación para saber cuándo protegerte.</p><p class="disclaimer">Sin cuenta y sin claves. Tu ubicación solo se utiliza para consultar el pronóstico.</p></div>
+<div id="dashboard" class="hidden">
+<section class="panel hero">
+<div class="herotop"><span class="eyebrow">Índice UV · Ahora</span><span class="date" id="todayDate"></span></div>
+<div class="gauge" role="img" id="gauge" aria-label="Índice ultravioleta">
+<svg viewBox="0 0 320 200" aria-hidden="true"><g id="gaugeSegments"></g><circle id="gaugeDot" cx="25" cy="153" r="8" fill="#172a45" stroke="white" stroke-width="3"/><text x="20" y="179" font-size="11" fill="#8793a3">0</text><text x="280" y="179" font-size="11" fill="#8793a3">12+</text></svg>
+<div class="readout"><div id="uvValue" class="uvvalue">—</div><div class="uvunit">índice ultravioleta</div><div id="level" class="level">—</div></div>
+</div>
+<p class="summary" id="summary"></p>
+<div class="stats"><div class="stat"><div class="statlabel">Máximo de hoy</div><div class="statvalue" id="maxToday"></div></div><div class="stat"><div class="statlabel">Hora de mayor UV</div><div class="statvalue" id="peakTime"></div></div></div>
+</section>
+<section class="panel">
+<div class="sectionhead"><h2>El sol, hora a hora</h2><span class="tiny">Hora del lugar</span></div>
+<svg id="chart" class="chart" viewBox="0 0 360 168" role="img" aria-label="Curva del índice UV de hoy"></svg>
+<div class="legend"><span><i class="dot"></i>Pronóstico UV</span><span><i class="dash"></i>Umbral de protección: 3</span></div>
+<div class="lowbox"><svg class="icon"><use href="#shield"/></svg><div><strong>Horas de menor exposición</strong><p id="lowHours"></p><p>UV menor de 3 no significa riesgo cero.</p></div></div>
+</section>
+<section class="panel">
+<div class="sectionhead"><h2>Tu protección ahora</h2><span id="adviceLevel" class="tiny"></span></div>
+<div class="advice">
+<div class="adviceitem"><div class="adviceicon"><svg class="icon"><use href="#bottle"/></svg></div><div><strong id="spfTitle"></strong><p id="spfText"></p></div></div>
+<div class="adviceitem"><div class="adviceicon"><svg class="icon"><use href="#hat"/></svg></div><div><strong id="hatTitle"></strong><p id="hatText"></p></div></div>
+<div class="adviceitem"><div class="adviceicon"><svg class="icon"><use href="#glasses"/></svg></div><div><strong>Gafas con filtro UV400</strong><p id="glassesText"></p></div></div>
+</div>
+</section>
+<section class="panel">
+<div class="sectionhead"><h2>Conoce tu piel</h2><svg class="icon" style="color:#bd8b64"><use href="#sun"/></svg></div>
+<p class="skinintro">Elige cómo reacciona tu piel al sol, sin protección.</p>
+<div class="skinselect"><span class="skincolor" id="skinColor"></span><select id="skin" aria-label="Fototipo de piel">
+<option value="1">I · Muy clara · Siempre se quema</option><option value="2">II · Clara · Se quema fácilmente</option><option value="3">III · Intermedia · A veces se quema</option><option value="4">IV · Morena · Rara vez se quema</option><option value="5">V · Oscura · Casi nunca se quema</option><option value="6">VI · Muy oscura · Muy resistente</option>
+</select></div>
+<div class="burn"><svg class="icon"><use href="#clock"/></svg><div><strong id="burnTime">—</strong><span id="burnLabel">hasta una posible quemadura, con el UV actual</span></div></div>
+<p class="disclaimer">Estimación orientativa para piel sin protección y UV constante; no es un tiempo seguro ni una recomendación de exposición. Medicación, altitud, agua y sensibilidad pueden aumentar el riesgo. Ningún tono de piel es inmune al daño solar.</p>
+</section>
+<section class="panel tomorrow"><svg class="icon"><use href="#sun"/></svg><div class="tomorrowtext"><strong>Un vistazo a mañana</strong><p id="tomorrowLevel"></p></div><div class="tomorrowuv" id="tomorrowUV"></div></section>
+</div>
+<footer><div id="updated"></div>Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Pronóstico, no medición en directo.<br>La sombra y la ropa también protegen. Cuida especialmente a los niños.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const store={
+ async get(k){if(window.Acornix?.db)return Acornix.db.get(k);try{return JSON.parse(localStorage.getItem('solaria_'+k))}catch{return null}},
+ async set(k,v){if(window.Acornix?.db)return Acornix.db.set(k,v);localStorage.setItem('solaria_'+k,JSON.stringify(v))}
+};
+let locationData=null,data=null,skin=2,busy=false,requestId=0,searchId=0;
+const levels=[
+{name:'Bajo',color:'#59a779',bg:'#e9f5ed',text:'#28784b'},
+{name:'Moderado',color:'#e6b73b',bg:'#fff5d6',text:'#967019'},
+{name:'Alto',color:'#ee9441',bg:'#fff0df',text:'#ab601d'},
+{name:'Muy alto',color:'#e56d79',bg:'#ffebee',text:'#b34254'},
+{name:'Extremo',color:'#a080cd',bg:'#f1e9fa',text:'#7f53a3'}
+];
+const levelFor=u=>levels[u<3?0:u<6?1:u<8?2:u<11?3:4];
+function status(text,error=false,retry=false){const el=$('status');el.replaceChildren();el.className='status'+(error?' error':'')+(text?'':' hidden');if(text){let span=document.createElement('span');span.textContent=text;el.append(span);if(retry){let b=document.createElement('button');b.textContent='Reintentar';b.onclick=()=>locationData?loadWeather(locationData):$('searchPanel').classList.remove('hidden');el.append(b)}}}
+async function save(k,v){try{await store.set(k,v)}catch{status('No se pudo guardar en este dispositivo. Tus datos siguen en pantalla.',true)}}
+async function fetchJSON(url){const c=new AbortController(),timer=setTimeout(()=>c.abort(),20000);try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw Error('HTTP');const j=await r.json();if(j.error)throw Error(j.reason);return j}finally{clearTimeout(timer)}}
+function localNow(){const tz=data?.forecast?.timezone||'UTC';const parts=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());const o=Object.fromEntries(parts.map(p=>[p.type,p.value]));return{date:`${o.year}-${o.month}-${o.day}`,hour:Number(o.hour)+Number(o.minute)/60}}
+function hourNumber(t){return Number(t.slice(11,13))+Number(t.slice(14,16))/60}
+function hh(h){return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.round((h%1)*60)).padStart(2,'0')}
+function todayInfo(){
+ const now=localNow(),a=data.air.hourly;
+ const points=a.time.map((t,i)=>({h:hourNumber(t),uv:a.uv_index[i]})).filter((p,i)=>a.time[i].startsWith(now.date)&&Number.isFinite(p.uv));
+ if(!points.length)return null;
+ const prev=[...points].reverse().find(p=>p.h<=now.hour)||points[0],next=points.find(p=>p.h>now.hour);
+ const current=next?prev.uv+(next.uv-prev.uv)*Math.max(0,(now.hour-prev.h)/(next.h-prev.h)):prev.uv;
+ const daily=data.forecast.daily,idx=daily.time.indexOf(now.date);
+ const peak=points.reduce((a,b)=>b.uv>a.uv?b:a,points[0]);
+ return{now,points,current:Math.max(0,current),daily,idx,peak};
+}
+function arc(a,b){const p=v=>{const t=Math.PI+v/12*Math.PI;return[160+135*Math.cos(t),153+135*Math.sin(t)]};const s=p(a),e=p(b);return`M ${s[0]} ${s[1]} A 135 135 0 0 1 ${e[0]} ${e[1]}`}
+$('gaugeSegments').innerHTML=[[0,3],[3,6],[6,8],[8,11],[11,12]].map(([a,b],i)=>`<path d="${arc(a+.055,b-.055)}" fill="none" stroke="${levels[i].color}" stroke-width="13" stroke-linecap="round"/>`).join('');
+function render(){
+ $('place').textContent=locationData?.name||'Elige tu ubicación';
+ $('skin').value=String(skin);
+ $('skinColor').style.background=['#f7deca','#eec5a4','#d5a17b','#b67d53','#895734','#513525'][skin-1];
+ if(!data)return;
+ const info=todayInfo();if(!info){$('dashboard').classList.add('hidden');$('empty').classList.remove('hidden');status('El pronóstico guardado ya no cubre hoy. Actualízalo para ver los datos.',true,true);return}
+ $('dashboard').classList.remove('hidden');$('empty').classList.add('hidden');
+ const{now,points,current:u,daily,idx,peak}=info,lev=levelFor(u);
+ $('todayDate').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(now.date+'T12:00:00Z'));
+ $('uvValue').textContent=u.toFixed(1).replace('.',',');
+ $('level').textContent=lev.name;$('level').style.background=lev.bg;$('level').style.color=lev.text;
+ $('gauge').setAttribute('aria-label',`Índice UV actual estimado: ${u.toFixed(1)}, ${lev.name}`);
+ const angle=Math.PI+Math.min(u,12)/12*Math.PI;
+ $('gaugeDot').setAttribute('cx',160+135*Math.cos(angle));$('gaugeDot').setAttribute('cy',153+135*Math.sin(angle));
+ $('summary').textContent=u<.1?'UV prácticamente nulo en este momento.':u<3?'Radiación baja. Disfruta del día con cuidado.':u<6?'Protégete si vas a estar al aire libre.':u<8?'Busca la sombra y limita la exposición.':'Evita el sol directo: la radiación es intensa.';
+ const max=idx>=0&&Number.isFinite(daily.uv_index_max[idx])?daily.uv_index_max[idx]:peak.uv;
+ $('maxToday').textContent=max.toFixed(1).replace('.',',')+' · '+levelFor(max).name;
+ $('peakTime').textContent=peak.uv>.05?hh(peak.h):'Sin pico';
+ drawChart(points,now.hour);
+ const sunrise=idx>=0?hourNumber(daily.sunrise[idx]):6,sunset=idx>=0?hourNumber(daily.sunset[idx]):18;
+ let intervals=[];
+ for(let i=0;i<points.length-1;i++){
+ const a=points[i],b=points[i+1];let start=Math.max(a.h,sunrise),end=Math.min(b.h,sunset);
+ if(start>=end)continue;
+ if(a.uv>=3&&b.uv>=3)continue;
+ if((a.uv<3)!==(b.uv<3)){const cross=a.h+(3-a.uv)/(b.uv-a.uv)*(b.h-a.h);if(a.uv<3)end=Math.min(end,cross);else start=Math.max(start,cross)}
+ if(end<=start)continue;
+ const last=intervals[intervals.length-1];if(last&&Math.abs(last[1]-start)<.01)last[1]=end;else intervals.push([start,end]);
+ }
+ const fmt=h=>hh(Math.round(h*60)/60);
+ $('lowHours').textContent=intervals.length?intervals.map(([a,b])=>fmt(a)+'–'+fmt(b)).join(' y ')+'. Horas de luz con UV bajo.':'No se prevén franjas de luz con UV menor de 3.';
+ $('adviceLevel').textContent='UV '+lev.name.toLowerCase();
+ $('spfTitle').textContent=u<3?'Protector si la exposición es prolongada':u<6?'Protector FPS 30 o superior':'Protector FPS 50+';
+ $('spfText').textContent=u<3?'FPS 30+ si tienes piel sensible o vas a pasar tiempo fuera.':'Amplio espectro UVA/UVB. Reaplica cada 2 h y tras bañarte o sudar.';
+ $('hatTitle').textContent=u<3?'Sombrero para estancias largas':u<8?'Sombrero de ala ancha':'Sombrero, ropa y sombra';
+ $('hatText').textContent=u<3?'Una capa extra de cuidado para cara, orejas y cuello.':u<8?'Cubre cara, orejas y cuello; mejor que una gorra.':'Evita el sol directo, especialmente en torno al pico UV.';
+ $('glassesText').textContent=u<3?'Úsalas con luz diurna, también si hay nubes.':'Imprescindibles al aire libre. Mejor si cubren los laterales.';
+ const minutes=[200,250,350,450,600,1000][skin-1]/(1.5*Math.max(.001,u));
+ $('burnTime').textContent=u<.1?'UV casi nulo':minutes>180?'Más de 180 min':'≈ '+Math.max(1,Math.round(minutes))+' min';
+ $('burnLabel').textContent=u<.1?'No se estima un tiempo con este nivel de UV':'hasta una posible quemadura, con el UV actual';
+ const tomorrowIdx=daily.time.indexOf(now.date)+1,tom=idx>=0?daily.uv_index_max[tomorrowIdx]:null;
+ $('tomorrowUV').replaceChildren();$('tomorrowLevel').textContent=Number.isFinite(tom)?'Máximo previsto · '+levelFor(tom).name:'Pronóstico aún no disponible';
+ $('tomorrowUV').append(document.createTextNode(Number.isFinite(tom)?tom.toFixed(1).replace('.',','):'—'));
+ const unit=document.createElement('span');unit.textContent='índice UV';$('tomorrowUV').append(unit);
+ const stamp=new Intl.DateTimeFormat('es',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short',timeZone:data.forecast.timezone}).format(new Date(data.fetchedAt));
+ $('updated').textContent='Actualizado: '+stamp+' · Hora del lugar';
+}
+function drawChart(points,currentHour){
+ const W=360,L=26,R=348,T=12,B=134,max=Math.max(6,Math.ceil(Math.max(...points.map(p=>p.uv))/3)*3);
+ const x=h=>L+(R-L)*h/24,y=u=>B-(B-T)*u/max;
+ const path=points.map((p,i)=>(i?'L':'M')+x(p.h).toFixed(2)+' '+y(p.uv).toFixed(2)).join(' ');
+ let s=`<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffbd59" stop-opacity=".4"/><stop offset="1" stop-color="#ffbd59" stop-opacity=".03"/></linearGradient></defs>`;
+ for(let v=0;v<=max;v+=3)s+=`<line x1="${L}" x2="${R}" y1="${y(v)}" y2="${y(v)}" stroke="${v===3?'#a7b9a5':'#edf0f4'}" ${v===3?'stroke-dasharray="4 4"':''}/><text x="3" y="${y(v)+4}" font-size="10" fill="#8995a4">${v}</text>`;
+ s+=`<path d="${path} L ${x(points.at(-1).h)} ${B} L ${x(points[0].h)} ${B} Z" fill="url(#fill)"/><path d="${path}" stroke="#f2a23c" stroke-width="2.8" fill="none" stroke-linejoin="round"/>`;
+ for(const h of[0,6,12,18,24])s+=`<text x="${x(h)}" y="155" text-anchor="middle" font-size="10" fill="#8995a4">${h} h</text>`;
+ s+=`<line x1="${x(currentHour)}" x2="${x(currentHour)}" y1="${T}" y2="${B}" stroke="#7088b4" stroke-width="1" stroke-dasharray="3 4"/><rect x="${Math.min(R-32,Math.max(L,x(currentHour)-17))}" y="0" width="34" height="15" rx="5" fill="#eef3fb"/><text x="${Math.min(R-15,Math.max(L+17,x(currentHour)))}" y="11" font-size="8" text-anchor="middle" fill="#5474a5">Ahora</text>`;
+ $('chart').innerHTML=s;
+}
+async function loadWeather(loc){
+ const id=++requestId;busy=true;$('refreshIcon').classList.add('spin');$('refreshBtn').disabled=true;status('Consultando la radiación solar…');
+ try{
+ const coords=`latitude=${encodeURIComponent(loc.lat)}&longitude=${encodeURIComponent(loc.lon)}`;
+ const [air,forecast]=await Promise.all([
+ fetchJSON('https://air-quality-api.open-meteo.com/v1/air-quality?'+coords+'&hourly=uv_index&timezone=auto&forecast_days=3'),
+ fetchJSON('https://api.open-meteo.com/v1/forecast?'+coords+'&daily=uv_index_max,sunrise,sunset&timezone=auto&forecast_days=3')
+ ]);
+ if(id!==requestId)return;
+ if(!air.hourly?.uv_index?.some(Number.isFinite)||!forecast.daily?.time)throw Error('Datos incompletos');
+ data={air,forecast,fetchedAt:Date.now()};locationData=loc;
+ status('');render();$('searchPanel').classList.add('hidden');$('changeBtn').setAttribute('aria-expanded','false');
+ await save('state',{location:loc,data,skin});
+ }catch(e){if(id===requestId)status('No pudimos obtener el pronóstico. Revisa tu conexión e inténtalo de nuevo. Los datos anteriores, si los hay, siguen visibles.',true,true)}
+ finally{if(id===requestId){busy=false;$('refreshIcon').classList.remove('spin');$('refreshBtn').disabled=false}}
+}
+$('searchForm').onsubmit=async e=>{
+ e.preventDefault();const q=$('cityInput').value.trim();if(q.length<2){$('results').textContent='Escribe al menos dos letras.';return}
+ const id=++searchId;$('searchBtn').disabled=true;$('results').textContent='Buscando ciudades…';
+ try{
+ const r=await fetchJSON('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=6&language=es&format=json');if(id!==searchId)return;
+ $('results').replaceChildren();
+ if(!r.results?.length){$('results').textContent='No encontramos esa ciudad. Prueba otro nombre.';return}
+ for(const city of r.results){const b=document.createElement('button');b.type='button';b.className='result';b.append(document.createTextNode(city.name));const sub=document.createElement('small');sub.textContent=[city.admin1,city.country].filter(Boolean).join(' · ');b.append(sub);b.onclick=()=>loadWeather({name:city.name+(city.country?' · '+city.country:''),lat:city.latitude,lon:city.longitude});$('results').append(b)}
+ }catch{$('results').textContent='No se pudo buscar. Revisa tu conexión y vuelve a pulsar Buscar.'}finally{if(id===searchId)$('searchBtn').disabled=false}
+};
+$('geoBtn').onclick=()=>{
+ if(!navigator.geolocation){status('La ubicación no está disponible. Busca tu ciudad para continuar.',true);return}
+ $('geoBtn').disabled=true;status('Buscando tu ubicación…');
+ navigator.geolocation.getCurrentPosition(async pos=>{
+ $('geoBtn').disabled=false;
+ const lat=pos.coords.latitude,lon=pos.coords.longitude;
+ await loadWeather({name:'Mi ubicación · '+lat.toFixed(2)+'°, '+lon.toFixed(2)+'°',lat,lon});
+ },err=>{$('geoBtn').disabled=false;status(err.code===1?'Permiso de ubicación denegado. Puedes buscar tu ciudad.':'No logramos localizarte. Activa la ubicación o busca una ciudad.',true)}, {enableHighAccuracy:false,timeout:15000,maximumAge:300000});
+};
+$('changeBtn').onclick=()=>{const hidden=$('searchPanel').classList.toggle('hidden');$('changeBtn').setAttribute('aria-expanded',String(!hidden));if(!hidden)$('cityInput').focus()};
+$('refreshBtn').onclick=()=>{if(locationData)loadWeather(locationData);else{$('searchPanel').classList.remove('hidden');$('cityInput').focus()}};
+$('skin').onchange=async()=>{skin=Number($('skin').value);render();await save('skin',skin);if(locationData&&data)await save('state',{location:locationData,data,skin})};
+async function reload(initial=false){
+ try{const [state,savedSkin]=await Promise.all([store.get('state'),store.get('skin')]);
+ skin=Number(savedSkin||state?.skin)||2;if(skin<1||skin>6)skin=2;
+ if(state?.location){locationData=state.location;data=state.data;$('searchPanel').classList.add('hidden');$('changeBtn').setAttribute('aria-expanded','false');render();if(initial)loadWeather(locationData)}else render();
+ }catch{status('No pudimos recuperar los datos guardados. Puedes buscar una ciudad para empezar.',true)}
+}
+window.addEventListener('acornixdata',()=>reload(false));
+setInterval(()=>{if(data){render();if(!busy&&Date.now()-data.fetchedAt>30*60*1000)loadWeather(locationData)}},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&data){render();if(!busy&&Date.now()-data.fetchedAt>30*60*1000)loadWeather(locationData)}});
+reload(true);
+</script>
+</body>
+</html>
