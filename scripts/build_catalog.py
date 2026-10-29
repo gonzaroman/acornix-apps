@@ -24,6 +24,8 @@ CATEGORIES = {
     "reference", "health-fitness", "sports", "music", "photo-video", "graphics-design", "lifestyle",
     "food-drink", "travel", "kids", "shopping", "weather",
 }
+# Apps published from these accounts are Acornix's own: the app shows them as "by Acornix".
+OFFICIAL = {"gonzaroman"}
 REQUIRED = ["id", "name", "emoji", "category", "description", "author", "version", "added", "updated"]
 MAX_APP_BYTES = 2 * 1024 * 1024
 ID = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -100,6 +102,7 @@ def build():
             "added": meta["added"],
             "updated": meta["updated"],
             "featured": bool(meta.get("featured", False)),
+            "official": meta["author"].lower() in OFFICIAL,
             "tags": [t for t, rx in TAGS.items() if rx.search(code)],
             "files": files,
             "size": size,
