@@ -1,0 +1,15 @@
+{
+  "id": "collage",
+  "name": "Collage",
+  "emoji": "🌰",
+  "category": "photo-video",
+  "description": "Put up to six photos together with eight layouts, four shapes for posts and stories, background colours, spacing and rounded corners.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 13
+}

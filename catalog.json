@@ -2773,6 +2773,29 @@
       "trending": 0
     },
     {
+      "id": "collage",
+      "name": "Collage",
+      "emoji": "🌰",
+      "category": "photo-video",
+      "description": "Put up to six photos together with eight layouts, four shapes for posts and stories, background colours, spacing and rounded corners.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9319,
+      "sha256": "0784a95711811b2a1c95032cebecb52b32d121bd69f39791c3031954a7640e0e",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "charades",
       "name": "Charades",
       "emoji": "🎭",

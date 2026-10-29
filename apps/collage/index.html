@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Collage</title>
+<style>
+  :root { --bg:#f6f3ef; --card:#fff; --ink:#22201d; --muted:#857d73; --a:#e64980; --line:#ebe4da; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:10px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:22px; flex:1; }
+  .top button { padding:10px 16px; border-radius:14px; background:var(--a); color:#fff; font-weight:900; }
+  .stage { flex:1; min-height:0; display:grid; place-items:center; }
+  canvas { max-width:100%; max-height:100%; border-radius:6px; box-shadow:0 10px 30px #22201d22; touch-action:none; background:#fff; }
+  .row { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; align-items:center; }
+  .row::-webkit-scrollbar { display:none; }
+  .lay { flex:none; width:52px; height:52px; padding:5px; border-radius:12px; background:var(--card); border:2px solid transparent; }
+  .lay.on { border-color:var(--a); }
+  .lay svg { width:100%; height:100%; }
+  .ratio, .col { flex:none; padding:8px 12px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; }
+  .ratio.on { background:var(--ink); color:#fff; }
+  .col { width:34px; height:34px; padding:0; border-radius:50%; border:2px solid var(--line); }
+  .col.on { outline:3px solid var(--a); }
+  .sl { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:800; color:var(--muted); }
+  .sl input { flex:1; accent-color:var(--a); }
+  .hint { text-align:center; color:var(--muted); font-size:12px; font-weight:700; }
+  input[type=file] { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🖼️ <span id="ttl"></span></h1><button id="save"></button></div>
+  <div class="stage"><canvas id="c"></canvas></div>
+  <div class="hint" id="hint"></div>
+  <div class="row" id="layouts"></div>
+  <div class="row" id="opts"></div>
+  <div class="sl"><span id="lGap"></span><input type="range" id="gap" min="0" max="40" value="12"><span id="lRad"></span><input type="range" id="rad" min="0" max="60" value="12"></div>
+  <input type="file" id="file" accept="image/*">
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Collage', save:'Guardar', hint:'Toca un hueco para poner una foto · arrastra para encuadrar · pellizca para acercar', gap:'Margen', rad:'Esquinas', saved:'Guardado en esta app', add:'＋ Foto' }
+ : { title:'Collage', save:'Save', hint:'Tap a space to add a photo · drag to frame it · pinch to zoom', gap:'Spacing', rad:'Corners', saved:'Saved in this app', add:'＋ Photo' };
+// Layouts as cells [x, y, w, h] in a 0..1 square.
+const LAYOUTS = [
+  [[0, 0, .5, 1], [.5, 0, .5, 1]], [[0, 0, 1, .5], [0, .5, 1, .5]], [[0, 0, .5, 1], [.5, 0, .5, .5], [.5, .5, .5, .5]], [[0, 0, 1, .55], [0, .55, .5, .45], [.5, .55, .5, .45]],
+  [[0, 0, .5, .5], [.5, 0, .5, .5], [0, .5, .5, .5], [.5, .5, .5, .5]], [[0, 0, .6, .6], [.6, 0, .4, .3], [.6, .3, .4, .3], [0, .6, .3, .4], [.3, .6, .3, .4], [.6, .6, .4, .4]],
+  [[0, 0, 1 / 3, .5], [1 / 3, 0, 1 / 3, .5], [2 / 3, 0, 1 / 3, .5], [0, .5, 1 / 3, .5], [1 / 3, .5, 1 / 3, .5], [2 / 3, .5, 1 / 3, .5]], [[0, 0, 1, 1 / 3], [0, 1 / 3, 1, 1 / 3], [0, 2 / 3, 1, 1 / 3]],
+];
+const RATIOS = [['1:1', 1], ['4:5', .8], ['9:16', 9 / 16], ['3:2', 1.5]], COLORS = ['#ffffff', '#111111', '#f8e1e7', '#fff3bf', '#d3f9d8', '#d0ebff', '#e64980'];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+let lay = 4, ratio = 0, bg = 0, cells = [], pick = -1;
+['ttl', 'save', 'hint', 'lGap', 'lRad'].forEach((id, i) => $(id).textContent = [T.title, T.save, T.hint, T.gap, T.rad][i]);
+// Each slot keeps its image plus pan/zoom.
+let slots = Array.from({ length: 6 }, () => ({ img: null, ox: 0, oy: 0, z: 1 }));
+const OUT = 1600;
+function size() { const r = RATIOS[ratio][1]; cv.width = r >= 1 ? OUT : OUT * r; cv.height = r >= 1 ? OUT / r : OUT; }
+function rr(x, y, w, h, r) { cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath(); }
+function draw(forExport) {
+  const W = cv.width, H = cv.height, g = +$('gap').value * W / 400, r = +$('rad').value * W / 400;
+  cx.fillStyle = COLORS[bg]; cx.fillRect(0, 0, W, H);
+  cells = LAYOUTS[lay].map(([x, y, w, h]) => ({ x: x * W + g / (x ? 2 : 1), y: y * H + g / (y ? 2 : 1), w: w * W - g / (x ? 2 : 1) - g / (x + w < .999 ? 2 : 1), h: h * H - g / (y ? 2 : 1) - g / (y + h < .999 ? 2 : 1) }));
+  cells.forEach((c, i) => {
+    const s = slots[i]; cx.save(); rr(c.x, c.y, c.w, c.h, Math.min(r, c.w / 2, c.h / 2)); cx.clip();
+    if (s.img) { const k = Math.max(c.w / s.img.width, c.h / s.img.height) * s.z, iw = s.img.width * k, ih = s.img.height * k; s.ox = Math.max(-(iw - c.w) / 2, Math.min((iw - c.w) / 2, s.ox)); s.oy = Math.max(-(ih - c.h) / 2, Math.min((ih - c.h) / 2, s.oy)); cx.drawImage(s.img, c.x + (c.w - iw) / 2 + s.ox, c.y + (c.h - ih) / 2 + s.oy, iw, ih); }
+    else if (!forExport) { cx.fillStyle = bg === 1 ? '#2a2a2a' : '#00000010'; cx.fillRect(c.x, c.y, c.w, c.h); cx.fillStyle = bg === 1 ? '#aaa' : '#857d73'; cx.font = `800 ${W / 24}px system-ui`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(T.add, c.x + c.w / 2, c.y + c.h / 2); }
+    cx.restore();
+  });
+}
+function ui() {
+  $('layouts').innerHTML = LAYOUTS.map((L, i) => `<button class="lay ${lay === i ? 'on' : ''}" data-i="${i}"><svg viewBox="0 0 40 40">${L.map(([x, y, w, h]) => `<rect x="${x * 40 + 1}" y="${y * 40 + 1}" width="${w * 40 - 2}" height="${h * 40 - 2}" rx="2" fill="${lay === i ? '#e64980' : '#cfc6ba'}"/>`).join('')}</svg></button>`).join('');
+  $('layouts').querySelectorAll('.lay').forEach(b => b.onclick = () => { lay = +b.dataset.i; ui(); draw(); });
+  $('opts').innerHTML = RATIOS.map(([n], i) => `<button class="ratio ${ratio === i ? 'on' : ''}" data-r="${i}">${n}</button>`).join('') + COLORS.map((c, i) => `<button class="col ${bg === i ? 'on' : ''}" data-c="${i}" style="background:${c}"></button>`).join('');
+  $('opts').querySelectorAll('.ratio').forEach(b => b.onclick = () => { ratio = +b.dataset.r; size(); ui(); draw(); });
+  $('opts').querySelectorAll('.col').forEach(b => b.onclick = () => { bg = +b.dataset.c; ui(); draw(); });
+}
+$('gap').oninput = () => draw(); $('rad').oninput = () => draw();
+const toC = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left) * cv.width / b.width, (e.clientY - b.top) * cv.height / b.height]; };
+const hitCell = ([x, y]) => cells.findIndex(c => x >= c.x && x <= c.x + c.w && y >= c.y && y <= c.y + c.h);
+const ptrs = new Map(); let active = -1, moved = 0, pinch0 = 0, z0 = 1;
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); const p = toC(e); ptrs.set(e.pointerId, p); if (ptrs.size === 1) { active = hitCell(p); moved = 0; } else if (ptrs.size === 2 && active >= 0) { const [a, b] = [...ptrs.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); z0 = slots[active].z; } });
+cv.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId) || active < 0) return; const p = toC(e), last = ptrs.get(e.pointerId); ptrs.set(e.pointerId, p);
+  if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; slots[active].z = Math.max(1, Math.min(4, z0 * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch0)); moved = 99; draw(); return; }
+  const s = slots[active]; if (!s.img) return; s.ox += p[0] - last[0]; s.oy += p[1] - last[1]; moved += Math.abs(p[0] - last[0]) + Math.abs(p[1] - last[1]); draw();
+});
+cv.addEventListener('pointerup', e => { ptrs.delete(e.pointerId); if (ptrs.size === 0 && active >= 0 && moved < 15) { pick = active; $('file').click(); } });
+cv.addEventListener('wheel', e => { const i = hitCell(toC(e)); if (i >= 0 && slots[i].img) { slots[i].z = Math.max(1, Math.min(4, slots[i].z * (e.deltaY < 0 ? 1.1 : .9))); draw(); } }, { passive: true });
+$('file').onchange = e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f || pick < 0) return;
+  const im = new Image(); im.onload = () => { const s = Math.min(1, 1800 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); slots[pick] = { img: c, ox: 0, oy: 0, z: 1 }; draw(); URL.revokeObjectURL(im.src); }; im.src = URL.createObjectURL(f);
+};
+$('save').onclick = async () => {
+  draw(true); const url = cv.toDataURL('image/jpeg', .92); draw();
+  try { if (window.Acornix) { await Acornix.files.save(`collage-${Date.now()}.jpg`, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = 'collage.jpg'; a.click(); } } catch (er) {}
+};
+size(); ui(); draw();
+</script>
+</body>
+</html>
