@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f5f7f9">
+<title>Aire · Respira mejor</title>
+<style>
+:root{--bg:#f5f7f9;--card:#fff;--ink:#192b40;--muted:#758296;--line:#e9edf2;--green:#19aa86;--blue:#4872e8;--shadow:0 7px 26px #1c395607}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible{outline:3px solid #729aff;outline-offset:3px}button{touch-action:manipulation}svg{display:block}button svg{pointer-events:none}body.modal-open{overflow:hidden}
+.app{max-width:620px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom))}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.brand{display:flex;gap:10px;align-items:center}.brand-mark{height:42px;width:42px;background:#dff4ee;border-radius:15px;display:grid;place-items:center;color:#159a79}.brand-name{font-size:25px;font-weight:800;letter-spacing:-1px;line-height:1.1}.brand-tag{font-size:10px;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase;margin-top:4px}
+.icon-btn{border:1px solid var(--line);background:#fff;width:44px;height:44px;border-radius:15px;display:grid;place-items:center;color:var(--ink);flex-shrink:0}.icon-btn:active{transform:scale(.95)}.icon-btn.active{color:#d99815;background:#fff8e5;border-color:#ffe7a6}.icon{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.location-row{display:flex;align-items:center;gap:10px;margin-bottom:17px}.place-btn{border:0;background:none;padding:0;display:flex;align-items:center;gap:9px;text-align:left;min-height:44px;min-width:0;flex:1}.place-btn>.icon{color:var(--blue);flex-shrink:0}.place-name{font-size:21px;font-weight:750;letter-spacing:-.6px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.place-sub{font-size:12px;color:var(--muted);display:block;margin-top:3px}.place-label{min-width:0}.chevron{width:15px!important;flex-shrink:0;color:var(--muted)!important}
+.banner{display:none;border-radius:15px;background:#fff2d8;color:#846124;padding:13px 15px;font-size:13px;line-height:1.5;margin-bottom:15px}.banner.visible{display:block}.banner button{border:0;background:none;color:inherit;font-weight:750;padding:9px 0 0;display:block}
+.card{background:var(--card);border:1px solid #edf0f4;border-radius:25px;box-shadow:var(--shadow)}
+.hero{padding:20px 18px 18px;text-align:center;position:relative;overflow:hidden}.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left}.eyebrow{font-size:11px;font-weight:750;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase}.live{font-size:11px;color:#648376;background:#f0f8f4;padding:6px 9px;border-radius:20px;white-space:nowrap;display:flex;align-items:center;gap:5px}.dot{width:5px;height:5px;border-radius:50%;background:#21ac84}
+.ring-box{width:238px;height:238px;position:relative;margin:13px auto 0}.ring-svg{width:100%;height:100%;transform:rotate(-90deg)}.ring-bg{fill:none;stroke:#edf2f3;stroke-width:13}.ring-progress{fill:none;stroke:var(--aq-color,#19aa86);stroke-width:13;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .5s}.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.aq-number{font-size:69px;line-height:1;font-weight:770;letter-spacing:-4px}.aq-word{font-size:16px;color:var(--aq-color,#19aa86);background:var(--aq-bg,#e8f8f1);padding:5px 14px;border-radius:20px;font-weight:700;margin-top:11px}.ring-label{font-size:11px;color:var(--muted);margin-top:8px}.hero-summary{font-size:14px;line-height:1.6;color:#647185;max-width:350px;margin:2px auto 17px;min-height:44px}.scale{display:flex;gap:4px;max-width:300px;margin:auto}.scale span{height:5px;flex:1;border-radius:6px}.scale-labels{display:flex;justify-content:space-between;max-width:300px;margin:7px auto 0;color:#8993a1;font-size:10px}.updated{color:#8b96a6;font-size:11px;margin-top:15px;display:flex;gap:7px;align-items:center;justify-content:center}.refresh{border:0;background:transparent;padding:6px;color:#78869a;min-width:30px;min-height:30px;display:grid;place-items:center}.refresh .icon{width:15px;height:15px}.loading .refresh .icon{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:24px 2px 13px;gap:8px}h2{font-size:17px;letter-spacing:-.45px;margin:0;font-weight:750}.tiny{font-size:11px;color:var(--muted)}.pollutants{display:grid;grid-template-columns:1fr 1fr;gap:11px}.pollutant{padding:16px;border-radius:20px;box-shadow:none}.poll-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}.poll-name{font-size:14px;font-weight:750}.poll-symbol{font-size:10px;font-weight:700;color:#8995a6;background:#f4f6fa;border-radius:7px;padding:4px 6px}.poll-value{font-size:25px;font-weight:730;letter-spacing:-.7px}.poll-value small{font-size:10px;color:#8a96a6;font-weight:500;letter-spacing:0;margin-left:4px}.bar{height:5px;background:#f0f3f7;border-radius:5px;overflow:hidden;margin:12px 0 8px}.bar div{height:100%;width:0;border-radius:5px;transition:width .8s}.poll-desc{font-size:10px;color:var(--muted)}.scale-note{font-size:10px;color:#8b96a6;margin:9px 3px 0;line-height:1.5}
+.chart-card{padding:18px 15px 13px}.chart-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.pill{background:#eef2ff;color:#5774c6;padding:6px 9px;border-radius:8px;font-size:10px;font-weight:700}.chart-detail{font-size:12px;color:#7b8797;margin-top:12px;min-height:20px;display:flex;justify-content:space-between;gap:6px}.chart-detail strong{color:var(--ink)}.chart-wrap{width:100%;height:174px;position:relative;margin-top:4px;touch-action:pan-y;outline-offset:0}.chart-wrap svg{width:100%;height:100%;overflow:visible}.chart-help{font-size:10px;color:#919baa;text-align:center;margin-top:8px}.legend{display:flex;gap:13px;justify-content:center;margin-top:12px;flex-wrap:wrap}.legend span{font-size:10px;color:#8b96a6;display:flex;align-items:center;gap:5px}.legend i{width:6px;height:6px;border-radius:50%;display:inline-block}
+.best-card{padding:17px;display:flex;gap:13px;align-items:flex-start;margin-bottom:10px;box-shadow:none}.activity-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;background:#e7f7f0;color:#1ca17e}.activity-icon.window{background:#edf1ff;color:#6484d5}.activity-info{flex:1;min-width:0}.activity-title{font-size:12px;font-weight:650;color:#66768b}.activity-time{font-size:18px;font-weight:750;letter-spacing:-.4px;margin:4px 0}.activity-desc{font-size:11px;color:#8590a1;line-height:1.5}.activity-badge{border-radius:8px;padding:5px 7px;background:#edf9f3;color:#258b6c;font-size:10px;font-weight:750;margin-top:3px;white-space:nowrap}.tip{font-size:11px;color:#8692a3;line-height:1.6;margin:9px 3px 0}
+.advice{padding:19px;background:#edf6f3;border-color:#e2efea;box-shadow:none;margin-top:22px}.advice-heading{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:14px;font-weight:750;color:#317963}.advice-heading .icon{width:19px;height:19px}.advice p{font-size:12px;line-height:1.75;margin:7px 0;color:#526c65}.advice strong{font-weight:700}.footer{color:#96a0ad;font-size:10px;line-height:1.7;text-align:center;margin:25px 10px 3px}.footer a{color:#788da7;text-decoration:underline;text-underline-offset:3px}
+.skeleton .aq-number{color:#d6dfe4}.empty-chart{display:flex;align-items:center;justify-content:center;height:100%;color:#8c98a9;font-size:12px}
+.overlay{position:fixed;inset:0;background:#15284065;z-index:20;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(5px);padding-top:calc(20px + env(safe-area-inset-top))}.overlay.open{display:flex}.sheet{background:var(--bg);width:100%;max-width:620px;border-radius:28px 28px 0 0;padding:12px 21px calc(24px + env(safe-area-inset-bottom));max-height:94%;overflow-y:auto;overscroll-behavior:contain;animation:slide .25s ease}.handle{width:35px;height:4px;background:#d9e0e7;border-radius:4px;margin:0 auto 15px}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.sheet h2{font-size:22px}.search-form{display:flex;align-items:center;border:1px solid #dfe5ed;background:#fff;border-radius:16px;padding:5px 6px 5px 13px;gap:8px}.search-form>.icon{color:#8493aa;width:20px;flex-shrink:0}.search-form input{border:0;outline:0;min-width:0;width:100%;background:transparent;padding:10px 0;font-size:15px;color:var(--ink)}.search-submit{background:#466de3;color:white;border:0;border-radius:11px;width:42px;height:42px;display:grid;place-items:center;flex-shrink:0}.geo-btn{width:100%;border:0;background:#e8eefc;color:#486ed1;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:9px;min-height:49px;font-weight:650;font-size:13px;margin:12px 0 22px}.list-heading{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:#8692a2;font-weight:750;margin:22px 2px 10px}.city-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid #e6ebf1;min-height:70px}.city-select{border:0;background:none;display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;padding:13px 0;color:var(--ink)}.city-select>.icon{color:#8a9ab0;width:19px;flex-shrink:0}.city-title{font-size:15px;font-weight:650;display:block}.city-country{font-size:11px;color:#8b97a7;display:block;margin-top:4px}.remove-fav{border:0;background:transparent;padding:12px;color:#a3adba;min-width:44px;min-height:44px;display:grid;place-items:center}.sheet-status{font-size:13px;color:#7e8b9d;line-height:1.6;padding:12px 2px}.suggestions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.suggestions button{border:1px solid #e0e6ee;border-radius:20px;background:white;color:#6a7b90;padding:10px 15px;font-size:12px}.toast{position:fixed;bottom:calc(25px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,15px);background:#23384c;color:white;padding:13px 20px;border-radius:16px;font-size:13px;box-shadow:0 8px 25px #172e4825;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%;width:max-content}.toast.show{opacity:1;transform:translate(-50%,0)}@keyframes slide{from{transform:translateY(35px);opacity:.5}to{transform:translateY(0);opacity:1}}
+@media(min-width:500px){.app{padding-left:30px;padding-right:30px}.hero{padding-top:23px}.ring-box{width:250px;height:250px}.pollutant{padding:19px}.chart-wrap{height:190px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+<symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h12a3 3 0 1 0-3-3M2 12h17a3 3 0 1 1-3 3M4 16h5a3 3 0 1 1-3 3"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-gps" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7a9 9 0 1 0 1 8M20 3v5h-5"/></symbol>
+<symbol id="i-run" viewBox="0 0 24 24"><circle cx="15" cy="4" r="2"/><path d="m5 9 5-2 4 3 5 1M11 8l-3 6 5 3-2 5M8 14l-3 5H2m12-9-2 5 6 4"/></symbol>
+<symbol id="i-window" viewBox="0 0 24 24"><path d="M4 3h16v18H4zM12 3v18M4 12h16M8 15v2m8-10v2"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+</svg>
+<main class="app" id="app">
+<header class="header">
+<div class="brand"><div class="brand-mark"><svg class="icon"><use href="#i-wind"/></svg></div><div><div class="brand-name">aire<span style="color:#1caf8c">.</span></div><div class="brand-tag">Respira mejor</div></div></div>
+<button class="icon-btn" id="citiesBtn" aria-label="Buscar ciudades y ver favoritas"><svg class="icon"><use href="#i-search"/></svg></button>
+</header>
+<div class="location-row">
+<button class="place-btn" id="placeBtn" aria-label="Cambiar ciudad"><svg class="icon"><use href="#i-pin"/></svg><span class="place-label"><span class="place-name" id="placeName">Madrid</span><span class="place-sub" id="placeSub">Comunidad de Madrid, España</span></span><svg class="icon chevron"><use href="#i-chevron"/></svg></button>
+<button class="icon-btn" id="favoriteBtn" aria-label="Guardar ciudad como favorita" aria-pressed="false"><svg class="icon"><use href="#i-star"/></svg></button>
+</div>
+<div class="banner" id="banner" role="status"><span id="bannerText"></span><button id="retryBtn">Volver a intentar</button></div>
+<section class="card hero skeleton" id="hero" aria-label="Calidad del aire actual">
+<div class="card-top"><span class="eyebrow">Calidad del aire</span><span class="live" id="liveLabel"><span class="dot"></span><span id="liveText">Consultando</span></span></div>
+<div class="ring-box">
+<svg class="ring-svg" viewBox="0 0 240 240" aria-hidden="true"><circle class="ring-bg" cx="120" cy="120" r="101"/><circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="101" stroke-dasharray="634.6" stroke-dashoffset="634.6"/></svg>
+<div class="ring-center"><div class="aq-number" id="aqNumber">—</div><div class="aq-word" id="aqWord">Cargando</div><div class="ring-label">Índice europeo · AQI</div></div>
+</div>
+<p class="hero-summary" id="heroSummary">Buscando el aire que te rodea…</p>
+<div class="scale" aria-hidden="true"><span style="background:#1aae8d"></span><span style="background:#8ebd57"></span><span style="background:#e6b543"></span><span style="background:#ed8a58"></span><span style="background:#dc667b"></span><span style="background:#9962a8"></span></div>
+<div class="scale-labels"><span>Buena · 0</span><span>Extremadamente mala · &gt;100</span></div>
+<div class="updated"><span id="updatedText">Preparando la previsión</span><button class="refresh" id="refreshBtn" aria-label="Actualizar datos"><svg class="icon"><use href="#i-refresh"/></svg></button></div>
+</section>
+<div class="section-head"><h2>Qué hay en el aire</h2><span class="tiny">Concentración actual</span></div>
+<section class="pollutants" aria-label="Contaminantes principales">
+<div class="card pollutant"><div class="poll-top"><span class="poll-name">PM2.5</span><span class="poll-symbol">FINAS</span></div><div class="poll-value"><span id="v-pm2_5">—</span><small>µg/m³</small></div><div class="bar"><div id="b-pm2_5" style="background:#7599dd"></div></div><div class="poll-desc">Partículas finas</div></div>
+<div class="card pollutant"><div class="poll-top"><span class="poll-name">PM10</span><span class="poll-symbol">POLVO</span></div><div class="poll-value"><span id="v-pm10">—</span><small>µg/m³</small></div><div class="bar"><div id="b-pm10" style="background:#a38bcb"></div></div><div class="poll-desc">Partículas en suspensión</div></div>
+<div class="card pollutant"><div class="poll-top"><span class="poll-name">O₃</span><span class="poll-symbol">OZONO</span></div><div class="poll-value"><span id="v-ozone">—</span><small>µg/m³</small></div><div class="bar"><div id="b-ozone" style="background:#d7ae5c"></div></div><div class="poll-desc">Ozono a nivel del suelo</div></div>
+<div class="card pollutant"><div class="poll-top"><span class="poll-name">NO₂</span><span class="poll-symbol">GASES</span></div><div class="poll-value"><span id="v-nitrogen_dioxide">—</span><small>µg/m³</small></div><div class="bar"><div id="b-nitrogen_dioxide" style="background:#68b5aa"></div></div><div class="poll-desc">Dióxido de nitrógeno</div></div>
+</section>
+<p class="scale-note">Barras orientativas; cada contaminante tiene su propia escala, no un límite sanitario.</p>
+<div class="section-head"><h2>Tu aire, hora a hora</h2><span class="tiny">Próximas 48 horas</span></div>
+<section class="card chart-card">
+<div class="chart-title"><span class="eyebrow">Índice europeo</span><span class="pill">PREVISIÓN</span></div>
+<div class="chart-detail" id="chartDetail"><span>Consultando previsión…</span></div>
+<div class="chart-wrap" id="chartWrap" tabindex="0" role="slider" aria-label="Explorar previsión horaria de calidad del aire" aria-valuemin="0" aria-valuemax="47" aria-valuenow="0"><div class="empty-chart">Preparando las próximas horas</div></div>
+<div class="chart-help">Toca el gráfico para explorar cada hora</div>
+<div class="legend"><span><i style="background:#1aae8d"></i>Buena ≤20</span><span><i style="background:#e6b543"></i>Moderada 41–60</span><span><i style="background:#ed8a58"></i>Mala &gt;60</span></div>
+</section>
+<div class="section-head"><h2>Elige tu momento</h2><span class="tiny">Según la calidad del aire</span></div>
+<section aria-label="Mejores horas">
+<div class="card best-card"><div class="activity-icon"><svg class="icon"><use href="#i-run"/></svg></div><div class="activity-info"><div class="activity-title">Para salir a correr</div><div class="activity-time" id="runTime">Buscando una buena hora…</div><div class="activity-desc" id="runDesc">Comparamos las horas de 06:00 a 22:00.</div></div><span class="activity-badge" id="runBadge">—</span></div>
+<div class="card best-card"><div class="activity-icon window"><svg class="icon"><use href="#i-window"/></svg></div><div class="activity-info"><div class="activity-title">Para abrir las ventanas</div><div class="activity-time" id="windowTime">Consultando el exterior…</div><div class="activity-desc" id="windowDesc">Buscamos un intervalo de dos horas.</div></div><span class="activity-badge" id="windowBadge">—</span></div>
+</section>
+<p class="tip">Horarios locales de la ciudad. Sugerencias basadas solo en el aire exterior, no en el tiempo, el polen ni el aire interior.</p>
+<section class="card advice" aria-labelledby="adviceTitle">
+<div class="advice-heading"><svg class="icon"><use href="#i-heart"/></svg><span id="adviceTitle">Un respiro para tu salud</span></div>
+<p id="adviceGeneral">La actividad al aire libre se disfruta más cuando la contaminación es baja.</p>
+<p id="adviceSensitive">Si tienes asma u otra afección respiratoria, sigue tu plan médico y presta atención a los síntomas.</p>
+</section>
+<footer class="footer">Datos y previsiones de <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · CAMS ENSEMBLE / CAMS<br>Estimaciones de modelo, no mediciones en tu calle.<br>Información orientativa; no sustituye el consejo médico.</footer>
+</main>
+
+<div class="overlay" id="cityOverlay">
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+<div class="handle"></div>
+<div class="sheet-head"><h2 id="sheetTitle">Encuentra tu aire</h2><button class="icon-btn" id="closeSheet" aria-label="Cerrar búsqueda"><svg class="icon"><use href="#i-close"/></svg></button></div>
+<form class="search-form" id="searchForm"><svg class="icon"><use href="#i-search"/></svg><input type="search" id="searchInput" placeholder="Busca una ciudad…" aria-label="Nombre de la ciudad" autocomplete="off" enterkeyhint="search"><button class="search-submit" id="searchSubmit" type="submit" aria-label="Buscar"><svg class="icon"><use href="#i-arrow"/></svg></button></form>
+<button class="geo-btn" id="geoBtn"><svg class="icon"><use href="#i-gps"/></svg><span id="geoLabel">Usar mi ubicación</span></button>
+<div id="searchArea" aria-live="polite"></div>
+<div class="list-heading">Tus ciudades favoritas</div>
+<div id="favoritesList"></div>
+<div class="list-heading">Un lugar para empezar</div>
+<div class="suggestions"><button data-city="Madrid">Madrid</button><button data-city="Barcelona">Barcelona</button><button data-city="Ciudad de México">Ciudad de México</button></div>
+</section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const database = window.Acornix ? window.Acornix.db : {
+  async get(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } },
+  async set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+};
+const KEYS = {fav:'aire.favoritas', place:'aire.ciudad', cache:'aire.ultimoInforme'};
+const DEFAULT = {name:'Madrid', admin:'Comunidad de Madrid', country:'España', latitude:40.4165, longitude:-3.70256};
+const LEVELS = [
+ {max:20,name:'Buena',color:'#19aa86',bg:'#e7f7f0',summary:'Un buen día para respirar al aire libre. Disfruta de tus planes.',general:'Puedes realizar tus actividades habituales al aire libre, incluido el ejercicio.',sensitive:'Personas sensibles: en general, no se necesitan precauciones especiales. Mantén tu tratamiento habitual.'},
+ {max:40,name:'Razonable',color:'#85a945',bg:'#f0f6e6',summary:'El aire es aceptable para la mayoría. Un poco de atención si eres sensible.',general:'La mayoría de las personas puede disfrutar de sus actividades habituales al aire libre.',sensitive:'Personas sensibles: si notas tos, irritación o falta de aire, reduce la intensidad del esfuerzo y sigue tu plan médico.'},
+ {max:60,name:'Moderada',color:'#c89c2e',bg:'#fbf4df',summary:'Algo de contaminación. Ajusta el esfuerzo si notas molestias.',general:'Puedes mantener tus actividades habituales; si aparecen molestias, reduce el ejercicio intenso o prolongado.',sensitive:'Niños, mayores y personas con problemas cardíacos o respiratorios: considera reducir el esfuerzo intenso al aire libre.'},
+ {max:80,name:'Mala',color:'#e78650',bg:'#fff0e6',summary:'Hoy conviene bajar el ritmo y elegir las horas menos contaminadas.',general:'Considera reducir el ejercicio intenso o prolongado al aire libre, especialmente si notas síntomas.',sensitive:'Personas sensibles: reduce el esfuerzo físico al aire libre. Busca espacios interiores con aire limpio y sigue tu tratamiento.'},
+ {max:100,name:'Muy mala',color:'#d45e77',bg:'#fcebf0',summary:'Aire poco saludable. Mejor posponer el ejercicio intenso en el exterior.',general:'Reduce las actividades físicas al aire libre y evita esfuerzos prolongados. Elige lugares con aire más limpio.',sensitive:'Personas sensibles: evita la actividad física al aire libre. Mantén a mano la medicación prescrita y sigue tu plan médico.'},
+ {max:Infinity,name:'Extremadamente mala',color:'#9460a3',bg:'#f2eaf6',summary:'Protege tu respiración. Evita esfuerzos y limita la exposición exterior.',general:'Evita el ejercicio al aire libre y reduce el tiempo de exposición. Prioriza espacios interiores con aire limpio.',sensitive:'Personas sensibles: evita las actividades al aire libre y sigue las indicaciones sanitarias locales. Si hay dificultad respiratoria importante, busca atención médica.'}
+];
+let place=DEFAULT, favorites=[], report=null, cache=null, hours=[], selected=0;
+let loading=false, requestId=0, searchSeq=0, searchTimer, searchController, toastTimer, chartGeometry=null, lastFocus=null, saveQueue=Promise.resolve();
+function valid(v){return typeof v==='number' && Number.isFinite(v) && v>=0;}
+function level(v){return valid(v)?LEVELS.find(l=>v<=l.max):null;}
+function key(p){return Number(p.latitude).toFixed(3)+','+Number(p.longitude).toFixed(3);}
+function validPlace(p){return p && typeof p.name==='string' && Number.isFinite(p.latitude) && Number.isFinite(p.longitude) && Math.abs(p.latitude)<=90 && Math.abs(p.longitude)<=180;}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function subtitle(p){return [p.admin,p.country].filter(Boolean).join(', ') || `${p.latitude.toFixed(3)}°, ${p.longitude.toFixed(3)}°`;}
+function toast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200);}
+function persist(k,v){const snapshot=JSON.parse(JSON.stringify(v));saveQueue=saveQueue.then(()=>database.set(k,snapshot)).catch(()=>toast('No se pudo guardar el cambio en este dispositivo.'));return saveQueue;}
+function favoriteState(){const saved=favorites.some(p=>key(p)===key(place));$('favoriteBtn').classList.toggle('active',saved);$('favoriteBtn').setAttribute('aria-pressed',String(saved));$('favoriteBtn').setAttribute('aria-label',saved?'Quitar ciudad de favoritas':'Guardar ciudad como favorita');$('favoriteBtn').querySelector('svg').style.fill=saved?'currentColor':'none';}
+function renderPlace(){$('placeName').textContent=place.name;$('placeSub').textContent=subtitle(place);favoriteState();}
+function toggleFavorite(){const i=favorites.findIndex(p=>key(p)===key(place));if(i>=0){favorites.splice(i,1);toast('Ciudad eliminada de favoritas.');}else{favorites.push({...place});toast('Ciudad guardada en favoritas.');}persist(KEYS.fav,favorites);favoriteState();renderFavorites();}
+function renderFavorites(){
+ const host=$('favoritesList');host.innerHTML='';
+ if(!favorites.length){host.innerHTML='<div class="sheet-status">Guarda una ciudad con la estrella para tenerla siempre a mano.</div>';return;}
+ favorites.forEach(p=>host.appendChild(cityRow(p,true)));
+}
+function cityRow(p,isFavorite=false){
+ const row=document.createElement('div');row.className='city-row';
+ const b=document.createElement('button');b.className='city-select';
+ b.innerHTML=`<svg class="icon"><use href="#i-pin"/></svg><span><span class="city-title">${escapeHTML(p.name)}</span><span class="city-country">${escapeHTML(subtitle(p))}</span></span>`;
+ b.addEventListener('click',()=>choose(p));row.appendChild(b);
+ if(isFavorite){const remove=document.createElement('button');remove.className='remove-fav';remove.setAttribute('aria-label','Quitar '+p.name+' de favoritas');remove.innerHTML='<svg class="icon"><use href="#i-close"/></svg>';remove.onclick=()=>{favorites=favorites.filter(f=>key(f)!==key(p));persist(KEYS.fav,favorites);renderFavorites();favoriteState();};row.appendChild(remove);}
+ return row;
+}
+function openSheet(){lastFocus=document.activeElement;$('cityOverlay').classList.add('open');document.body.classList.add('modal-open');$('app').inert=true;renderFavorites();setTimeout(()=>$('searchInput').focus(),100);}
+function closeSheet(){$('cityOverlay').classList.remove('open');document.body.classList.remove('modal-open');$('app').inert=false;if(lastFocus)lastFocus.focus();}
+async function choose(p){
+ place={...p};report=null;hours=[];renderPlace();closeSheet();persist(KEYS.place,place);
+ if(cache && cache.placeKey===key(place)){report=cache.data;renderReport(true);}
+ else renderEmpty();
+ await loadReport();
+}
+function setBanner(text){$('bannerText').textContent=text;$('banner').classList.toggle('visible',!!text);}
+function setLoading(value){loading=value;$('hero').classList.toggle('loading',value);$('refreshBtn').disabled=value;$('retryBtn').disabled=value;if(value)$('liveText').textContent='Actualizando';}
+function renderEmpty(){
+ $('hero').classList.add('skeleton');$('hero').style.setProperty('--aq-color','#9aabba');$('hero').style.setProperty('--aq-bg','#eef2f5');
+ $('aqNumber').textContent='—';$('aqWord').textContent='Consultando';$('heroSummary').textContent='Buscando el aire que te rodea…';$('ringProgress').style.strokeDashoffset='634.6';$('updatedText').textContent='Cargando datos';
+ ['pm2_5','pm10','ozone','nitrogen_dioxide'].forEach(k=>{$('v-'+k).textContent='—';$('b-'+k).style.width='0';});
+ $('chartWrap').innerHTML='<div class="empty-chart">Consultando las próximas horas…</div>';$('chartDetail').textContent='Previsión de 48 horas';chartGeometry=null;
+ ['run','window'].forEach(k=>{$(k+'Time').textContent='Consultando…';$(k+'Desc').textContent='Comparando la calidad del aire.';$(k+'Badge').textContent='—';});
+ $('adviceGeneral').textContent='Espera a que se actualice la previsión para consultar los consejos de este lugar.';$('adviceSensitive').textContent='Si tienes una afección respiratoria, sigue tu plan médico.';
+ setBanner('');
+}
+async function fetchJSON(url,signal){
+ const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),18000);
+ const relay=()=>controller.abort();if(signal)signal.addEventListener('abort',relay,{once:true});
+ try{const r=await fetch(url,{signal:controller.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();}
+ finally{clearTimeout(timer);if(signal)signal.removeEventListener('abort',relay);}
+}
+async function loadReport(){
+ const id=++requestId;const target={...place};setLoading(true);setBanner('');
+ const fields='european_aqi,pm2_5,pm10,ozone,nitrogen_dioxide';
+ const url=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${target.latitude}&longitude=${target.longitude}&current=${fields}&hourly=${fields}&timezone=auto&forecast_days=3`;
+ try{
+  const data=await fetchJSON(url);
+  if(!data.hourly || !Array.isArray(data.hourly.time) || !data.current)throw new Error('Datos incompletos');
+  if(id!==requestId)return;
+  report=data;cache={placeKey:key(target),data,fetchedAt:Date.now()};persist(KEYS.cache,cache);
+  selected=0;renderReport(false);
+ }catch(e){
+  if(id!==requestId)return;
+  if(report){renderReport(true);setBanner('No se pudo actualizar. Se muestra la última consulta guardada; puede estar desactualizada.');}
+  else{
+   $('hero').classList.remove('skeleton');$('aqWord').textContent='Sin datos';$('liveText').textContent='Sin conexión';$('heroSummary').textContent='No hemos podido consultar el aire de esta ubicación.';$('updatedText').textContent='Datos no disponibles';$('chartWrap').innerHTML='<div class="empty-chart">Sin previsión disponible</div>';
+   ['run','window'].forEach(k=>{$(k+'Time').textContent='Sin previsión';$(k+'Desc').textContent='Actualiza para consultar los mejores horarios.';});
+   setBanner('No pudimos conectar con Open-Meteo. Revisa tu conexión e inténtalo de nuevo.');
+  }
+ }finally{if(id===requestId)setLoading(false);}
+}
+function localNowISO(data){
+ const shift=(data.utc_offset_seconds||0)*1000;
+ return new Date(Date.now()+shift).toISOString().slice(0,13)+':00';
+}
+function deriveHours(){
+ const start=localNowISO(report);
+ const times=report.hourly.time;
+ let idx=times.findIndex(t=>t>=start);
+ if(idx<0){hours=[];return;}
+ hours=times.slice(idx,idx+48).map((time,i)=>({time,aq:report.hourly.european_aqi?.[idx+i]}));
+}
+function dayLabel(time){
+ const now=localNowISO(report).slice(0,10);
+ const next=new Date(new Date(now+'T12:00:00Z').getTime()+86400000).toISOString().slice(0,10);
+ const day=time.slice(0,10);
+ if(day===now)return 'Hoy';if(day===next)return 'Mañana';
+ return new Intl.DateTimeFormat('es',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(day+'T12:00:00Z'));
+}
+function renderReport(stale){
+ if(!report)return;deriveHours();renderPlace();
+ const cur=report.current;const v=cur.european_aqi;const l=level(v);
+ $('hero').classList.remove('skeleton');$('hero').style.setProperty('--aq-color',l?l.color:'#8999ab');$('hero').style.setProperty('--aq-bg',l?l.bg:'#eef2f5');
+ $('aqNumber').textContent=valid(v)?Math.round(v):'—';$('aqWord').textContent=l?l.name:'Sin índice';$('aqWord').style.fontSize=l&&v>100?'12px':'16px';
+ $('heroSummary').textContent=l?l.summary:'No hay un índice disponible para esta hora. Puedes consultar la previsión.';
+ $('ringProgress').style.strokeDashoffset=String(634.6*(1-Math.min(valid(v)?v:0,125)/125));
+ $('liveText').textContent=stale?'Guardado':'Ahora · modelo';
+ $('liveLabel').style.background=stale?'#f7f0e1':'#f0f8f4';$('liveLabel').style.color=stale?'#967a42':'#648376';
+ const tm=cur.time;
+ $('updatedText').textContent=tm?`${dayLabel(tm)}, ${tm.slice(11,16)} · hora local`:'Hora no disponible';
+ if(stale)setBanner('Última consulta guardada. Actualiza para comprobar las condiciones actuales.');
+ const maxes={pm2_5:75,pm10:150,ozone:240,nitrogen_dioxide:200};
+ Object.keys(maxes).forEach(k=>{const x=cur[k];$('v-'+k).textContent=valid(x)?x.toLocaleString('es',{maximumFractionDigits:1}):'—';$('b-'+k).style.width=valid(x)?Math.min(100,x/maxes[k]*100)+'%':'0';});
+ $('adviceGeneral').textContent=l?l.general:'Sin índice actual: no es posible establecer un consejo específico.';
+ $('adviceSensitive').textContent=l?l.sensitive:'Si tienes asma u otra afección respiratoria, sigue tu plan médico y presta atención a los síntomas.';
+ $('adviceTitle').textContent=l?'Tu salud · aire '+l.name.toLowerCase():'Un respiro para tu salud';
+ selected=Math.min(selected,Math.max(0,hours.length-1));renderChart();renderRecommendations();
+}
+function renderChart(){
+ if(!hours.length){$('chartWrap').innerHTML='<div class="empty-chart">No hay previsión para las próximas horas</div>';$('chartDetail').textContent='Datos horarios no disponibles';chartGeometry=null;return;}
+ const W=500,H=175,L=29,R=12,T=14,B=29,vals=hours.map(h=>h.aq).filter(valid);
+ if(!vals.length){$('chartWrap').innerHTML='<div class="empty-chart">Índices horarios no disponibles</div>';$('chartDetail').textContent='Sin datos';chartGeometry=null;return;}
+ const max=Math.max(60,Math.ceil(Math.max(...vals)/20)*20);
+ const x=i=>L+i*(W-L-R)/Math.max(hours.length-1,1);
+ const y=v=>T+(max-v)/max*(H-T-B);
+ let grid='';
+ const ticks=max<=100?[0,20,40,60,80,100].filter(v=>v<=max):[0,Math.round(max/2),max];
+ ticks.forEach(v=>{grid+=`<line x1="${L}" y1="${y(v)}" x2="${W-R}" y2="${y(v)}" stroke="#eaf0f3" stroke-dasharray="3 5"/><text x="${L-8}" y="${y(v)+3}" text-anchor="end" fill="#98a4b1" font-size="9">${v}</text>`;});
+ const labels=[0,12,24,36,hours.length-1].filter((v,i,a)=>v<hours.length&&a.indexOf(v)===i);
+ labels.forEach((i,n)=>{grid+=`<text x="${x(i)}" y="${H-6}" text-anchor="${n===0?'start':n===labels.length-1?'end':'middle'}" fill="#8e9aab" font-size="9">${i===0?'Ahora':hours[i].time.slice(11,16)}</text>`;});
+ let paths='',segment=[];
+ function flush(){if(!segment.length)return;const d=segment.map((p,i)=>(i?'L':'M')+p.join(',')).join(' ');paths+=`<path d="${d} L${segment[segment.length-1][0]},${H-B} L${segment[0][0]},${H-B} Z" fill="url(#area)"/><path d="${d}" fill="none" stroke="#56b5a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;segment=[];}
+ hours.forEach((h,i)=>{if(valid(h.aq))segment.push([x(i),y(h.aq)]);else flush();});flush();
+ $('chartWrap').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#50b99c" stop-opacity=".22"/><stop offset="100%" stop-color="#50b99c" stop-opacity=".015"/></linearGradient></defs>${grid}${paths}<g id="chartMarker"></g></svg>`;
+ chartGeometry={W,L,R,x,y,H,B};$('chartWrap').setAttribute('aria-valuemax',String(hours.length-1));updateChartSelection();
+}
+function updateChartSelection(){
+ if(!chartGeometry||!hours[selected])return;
+ const h=hours[selected],l=level(h.aq),g=chartGeometry;
+ $('chartDetail').innerHTML=`<span>${escapeHTML(dayLabel(h.time))} · ${escapeHTML(h.time.slice(11,16))}</span><strong style="color:${l?l.color:'#8491a1'}">${valid(h.aq)?Math.round(h.aq)+' · '+escapeHTML(l.name):'Sin datos'}</strong>`;
+ const marker=$('chartMarker');
+ if(marker)marker.innerHTML=`<line x1="${g.x(selected)}" y1="8" x2="${g.x(selected)}" y2="${g.H-g.B}" stroke="#9eb5ba" stroke-dasharray="3 3"/>${valid(h.aq)?`<circle cx="${g.x(selected)}" cy="${g.y(h.aq)}" r="5" fill="${l.color}" stroke="white" stroke-width="2.5"/>`:''}`;
+ $('chartWrap').setAttribute('aria-valuenow',selected);$('chartWrap').setAttribute('aria-valuetext',`${dayLabel(h.time)}, ${h.time.slice(11,16)}, ${valid(h.aq)?Math.round(h.aq)+', '+l.name:'sin datos'}`);
+}
+$('chartWrap').addEventListener('pointerdown',e=>{if(!chartGeometry)return;const r=$('chartWrap').getBoundingClientRect();const g=chartGeometry;selected=Math.max(0,Math.min(hours.length-1,Math.round(((e.clientX-r.left)/r.width*g.W-g.L)/(g.W-g.L-g.R)*(hours.length-1))));updateChartSelection();});
+$('chartWrap').addEventListener('keydown',e=>{if(!hours.length)return;if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();selected=e.key==='Home'?0:e.key==='End'?hours.length-1:Math.max(0,Math.min(hours.length-1,selected+(e.key==='ArrowRight'?1:-1)));updateChartSelection();}});
+function bestInterval(length){
+ let best=null;
+ for(let i=0;i<=hours.length-length;i++){
+  const block=hours.slice(i,i+length);const hr=Number(block[0].time.slice(11,13));
+  if(hr<6||hr+length>22||block.some(h=>!valid(h.aq)))continue;
+  const mean=block.reduce((s,h)=>s+h.aq,0)/length;
+  const peak=Math.max(...block.map(h=>h.aq));const score=peak*.7+mean*.3;
+  if(!best||score<best.score)best={index:i,score,peak,mean,length};
+ }
+ return best;
+}
+function renderRecommendations(){
+ for(const [type,length] of [['run',1],['window',2]]){
+  const b=bestInterval(length);
+  if(!b){$(type+'Time').textContent='Sin intervalo disponible';$(type+'Desc').textContent='Faltan datos diurnos para comparar.';$(type+'Badge').textContent='—';continue;}
+  const h=hours[b.index],start=h.time.slice(11,16),end=String(Number(h.time.slice(11,13))+length).padStart(2,'0')+':00';
+  const l=level(b.peak);
+  $(type+'Time').textContent=`${dayLabel(h.time)} · ${start}–${end}`;
+  $(type+'Badge').textContent=`AQI ${Math.round(b.peak)}`;$(type+'Badge').style.color=l.color;$(type+'Badge').style.background=l.bg;
+  if(b.peak>60){$(type+'Desc').textContent=type==='run'?'La menos contaminada, pero el aire es malo: mejor posponer el esfuerzo.':'El mejor intervalo relativo, pero con aire malo: evita ventilar innecesariamente.';}
+  else if(b.peak>40){$(type+'Desc').textContent=type==='run'?'El mejor tramo diurno; reduce el esfuerzo si eres sensible.':'Menor contaminación prevista; ventila brevemente si es necesario.';}
+  else{$(type+'Desc').textContent=type==='run'?'El tramo diurno con mejor aire para moverte.':'Dos horas con el aire exterior más limpio de la previsión.';}
+ }
+}
+async function searchCities(query){
+ const q=query.trim();const seq=++searchSeq;
+ if(searchController)searchController.abort();
+ if(q.length<2){$('searchArea').innerHTML='';return;}
+ searchController=new AbortController();$('searchArea').innerHTML='<div class="sheet-status">Buscando ciudades…</div>';
+ $('searchSubmit').disabled=true;
+ try{
+  const data=await fetchJSON('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=8&language=es&format=json',searchController.signal);
+  if(seq!==searchSeq)return;
+  $('searchArea').innerHTML='<div class="list-heading">Resultados</div>';
+  if(!data.results?.length){$('searchArea').innerHTML+='<div class="sheet-status">No encontramos esa ciudad. Prueba otro nombre o una localidad cercana.</div>';return;}
+  data.results.forEach(r=>{const p={name:r.name,admin:r.admin1||'',country:r.country||'',latitude:r.latitude,longitude:r.longitude};$('searchArea').appendChild(cityRow(p));});
+ }catch(e){if(seq!==searchSeq)return;$('searchArea').innerHTML='<div class="sheet-status">No se pudo completar la búsqueda. Revisa la conexión y vuelve a pulsar la flecha para intentarlo.</div>';}
+ finally{if(seq===searchSeq)$('searchSubmit').disabled=false;}
+}
+async function locate(){
+ if(!navigator.geolocation){toast('Este dispositivo no permite consultar la ubicación. Busca tu ciudad.');return;}
+ $('geoBtn').disabled=true;$('geoLabel').textContent='Localizando…';
+ navigator.geolocation.getCurrentPosition(pos=>{
+  $('geoBtn').disabled=false;$('geoLabel').textContent='Usar mi ubicación';
+  choose({name:'Mi ubicación',admin:'',country:'',latitude:pos.coords.latitude,longitude:pos.coords.longitude});
+ },err=>{
+  $('geoBtn').disabled=false;$('geoLabel').textContent='Usar mi ubicación';
+  $('searchArea').innerHTML=`<div class="sheet-status">${err.code===1?'No tenemos permiso para acceder a tu ubicación. Puedes habilitarlo en los ajustes de la aplicación o buscar una ciudad.':'No pudimos obtener tu ubicación. Activa la ubicación del teléfono, vuelve a intentarlo o busca tu ciudad.'}</div>`;
+ },{enableHighAccuracy:false,timeout:14000,maximumAge:300000});
+}
+$('placeBtn').onclick=openSheet;$('citiesBtn').onclick=openSheet;$('closeSheet').onclick=closeSheet;
+$('cityOverlay').addEventListener('click',e=>{if(e.target===$('cityOverlay'))closeSheet();});
+document.addEventListener('keydown',e=>{
+ if(!$('cityOverlay').classList.contains('open'))return;
+ if(e.key==='Escape')closeSheet();
+ if(e.key==='Tab'){
+  const els=[...$('cityOverlay').querySelectorAll('button:not(:disabled),input')].filter(el=>el.getClientRects().length);
+  if(!els.length)return;const first=els[0],last=els[els.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+ }
+});
+$('favoriteBtn').onclick=toggleFavorite;$('refreshBtn').onclick=loadReport;$('retryBtn').onclick=loadReport;$('geoBtn').onclick=locate;
+$('searchForm').onsubmit=e=>{e.preventDefault();clearTimeout(searchTimer);searchCities($('searchInput').value);};
+$('searchInput').addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>searchCities($('searchInput').value),400);});
+document.querySelectorAll('[data-city]').forEach(b=>b.onclick=()=>{$('searchInput').value=b.dataset.city;clearTimeout(searchTimer);searchCities(b.dataset.city);});
+async function reloadExternal(){
+ try{
+  const [f,p,c]=await Promise.all([database.get(KEYS.fav),database.get(KEYS.place),database.get(KEYS.cache)]);
+  favorites=Array.isArray(f)?f.filter(validPlace):[];favoriteState();renderFavorites();
+  if(c?.data)cache=c;
+  if(validPlace(p)&&key(p)!==key(place)){place=p;renderPlace();report=cache?.placeKey===key(place)?cache.data:null;if(report)renderReport(true);else renderEmpty();loadReport();}
+ }catch{toast('No se pudieron sincronizar las ciudades guardadas.');}
+}
+window.addEventListener('acornixdata',reloadExternal);
+window.addEventListener('online',()=>{if(!loading)loadReport();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!loading&&cache&&Date.now()-cache.fetchedAt>900000)loadReport();});
+async function init(){
+ try{
+  const [p,f,c]=await Promise.all([database.get(KEYS.place),database.get(KEYS.fav),database.get(KEYS.cache)]);
+  if(validPlace(p))place=p;
+  favorites=Array.isArray(f)?f.filter(validPlace):[];
+  if(c?.data)cache=c;
+ }catch{toast('No se pudieron cargar los datos guardados.');}
+ renderPlace();renderFavorites();
+ if(cache?.placeKey===key(place)){report=cache.data;renderReport(true);}
+ loadReport();
+}
+init();
+})();
+</script>
+</body>
+</html>
