@@ -1,0 +1,14 @@
+{
+  "id": "capitals-quiz",
+  "name": "Capitals",
+  "emoji": "🏛️",
+  "category": "education",
+  "description": "What's the capital of…? Rounds of 10 by continent with believable wrong answers, best scores and a list to review.",
+  "prompt": "A capitals quiz: choose a continent or the whole world, see a country with its flag and pick its capital among four options from the same region, with best scores per region and the ones you missed at the end.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

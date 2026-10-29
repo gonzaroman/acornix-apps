@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Spelling Bee</title>
+<style>
+  :root { --bg:#fff7d6; --ink:#3a2a00; --muted:#9a7d2c; --a:#ffc21a; --d:#3a2a00; --g:#16a34a; --r:#dc2626; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:"Trebuchet MS",system-ui,sans-serif; }
+  body { background-image:radial-gradient(#ffe48a 1.5px,transparent 1.5px); background-size:22px 22px; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; user-select:none; -webkit-user-select:none; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:6px 0 2px; font-size:34px; }
+  .sub { color:var(--muted); font-weight:700; margin:0 0 16px; }
+  .levels { display:grid; gap:10px; }
+  .lvl { display:flex; align-items:center; gap:12px; padding:16px; border-radius:22px; background:#fff; box-shadow:0 5px 0 #f0d77a; text-align:left; }
+  .lvl .hex { width:52px; height:58px; clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); display:grid; place-items:center; font-size:24px; flex:none; }
+  .lvl b { display:block; font-size:18px; } .lvl small { color:var(--muted); font-weight:700; }
+  .lvl .st { margin-left:auto; font-size:13px; letter-spacing:1px; }
+  .lang { display:flex; gap:8px; margin-top:16px; }
+  .lang button { flex:1; padding:12px; border-radius:16px; background:#fff; font-weight:800; box-shadow:0 4px 0 #f0d77a; }
+  .lang button.on { background:var(--d); color:#fff; box-shadow:0 4px 0 #000; }
+  .bar { display:flex; justify-content:space-between; align-items:center; font-weight:900; font-size:18px; }
+  .bar button { width:44px; height:44px; border-radius:14px; background:#fff; }
+  .lives { letter-spacing:2px; }
+  .stage { margin:auto 0; text-align:center; }
+  .speak { width:150px; height:168px; margin:0 auto; clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); background:var(--a); font-size:64px; display:grid; place-items:center; transition:transform .15s; }
+  .speak:active { transform:scale(.94); }
+  .speak.talk { animation:talk .5s infinite alternate; }
+  @keyframes talk { to { transform:scale(1.06); } }
+  .row { display:flex; justify-content:center; gap:8px; margin-top:12px; }
+  .small { padding:10px 14px; border-radius:14px; background:#fff; font-weight:800; font-size:14px; box-shadow:0 3px 0 #f0d77a; }
+  .hint { min-height:24px; margin-top:12px; color:var(--muted); font-weight:700; }
+  .slots { display:flex; justify-content:center; flex-wrap:wrap; gap:5px; margin-top:12px; min-height:46px; }
+  .slot { width:34px; height:44px; border-radius:10px; background:#fff; border-bottom:4px solid #f0d77a; font-size:24px; font-weight:900; display:grid; place-items:center; text-transform:uppercase; }
+  .slot.good { background:#dcfce7; color:var(--g); border-color:#86efac; } .slot.bad { background:#fee2e2; color:var(--r); border-color:#fca5a5; }
+  .kb { margin-top:auto; display:grid; gap:6px; }
+  .kb div { display:flex; gap:5px; justify-content:center; }
+  .kb button { flex:1; max-width:40px; height:48px; border-radius:10px; background:#fff; font-weight:900; font-size:18px; box-shadow:0 3px 0 #f0d77a; text-transform:uppercase; padding:0; }
+  .kb button.wide { max-width:68px; font-size:15px; }
+  .kb button.go { background:var(--d); color:#fff; box-shadow:0 3px 0 #000; }
+  .res { margin:auto 0; text-align:center; }
+  .res .big { font-size:84px; } .res h2 { font-size:32px; margin:4px 0; } .res p { color:var(--muted); font-weight:700; }
+  .main { width:100%; padding:17px; border-radius:20px; background:var(--d); color:#fff; font-weight:900; font-size:19px; margin-top:12px; }
+  .list { text-align:left; background:#fff; border-radius:18px; padding:8px 14px; margin-top:14px; font-weight:700; line-height:2; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home">
+  <h1>🐝 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="levels" id="levels"></div>
+  <div class="lang" id="lang"><button data-l="en">🇬🇧 English</button><button data-l="es">🇪🇸 Español</button></div>
+</section>
+<section class="screen" id="play">
+  <div class="bar"><button id="quit">✕</button><span id="prog"></span><span class="lives" id="lives"></span></div>
+  <div class="stage">
+    <button class="speak" id="say">🔊</button>
+    <div class="row"><button class="small" id="slow"></button><button class="small" id="clue"></button></div>
+    <div class="hint" id="hint"></div>
+    <div class="slots" id="slots"></div>
+  </div>
+  <div class="kb" id="kb"></div>
+</section>
+<section class="screen" id="end"><div class="res"><div class="big" id="eE"></div><h2 id="eT"></h2><p id="eP"></p><div class="list" id="eL"></div><button class="main" id="again"></button><button class="main" style="background:#fff;color:var(--ink)" id="back"></button></div></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Deletreo', sub:'Escucha la palabra y escríbela bien', levels:[['Abejita','Palabras cortas'],['Obrera','Palabras de cada día'],['Reina','Palabras difíciles']], slow:'🐢 Despacio', clue:'💡 Pista', letters:'letras', starts:'Empieza por', again:'Otra vez', back:'Elegir nivel', titles:['¡A practicar!','¡Bien hecho!','¡Genial!','¡Perfecto!'], of:'de', right:'bien', review:'Para repasar', tap:'Toca la abeja para oír la palabra' }
+ : { title:'Spelling Bee', sub:'Listen to the word and spell it right', levels:[['Little bee','Short words'],['Worker bee','Everyday words'],['Queen bee','Tricky words']], slow:'🐢 Slowly', clue:'💡 Clue', letters:'letters', starts:'Starts with', again:'Again', back:'Choose level', titles:['Keep practising!','Well done!','Great!','Perfect!'], of:'of', right:'right', review:'To review', tap:'Tap the bee to hear the word' };
+const WORDS = {
+  en: [
+    'cat dog sun hat fish milk tree book frog cake ship rain star duck lamp jump bird ball moon king',
+    'friend because school people water little garden yellow window orange answer family pencil animal mother kitchen picture morning summer castle',
+    'necessary rhythm separate definitely beautiful library february knowledge island receive believe calendar tomorrow restaurant government embarrass occasion parallel weird vacuum'
+  ],
+  es: [
+    'sol mar pan casa gato luna flor mesa pato agua leche mano tren nube silla perro libro rana fuego',
+    'amigo escuela ventana familia naranja jardín cocina hermano pájaro camisa zapato verano lápiz árbol música ciudad médico canción invierno',
+    'hielo búho cigüeña hormiga zanahoria murciélago excursión jirafa vehículo exhausto bahía ahorro cerveza hueso enhorabuena exagerar avellana bisabuelo desahogo'
+  ]
+};
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+let lang = ES ? 'es' : 'en', stars = {}, level, words, i, lives, right, missed, typed, clueLevel, locked;
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('slow').textContent = T.slow; $('clue').textContent = T.clue; $('again').textContent = T.again; $('back').textContent = T.back;
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function home() {
+  $('levels').innerHTML = T.levels.map(([n, d], k) => { const s = stars[lang + k] || 0; return `<button class="lvl" data-k="${k}"><span class="hex" style="background:${['#ffe48a', '#ffc21a', '#f59e0b'][k]}">${['🐝', '🍯', '👑'][k]}</span><span><b>${n}</b><small>${d}</small></span><span class="st">${'⭐'.repeat(s)}${'☆'.repeat(3 - s)}</span></button>`; }).join('');
+  $('levels').querySelectorAll('.lvl').forEach(b => b.onclick = () => start(+b.dataset.k));
+  $('lang').querySelectorAll('button').forEach(b => { b.classList.toggle('on', b.dataset.l === lang); b.onclick = () => { lang = b.dataset.l; store.set('lang', lang); buildKb(); home(); }; });
+  show('home');
+}
+function buildKb() {
+  const rows = lang === 'es' ? ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm'] : ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+  const extra = lang === 'es' ? 'áéíóúü' : '';
+  $('kb').innerHTML = (extra ? `<div>${[...extra].map(c => `<button data-c="${c}">${c}</button>`).join('')}</div>` : '') + rows.map((r, n) => `<div>${n === 2 ? '<button class="wide" data-c="del">⌫</button>' : ''}${[...r].map(c => `<button data-c="${c}">${c}</button>`).join('')}${n === 2 ? '<button class="wide go" data-c="ok">✓</button>' : ''}</div>`).join('');
+  $('kb').querySelectorAll('button').forEach(b => b.onclick = () => key(b.dataset.c));
+}
+function say() {
+  const w = words[i];
+  $('say').classList.add('talk'); setTimeout(() => $('say').classList.remove('talk'), 1200);
+  const code = lang === 'es' ? 'es-ES' : 'en-US';
+  try {
+    if (window.Acornix && Acornix.speak) { Acornix.speak(w, code); return; }
+    const u = new SpeechSynthesisUtterance(w); u.lang = code; speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function slowSay() {
+  const w = words[i], code = lang === 'es' ? 'es-ES' : 'en-US';
+  $('say').classList.add('talk'); setTimeout(() => $('say').classList.remove('talk'), 2000);
+  try {
+    if (window.Acornix && Acornix.speak) { Acornix.speak(w.replace(/(.)/g, '$1 ').trim() + '. ' + w, code); return; }
+    const u = new SpeechSynthesisUtterance(w); u.lang = code; u.rate = .45; speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function slots(state) {
+  const w = words[i];
+  $('slots').innerHTML = [...w].map((c, k) => { const t = typed[k] || ''; let cls = ''; if (state) cls = t === c ? 'good' : 'bad'; return `<div class="slot ${cls}">${state === 'show' ? c : t}</div>`; }).join('');
+}
+function hud() { $('prog').textContent = `${i + 1} / ${words.length}`; $('lives').textContent = '💛'.repeat(lives) + '🤍'.repeat(3 - lives); }
+function start(k) {
+  level = k; const pool = WORDS[lang][k].split(' ');
+  words = pool.sort(() => Math.random() - .5).slice(0, 10); i = 0; lives = 3; right = 0; missed = []; show('play'); ask();
+}
+function ask() { typed = ''; clueLevel = 0; locked = false; $('hint').textContent = T.tap; hud(); slots(); setTimeout(say, 300); }
+function key(c) {
+  if (locked) return;
+  if (c === 'del') typed = typed.slice(0, -1);
+  else if (c === 'ok') return check();
+  else if (typed.length < words[i].length) typed += c;
+  slots(); tick();
+  if (typed.length === words[i].length) setTimeout(check, 250);
+}
+function check() {
+  if (locked || !typed) return; locked = true;
+  const w = words[i], ok = typed === w;
+  slots('mark');
+  if (ok) { right++; buzz(15); chime(true); }
+  else { lives--; missed.push(w); buzz([40, 30, 40]); chime(false); setTimeout(() => { slots('show'); $('slots').querySelectorAll('.slot').forEach(s => s.classList.add('good')); }, 700); }
+  hud();
+  setTimeout(() => { if (lives <= 0 || i + 1 >= words.length) end(); else { i++; ask(); } }, ok ? 900 : 2200);
+}
+async function end() {
+  const tier = right >= 10 ? 3 : right >= 8 ? 2 : right >= 5 ? 1 : 0;
+  const k = lang + level; if (tier > (stars[k] || 0)) { stars[k] = tier; await store.set('stars', stars); }
+  $('eE').textContent = ['🌱', '🐝', '🍯', '👑'][tier]; $('eT').textContent = T.titles[tier];
+  $('eP').textContent = `${right} ${T.of} ${i + 1} ${T.right}`;
+  $('eL').innerHTML = missed.length ? `<b>${T.review}</b><br>` + missed.map(w => w.toUpperCase()).join(' · ') : '';
+  $('eL').style.display = missed.length ? 'block' : 'none'; show('end');
+}
+$('say').onclick = say;
+$('slow').onclick = slowSay;
+$('clue').onclick = () => { const w = words[i]; clueLevel = Math.min(clueLevel + 1, 4); $('hint').textContent = clueLevel === 1 ? `${w.length} ${T.letters}` : `${T.starts} “${w.slice(0, clueLevel - 1).toUpperCase()}…”`; };
+addEventListener('keydown', e => { if (!$('play').classList.contains('on')) return; if (e.key === 'Backspace') key('del'); else if (e.key === 'Enter') key('ok'); else if (/^[a-zñáéíóúü]$/i.test(e.key)) key(e.key.toLowerCase()); });
+let ac; function chime(ok) { try { ac = ac || new AudioContext(); (ok ? [660, 880] : [220, 180]).forEach((f, n) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = .07; o.connect(g); g.connect(ac.destination); const t0 = ac.currentTime + n * .12; o.start(t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + .2); o.stop(t0 + .2); }); } catch (e) {} }
+function tick() { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = 900; g.gain.value = .02; o.connect(g); g.connect(ac.destination); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .04); o.start(); o.stop(ac.currentTime + .04); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('quit').onclick = home; $('again').onclick = () => start(level); $('back').onclick = home;
+(async () => { stars = await store.get('stars', {}); lang = await store.get('lang', lang); buildKb(); home(); })();
+</script>
+</body>
+</html>

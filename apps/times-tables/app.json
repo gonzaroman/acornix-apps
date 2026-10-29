@@ -1,0 +1,14 @@
+{
+  "id": "times-tables",
+  "name": "Times Tables",
+  "emoji": "✖️",
+  "category": "education",
+  "description": "Pick the tables you want and practise them at your pace or race against 60 seconds. Stars for every table you master.",
+  "prompt": "A times tables trainer for kids: pick which tables to practise, a big number keypad, a relaxed practice mode of 20 questions and a 60-second race with a high score. Mistakes come back later, and each table earns up to three stars.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

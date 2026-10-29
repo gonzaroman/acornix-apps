@@ -1,0 +1,14 @@
+{
+  "id": "spelling-bee",
+  "name": "Spelling Bee",
+  "emoji": "🐝",
+  "category": "education",
+  "description": "Hear a word and spell it with the bee keyboard. Three levels in English or Spanish, clues, slow mode and three lives.",
+  "prompt": "A spelling bee game: the phone says a word out loud and you spell it with a big on-screen keyboard, in English or Spanish, three levels of difficulty, a slow mode that spells it letter by letter, clues, three lives and stars per level.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

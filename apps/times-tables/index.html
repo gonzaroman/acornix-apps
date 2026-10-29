@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Times Tables</title>
+<style>
+  :root { --bg:#fff8e7; --ink:#3b2a07; --muted:#9a8152; --a:#ff9f1c; --g:#2ec4b6; --r:#ff595e; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:"Trebuchet MS",system-ui,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:0 0 4px; font-size:32px; }
+  .sub { color:var(--muted); font-weight:700; margin:0 0 12px; }
+  .tables { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .tb { aspect-ratio:1; border-radius:20px; background:#fff; font-size:28px; font-weight:900; box-shadow:0 5px 0 #f1dcb0; position:relative; }
+  .tb.on { background:var(--a); color:#fff; box-shadow:0 5px 0 #c9740b; }
+  .tb .stars { position:absolute; bottom:6px; left:0; right:0; font-size:10px; letter-spacing:1px; }
+  .modes { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .mode { padding:16px 10px; border-radius:20px; background:#fff; font-weight:900; font-size:16px; box-shadow:0 5px 0 #f1dcb0; }
+  .mode span { display:block; font-size:30px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; font-weight:900; font-size:18px; }
+  .bar button { width:44px; height:44px; border-radius:14px; background:#fff; font-size:18px; }
+  .q { text-align:center; font-size:clamp(56px,18vw,96px); font-weight:900; margin:auto 0 8px; }
+  .ans { text-align:center; font-size:48px; font-weight:900; min-height:60px; color:var(--a); }
+  .ans.good { color:var(--g); } .ans.bad { color:var(--r); animation:shake .35s; }
+  @keyframes shake { 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
+  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:auto; }
+  .pad button { padding:16px 0; border-radius:18px; background:#fff; font-size:28px; font-weight:900; box-shadow:0 4px 0 #f1dcb0; }
+  .pad button:active { transform:translateY(3px); box-shadow:0 1px 0 #f1dcb0; }
+  .pad .ok { background:var(--g); color:#fff; box-shadow:0 4px 0 #1f8a80; }
+  .timer { height:10px; border-radius:5px; background:#f1dcb0; overflow:hidden; margin-top:10px; }
+  .timer i { display:block; height:100%; background:var(--a); }
+  .result { margin:auto 0; text-align:center; }
+  .result .big { font-size:90px; }
+  .result h2 { font-size:34px; margin:6px 0; }
+  .result p { color:var(--muted); font-weight:700; }
+  .main { width:100%; padding:17px; border-radius:20px; background:var(--a); color:#fff; font-weight:900; font-size:20px; box-shadow:0 5px 0 #c9740b; margin-top:10px; }
+  .grid { display:grid; grid-template-columns:repeat(11,1fr); gap:2px; margin-top:12px; font-size:12px; font-weight:800; text-align:center; }
+  .grid div { padding:5px 0; border-radius:5px; background:#fff; }
+  .grid .h { background:var(--a); color:#fff; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home">
+  <h1>✖️ <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <div class="tables" id="tables"></div>
+  <div class="modes"><button class="mode" id="mPractice"></button><button class="mode" id="mRace"></button></div>
+  <div class="grid" id="grid"></div>
+</section>
+<section class="screen" id="play">
+  <div class="bar"><button id="quit">✕</button><span id="score"></span><span id="streak"></span></div>
+  <div class="timer" id="timerBox"><i id="timer"></i></div>
+  <div class="q" id="q"></div><div class="ans" id="ans"></div>
+  <div class="pad" id="pad"></div>
+</section>
+<section class="screen" id="end"><div class="result"><div class="big" id="eEmoji"></div><h2 id="eTitle"></h2><p id="eText"></p><button class="main" id="again"></button><button class="main" style="background:#fff;color:var(--ink);box-shadow:0 5px 0 #f1dcb0" id="toHome"></button></div></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Tablas', sub:'Elige las tablas que quieres practicar', practice:'Practicar', practiceS:'Sin prisa', race:'Contrarreloj', raceS:'60 segundos', right:'aciertos', of:'de', great:['¡Sigue así!','¡Muy bien!','¡Genial!','¡Eres un crack!'], again:'Otra vez', home:'Elegir tablas', best:'Récord', newBest:'¡Nuevo récord!', streak:'racha' }
+ : { title:'Times Tables', sub:'Pick the tables you want to practise', practice:'Practise', practiceS:'No rush', race:'Race', raceS:'60 seconds', right:'right', of:'of', great:['Keep going!','Well done!','Brilliant!','You\'re a star!'], again:'Again', home:'Choose tables', best:'Best', newBest:'New record!', streak:'streak' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('mPractice').innerHTML = `<span>🐢</span>${T.practice}<br><small>${T.practiceS}</small>`; $('mRace').innerHTML = `<span>⚡</span>${T.race}<br><small>${T.raceS}</small>`; $('again').textContent = T.again; $('toHome').textContent = T.home;
+let picked = new Set([2, 3, 4, 5]), stats = {}, best = 0, mode, q, input = '', score, total, streak, maxStreak, timer, left, wrong = [];
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function home() {
+  $('tables').innerHTML = [...Array(12)].map((_, i) => { const n = i + 1, s = stats[n] || 0; return `<button class="tb ${picked.has(n) ? 'on' : ''}" data-n="${n}">${n}<span class="stars">${'⭐'.repeat(Math.min(3, Math.floor(s / 10)))}</span></button>`; }).join('');
+  $('tables').querySelectorAll('.tb').forEach(b => b.onclick = () => { const n = +b.dataset.n; picked.has(n) ? picked.delete(n) : picked.add(n); if (!picked.size) picked.add(n); store.set('picked', [...picked]); home(); });
+  $('grid').innerHTML = '<div class="h">×</div>' + [...Array(10)].map((_, i) => `<div class="h">${i + 1}</div>`).join('') + [...Array(10)].map((_, r) => `<div class="h">${r + 1}</div>` + [...Array(10)].map((_, c) => `<div style="background:${picked.has(r + 1) || picked.has(c + 1) ? '#ffe4b5' : '#fff'}">${(r + 1) * (c + 1)}</div>`).join('')).join('');
+  show('home');
+}
+function newQ() {
+  const tabs = [...picked], a = wrong.length && Math.random() < .3 ? wrong.shift() : null;
+  q = a || { a: tabs[Math.floor(Math.random() * tabs.length)], b: 1 + Math.floor(Math.random() * 10) };
+  if (Math.random() < .5 && !a) q = { a: q.b, b: q.a, t: q.a };
+  $('q').textContent = `${q.a} × ${q.b}`; input = ''; $('ans').textContent = '?'; $('ans').className = 'ans';
+}
+function start(m) {
+  mode = m; score = 0; total = 0; streak = 0; maxStreak = 0; wrong = [];
+  $('timerBox').style.visibility = m === 'race' ? 'visible' : 'hidden';
+  clearInterval(timer);
+  if (m === 'race') { left = 60; $('timer').style.width = '100%'; timer = setInterval(() => { left -= .1; $('timer').style.width = left / 60 * 100 + '%'; if (left <= 0) end(); }, 100); }
+  hud(); newQ(); show('play');
+}
+function hud() { $('score').textContent = `✅ ${score}${mode === 'practice' ? ' / ' + total : ''}`; $('streak').textContent = streak > 1 ? `🔥 ${streak}` : ''; }
+function key(k) {
+  if (k === '⌫') input = input.slice(0, -1); else if (k === '✓') return check(); else if (input.length < 3) input += k;
+  $('ans').textContent = input || '?';
+  if (input.length >= String(q.a * q.b).length && +input === q.a * q.b) check();
+}
+function check() {
+  if (!input) return;
+  total++; const ok = +input === q.a * q.b, t = q.t || q.a;
+  if (ok) { score++; streak++; maxStreak = Math.max(maxStreak, streak); stats[t] = (stats[t] || 0) + 1; $('ans').className = 'ans good'; tone(660 + streak * 20); buzz(12); }
+  else { streak = 0; wrong.push(q); $('ans').textContent = `${q.a * q.b}`; $('ans').className = 'ans bad'; tone(200); buzz([40, 30, 40]); }
+  hud(); store.set('stats', stats);
+  setTimeout(() => { if (mode === 'practice' && total >= 20) end(); else if ($('play').classList.contains('on')) newQ(); }, ok ? 350 : 1200);
+}
+async function end() {
+  clearInterval(timer);
+  const ratio = total ? score / total : 0, tier = ratio > .95 ? 3 : ratio > .8 ? 2 : ratio > .6 ? 1 : 0;
+  let extra = '';
+  if (mode === 'race') { if (score > best) { best = score; await store.set('best', best); extra = ' · 🏆 ' + T.newBest; } else extra = ` · ${T.best}: ${best}`; }
+  $('eEmoji').textContent = ['🌱', '👍', '🌟', '🏆'][tier]; $('eTitle').textContent = T.great[tier];
+  $('eText').textContent = `${score} ${T.right} ${T.of} ${total} · 🔥 ${maxStreak} ${T.streak}${extra}`;
+  show('end'); buzz([30, 40, 80]);
+}
+let ac; function tone(f) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = .06; o.connect(g); g.connect(ac.destination); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .15); o.start(); o.stop(ac.currentTime + .15); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k => { const b = document.createElement('button'); b.textContent = k; if (k === '✓') b.className = 'ok'; b.onclick = () => key(k); $('pad').appendChild(b); });
+addEventListener('keydown', e => { if (!$('play').classList.contains('on')) return; if (/^[0-9]$/.test(e.key)) key(e.key); else if (e.key === 'Backspace') key('⌫'); else if (e.key === 'Enter') key('✓'); });
+$('mPractice').onclick = () => start('practice'); $('mRace').onclick = () => start('race');
+$('quit').onclick = () => { clearInterval(timer); home(); }; $('again').onclick = () => start(mode); $('toHome').onclick = home;
+(async () => { stats = await store.get('stats', {}); best = await store.get('best', 0); const p = await store.get('picked', null); if (p) picked = new Set(p); home(); })();
+</script>
+</body>
+</html>

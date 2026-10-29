@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Periodic Table</title>
+<style>
+  :root { --bg:#0e1220; --card:#182035; --ink:#eef2ff; --muted:#8e9bbf; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { padding:calc(env(safe-area-inset-top) + 12px) 0 calc(env(safe-area-inset-bottom) + 16px); }
+  header { padding:0 14px; display:flex; gap:10px; align-items:center; }
+  header h1 { margin:0; font-size:24px; flex:1; }
+  header input { width:150px; padding:10px 12px; border-radius:12px; background:var(--card); outline:none; }
+  .legend { display:flex; gap:6px; overflow-x:auto; padding:10px 14px; scrollbar-width:none; }
+  .legend::-webkit-scrollbar { display:none; }
+  .legend button { flex:none; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800; color:#0e1220; opacity:.95; }
+  .legend button.dim { opacity:.3; }
+  .wrap { overflow-x:auto; padding:6px 14px 10px; }
+  #table { display:grid; grid-template-columns:repeat(18,46px); grid-template-rows:repeat(7,54px) 10px repeat(2,54px); gap:3px; width:max-content; }
+  .el { border-radius:7px; padding:3px 4px; display:flex; flex-direction:column; justify-content:space-between; color:#0e1220; position:relative; transition:transform .15s, opacity .2s; }
+  .el:active { transform:scale(.92); }
+  .el .n { font-size:9px; font-weight:700; opacity:.75; }
+  .el .s { font-size:18px; font-weight:900; line-height:1; }
+  .el .m { font-size:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+  .el.dim { opacity:.15; }
+  .gap { height:10px; grid-column:1/-1; }
+  #sheet { position:fixed; left:0; right:0; bottom:0; background:var(--card); border-radius:24px 24px 0 0; padding:18px 18px calc(env(safe-area-inset-bottom) + 18px); transform:translateY(110%); transition:transform .3s cubic-bezier(.2,.8,.2,1); box-shadow:0 -10px 40px #0008; z-index:5; }
+  #sheet.on { transform:none; }
+  .sh-top { display:flex; gap:16px; align-items:center; }
+  .big { width:96px; height:96px; border-radius:18px; color:#0e1220; display:flex; flex-direction:column; align-items:center; justify-content:center; flex:none; }
+  .big b { font-size:40px; line-height:1; } .big small { font-weight:700; }
+  .sh-top h2 { margin:0; font-size:26px; } .sh-top p { margin:2px 0 0; color:var(--muted); font-weight:700; }
+  .facts { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:14px; }
+  .facts div { background:#0e1220; border-radius:12px; padding:10px; } .facts small { display:block; color:var(--muted); font-size:11px; font-weight:700; } .facts b { font-size:15px; }
+  .close { position:absolute; top:12px; right:14px; width:36px; height:36px; border-radius:50%; background:#ffffff14; }
+</style>
+</head>
+<body>
+<div id="app"><header><h1>⚗️ <span id="ttl"></span></h1><input id="q"></header><div class="legend" id="legend"></div><div class="wrap"><div id="table"></div></div></div>
+<div id="sheet"><button class="close" id="close">✕</button><div class="sh-top"><div class="big" id="bBig"></div><div><h2 id="bName"></h2><p id="bCat"></p></div></div><div class="facts" id="facts"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { title:'Tabla periódica', search:'Buscar…', number:'Número atómico', mass:'Masa atómica', period:'Periodo', group:'Grupo', block:'Bloque', state:'A 20 °C', solid:'Sólido', liquid:'Líquido', gas:'Gas', unknown:'Desconocido' }
+ : { title:'Periodic Table', search:'Search…', number:'Atomic number', mass:'Atomic mass', period:'Period', group:'Group', block:'Block', state:'At 20 °C', solid:'Solid', liquid:'Liquid', gas:'Gas', unknown:'Unknown' };
+const CATS = { a:['#ff8a8a','Alkali metals','Metales alcalinos'], e:['#ffc178','Alkaline earth','Alcalinotérreos'], t:['#ffe08a','Transition metals','Metales de transición'], p:['#b5e48c','Post-transition','Otros metales'], m:['#7ee0c3','Metalloids','Metaloides'], n:['#8ecdf7','Nonmetals','No metales'], h:['#a9b8ff','Halogens','Halógenos'], g:['#d8a8ff','Noble gases','Gases nobles'], l:['#ffa8d2','Lanthanides','Lantánidos'], c:['#ff9ec4','Actinides','Actínidos'], u:['#c9ccd6','Unknown','Desconocidos'] };
+// symbol|English|Spanish|mass|category|state (s/l/g)
+const RAW = 'H|Hydrogen|Hidrógeno|1.008|n|g,He|Helium|Helio|4.0026|g|g,Li|Lithium|Litio|6.94|a|s,Be|Beryllium|Berilio|9.0122|e|s,B|Boron|Boro|10.81|m|s,C|Carbon|Carbono|12.011|n|s,N|Nitrogen|Nitrógeno|14.007|n|g,O|Oxygen|Oxígeno|15.999|n|g,F|Fluorine|Flúor|18.998|h|g,Ne|Neon|Neón|20.180|g|g,Na|Sodium|Sodio|22.990|a|s,Mg|Magnesium|Magnesio|24.305|e|s,Al|Aluminium|Aluminio|26.982|p|s,Si|Silicon|Silicio|28.085|m|s,P|Phosphorus|Fósforo|30.974|n|s,S|Sulfur|Azufre|32.06|n|s,Cl|Chlorine|Cloro|35.45|h|g,Ar|Argon|Argón|39.948|g|g,K|Potassium|Potasio|39.098|a|s,Ca|Calcium|Calcio|40.078|e|s,Sc|Scandium|Escandio|44.956|t|s,Ti|Titanium|Titanio|47.867|t|s,V|Vanadium|Vanadio|50.942|t|s,Cr|Chromium|Cromo|51.996|t|s,Mn|Manganese|Manganeso|54.938|t|s,Fe|Iron|Hierro|55.845|t|s,Co|Cobalt|Cobalto|58.933|t|s,Ni|Nickel|Níquel|58.693|t|s,Cu|Copper|Cobre|63.546|t|s,Zn|Zinc|Zinc|65.38|t|s,Ga|Gallium|Galio|69.723|p|s,Ge|Germanium|Germanio|72.630|m|s,As|Arsenic|Arsénico|74.922|m|s,Se|Selenium|Selenio|78.971|n|s,Br|Bromine|Bromo|79.904|h|l,Kr|Krypton|Kriptón|83.798|g|g,Rb|Rubidium|Rubidio|85.468|a|s,Sr|Strontium|Estroncio|87.62|e|s,Y|Yttrium|Itrio|88.906|t|s,Zr|Zirconium|Circonio|91.224|t|s,Nb|Niobium|Niobio|92.906|t|s,Mo|Molybdenum|Molibdeno|95.95|t|s,Tc|Technetium|Tecnecio|98|t|s,Ru|Ruthenium|Rutenio|101.07|t|s,Rh|Rhodium|Rodio|102.91|t|s,Pd|Palladium|Paladio|106.42|t|s,Ag|Silver|Plata|107.87|t|s,Cd|Cadmium|Cadmio|112.41|t|s,In|Indium|Indio|114.82|p|s,Sn|Tin|Estaño|118.71|p|s,Sb|Antimony|Antimonio|121.76|m|s,Te|Tellurium|Telurio|127.60|m|s,I|Iodine|Yodo|126.90|h|s,Xe|Xenon|Xenón|131.29|g|g,Cs|Caesium|Cesio|132.91|a|s,Ba|Barium|Bario|137.33|e|s,La|Lanthanum|Lantano|138.91|l|s,Ce|Cerium|Cerio|140.12|l|s,Pr|Praseodymium|Praseodimio|140.91|l|s,Nd|Neodymium|Neodimio|144.24|l|s,Pm|Promethium|Prometio|145|l|s,Sm|Samarium|Samario|150.36|l|s,Eu|Europium|Europio|151.96|l|s,Gd|Gadolinium|Gadolinio|157.25|l|s,Tb|Terbium|Terbio|158.93|l|s,Dy|Dysprosium|Disprosio|162.50|l|s,Ho|Holmium|Holmio|164.93|l|s,Er|Erbium|Erbio|167.26|l|s,Tm|Thulium|Tulio|168.93|l|s,Yb|Ytterbium|Iterbio|173.05|l|s,Lu|Lutetium|Lutecio|174.97|l|s,Hf|Hafnium|Hafnio|178.49|t|s,Ta|Tantalum|Tántalo|180.95|t|s,W|Tungsten|Wolframio|183.84|t|s,Re|Rhenium|Renio|186.21|t|s,Os|Osmium|Osmio|190.23|t|s,Ir|Iridium|Iridio|192.22|t|s,Pt|Platinum|Platino|195.08|t|s,Au|Gold|Oro|196.97|t|s,Hg|Mercury|Mercurio|200.59|t|l,Tl|Thallium|Talio|204.38|p|s,Pb|Lead|Plomo|207.2|p|s,Bi|Bismuth|Bismuto|208.98|p|s,Po|Polonium|Polonio|209|p|s,At|Astatine|Astato|210|h|s,Rn|Radon|Radón|222|g|g,Fr|Francium|Francio|223|a|s,Ra|Radium|Radio|226|e|s,Ac|Actinium|Actinio|227|c|s,Th|Thorium|Torio|232.04|c|s,Pa|Protactinium|Protactinio|231.04|c|s,U|Uranium|Uranio|238.03|c|s,Np|Neptunium|Neptunio|237|c|s,Pu|Plutonium|Plutonio|244|c|s,Am|Americium|Americio|243|c|s,Cm|Curium|Curio|247|c|s,Bk|Berkelium|Berkelio|247|c|s,Cf|Californium|Californio|251|c|s,Es|Einsteinium|Einstenio|252|c|s,Fm|Fermium|Fermio|257|c|s,Md|Mendelevium|Mendelevio|258|c|s,No|Nobelium|Nobelio|259|c|s,Lr|Lawrencium|Lawrencio|266|c|s,Rf|Rutherfordium|Rutherfordio|267|t|s,Db|Dubnium|Dubnio|268|t|s,Sg|Seaborgium|Seaborgio|269|t|s,Bh|Bohrium|Bohrio|270|t|s,Hs|Hassium|Hasio|277|t|s,Mt|Meitnerium|Meitnerio|278|u|s,Ds|Darmstadtium|Darmstatio|281|u|s,Rg|Roentgenium|Roentgenio|282|u|s,Cn|Copernicium|Copernicio|285|t|l,Nh|Nihonium|Nihonio|286|u|s,Fl|Flerovium|Flerovio|289|u|s,Mc|Moscovium|Moscovio|290|u|s,Lv|Livermorium|Livermorio|293|u|s,Ts|Tennessine|Teneso|294|u|s,Og|Oganesson|Oganesón|294|u|s';
+const EL = RAW.split(',').map((r, i) => { const [s, en, es, m, c, st] = r.split('|'); return { z: i + 1, s, names: [en, es], m, c, st }; });
+// Period and group for the standard 18-column layout; lanthanides and actinides go to rows 9 and 10.
+function place(z) {
+  const starts = [1, 3, 11, 19, 37, 55, 87, 119];
+  let p = starts.findIndex((s, i) => z >= s && z < starts[i + 1]) + 1, idx = z - starts[p - 1];
+  if (p === 1) return { row: 1, col: z === 1 ? 1 : 18, p, g: z === 1 ? 1 : 18 };
+  if (p <= 3) { const col = idx < 2 ? idx + 1 : idx + 11; return { row: p, col, p, g: col }; }
+  if (p <= 5) return { row: p, col: idx + 1, p, g: idx + 1 };
+  if ((z >= 57 && z <= 71) || (z >= 89 && z <= 103)) { const base = z <= 71 ? 57 : 89; return { row: z <= 71 ? 9 : 10, col: 3 + (z - base), p, g: 3, f: true }; }
+  const col = idx < 2 ? idx + 1 : idx - 14 + 1; return { row: p, col, p, g: col };
+}
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('q').placeholder = T.search;
+let filter = null;
+function build() {
+  const t = $('table'); t.innerHTML = '';
+  EL.forEach(e => {
+    const pos = place(e.z), b = document.createElement('button'); b.className = 'el';
+    b.style.gridRow = pos.row; b.style.gridColumn = pos.col; b.style.background = CATS[e.c][0];
+    b.innerHTML = `<span class="n">${e.z}</span><span class="s">${e.s}</span><span class="m">${e.names[L]}</span>`;
+    b.onclick = () => open(e, pos); e.btn = b; t.appendChild(b);
+  });
+  $('legend').innerHTML = Object.entries(CATS).map(([k, [c, en, es]]) => `<button data-k="${k}" style="background:${c}">${ES ? es : en}</button>`).join('');
+  $('legend').querySelectorAll('button').forEach(b => b.onclick = () => { filter = filter === b.dataset.k ? null : b.dataset.k; apply(); });
+}
+function apply() {
+  const q = $('q').value.trim().toLowerCase();
+  EL.forEach(e => { const hit = (!filter || e.c === filter) && (!q || e.s.toLowerCase() === q || e.names.some(n => n.toLowerCase().includes(q)) || String(e.z) === q); e.btn.classList.toggle('dim', !hit); });
+  $('legend').querySelectorAll('button').forEach(b => b.classList.toggle('dim', filter && b.dataset.k !== filter));
+}
+function open(e, pos) {
+  const c = CATS[e.c];
+  $('bBig').style.background = c[0]; $('bBig').innerHTML = `<small>${e.z}</small><b>${e.s}</b><small>${e.m}</small>`;
+  $('bName').textContent = e.names[L]; $('bCat').textContent = c[1 + L] + ` · ${ES ? e.names[0] : e.names[1]}`;
+  const block = pos.f ? 'f' : pos.g <= 2 || e.z === 2 ? 's' : pos.g >= 13 ? 'p' : 'd';
+  $('facts').innerHTML = [[T.number, e.z], [T.mass, e.m + ' u'], [T.period, pos.p], [T.group, pos.f ? '—' : pos.g], [T.block, block], [T.state, { s: '🧊 ' + T.solid, l: '💧 ' + T.liquid, g: '💨 ' + T.gas }[e.st]]].map(([k, v]) => `<div><small>${k}</small><b>${v}</b></div>`).join('');
+  $('sheet').classList.add('on');
+  try { if (window.Acornix) Acornix.vibrate(8); } catch (x) {}
+}
+$('close').onclick = () => $('sheet').classList.remove('on');
+$('q').oninput = apply;
+build();
+</script>
+</body>
+</html>

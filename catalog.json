@@ -53,6 +53,52 @@
       "trending": 0
     },
     {
+      "id": "solar-system",
+      "name": "Solar System",
+      "emoji": "🪐",
+      "category": "education",
+      "description": "Watch the planets orbit the Sun, pinch to zoom and tap any planet for its size, year, day, moons, temperature and a fun fact.",
+      "prompt": "An animated solar system: the eight planets orbiting the Sun with a speed control, pinch and drag to explore, and a sheet for each planet and the Sun with distance, year length, day length, moons, diameter, temperature and a fun fact.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12191,
+      "sha256": "ebc64668cf4f3dc02ed3e3ccd3d0e2f86ca7c29795a83c7b16e83df83bb7f955",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "periodic-table",
+      "name": "Periodic Table",
+      "emoji": "⚗️",
+      "category": "education",
+      "description": "All 118 elements in a colourful table. Tap one to see its symbol, mass, group and what it's used for, or filter by family.",
+      "prompt": "An interactive periodic table with all 118 elements coloured by family, a legend that filters by family, search by name or symbol, and a detail sheet with atomic number, mass, group, period and a short note on each element.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": true,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11177,
+      "sha256": "ff2c45fb1f28b8d270782ac0dbc134af14565c45d17b0429ecdf8597b8550c1e",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "neon-drift-3d",
       "name": "Neon Drift 3D",
       "emoji": "🏎️",
@@ -122,6 +168,29 @@
       ],
       "size": 11004,
       "sha256": "99168432bac12935ae7ed1482ff28c783cc29c4a33476c7aad5bc03da7e8e57a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "flag-quiz",
+      "name": "World Flags",
+      "emoji": "🏳️",
+      "category": "education",
+      "description": "Guess the country from its flag, by continent or the whole world. Rounds of 10 with streaks and a list of the ones to review.",
+      "prompt": "A flags quiz: pick a continent or the whole world, see a big flag and choose the country among four options from the same region, with streaks, best scores per region and a list of the flags you missed.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12602,
+      "sha256": "dfc26f914308d97c3f489be7b5942c80c5ce741797b4f9b575de6a53c922a8b2",
       "downloads": 0,
       "trending": 0
     },
@@ -291,6 +360,29 @@
       ],
       "size": 5665,
       "sha256": "34bbda2a76882b081f51ffacbc34ae2c81ce3519e07a8cd489fe8261b3de13ec",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "times-tables",
+      "name": "Times Tables",
+      "emoji": "✖️",
+      "category": "education",
+      "description": "Pick the tables you want and practise them at your pace or race against 60 seconds. Stars for every table you master.",
+      "prompt": "A times tables trainer for kids: pick which tables to practise, a big number keypad, a relaxed practice mode of 20 questions and a 60-second race with a high score. Mistakes come back later, and each table earns up to three stars.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10600,
+      "sha256": "1ae125ca256287b3688255352badc68a511313456fcad02a083bb44ac929301d",
       "downloads": 0,
       "trending": 0
     },
@@ -531,6 +623,31 @@
       "trending": 0
     },
     {
+      "id": "spelling-bee",
+      "name": "Spelling Bee",
+      "emoji": "🐝",
+      "category": "education",
+      "description": "Hear a word and spell it with the bee keyboard. Three levels in English or Spanish, clues, slow mode and three lives.",
+      "prompt": "A spelling bee game: the phone says a word out loud and you spell it with a big on-screen keyboard, in English or Spanish, three levels of difficulty, a slow mode that spells it letter by letter, clues, three lives and stars per level.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13693,
+      "sha256": "555c931d7527b58aa8e8ae34b75810cbd53a0d0ece8a5221ed1b04d3451d8b94",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "solitaire",
       "name": "Solitaire",
       "emoji": "♠️",
@@ -750,6 +867,31 @@
       "trending": 0
     },
     {
+      "id": "quiz-me-ai",
+      "name": "Quiz Me",
+      "emoji": "🧠",
+      "category": "education",
+      "description": "Tell it what you're studying, or paste your notes, and your AI makes a multiple-choice quiz with an explanation for every answer.",
+      "prompt": "A quiz generator: type a topic or paste your notes, choose the level and number of questions, and the AI creates a multiple-choice quiz. After each answer show whether it was right and why, and at the end a score ring and a list of past quizzes.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 12365,
+      "sha256": "3bfd07d1cb7b8e0193a7197eb85c1509729c3637ef9f102ef3fa6656df4aff20",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "eisenhower",
       "name": "Priority Matrix",
       "emoji": "🧭",
@@ -912,6 +1054,29 @@
       ],
       "size": 10613,
       "sha256": "2b27bf5f7cd2fefd118058db69e37b0f8515c2962ef810e50f3c11e04cb7d575",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "math-sprint",
+      "name": "Math Sprint",
+      "emoji": "⚡",
+      "category": "education",
+      "description": "60 seconds of mental maths. Answer fast to chain combos and multiply your points, in three levels from sums to brackets.",
+      "prompt": "A fast mental maths game: 60 seconds, four answer buttons, three levels from addition and subtraction to all four operations and brackets, combo multipliers for answers in a row, time penalty for mistakes and a best score per level.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10661,
+      "sha256": "59ed4cd69fdb88c97ca5134dbd964c3b572f2cf2e2d0ccfe9b9353e018cd9fd8",
       "downloads": 0,
       "trending": 0
     },
@@ -1081,6 +1246,32 @@
       "trending": 0
     },
     {
+      "id": "homework-helper-ai",
+      "name": "Homework Helper",
+      "emoji": "📚",
+      "category": "education",
+      "description": "Type an exercise or take a photo and your AI explains it step by step, gives you just a hint, or explains it like you're 10.",
+      "prompt": "A homework helper: type the exercise or take a photo of it, choose just a hint, step by step or explain like I am 10, and the AI answers with numbered steps revealed one at a time, the final answer and how to check it. Keep a list of recent questions.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10419,
+      "sha256": "77afb6a60bd610c1db7d3ec22abd82d359520c76af3b5c9b4528843a46704443",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "habit-streaks",
       "name": "Habit Streaks",
       "emoji": "🔥",
@@ -1194,6 +1385,29 @@
       ],
       "size": 9875,
       "sha256": "c2aca5737b3e5fbdfcc51d752347449c9adfe1fac2a1a72c64cc69fe0d4e4081",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "flashcards",
+      "name": "Flashcards",
+      "emoji": "🗂️",
+      "category": "education",
+      "description": "Make your own decks and study them with spaced repetition: the cards you find hard come back sooner.",
+      "prompt": "A flashcards app: create decks by writing one card per line as question = answer, flip cards to study, rate each one as again, hard, good or easy, and schedule reviews with spaced repetition. Show how many cards are due in each deck.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11639,
+      "sha256": "00ddf3ebdeaa0f2144c7cebd3f081a4c7d3e9a8c6ef566237d87cf712a8e584c",
       "downloads": 0,
       "trending": 0
     },
@@ -1428,6 +1642,29 @@
       ],
       "size": 11062,
       "sha256": "9e8b6cdbc809d8b94819500963b2d6755f6aab512455b8dc6bbc71d3e0340208",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "capitals-quiz",
+      "name": "Capitals",
+      "emoji": "🏛️",
+      "category": "education",
+      "description": "What's the capital of…? Rounds of 10 by continent with believable wrong answers, best scores and a list to review.",
+      "prompt": "A capitals quiz: choose a continent or the whole world, see a country with its flag and pick its capital among four options from the same region, with best scores per region and the ones you missed at the end.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12602,
+      "sha256": "3c9ac8e43d218b932e8168cf77431f50b80a3ddc377c2454f61246f620a57ffa",
       "downloads": 0,
       "trending": 0
     },

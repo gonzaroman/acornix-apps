@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Capitals</title>
+<style>
+  :root { --bg:#f3f0ff; --card:#ffffff; --ink:#152238; --muted:#6c7a93; --a:#7c3aed; --g:#16a34a; --r:#dc2626; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:0 0 4px; font-size:30px; }
+  .sub { color:var(--muted); font-weight:600; margin:0 0 14px; }
+  .regions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .reg { padding:16px 12px; border-radius:20px; background:var(--card); text-align:left; box-shadow:0 4px 14px #15223812; font-weight:800; }
+  .reg span { display:block; font-size:30px; margin-bottom:6px; }
+  .reg small { display:block; color:var(--muted); font-weight:700; margin-top:3px; }
+  .reg.all { grid-column:1/-1; background:var(--a); color:#fff; }
+  .reg.all small { color:#ffffffcc; }
+  .bar { display:flex; justify-content:space-between; align-items:center; font-weight:800; }
+  .bar button { width:42px; height:42px; border-radius:12px; background:var(--card); }
+  .prog { height:8px; border-radius:4px; background:#00000012; overflow:hidden; margin:12px 0; }
+  .prog i { display:block; height:100%; background:var(--a); transition:width .3s; }
+  .prompt { text-align:center; margin:auto 0 18px; }
+  .prompt .flag { font-size:min(38vw,170px); line-height:1.1; filter:drop-shadow(0 8px 14px #0002); }
+  .prompt .big { font-size:clamp(28px,8vw,40px); font-weight:900; }
+  .prompt small { display:block; color:var(--muted); font-weight:700; margin-top:6px; }
+  .opts { display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:auto; }
+  .opt { padding:16px; border-radius:16px; background:var(--card); font-weight:800; font-size:17px; box-shadow:0 3px 0 #00000014; display:flex; align-items:center; gap:10px; }
+  .opt .f { font-size:28px; }
+  .opt.good { background:#dcfce7; color:var(--g); } .opt.bad { background:#fee2e2; color:var(--r); animation:shake .35s; }
+  @keyframes shake { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+  .res { margin:auto 0; text-align:center; }
+  .res .big { font-size:80px; } .res h2 { font-size:32px; margin:6px 0; } .res p { color:var(--muted); font-weight:700; }
+  .main { width:100%; padding:16px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:18px; margin-top:10px; }
+  .ghost { width:100%; padding:14px; border-radius:18px; background:var(--card); font-weight:800; margin-top:10px; }
+  .missed { text-align:left; background:var(--card); border-radius:16px; padding:10px 14px; margin-top:12px; font-size:14px; line-height:1.8; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home"><h1>🏛️ <span id="ttl"></span></h1><p class="sub" id="sub"></p><div class="regions" id="regions"></div></section>
+<section class="screen" id="play"><div class="bar"><button id="quit">✕</button><span id="score"></span><span id="streak"></span></div><div class="prog"><i id="prog"></i></div><div class="prompt" id="prompt"></div><div class="opts" id="opts"></div></section>
+<section class="screen" id="end"><div class="res"><div class="big" id="eE"></div><h2 id="eT"></h2><p id="eP"></p><div class="missed" id="missed"></div><button class="main" id="again"></button><button class="ghost" id="back"></button></div></section>
+<script>
+const MODE = 'capitals'; // 'flags': flag -> country · 'capitals': country -> capital
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { flags:['Banderas del mundo','¿De qué país es esta bandera?'], capitals:['Capitales','¿Cuál es la capital de…?'], all:'Todo el mundo', regions:{ eu:['🏰','Europa'], am:['🌎','América'], as:['🏯','Asia'], af:['🦁','África'], oc:['🏝️','Oceanía'] }, best:'Récord', of:'de', right:'aciertos', again:'Jugar otra vez', back:'Cambiar región', missed:'Para repasar', titles:['¡A practicar!','¡Bien!','¡Muy bien!','¡Perfecto!'], countries:'países', q:'Pregunta' }
+ : { flags:['World Flags','Which country is this flag from?'], capitals:['Capitals','What is the capital of…?'], all:'The whole world', regions:{ eu:['🏰','Europe'], am:['🌎','Americas'], as:['🏯','Asia'], af:['🦁','Africa'], oc:['🏝️','Oceania'] }, best:'Best', of:'of', right:'right', again:'Play again', back:'Change region', missed:'To review', titles:['Keep practising!','Good!','Great!','Perfect!'], countries:'countries', q:'Question' };
+const DATA = `🇪🇸|Spain|España|Madrid|Madrid|eu
+🇫🇷|France|Francia|Paris|París|eu
+🇩🇪|Germany|Alemania|Berlin|Berlín|eu
+🇮🇹|Italy|Italia|Rome|Roma|eu
+🇵🇹|Portugal|Portugal|Lisbon|Lisboa|eu
+🇬🇧|United Kingdom|Reino Unido|London|Londres|eu
+🇮🇪|Ireland|Irlanda|Dublin|Dublín|eu
+🇳🇱|Netherlands|Países Bajos|Amsterdam|Ámsterdam|eu
+🇧🇪|Belgium|Bélgica|Brussels|Bruselas|eu
+🇨🇭|Switzerland|Suiza|Bern|Berna|eu
+🇦🇹|Austria|Austria|Vienna|Viena|eu
+🇵🇱|Poland|Polonia|Warsaw|Varsovia|eu
+🇨🇿|Czechia|Chequia|Prague|Praga|eu
+🇸🇪|Sweden|Suecia|Stockholm|Estocolmo|eu
+🇳🇴|Norway|Noruega|Oslo|Oslo|eu
+🇫🇮|Finland|Finlandia|Helsinki|Helsinki|eu
+🇩🇰|Denmark|Dinamarca|Copenhagen|Copenhague|eu
+🇬🇷|Greece|Grecia|Athens|Atenas|eu
+🇭🇺|Hungary|Hungría|Budapest|Budapest|eu
+🇷🇴|Romania|Rumanía|Bucharest|Bucarest|eu
+🇺🇦|Ukraine|Ucrania|Kyiv|Kiev|eu
+🇮🇸|Iceland|Islandia|Reykjavik|Reikiavik|eu
+🇭🇷|Croatia|Croacia|Zagreb|Zagreb|eu
+🇺🇸|United States|Estados Unidos|Washington, D.C.|Washington D. C.|am
+🇨🇦|Canada|Canadá|Ottawa|Ottawa|am
+🇲🇽|Mexico|México|Mexico City|Ciudad de México|am
+🇨🇺|Cuba|Cuba|Havana|La Habana|am
+🇬🇹|Guatemala|Guatemala|Guatemala City|Ciudad de Guatemala|am
+🇨🇷|Costa Rica|Costa Rica|San José|San José|am
+🇵🇦|Panama|Panamá|Panama City|Ciudad de Panamá|am
+🇨🇴|Colombia|Colombia|Bogotá|Bogotá|am
+🇻🇪|Venezuela|Venezuela|Caracas|Caracas|am
+🇪🇨|Ecuador|Ecuador|Quito|Quito|am
+🇵🇪|Peru|Perú|Lima|Lima|am
+🇧🇴|Bolivia|Bolivia|Sucre|Sucre|am
+🇨🇱|Chile|Chile|Santiago|Santiago|am
+🇦🇷|Argentina|Argentina|Buenos Aires|Buenos Aires|am
+🇺🇾|Uruguay|Uruguay|Montevideo|Montevideo|am
+🇵🇾|Paraguay|Paraguay|Asunción|Asunción|am
+🇧🇷|Brazil|Brasil|Brasília|Brasilia|am
+🇯🇲|Jamaica|Jamaica|Kingston|Kingston|am
+🇩🇴|Dominican Republic|República Dominicana|Santo Domingo|Santo Domingo|am
+🇨🇳|China|China|Beijing|Pekín|as
+🇯🇵|Japan|Japón|Tokyo|Tokio|as
+🇰🇷|South Korea|Corea del Sur|Seoul|Seúl|as
+🇮🇳|India|India|New Delhi|Nueva Delhi|as
+🇹🇭|Thailand|Tailandia|Bangkok|Bangkok|as
+🇻🇳|Vietnam|Vietnam|Hanoi|Hanói|as
+🇮🇩|Indonesia|Indonesia|Jakarta|Yakarta|as
+🇵🇭|Philippines|Filipinas|Manila|Manila|as
+🇸🇦|Saudi Arabia|Arabia Saudí|Riyadh|Riad|as
+🇹🇷|Turkey|Turquía|Ankara|Ankara|as
+🇮🇱|Israel|Israel|Jerusalem|Jerusalén|as
+🇮🇷|Iran|Irán|Tehran|Teherán|as
+🇵🇰|Pakistan|Pakistán|Islamabad|Islamabad|as
+🇳🇵|Nepal|Nepal|Kathmandu|Katmandú|as
+🇲🇳|Mongolia|Mongolia|Ulaanbaatar|Ulán Bator|as
+🇪🇬|Egypt|Egipto|Cairo|El Cairo|af
+🇲🇦|Morocco|Marruecos|Rabat|Rabat|af
+🇳🇬|Nigeria|Nigeria|Abuja|Abuya|af
+🇰🇪|Kenya|Kenia|Nairobi|Nairobi|af
+🇪🇹|Ethiopia|Etiopía|Addis Ababa|Adís Abeba|af
+🇿🇦|South Africa|Sudáfrica|Pretoria|Pretoria|af
+🇬🇭|Ghana|Ghana|Accra|Acra|af
+🇸🇳|Senegal|Senegal|Dakar|Dakar|af
+🇹🇿|Tanzania|Tanzania|Dodoma|Dodoma|af
+🇲🇬|Madagascar|Madagascar|Antananarivo|Antananarivo|af
+🇦🇺|Australia|Australia|Canberra|Canberra|oc
+🇳🇿|New Zealand|Nueva Zelanda|Wellington|Wellington|oc
+🇫🇯|Fiji|Fiyi|Suva|Suva|oc
+🇵🇬|Papua New Guinea|Papúa Nueva Guinea|Port Moresby|Port Moresby|oc
+🇼🇸|Samoa|Samoa|Apia|Apia|oc
+🇹🇴|Tonga|Tonga|Nuku'alofa|Nukualofa|oc`.trim().split('\n').map(l => { const [f, en, es, cen, ces, r] = l.split('|'); return { f, name: [en, es], cap: [cen, ces], r }; });
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T[MODE][0]; $('sub').textContent = T[MODE][1]; $('again').textContent = T.again; $('back').textContent = T.back;
+let bests = {}, region, pool, i, score, streak, missed, answered;
+function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function home() {
+  const regs = [['all', '🌍', T.all], ...Object.entries(T.regions).map(([k, [e, n]]) => [k, e, n])];
+  $('regions').innerHTML = regs.map(([k, e, n]) => { const c = k === 'all' ? DATA.length : DATA.filter(d => d.r === k).length; return `<button class="reg ${k === 'all' ? 'all' : ''}" data-k="${k}"><span>${e}</span>${n}<small>${c} ${T.countries}${bests[k] != null ? ' · 🏆 ' + bests[k] + '/' + Math.min(10, c) : ''}</small></button>`; }).join('');
+  $('regions').querySelectorAll('.reg').forEach(b => b.onclick = () => start(b.dataset.k));
+  show('home');
+}
+function start(r) { region = r; pool = shuffle(DATA.filter(d => r === 'all' || d.r === r)).slice(0, 10); i = 0; score = 0; streak = 0; missed = []; show('play'); ask(); }
+function ask() {
+  answered = false; const d = pool[i], same = DATA.filter(x => x !== d && x.r === d.r);
+  const wrong = shuffle((same.length >= 3 ? same : DATA.filter(x => x !== d)).slice()).slice(0, 3), opts = shuffle([d, ...wrong]);
+  $('score').textContent = `✅ ${score}`; $('streak').textContent = streak > 1 ? `🔥 ${streak}` : ''; $('prog').style.width = i / pool.length * 100 + '%';
+  $('prompt').innerHTML = MODE === 'flags' ? `<div class="flag">${d.f}</div><small>${T.q} ${i + 1} ${T.of} ${pool.length}</small>` : `<div class="flag" style="font-size:90px">${d.f}</div><div class="big"></div><small>${T.q} ${i + 1} ${T.of} ${pool.length}</small>`;
+  if (MODE === 'capitals') $('prompt').querySelector('.big').textContent = d.name[L];
+  $('opts').innerHTML = '';
+  opts.forEach(o => { const b = document.createElement('button'); b.className = 'opt'; b.textContent = MODE === 'flags' ? o.name[L] : o.cap[L]; b.onclick = () => pick(b, o === d); b.dataset.ok = o === d; $('opts').appendChild(b); });
+}
+function pick(b, ok) {
+  if (answered) return; answered = true;
+  [...$('opts').children].forEach(x => { if (x.dataset.ok === 'true') x.classList.add('good'); });
+  if (ok) { score++; streak++; buzz(15); } else { b.classList.add('bad'); streak = 0; missed.push(pool[i]); buzz([40, 30, 40]); }
+  setTimeout(() => { i++; if (i < pool.length) ask(); else end(); }, ok ? 650 : 1300);
+}
+async function end() {
+  const r = score / pool.length, tier = r === 1 ? 3 : r >= .8 ? 2 : r >= .5 ? 1 : 0;
+  if (bests[region] == null || score > bests[region]) { bests[region] = score; await store.set('bests', bests); }
+  $('eE').textContent = ['📚', '👍', '🌟', '🏆'][tier]; $('eT').textContent = T.titles[tier]; $('eP').textContent = `${score} ${T.of} ${pool.length} ${T.right} · ${T.best}: ${bests[region]}`;
+  $('missed').innerHTML = missed.length ? `<b>${T.missed}</b><br>` + missed.map(d => `${d.f} ${d.name[L]}${MODE === 'capitals' ? ' → ' + d.cap[L] : ''}`).join('<br>') : '';
+  $('missed').style.display = missed.length ? 'block' : 'none'; show('end');
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('quit').onclick = home; $('again').onclick = () => start(region); $('back').onclick = home;
+(async () => { bests = await store.get('bests', {}); home(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Homework Helper</title>
+<style>
+  :root { --bg:#f4f1ff; --card:#fff; --ink:#1f1640; --muted:#7468a0; --a:#6d4aff; --a2:#ff7ab6; --line:#e6e0ff; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  h1 { margin:4px 0 2px; font-size:30px; }
+  .sub { margin:0 0 14px; color:var(--muted); font-weight:600; line-height:1.4; }
+  .card { background:var(--card); border-radius:22px; padding:14px; box-shadow:0 6px 20px #6d4aff14; margin-bottom:12px; }
+  textarea { width:100%; min-height:96px; border:2px solid var(--line); border-radius:16px; padding:12px; font:inherit; font-size:16px; resize:vertical; outline:none; color:var(--ink); background:#fbfaff; }
+  textarea:focus { border-color:var(--a); }
+  .photo { display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .photo label { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:14px; background:#efeaff; color:var(--a); font-weight:800; cursor:pointer; }
+  .photo input { display:none; }
+  .photo img { width:54px; height:54px; object-fit:cover; border-radius:12px; }
+  .photo .x { width:30px; height:30px; border-radius:50%; background:#efeaff; color:var(--a); font-weight:900; }
+  .seg { display:flex; gap:6px; margin-top:12px; background:#efeaff; padding:4px; border-radius:16px; }
+  .seg button { flex:1; padding:9px 4px; border-radius:12px; font-weight:800; font-size:13px; color:var(--muted); }
+  .seg button.on { background:#fff; color:var(--a); box-shadow:0 2px 8px #6d4aff22; }
+  .go { width:100%; margin-top:12px; padding:16px; border-radius:18px; background:linear-gradient(90deg,var(--a),var(--a2)); color:#fff; font-weight:900; font-size:17px; }
+  .go:disabled { opacity:.6; }
+  .err { color:#d63a6a; font-weight:700; margin:8px 2px 0; }
+  .subject { display:inline-block; padding:4px 10px; border-radius:10px; background:#efeaff; color:var(--a); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  .q { font-weight:800; font-size:17px; margin:8px 0 2px; }
+  .step { display:flex; gap:12px; padding:12px 0; border-top:1px dashed var(--line); animation:in .3s; }
+  @keyframes in { from { opacity:0; transform:translateY(8px); } }
+  .step .n { width:30px; height:30px; border-radius:50%; background:var(--a); color:#fff; font-weight:900; display:grid; place-items:center; flex:none; }
+  .step b { display:block; margin-bottom:3px; }
+  .step p { margin:0; line-height:1.5; white-space:pre-wrap; }
+  .answer { margin-top:6px; padding:14px; border-radius:16px; background:linear-gradient(90deg,#efeaff,#ffe9f4); font-weight:800; }
+  .answer small { display:block; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  .next { width:100%; margin-top:10px; padding:13px; border-radius:16px; background:#efeaff; color:var(--a); font-weight:900; }
+  .tip { margin-top:10px; color:var(--muted); font-size:14px; line-height:1.5; }
+  .hist h3 { margin:16px 4px 8px; font-size:15px; color:var(--muted); }
+  .hi { display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:12px 14px; border-radius:16px; background:#fff; margin-bottom:8px; }
+  .hi span { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; }
+  .hi small { color:var(--muted); }
+  .dots::after { content:'…'; animation:d 1s steps(3) infinite; }
+</style>
+</head>
+<body>
+<h1>📚 <span id="ttl"></span></h1>
+<p class="sub" id="sub"></p>
+<div class="card">
+  <textarea id="q"></textarea>
+  <div class="photo" id="photoRow"><label><input type="file" id="file" accept="image/*" capture="environment"><span id="photoLbl"></span></label></div>
+  <div class="seg" id="mode"></div>
+  <button class="go" id="go"></button>
+  <div class="err" id="err"></div>
+</div>
+<div class="card" id="out" hidden></div>
+<div class="hist" id="hist"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Ayuda con los deberes', sub:'Escribe el ejercicio o hazle una foto. Te lo explico paso a paso para que lo entiendas, no solo para copiarlo.', ph:'ej.: Resuelve 3x + 7 = 22\n¿Por qué llueve?\nAnaliza la frase: «El perro come pienso»', photo:'📷 Foto del ejercicio', modes:['💡 Solo una pista','🪜 Paso a paso','🧒 Como si tuviera 10 años'], go:'Ayúdame', thinking:'Pensando', next:'Siguiente paso', answer:'Solución', tip:'Para comprobarlo', recent:'Recientes', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No ha salido bien: ', empty:'Escribe el ejercicio o añade una foto.', showAll:'Ver la solución' }
+ : { title:'Homework Helper', sub:'Type the exercise or take a photo. I\'ll explain it step by step so you understand it, not just copy it.', ph:'e.g. Solve 3x + 7 = 22\nWhy does it rain?\nWhat is the past tense of "swim"?', photo:'📷 Photo of the exercise', modes:['💡 Just a hint','🪜 Step by step','🧒 Explain like I\'m 10'], go:'Help me', thinking:'Thinking', next:'Next step', answer:'Answer', tip:'To check it', recent:'Recent', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'That didn\'t work: ', empty:'Type the exercise or add a photo.', showAll:'Show the answer' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let mode = 1, photo = null, history = [];
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('q').placeholder = T.ph; $('photoLbl').textContent = T.photo; $('go').textContent = T.go;
+$('mode').innerHTML = T.modes.map((m, i) => `<button data-i="${i}">${m}</button>`).join('');
+function paintMode() { $('mode').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.i === mode)); }
+$('mode').querySelectorAll('button').forEach(b => b.onclick = () => { mode = +b.dataset.i; paintMode(); }); paintMode();
+$('file').onchange = () => {
+  photo = $('file').files[0] || null; $('photoRow').querySelectorAll('img,.x').forEach(e => e.remove());
+  if (!photo) return;
+  const img = document.createElement('img'); img.src = URL.createObjectURL(photo); const x = document.createElement('button'); x.className = 'x'; x.textContent = '✕';
+  x.onclick = () => { photo = null; $('file').value = ''; img.remove(); x.remove(); };
+  $('photoRow').append(img, x);
+};
+async function help() {
+  const text = $('q').value.trim(); $('err').textContent = '';
+  if (!text && !photo) { $('err').textContent = T.empty; return; }
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('go').disabled = true; $('go').innerHTML = `<span class="dots">${T.thinking}</span>`;
+  const style = ['Give ONLY one helpful hint that unblocks the student, never the solution. Put the hint as the single step and leave "answer" empty.',
+    'Explain it in 3 to 6 short steps, each one building on the previous, then give the final answer.',
+    'Explain it in 3 to 5 very simple steps for a 10-year-old, with an everyday comparison, then give the final answer.'][mode];
+  try {
+    const r = await Acornix.askAI(
+      `You are a patient tutor helping a student with homework. ${style} Write in ${ES ? 'Spanish' : 'English'}. Use plain text, no LaTeX; write maths like 3x + 7 = 22. ` +
+      `Return JSON: {"subject": short subject name, "question": the exercise restated in one line, "steps": [{"title": short, "text": explanation}], "answer": final answer or "", "check": one sentence on how to check the answer or "" }.` +
+      (text ? `\n\nThe exercise: ${text}` : '\n\nThe exercise is in the photo.'),
+      { json: true, images: photo ? [photo] : undefined });
+    if (!r || !Array.isArray(r.steps) || !r.steps.length) throw new Error('?');
+    const item = { q: r.question || text, subject: r.subject || '', steps: r.steps, answer: r.answer || '', check: r.check || '', at: Date.now() };
+    history = [item, ...history].slice(0, 20); store.set('history', history);
+    render(item, 1); renderHistory();
+    try { Acornix.vibrate(15); } catch (e) {}
+  } catch (e) { $('err').textContent = T.failed + (e.message || ''); }
+  $('go').disabled = false; $('go').textContent = T.go;
+}
+function render(item, shown) {
+  const out = $('out'); out.hidden = false;
+  const all = shown >= item.steps.length;
+  out.innerHTML = `${item.subject ? `<span class="subject">${esc(item.subject)}</span>` : ''}<div class="q">${esc(item.q)}</div>` +
+    item.steps.slice(0, shown).map((s, i) => `<div class="step"><span class="n">${item.steps.length > 1 ? i + 1 : '💡'}</span><div><b>${esc(s.title)}</b><p>${esc(s.text)}</p></div></div>`).join('') +
+    (all && item.answer ? `<div class="answer"><small>${T.answer}</small>${esc(item.answer)}</div>` : '') +
+    (all && item.check ? `<div class="tip">✅ <b>${T.tip}:</b> ${esc(item.check)}</div>` : '') +
+    (!all ? `<button class="next" id="nextStep">${T.next} →</button>` : '');
+  if (!all) $('nextStep').onclick = () => render(item, shown + 1);
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function renderHistory() {
+  $('hist').innerHTML = history.length ? `<h3>${T.recent}</h3>` + history.map((h, i) => `<button class="hi" data-i="${i}">${h.subject ? '📘' : '📝'}<span>${esc(h.q)}</span><small>${new Date(h.at).toLocaleDateString()}</small></button>`).join('') : '';
+  $('hist').querySelectorAll('.hi').forEach(b => b.onclick = () => { const h = history[+b.dataset.i]; render(h, h.steps.length); });
+}
+$('go').onclick = help;
+(async () => { history = await store.get('history', []); renderHistory(); })();
+</script>
+</body>
+</html>

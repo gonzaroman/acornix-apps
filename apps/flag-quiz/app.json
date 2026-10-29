@@ -1,0 +1,14 @@
+{
+  "id": "flag-quiz",
+  "name": "World Flags",
+  "emoji": "🏳️",
+  "category": "education",
+  "description": "Guess the country from its flag, by continent or the whole world. Rounds of 10 with streaks and a list of the ones to review.",
+  "prompt": "A flags quiz: pick a continent or the whole world, see a big flag and choose the country among four options from the same region, with streaks, best scores per region and a list of the flags you missed.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

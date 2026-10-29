@@ -1,0 +1,14 @@
+{
+  "id": "periodic-table",
+  "name": "Periodic Table",
+  "emoji": "⚗️",
+  "category": "education",
+  "description": "All 118 elements in a colourful table. Tap one to see its symbol, mass, group and what it's used for, or filter by family.",
+  "prompt": "An interactive periodic table with all 118 elements coloured by family, a legend that filters by family, search by name or symbol, and a detail sheet with atomic number, mass, group, period and a short note on each element.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

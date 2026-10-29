@@ -1,0 +1,14 @@
+{
+  "id": "homework-helper-ai",
+  "name": "Homework Helper",
+  "emoji": "📚",
+  "category": "education",
+  "description": "Type an exercise or take a photo and your AI explains it step by step, gives you just a hint, or explains it like you're 10.",
+  "prompt": "A homework helper: type the exercise or take a photo of it, choose just a hint, step by step or explain like I am 10, and the AI answers with numbered steps revealed one at a time, the final answer and how to check it. Keep a list of recent questions.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "math-sprint",
+  "name": "Math Sprint",
+  "emoji": "⚡",
+  "category": "education",
+  "description": "60 seconds of mental maths. Answer fast to chain combos and multiply your points, in three levels from sums to brackets.",
+  "prompt": "A fast mental maths game: 60 seconds, four answer buttons, three levels from addition and subtraction to all four operations and brackets, combo multipliers for answers in a row, time penalty for mistakes and a best score per level.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

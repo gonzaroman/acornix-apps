@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Flashcards</title>
+<style>
+  :root { --bg:#eef2ff; --card:#fff; --ink:#1e1b4b; --muted:#6b6a99; --line:#dfe3fb; --a:#4f46e5; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input, textarea { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  .screen { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px); display:none; }
+  .screen.on { display:block; }
+  h1 { margin:0 0 12px; font-size:28px; }
+  .deck { display:flex; align-items:center; gap:12px; background:var(--card); border-radius:20px; padding:14px; margin-bottom:10px; width:100%; text-align:left; box-shadow:0 4px 14px #1e1b4b0d; }
+  .deck .e { font-size:32px; }
+  .deck .t { flex:1; min-width:0; } .deck .t b { display:block; font-size:17px; } .deck .t small { color:var(--muted); }
+  .due { padding:6px 10px; border-radius:999px; background:var(--a); color:#fff; font-weight:800; font-size:13px; white-space:nowrap; }
+  .due.zero { background:#d1fae5; color:#065f46; }
+  .bar { display:flex; gap:8px; margin-top:12px; }
+  .bar button, .btn { flex:1; padding:14px; border-radius:16px; background:var(--card); font-weight:800; }
+  .btn.main { background:var(--a); color:#fff; }
+  .top { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .top button { width:42px; height:42px; border-radius:12px; background:var(--card); font-size:18px; }
+  .top b { flex:1; font-size:18px; }
+  .prog { height:8px; border-radius:4px; background:var(--line); overflow:hidden; margin-bottom:18px; }
+  .prog i { display:block; height:100%; background:var(--a); transition:width .3s; }
+  .flip { perspective:1200px; height:min(56vh,420px); }
+  .inner { position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.3,1.3,.5,1); transform-style:preserve-3d; cursor:pointer; }
+  .flip.back .inner { transform:rotateY(180deg); }
+  .face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:var(--card); border-radius:26px; box-shadow:0 14px 40px #1e1b4b1f; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; font-size:clamp(22px,6vw,32px); font-weight:700; word-break:break-word; }
+  .face small { position:absolute; top:16px; color:var(--muted); font-size:12px; font-weight:800; letter-spacing:2px; }
+  .face.b { transform:rotateY(180deg); background:linear-gradient(160deg,#fff,#eef2ff); }
+  .rate { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px; visibility:hidden; }
+  .flip.back + .rate { visibility:visible; }
+  .rate button { padding:14px 4px; border-radius:16px; font-weight:800; color:#fff; }
+  .rate small { display:block; font-weight:600; opacity:.85; font-size:11px; }
+  .hint { text-align:center; color:var(--muted); margin-top:14px; font-weight:600; }
+  .done { text-align:center; padding:40px 10px; }
+  .done div { font-size:70px; }
+  .editor textarea { width:100%; min-height:44vh; padding:14px; border-radius:16px; background:var(--card); outline:none; font-family:ui-monospace,Menlo,monospace; font-size:14px; line-height:1.6; }
+  .editor input { width:100%; padding:13px; border-radius:14px; background:var(--card); outline:none; margin-bottom:8px; font-weight:700; }
+  .editor p { color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home"><h1>🗂️ <span id="ttl"></span></h1><div id="decks"></div><div class="bar"><button id="newDeck"></button></div></section>
+<section class="screen" id="study"><div class="top"><button id="back">←</button><b id="sTitle"></b><span id="sCount"></span></div><div class="prog"><i id="prog"></i></div>
+  <div class="flip" id="flip"><div class="inner"><div class="face f"><small id="lQ"></small><span id="front"></span></div><div class="face b"><small id="lA"></small><span id="backTxt"></span></div></div></div>
+  <div class="rate"><button style="background:#ef4444" data-r="0"></button><button style="background:#f59e0b" data-r="1"></button><button style="background:#10b981" data-r="2"></button></div><div class="hint" id="hint"></div></section>
+<section class="screen editor" id="edit"><div class="top"><button id="eBack">←</button><b id="eTitle"></b><button id="eDel">🗑</button></div><input id="eName" maxlength="40"><p id="eHelp"></p><textarea id="eCards"></textarea><div class="bar"><button class="btn main" id="eSave"></button></div></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Tarjetas', newDeck:'＋ Nuevo mazo', cards:'tarjetas', due:'para repasar', none:'Al día ✓', q:'PREGUNTA', a:'RESPUESTA', tap:'Toca la tarjeta para ver la respuesta', rates:[['Otra vez','<1 min'],['Difícil','mañana'],['Fácil','en días']], done:'¡Mazo repasado!', doneSub:'Vuelve mañana para repasar las que tocan.', edit:'Editar mazo', help:'Una tarjeta por línea: pregunta = respuesta', save:'Guardar', name:'Nombre del mazo',
+  samples:[['🇬🇧','Inglés básico','Manzana = Apple\nPerro = Dog\nCasa = House\nGracias = Thank you\nBiblioteca = Library\nMañana = Tomorrow\nCocina = Kitchen\nAmigo = Friend'],['🌍','Capitales','Francia = París\nJapón = Tokio\nCanadá = Ottawa\nAustralia = Canberra\nBrasil = Brasilia\nEgipto = El Cairo']] }
+ : { title:'Flashcards', newDeck:'＋ New deck', cards:'cards', due:'to review', none:'All caught up ✓', q:'QUESTION', a:'ANSWER', tap:'Tap the card to see the answer', rates:[['Again','<1 min'],['Hard','tomorrow'],['Easy','in days']], done:'Deck reviewed!', doneSub:'Come back tomorrow for the cards that are due.', edit:'Edit deck', help:'One card per line: question = answer', save:'Save', name:'Deck name',
+  samples:[['🇪🇸','Basic Spanish','Apple = Manzana\nDog = Perro\nHouse = Casa\nThank you = Gracias\nLibrary = Biblioteca\nTomorrow = Mañana\nKitchen = Cocina\nFriend = Amigo'],['🌍','Capitals','France = Paris\nJapan = Tokyo\nCanada = Ottawa\nAustralia = Canberra\nBrazil = Brasília\nEgypt = Cairo']] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('newDeck').textContent = T.newDeck; $('lQ').textContent = T.q; $('lA').textContent = T.a; $('hint').textContent = T.tap; $('eTitle').textContent = T.edit; $('eHelp').textContent = T.help; $('eSave').textContent = T.save; $('eName').placeholder = T.name;
+document.querySelectorAll('.rate button').forEach((b, i) => b.innerHTML = `${T.rates[i][0]}<small>${T.rates[i][1]}</small>`);
+let decks = [], deck = null, queue = [], cur = null, total = 0, editing = null;
+const now = () => Date.now();
+function save() { store.set('decks', decks); }
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function dueOf(d) { return d.cards.filter(c => (c.due || 0) <= now()).length; }
+function home() {
+  $('decks').innerHTML = '';
+  decks.forEach(d => {
+    const n = dueOf(d), b = document.createElement('button'); b.className = 'deck';
+    b.innerHTML = `<span class="e">${d.e}</span><div class="t"><b></b><small>${d.cards.length} ${T.cards}</small></div><span class="due ${n ? '' : 'zero'}">${n ? n + ' ' + T.due : T.none}</span>`;
+    b.querySelector('b').textContent = d.name;
+    let press; b.onpointerdown = () => press = setTimeout(() => { press = null; openEditor(d); }, 550); b.onpointerup = () => { if (press) { clearTimeout(press); study(d); } };
+    $('decks').appendChild(b);
+  });
+  show('home');
+}
+function study(d) {
+  deck = d; queue = d.cards.filter(c => (c.due || 0) <= now()).sort(() => Math.random() - .5); total = queue.length;
+  if (!queue.length) queue = d.cards.slice().sort(() => Math.random() - .5).slice(0, 10), total = queue.length;
+  $('sTitle').textContent = d.e + ' ' + d.name; show('study'); next();
+}
+function next() {
+  $('flip').classList.remove('back');
+  cur = queue.shift();
+  $('sCount').textContent = `${total - queue.length - (cur ? 1 : 0)}/${total}`; $('prog').style.width = (total - queue.length - (cur ? 1 : 0)) / Math.max(1, total) * 100 + '%';
+  if (!cur) { document.querySelector('#study .flip').style.display = 'none'; document.querySelector('#study .rate').style.display = 'none'; $('hint').innerHTML = `<div class="done"><div>🎉</div><h2>${T.done}</h2><p>${T.doneSub}</p></div>`; save(); return; }
+  document.querySelector('#study .flip').style.display = ''; document.querySelector('#study .rate').style.display = ''; $('hint').textContent = T.tap;
+  setTimeout(() => { $('front').textContent = cur.q; $('backTxt').textContent = cur.a; }, 150);
+}
+// Spaced repetition (a light SM-2): "again" comes back this session, "hard" tomorrow, "easy" grows the gap.
+function rate(r) {
+  if (!cur) return;
+  if (r === 0) { cur.ease = Math.max(1.3, (cur.ease || 2.5) - .2); cur.int = 0; cur.due = now() + 60e3; queue.splice(Math.min(queue.length, 3), 0, cur); }
+  else if (r === 1) { cur.int = Math.max(1, (cur.int || 0) * 1.2); cur.ease = Math.max(1.3, (cur.ease || 2.5) - .15); cur.due = now() + cur.int * 864e5; }
+  else { cur.int = Math.max(2, (cur.int || 1) * (cur.ease || 2.5)); cur.ease = (cur.ease || 2.5) + .1; cur.due = now() + cur.int * 864e5; }
+  try { if (window.Acornix) Acornix.vibrate(10); } catch (e) {}
+  save(); next();
+}
+function openEditor(d) { editing = d; $('eName').value = d ? d.name : ''; $('eCards').value = d ? d.cards.map(c => c.q + ' = ' + c.a).join('\n') : ''; $('eDel').style.visibility = d ? 'visible' : 'hidden'; show('edit'); }
+$('flip').onclick = () => $('flip').classList.toggle('back');
+document.querySelectorAll('.rate button').forEach(b => b.onclick = () => rate(+b.dataset.r));
+$('back').onclick = () => { save(); home(); }; $('eBack').onclick = home;
+$('newDeck').onclick = () => openEditor(null);
+$('eDel').onclick = () => { decks = decks.filter(d => d !== editing); save(); home(); };
+$('eSave').onclick = () => {
+  const old = editing ? Object.fromEntries(editing.cards.map(c => [c.q, c])) : {};
+  const cards = $('eCards').value.split('\n').map(l => l.split(/\s*=\s*/)).filter(p => p.length >= 2 && p[0].trim() && p[1].trim()).map(([q, ...a]) => ({ ...(old[q.trim()] || {}), q: q.trim(), a: a.join(' = ').trim() }));
+  if (!cards.length) return;
+  if (editing) Object.assign(editing, { name: $('eName').value.trim() || editing.name, cards }); else decks.push({ e: ['📘','🧪','🎵','🗣️','➗','🌱'][decks.length % 6], name: $('eName').value.trim() || T.title, cards });
+  save(); home();
+};
+addEventListener('keydown', e => { if (!$('study').classList.contains('on')) return; if (e.key === ' ') $('flip').classList.toggle('back'); if (['1', '2', '3'].includes(e.key)) rate(+e.key - 1); });
+(async () => { decks = await store.get('decks', null); if (!decks) { decks = T.samples.map(([e, name, txt]) => ({ e, name, cards: txt.split('\n').map(l => { const [q, a] = l.split(' = '); return { q, a }; }) })); save(); } home(); })();
+</script>
+</body>
+</html>

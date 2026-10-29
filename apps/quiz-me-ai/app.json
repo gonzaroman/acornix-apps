@@ -1,0 +1,14 @@
+{
+  "id": "quiz-me-ai",
+  "name": "Quiz Me",
+  "emoji": "🧠",
+  "category": "education",
+  "description": "Tell it what you're studying, or paste your notes, and your AI makes a multiple-choice quiz with an explanation for every answer.",
+  "prompt": "A quiz generator: type a topic or paste your notes, choose the level and number of questions, and the AI creates a multiple-choice quiz. After each answer show whether it was right and why, and at the end a score ring and a list of past quizzes.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "flashcards",
+  "name": "Flashcards",
+  "emoji": "🗂️",
+  "category": "education",
+  "description": "Make your own decks and study them with spaced repetition: the cards you find hard come back sooner.",
+  "prompt": "A flashcards app: create decks by writing one card per line as question = answer, flip cards to study, rate each one as again, hard, good or easy, and schedule reviews with spaced repetition. Show how many cards are due in each deck.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "solar-system",
+  "name": "Solar System",
+  "emoji": "🪐",
+  "category": "education",
+  "description": "Watch the planets orbit the Sun, pinch to zoom and tap any planet for its size, year, day, moons, temperature and a fun fact.",
+  "prompt": "An animated solar system: the eight planets orbiting the Sun with a speed control, pinch and drag to explore, and a sheet for each planet and the Sun with distance, year length, day length, moons, diameter, temperature and a fun fact.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": true
+}

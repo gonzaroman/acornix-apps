@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Math Sprint</title>
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --ink:#f1f5f9; --muted:#94a3b8; --a:#22d3ee; --b:#a78bfa; --g:#4ade80; --r:#f87171; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:radial-gradient(circle at 50% 0%,#1e3a5f,var(--bg) 60%); background-color:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:8px 0 2px; font-size:36px; font-weight:900; letter-spacing:-1px; background:linear-gradient(90deg,var(--a),var(--b)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--muted); margin:0 0 18px; font-weight:600; }
+  .levels { display:flex; flex-direction:column; gap:10px; }
+  .lvl { display:flex; align-items:center; gap:14px; padding:16px; border-radius:20px; background:var(--card); text-align:left; border:1px solid #ffffff10; }
+  .lvl .ic { width:50px; height:50px; border-radius:15px; display:grid; place-items:center; font-size:22px; font-weight:900; background:#ffffff10; flex:none; }
+  .lvl b { display:block; font-size:18px; } .lvl small { color:var(--muted); font-weight:600; }
+  .lvl .best { margin-left:auto; text-align:right; color:var(--a); font-weight:900; font-size:20px; }
+  .lvl .best small { display:block; font-size:11px; }
+  .hud { display:flex; justify-content:space-between; align-items:center; font-weight:800; }
+  .hud button { width:42px; height:42px; border-radius:12px; background:var(--card); }
+  .pts { font-size:26px; font-variant-numeric:tabular-nums; }
+  .combo { color:var(--b); min-width:60px; text-align:right; }
+  .time { height:8px; border-radius:4px; background:#ffffff14; overflow:hidden; margin:12px 0 0; }
+  .time i { display:block; height:100%; background:linear-gradient(90deg,var(--a),var(--b)); }
+  .q { margin:auto 0 24px; text-align:center; font-size:clamp(48px,15vw,76px); font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:-1px; }
+  .q.pop { animation:pop .25s; }
+  @keyframes pop { from { transform:scale(.85); opacity:.3; } }
+  .opts { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px; }
+  .opt { padding:24px 0; border-radius:22px; background:var(--card); font-size:32px; font-weight:900; border:1px solid #ffffff12; font-variant-numeric:tabular-nums; }
+  .opt:active { transform:scale(.97); }
+  .opt.good { background:#14532d; color:var(--g); } .opt.bad { background:#7f1d1d; color:var(--r); }
+  .flash { position:fixed; inset:0; pointer-events:none; opacity:0; transition:opacity .3s; }
+  .res { margin:auto 0; text-align:center; }
+  .res .big { font-size:72px; font-weight:900; background:linear-gradient(90deg,var(--a),var(--b)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .res p { color:var(--muted); font-weight:700; line-height:1.6; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:16px 0; }
+  .stats div { background:var(--card); border-radius:16px; padding:12px 4px; font-weight:900; font-size:22px; }
+  .stats small { display:block; color:var(--muted); font-size:11px; font-weight:700; }
+  .main { width:100%; padding:17px; border-radius:20px; background:linear-gradient(90deg,var(--a),var(--b)); color:#0f172a; font-weight:900; font-size:18px; margin-top:6px; }
+  .ghost { width:100%; padding:15px; border-radius:20px; background:var(--card); font-weight:800; margin-top:10px; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home"><h1>⚡ Math Sprint</h1><p class="sub" id="sub"></p><div class="levels" id="levels"></div></section>
+<section class="screen" id="play">
+  <div class="hud"><button id="quit">✕</button><span class="pts" id="pts">0</span><span class="combo" id="combo"></span></div>
+  <div class="time"><i id="time"></i></div>
+  <div class="q" id="q"></div>
+  <div class="opts" id="opts"></div>
+</section>
+<section class="screen" id="end"><div class="res"><div id="eTitle" style="font-weight:800;color:var(--muted)"></div><div class="big" id="ePts"></div><p id="eMsg"></p><div class="stats" id="stats"></div><button class="main" id="again"></button><button class="ghost" id="back"></button></div></section>
+<div class="flash" id="flash"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { sub:'60 segundos. Acierta rápido y encadena combos.', levels:[['Calentando','Sumas y restas'],['En forma','Las cuatro operaciones'],['Imparable','Números grandes y paréntesis']], best:'récord', points:'puntos', newBest:'¡Nuevo récord! 🎉', bestWas:'Tu récord', right:'aciertos', acc:'precisión', combo:'mejor combo', again:'Otra vez', back:'Elegir nivel', over:'¡Tiempo!' }
+ : { sub:'60 seconds. Answer fast and chain combos.', levels:[['Warm-up','Add and subtract'],['In shape','All four operations'],['Unstoppable','Big numbers and brackets']], best:'best', points:'points', newBest:'New record! 🎉', bestWas:'Your best', right:'right', acc:'accuracy', combo:'best combo', again:'Again', back:'Choose level', over:'Time!' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const LEN = 60;
+let bests = [0, 0, 0], level, pts, combo, maxCombo, right, wrong, left, timer, cur, locked;
+$('sub').textContent = T.sub; $('again').textContent = T.again; $('back').textContent = T.back;
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function home() {
+  $('levels').innerHTML = T.levels.map(([n, d], i) => `<button class="lvl" data-i="${i}"><span class="ic" style="color:${['#4ade80', '#22d3ee', '#a78bfa'][i]}">${['+', '×', '( )'][i]}</span><span><b>${n}</b><small>${d}</small></span><span class="best">${bests[i] || '–'}<small>${T.best}</small></span></button>`).join('');
+  $('levels').querySelectorAll('.lvl').forEach(b => b.onclick = () => start(+b.dataset.i));
+  show('home');
+}
+function make() {
+  let text, ans;
+  const op = level === 0 ? ['+', '-'][R(0, 1)] : ['+', '-', '×', '÷'][R(0, 3)];
+  const big = level === 2;
+  if (level === 2 && Math.random() < .35) { const a = R(2, 12), b = R(2, 12), c = R(2, 9); ans = (a + b) * c; return { text: `(${a} + ${b}) × ${c}`, ans }; }
+  if (op === '+') { const a = R(big ? 25 : 2, big ? 199 : 30), b = R(big ? 25 : 2, big ? 199 : 30); text = `${a} + ${b}`; ans = a + b; }
+  if (op === '-') { const a = R(big ? 60 : 8, big ? 250 : 40), b = R(2, a - 1); text = `${a} − ${b}`; ans = a - b; }
+  if (op === '×') { const a = R(2, big ? 19 : 10), b = R(2, big ? 15 : 10); text = `${a} × ${b}`; ans = a * b; }
+  if (op === '÷') { const b = R(2, big ? 15 : 10), ans2 = R(2, big ? 15 : 10); text = `${b * ans2} ÷ ${b}`; ans = ans2; }
+  return { text, ans };
+}
+function options(ans) {
+  const s = new Set([ans]);
+  while (s.size < 4) { const d = [1, 2, 10, -1, -2, -10, 3, 5][R(0, 7)], v = ans + d * (Math.random() < .5 ? 1 : R(1, 2)); if (v >= 0) s.add(v); }
+  return [...s].sort(() => Math.random() - .5);
+}
+function next() {
+  cur = make(); locked = false;
+  $('q').textContent = cur.text; $('q').classList.remove('pop'); void $('q').offsetWidth; $('q').classList.add('pop');
+  $('opts').innerHTML = '';
+  options(cur.ans).forEach(v => { const b = document.createElement('button'); b.className = 'opt'; b.textContent = v; b.onclick = () => pick(b, v); $('opts').appendChild(b); });
+}
+function hud() { $('pts').textContent = pts; $('combo').textContent = combo > 1 ? `×${Math.min(5, 1 + Math.floor(combo / 3))} 🔥` : ''; }
+function flash(c) { $('flash').style.background = c; $('flash').style.opacity = .18; setTimeout(() => $('flash').style.opacity = 0, 120); }
+function pick(b, v) {
+  if (locked) return;
+  if (v === cur.ans) {
+    combo++; maxCombo = Math.max(maxCombo, combo); right++;
+    pts += 10 * Math.min(5, 1 + Math.floor(combo / 3)) * (level + 1);
+    b.classList.add('good'); flash('#4ade80'); beep(520 + Math.min(combo, 12) * 40); buzz(10);
+    locked = true; hud(); setTimeout(next, 160);
+  } else {
+    combo = 0; wrong++; b.classList.add('bad'); flash('#f87171'); beep(170); buzz([40, 30, 40]);
+    left = Math.max(0, left - 3); hud();
+  }
+}
+function start(l) {
+  level = l; pts = 0; combo = 0; maxCombo = 0; right = 0; wrong = 0; left = LEN; hud(); show('play'); next();
+  clearInterval(timer);
+  timer = setInterval(() => { left -= .1; $('time').style.width = Math.max(0, left / LEN * 100) + '%'; if (left <= 0) end(); }, 100);
+}
+async function end() {
+  clearInterval(timer);
+  const isNew = pts > (bests[level] || 0);
+  $('eTitle').textContent = T.over + ' · ' + T.levels[level][0];
+  $('ePts').textContent = pts;
+  $('eMsg').textContent = isNew ? T.newBest : `${T.bestWas}: ${bests[level]}`;
+  if (isNew) { bests[level] = pts; await store.set('bests', bests); }
+  const acc = right + wrong ? Math.round(right / (right + wrong) * 100) : 0;
+  $('stats').innerHTML = `<div>${right}<small>${T.right}</small></div><div>${acc}%<small>${T.acc}</small></div><div>${maxCombo}<small>${T.combo}</small></div>`;
+  show('end'); buzz([30, 40, 80]);
+}
+let ac; function beep(f) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.value = .07; o.connect(g); g.connect(ac.destination); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .12); o.start(); o.stop(ac.currentTime + .12); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('quit').onclick = () => { clearInterval(timer); home(); }; $('again').onclick = () => start(level); $('back').onclick = home;
+(async () => { bests = await store.get('bests', [0, 0, 0]); home(); })();
+</script>
+</body>
+</html>

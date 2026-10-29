@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Solar System</title>
+<style>
+  :root { --ink:#e8ecff; --muted:#8f9bc7; --card:#121a3acc; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:#03050f; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  canvas { position:fixed; inset:0; width:100%; height:100%; touch-action:none; }
+  .top { position:fixed; left:0; right:0; top:0; padding:calc(env(safe-area-inset-top) + 12px) 16px 0; display:flex; align-items:center; gap:10px; pointer-events:none; }
+  .top h1 { margin:0; font-size:22px; flex:1; text-shadow:0 2px 10px #000; }
+  .top button { pointer-events:auto; height:40px; padding:0 14px; border-radius:20px; background:var(--card); backdrop-filter:blur(8px); font-weight:800; font-size:14px; border:1px solid #ffffff18; }
+  .hint { position:fixed; left:0; right:0; top:calc(env(safe-area-inset-top) + 58px); text-align:center; color:var(--muted); font-size:13px; font-weight:600; pointer-events:none; transition:opacity .5s; }
+  .chips { position:fixed; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 12px); display:flex; gap:8px; overflow-x:auto; padding:0 16px; scrollbar-width:none; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:none; display:flex; align-items:center; gap:6px; height:38px; padding:0 14px 0 8px; border-radius:19px; background:var(--card); backdrop-filter:blur(8px); border:1px solid #ffffff18; font-weight:700; font-size:14px; }
+  .chip i { width:16px; height:16px; border-radius:50%; display:block; }
+  .chip.on { border-color:#fff; background:#ffffff26; }
+  .sheet { position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 62px); background:var(--card); backdrop-filter:blur(14px); border:1px solid #ffffff1c; border-radius:24px; padding:16px 16px 14px; transform:translateY(130%); transition:transform .35s cubic-bezier(.2,.9,.3,1.1); }
+  .sheet.on { transform:none; }
+  .sheet h2 { margin:0; font-size:26px; display:flex; align-items:center; gap:10px; }
+  .sheet h2 i { width:26px; height:26px; border-radius:50%; display:block; }
+  .sheet .kind { color:var(--muted); font-weight:700; font-size:13px; margin:2px 0 10px; }
+  .facts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .facts div { background:#ffffff0d; border-radius:14px; padding:9px 11px; font-weight:800; font-size:15px; }
+  .facts small { display:block; color:var(--muted); font-weight:700; font-size:11px; margin-bottom:2px; }
+  .fun { margin:10px 2px 0; font-size:14px; line-height:1.45; color:#cfd6ff; }
+  .close { position:absolute; right:12px; top:12px; width:34px; height:34px; border-radius:50%; background:#ffffff14; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="top"><h1>🪐 <span id="ttl"></span></h1><button id="speed"></button></div>
+<div class="hint" id="hint"></div>
+<div class="sheet" id="sheet"><button class="close" id="close">✕</button><h2><i id="sDot"></i><span id="sName"></span></h2><div class="kind" id="sKind"></div><div class="facts" id="sFacts"></div><p class="fun" id="sFun"></p></div>
+<div class="chips" id="chips"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Sistema solar', hint:'Toca un planeta · pellizca o arrastra para mirar', dist:'Distancia al Sol', year:'Un año dura', day:'Un día dura', moons:'Lunas', size:'Diámetro', temp:'Temperatura media', days:'días', years:'años', hours:'horas', star:'Estrella', rocky:'Planeta rocoso', gas:'Gigante gaseoso', ice:'Gigante helado', dwarf:'Planeta enano' }
+ : { title:'Solar System', hint:'Tap a planet · pinch or drag to look around', dist:'Distance from the Sun', year:'A year lasts', day:'A day lasts', moons:'Moons', size:'Diameter', temp:'Average temperature', days:'days', years:'years', hours:'hours', star:'Star', rocky:'Rocky planet', gas:'Gas giant', ice:'Ice giant', dwarf:'Dwarf planet' };
+// name EN/ES, colour, orbit radius (AU), period (Earth years), visual size, kind, km diameter, day (hours), moons, temp °C, fact EN/ES
+const P = [
+  ['Mercury','Mercurio','#a8a29e',0.39,0.24,4,'rocky',4879,4222.6,0,167,'The smallest planet. A day there lasts longer than its year.','El planeta más pequeño. Allí un día dura más que su año.'],
+  ['Venus','Venus','#fbbf77',0.72,0.62,6,'rocky',12104,2802,0,464,'The hottest planet, hotter than Mercury, and it spins backwards.','El planeta más caliente, más que Mercurio, y gira al revés.'],
+  ['Earth','Tierra','#4f9cff',1,1,6.4,'rocky',12756,24,1,15,'The only place we know with life. 71% of it is covered by water.','El único lugar con vida que conocemos. El 71 % es agua.'],
+  ['Mars','Marte','#f0643c',1.52,1.88,5,'rocky',6792,24.7,2,-65,'Home of Olympus Mons, a volcano almost three times taller than Everest.','Tiene el Olympus Mons, un volcán casi tres veces más alto que el Everest.'],
+  ['Jupiter','Júpiter','#e0b083',5.2,11.86,13,'gas',142984,9.9,95,-110,'So big that all the other planets would fit inside it.','Tan grande que todos los demás planetas cabrían dentro.'],
+  ['Saturn','Saturno','#f2d58c',9.54,29.46,11,'gas',120536,10.7,146,-140,'It is so light it would float in a giant bathtub.','Es tan ligero que flotaría en una bañera gigante.'],
+  ['Uranus','Urano','#8ee3ef',19.2,84,8.5,'ice',51118,17.2,28,-195,'It rolls around the Sun on its side.','Da vueltas al Sol tumbado de lado.'],
+  ['Neptune','Neptuno','#4b6cf5',30.06,164.8,8.3,'ice',49528,16.1,16,-200,'The windiest planet: storms reach 2,000 km/h.','El planeta con más viento: hasta 2.000 km/h.'],
+];
+const SUN = ['Sun','Sol','#ffcc33',0,0,22,'star',1392700,609,0,5500,'99.8% of all the mass in the solar system is the Sun.','El Sol tiene el 99,8 % de toda la masa del sistema solar.'];
+const L = ES ? 1 : 0, nf = new Intl.NumberFormat(ES ? 'es-ES' : 'en-US', { maximumFractionDigits: 1 });
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('hint').textContent = T.hint;
+const cv = $('c'), cx = cv.getContext('2d');
+let W, H, dpr, zoom = 1, panX = 0, panY = 0, t = 0, speeds = [1, 5, 25, 0], si = 1, sel = null, stars = [];
+function resize() {
+  dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr;
+  stars = [...Array(220)].map(() => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3 + .2, p: Math.random() * 6 }));
+}
+addEventListener('resize', resize); resize();
+const orbit = au => 30 + Math.sqrt(au) * (Math.min(W, H * 1.4) / 2 - 44) / Math.sqrt(30.06); // square-root scale: Neptune fits the width
+let cyK = .45; // vertical centre; it eases up while the info sheet is open
+const CY = () => H * cyK;
+function pos(p, i) { const ang = t / p[4] * .6 + i * 1.7; const r = orbit(p[3]) * zoom; return [W / 2 + panX + Math.cos(ang) * r, CY() + panY + Math.sin(ang) * r * .62]; }
+function draw() {
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.fillStyle = '#03050f'; cx.fillRect(0, 0, W, H);
+  stars.forEach(s => { cx.globalAlpha = .4 + .4 * Math.sin(t * 2 + s.p); cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 7); cx.fill(); });
+  cx.globalAlpha = 1;
+  cyK += ((sel ? .3 : .45) - cyK) * .08;
+  const sx = W / 2 + panX, sy = CY() + panY;
+  P.forEach(p => { cx.strokeStyle = sel === p ? p[2] + 'aa' : '#ffffff1a'; cx.lineWidth = sel === p ? 1.6 : 1; cx.beginPath(); cx.ellipse(sx, sy, orbit(p[3]) * zoom, orbit(p[3]) * zoom * .62, 0, 0, 7); cx.stroke(); });
+  const g = cx.createRadialGradient(sx, sy, 0, sx, sy, 60 * zoom); g.addColorStop(0, '#fff6cc'); g.addColorStop(.3, '#ffcc33'); g.addColorStop(.55, '#ff8a0055'); g.addColorStop(1, '#ff8a0000');
+  cx.fillStyle = g; cx.beginPath(); cx.arc(sx, sy, 60 * zoom, 0, 7); cx.fill();
+  // farther planets first so near ones overlap them
+  P.map((p, i) => [p, ...pos(p, i)]).sort((a, b) => a[2] - b[2]).forEach(([p, x, y]) => {
+    const r = p[5] * 1.15 * Math.sqrt(zoom);
+    const gr = cx.createRadialGradient(x - r * .4, y - r * .4, r * .1, x, y, r); gr.addColorStop(0, '#fff'); gr.addColorStop(.25, p[2]); gr.addColorStop(1, '#000a');
+    if (p[0] === 'Saturn') { cx.strokeStyle = '#e9d39acc'; cx.lineWidth = r * .35; cx.beginPath(); cx.ellipse(x, y, r * 2, r * .7, -.3, Math.PI, 2 * Math.PI); cx.stroke(); }
+    cx.fillStyle = gr; cx.beginPath(); cx.arc(x, y, r, 0, 7); cx.fill();
+    if (p[0] === 'Saturn') { cx.beginPath(); cx.ellipse(x, y, r * 2, r * .7, -.3, 0, Math.PI); cx.stroke(); }
+    if (sel === p) { cx.strokeStyle = '#fff'; cx.lineWidth = 2; cx.beginPath(); cx.arc(x, y, r + 7, 0, 7); cx.stroke(); }
+    if (zoom > .7 || sel === p) { cx.fillStyle = '#ffffffcc'; cx.font = '600 11px system-ui'; cx.textAlign = 'center'; cx.fillText(p[L], x, y + r + 15); }
+  });
+}
+let last = performance.now();
+function loop(now) { t += (now - last) / 1000 * speeds[si] * .25; last = now; draw(); requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+function speedLabel() { $('speed').textContent = speeds[si] ? '▶ ×' + speeds[si] : '⏸'; }
+$('speed').onclick = () => { si = (si + 1) % speeds.length; speedLabel(); }; speedLabel();
+function open(p) {
+  sel = p; $('sDot').style.background = p[2]; $('sName').textContent = p[L]; $('sKind').textContent = T[p[6]];
+  const f = p === SUN ? [[T.size, nf.format(p[7]) + ' km'], [T.temp, nf.format(p[10]) + ' °C'], [T.day, nf.format(p[8] / 24) + ' ' + T.days], [T.moons, '—']]
+    : [[T.dist, nf.format(p[3] * 149.6) + ' M km'], [T.year, p[4] < 1 ? nf.format(p[4] * 365.25) + ' ' + T.days : nf.format(p[4]) + ' ' + T.years], [T.day, p[8] > 48 ? nf.format(p[8] / 24) + ' ' + T.days : nf.format(p[8]) + ' ' + T.hours], [T.moons, p[9]], [T.size, nf.format(p[7]) + ' km'], [T.temp, nf.format(p[10]) + ' °C']];
+  $('sFacts').innerHTML = f.map(([k, v]) => `<div><small>${k}</small>${v}</div>`).join('');
+  $('sFun').textContent = '✨ ' + p[11 + L];
+  $('sheet').classList.add('on'); $('hint').style.opacity = 0;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.n === p[0]));
+  try { if (window.Acornix) Acornix.vibrate(8); } catch (e) {}
+}
+$('close').onclick = () => { sel = null; $('sheet').classList.remove('on'); document.querySelectorAll('.chip').forEach(c => c.classList.remove('on')); };
+$('chips').innerHTML = [SUN, ...P].map(p => `<button class="chip" data-n="${p[0]}"><i style="background:${p[2]}"></i>${p[L]}</button>`).join('');
+$('chips').querySelectorAll('.chip').forEach(c => c.onclick = () => open([SUN, ...P].find(p => p[0] === c.dataset.n)));
+// Tap to pick, drag to pan, pinch to zoom.
+const ptrs = new Map(); let moved = 0, pinch0 = 0, zoom0 = 1;
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); zoom0 = zoom; } });
+cv.addEventListener('pointermove', e => {
+  const p = ptrs.get(e.pointerId); if (!p) return;
+  if (ptrs.size === 2) { ptrs.set(e.pointerId, [e.clientX, e.clientY]); const [a, b] = [...ptrs.values()]; zoom = Math.max(.5, Math.min(4, zoom0 * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch0)); moved = 99; return; }
+  const dx = e.clientX - p[0], dy = e.clientY - p[1]; moved += Math.abs(dx) + Math.abs(dy); panX += dx; panY += dy; ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+});
+cv.addEventListener('pointerup', e => {
+  ptrs.delete(e.pointerId); if (moved > 8) return;
+  let best = null, bd = 40;
+  P.forEach((p, i) => { const [x, y] = pos(p, i), d = Math.hypot(x - e.clientX, y - e.clientY); if (d < bd) { bd = d; best = p; } });
+  if (!best && Math.hypot(W / 2 + panX - e.clientX, CY() + panY - e.clientY) < 30 * zoom) best = SUN;
+  if (best) open(best);
+});
+cv.addEventListener('wheel', e => { zoom = Math.max(.5, Math.min(4, zoom * (e.deltaY < 0 ? 1.1 : .9))); }, { passive: true });
+</script>
+</body>
+</html>

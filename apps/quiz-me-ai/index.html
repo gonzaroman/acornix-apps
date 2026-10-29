@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quiz Me</title>
+<style>
+  :root { --bg:#06231f; --card:#0d3a33; --ink:#eafff9; --muted:#8cc5b8; --a:#2ee6b6; --b:#ffd166; --g:#2ee6b6; --r:#ff6b6b; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:6px 0 2px; font-size:32px; }
+  .sub { color:var(--muted); font-weight:600; margin:0 0 16px; line-height:1.4; }
+  input, textarea { width:100%; padding:14px; border-radius:16px; border:2px solid #ffffff1a; background:var(--card); color:var(--ink); font:inherit; font-size:17px; outline:none; }
+  input:focus, textarea:focus { border-color:var(--a); }
+  textarea { min-height:90px; resize:vertical; margin-top:8px; font-size:15px; }
+  .lbl { color:var(--muted); font-weight:800; font-size:13px; margin:14px 2px 6px; text-transform:uppercase; letter-spacing:.5px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { padding:9px 13px; border-radius:14px; background:var(--card); font-weight:700; font-size:14px; border:1px solid #ffffff14; }
+  .chip.on { background:var(--a); color:#06231f; }
+  .go { width:100%; margin-top:18px; padding:17px; border-radius:18px; background:var(--a); color:#06231f; font-weight:900; font-size:18px; }
+  .go:disabled { opacity:.6; }
+  .err { color:var(--r); font-weight:700; margin-top:10px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; font-weight:800; }
+  .bar button { width:42px; height:42px; border-radius:12px; background:var(--card); }
+  .prog { height:8px; border-radius:4px; background:#ffffff14; overflow:hidden; margin:12px 0 18px; }
+  .prog i { display:block; height:100%; background:var(--a); transition:width .3s; }
+  .question { font-size:22px; font-weight:800; line-height:1.35; margin:auto 0 18px; }
+  .opts { display:grid; gap:10px; }
+  .opt { text-align:left; padding:15px 16px; border-radius:16px; background:var(--card); font-weight:700; font-size:16px; border:2px solid transparent; display:flex; gap:12px; align-items:center; }
+  .opt .k { width:28px; height:28px; border-radius:9px; background:#ffffff14; display:grid; place-items:center; font-weight:900; font-size:13px; flex:none; }
+  .opt.good { border-color:var(--g); background:#0f4d40; } .opt.bad { border-color:var(--r); background:#4a1f25; }
+  .why { margin-top:12px; padding:14px; border-radius:16px; background:#ffffff0d; line-height:1.5; font-size:15px; display:none; }
+  .why.on { display:block; animation:in .3s; }
+  @keyframes in { from { opacity:0; transform:translateY(6px); } }
+  .next { margin-top:12px; padding:15px; border-radius:16px; background:var(--b); color:#3a2a00; font-weight:900; font-size:17px; display:none; }
+  .next.on { display:block; }
+  .res { margin:auto 0; text-align:center; }
+  .ring { width:170px; height:170px; margin:0 auto 10px; border-radius:50%; display:grid; place-items:center; }
+  .ring div { width:136px; height:136px; border-radius:50%; background:var(--bg); display:grid; place-items:center; font-size:40px; font-weight:900; }
+  .res h2 { margin:4px 0; font-size:28px; } .res p { color:var(--muted); font-weight:600; line-height:1.5; }
+  .ghost { width:100%; margin-top:10px; padding:15px; border-radius:18px; background:var(--card); font-weight:800; }
+  .past { margin-top:18px; }
+  .pi { display:flex; justify-content:space-between; gap:10px; width:100%; padding:12px 14px; border-radius:14px; background:var(--card); margin-bottom:8px; text-align:left; font-weight:700; }
+  .pi small { color:var(--a); font-weight:900; }
+  .dots::after { content:'…'; animation:d 1s steps(3) infinite; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home">
+  <h1>🧠 <span id="ttl"></span></h1><p class="sub" id="sub"></p>
+  <input id="topic">
+  <textarea id="notes"></textarea>
+  <div class="lbl" id="lLevel"></div><div class="chips" id="levels"></div>
+  <div class="lbl" id="lCount"></div><div class="chips" id="counts"></div>
+  <button class="go" id="go"></button><div class="err" id="err"></div>
+  <div class="past" id="past"></div>
+</section>
+<section class="screen" id="play">
+  <div class="bar"><button id="quit">✕</button><span id="count"></span><span id="score"></span></div>
+  <div class="prog"><i id="prog"></i></div>
+  <div class="question" id="question"></div>
+  <div class="opts" id="opts"></div>
+  <div class="why" id="why"></div>
+  <button class="next" id="next"></button>
+</section>
+<section class="screen" id="end"><div class="res"><div class="ring" id="ring"><div id="pct"></div></div><h2 id="eT"></h2><p id="eP"></p><button class="go" id="again"></button><button class="ghost" id="back"></button></div></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Ponme a prueba', sub:'Dime qué estás estudiando y tu IA te prepara un test con explicaciones.', topic:'Tema: la fotosíntesis, la Revolución francesa, verbos irregulares…', notes:'Opcional: pega aquí tus apuntes y el test saldrá de ellos', level:'Nivel', levels:['Primaria','ESO','Bachillerato','Universidad'], count:'Preguntas', go:'Crear test', making:'Preparando tu test', next:'Siguiente', finish:'Ver resultado', titles:['Hay que repasar','Vas bien','¡Muy bien!','¡Lo dominas!'], again:'Otro test del mismo tema', back:'Cambiar tema', past:'Tus tests', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No ha salido bien: ', empty:'Escribe un tema.', of:'de', right:'correctas' }
+ : { title:'Quiz Me', sub:'Tell me what you are studying and your AI makes you a quiz with explanations.', topic:'Topic: photosynthesis, the French Revolution, irregular verbs…', notes:'Optional: paste your notes here and the quiz will come from them', level:'Level', levels:['Primary','Middle school','High school','University'], count:'Questions', go:'Make my quiz', making:'Making your quiz', next:'Next', finish:'See result', titles:['Time to review','Getting there','Great job!','You\'ve mastered it!'], again:'Another quiz on this topic', back:'Change topic', past:'Your quizzes', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'That didn\'t work: ', empty:'Type a topic.', of:'of', right:'right' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+let level = 1, count = 8, quiz = null, qi = 0, score = 0, past = [];
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('topic').placeholder = T.topic; $('notes').placeholder = T.notes;
+$('lLevel').textContent = T.level; $('lCount').textContent = T.count; $('go').textContent = T.go; $('again').textContent = T.again; $('back').textContent = T.back;
+function chips(el, items, get, set) {
+  el.innerHTML = items.map((t, i) => `<button class="chip" data-i="${i}">${t}</button>`).join('');
+  const paint = () => el.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === get()));
+  el.querySelectorAll('.chip').forEach(c => c.onclick = () => { set(+c.dataset.i); paint(); }); paint();
+}
+chips($('levels'), T.levels, () => level, v => level = v);
+const COUNTS = [5, 8, 12]; chips($('counts'), COUNTS.map(String), () => COUNTS.indexOf(count), v => count = COUNTS[v]);
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function renderPast() {
+  $('past').innerHTML = past.length ? `<div class="lbl">${T.past}</div>` + past.map((p, i) => `<button class="pi" data-i="${i}"><span></span><small>${p.score}/${p.total}</small></button>`).join('') : '';
+  $('past').querySelectorAll('.pi').forEach(b => { b.querySelector('span').textContent = past[+b.dataset.i].topic; b.onclick = () => { $('topic').value = past[+b.dataset.i].topic; }; });
+}
+async function make() {
+  const topic = $('topic').value.trim(), notes = $('notes').value.trim(); $('err').textContent = '';
+  if (!topic && !notes) { $('err').textContent = T.empty; return; }
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('go').disabled = true; $('go').innerHTML = `<span class="dots">${T.making}</span>`;
+  try {
+    const r = await Acornix.askAI(
+      `Write a multiple-choice quiz of exactly ${count} questions about "${topic || 'the notes below'}" for a student at ${['primary school', 'middle school', 'high school', 'university'][level]} level, in ${ES ? 'Spanish' : 'English'}. ` +
+      `Mix easy and harder questions, test understanding rather than trivia, and make the wrong options believable. Each question has 4 options and exactly one correct. ` +
+      `Return JSON: {"title": short quiz title, "questions": [{"q": question, "options": [4 strings], "correct": index 0-3, "why": one or two sentences explaining the right answer}]}.` +
+      (notes ? `\n\nBase the questions on these notes:\n${notes.slice(0, 6000)}` : ''), { json: true });
+    const qs = (r && r.questions || []).filter(q => q && q.q && Array.isArray(q.options) && q.options.length >= 2 && q.correct >= 0 && q.correct < q.options.length);
+    if (!qs.length) throw new Error('?');
+    quiz = { topic: topic || r.title || '…', questions: qs }; qi = 0; score = 0; show('play'); ask();
+  } catch (e) { $('err').textContent = T.failed + (e.message || ''); }
+  $('go').disabled = false; $('go').textContent = T.go;
+}
+function ask() {
+  const q = quiz.questions[qi];
+  $('count').textContent = `${qi + 1} / ${quiz.questions.length}`; $('score').textContent = `✅ ${score}`; $('prog').style.width = qi / quiz.questions.length * 100 + '%';
+  $('question').textContent = q.q; $('why').className = 'why'; $('next').className = 'next';
+  $('opts').innerHTML = '';
+  q.options.forEach((o, i) => {
+    const b = document.createElement('button'); b.className = 'opt';
+    b.innerHTML = `<span class="k">${'ABCD'[i] || i + 1}</span><span></span>`; b.lastChild.textContent = o;
+    b.onclick = () => pick(i); $('opts').appendChild(b);
+  });
+}
+function pick(i) {
+  const q = quiz.questions[qi], bs = [...$('opts').children];
+  if ($('next').classList.contains('on')) return;
+  bs[q.correct].classList.add('good');
+  if (i === q.correct) { score++; buzz(15); } else { bs[i].classList.add('bad'); buzz([40, 30, 40]); }
+  $('score').textContent = `✅ ${score}`;
+  $('why').textContent = (i === q.correct ? '✅ ' : '💡 ') + (q.why || ''); $('why').className = 'why on';
+  $('next').textContent = qi + 1 < quiz.questions.length ? T.next + ' →' : T.finish; $('next').className = 'next on';
+}
+$('next').onclick = () => { if (++qi < quiz.questions.length) ask(); else end(); };
+async function end() {
+  const n = quiz.questions.length, p = Math.round(score / n * 100), tier = p === 100 ? 3 : p >= 75 ? 2 : p >= 50 ? 1 : 0;
+  $('ring').style.background = `conic-gradient(var(--a) ${p * 3.6}deg, #ffffff14 0)`; $('pct').textContent = p + '%';
+  $('eT').textContent = ['📖', '👍', '🌟', '🏆'][tier] + ' ' + T.titles[tier]; $('eP').textContent = `${score} ${T.of} ${n} ${T.right} · ${quiz.topic}`;
+  past = [{ topic: quiz.topic, score, total: n, at: Date.now() }, ...past.filter(x => x.topic !== quiz.topic)].slice(0, 12); await store.set('past', past); renderPast();
+  show('end'); buzz([30, 40, 80]);
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('go').onclick = make; $('again').onclick = () => { show('home'); make(); }; $('back').onclick = () => show('home'); $('quit').onclick = () => show('home');
+(async () => { past = await store.get('past', []); renderPast(); })();
+</script>
+</body>
+</html>
