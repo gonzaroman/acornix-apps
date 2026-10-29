@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#091b2b">
+<title>Brisa · Viento y olas</title>
+<style>
+:root{--bg:#091b2b;--panel:#112a3b;--panel2:#18384a;--text:#eff8fc;--muted:#9db9c9;--aqua:#51e1cf;--blue:#71baff;--good:#65e0ac;--fair:#ffd17b;--poor:#ff8b91;--line:rgba(180,218,238,.12)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button,a,input{ -webkit-tap-highlight-color:transparent}button{cursor:pointer;color:inherit}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}button{border:0}a{color:var(--aqua)}.app{max-width:850px;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 18px calc(30px + env(safe-area-inset-bottom))}header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}.brand{display:flex;gap:10px;align-items:center}.brandmark{width:43px;height:43px;display:grid;place-items:center;background:var(--aqua);border-radius:15px;color:#092a35;font-size:28px;font-weight:800;transform:rotate(-8deg)}h1{font-size:25px;letter-spacing:-1px;margin:0}.tagline{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}.iconbtn{background:var(--panel);border:1px solid var(--line);border-radius:14px;min-width:46px;height:46px;font-size:20px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.6px;font-weight:750;color:var(--aqua)}h2{margin:6px 0;font-size:28px;letter-spacing:-.8px;line-height:1.2}.locationline{display:flex;align-items:center;justify-content:space-between;gap:10px}.locationline small{color:var(--muted);font-size:12px}.searchwrap{position:relative;margin:18px 0 12px}.searchbar{display:flex;gap:8px}.searchfield{min-width:0;flex:1;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0 14px}.searchfield input{width:100%;border:0;outline:none;background:none;color:var(--text);height:52px;font-size:15px;min-width:0}.searchfield input::placeholder{color:#91aebf}.locate{background:var(--aqua);color:#082a35;border-radius:16px;min-width:53px;font-size:24px}.results{position:absolute;z-index:10;top:60px;width:100%;background:#19384b;border:1px solid #35536a;border-radius:16px;box-shadow:0 15px 50px #0008;overflow:hidden}.results button{display:block;text-align:left;width:100%;background:none;padding:14px 16px;border-bottom:1px solid var(--line)}.results button:last-child{border-bottom:0}.results small{display:block;margin-top:3px;color:var(--muted)}.resultnote{padding:16px;color:var(--muted);font-size:13px}.status{font-size:12px;color:var(--muted);min-height:20px;display:flex;align-items:center;gap:7px;margin-bottom:16px}.dot{width:6px;height:6px;border-radius:50%;background:var(--aqua)}.loading .dot{animation:pulse 1s infinite}.notice{padding:13px 15px;background:#40372b;border:1px solid #776044;border-radius:14px;font-size:13px;line-height:1.5;margin-bottom:15px;color:#ffe4b1}.notice button{background:none;color:#fff;text-decoration:underline;padding:6px 0;margin-left:8px}.hidden{display:none!important}.hero{position:relative;border:1px solid #2a6670;border-radius:24px;background:radial-gradient(ellipse at 100% 0%,#196475 0%,#123b4b 40%,#112f40 85%);padding:20px;overflow:hidden}.hero:after{content:"";position:absolute;width:280px;height:280px;border:1px solid #56e4cd0b;border-radius:45%;right:-170px;bottom:-210px;pointer-events:none;animation:wave 18s linear infinite}.heroTop{display:flex;justify-content:space-between;align-items:center;gap:8px}.timebadge{font-size:12px;color:#ccedf2;background:#0b263f66;border:1px solid #8bdbd52b;padding:7px 10px;border-radius:20px}.unit{border:1px solid #78bdc345;background:#0a293566;border-radius:10px;padding:7px 9px;font-size:12px}.windmain{display:flex;align-items:center;justify-content:space-between;margin:20px 0 16px;gap:10px}.big{font-size:58px;font-weight:760;line-height:1;letter-spacing:-3px}.big small{font-size:16px;letter-spacing:0;color:#b4d6df;font-weight:500}.windcopy{font-size:13px;color:#b4d6df;margin-top:10px}.windcopy b{color:white}.compass{width:132px;height:132px;position:relative;flex-shrink:0;border-radius:50%;border:1px solid #67c3c750;background:#0b283760;box-shadow:inset 0 0 0 13px #80d7d005,inset 0 0 0 14px #80d7d015}.compass span{position:absolute;font-size:10px;color:#a1c5d0;font-weight:600}.north{top:7px;left:50%;transform:translateX(-50%)}.south{bottom:7px;left:50%;transform:translateX(-50%)}.east{right:9px;top:50%;transform:translateY(-50%)}.west{left:9px;top:50%;transform:translateY(-50%)}.needle{position:absolute;inset:25px;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}.needle:before{content:"";position:absolute;left:calc(50% - 9px);top:2px;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:36px solid var(--aqua);filter:drop-shadow(0 0 8px #51e1cf55)}.needle:after{content:"";position:absolute;left:calc(50% - 6px);top:38px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:26px solid #719ba3}.hub{position:absolute;top:calc(50% - 5px);left:calc(50% - 5px);width:10px;height:10px;background:#e5fffa;border:3px solid #236570;border-radius:50%}.ratings{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rating{padding:12px;background:#091d2d70;border:1px solid #ffffff0b;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:13px}.badge{font-size:11px;font-weight:700;border-radius:7px;padding:5px 7px;white-space:nowrap}.good{color:var(--good);background:#65e0ac16}.fair{color:var(--fair);background:#ffd17b16}.poor{color:var(--poor);background:#ff8b9116}.unknown{color:var(--muted);background:#ffffff09}.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 23px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}.metricname{color:var(--muted);font-size:12px;margin-bottom:8px}.metricvalue{font-size:26px;letter-spacing:-.7px;font-weight:700}.metricvalue small{font-size:13px;font-weight:400;color:var(--muted);letter-spacing:0}.metricfoot{font-size:11px;color:var(--muted);margin-top:5px;min-height:15px}.sectiontitle{display:flex;justify-content:space-between;align-items:center;margin:22px 0 13px;gap:10px}.sectiontitle h3{margin:0;font-size:18px;letter-spacing:-.4px}.subtle{font-size:12px;color:var(--muted)}.chartpanel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:15px 0 10px;overflow:hidden}.controls{display:flex;gap:7px;overflow:auto;padding:0 14px 12px;scrollbar-width:none}.chip{white-space:nowrap;min-height:39px;padding:8px 13px;border-radius:11px;background:#ffffff06;color:var(--muted);border:1px solid var(--line);font-size:12px}.chip.active{color:#092a35;background:var(--aqua);border-color:var(--aqua);font-weight:700}.chartlegend{padding:0 17px 6px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}.chartscroll{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#3f6979 transparent;touch-action:pan-x pan-y}.chartscroll canvas{display:block;height:192px;touch-action:pan-x pan-y}.rangebox{display:flex;gap:10px;align-items:center;margin:5px 17px 0}.rangebox input{width:100%;accent-color:var(--aqua);height:30px}.rangebox span{font-size:11px;color:var(--muted);white-space:nowrap}.forecasttools{display:flex;align-items:center;justify-content:space-between;gap:10px}.sportselect{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:10px;font-size:12px;max-width:145px}.legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin:13px 0}.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}.tablehead,.hourrow{display:grid;grid-template-columns:.8fr 1.15fr .85fr 1fr;align-items:center;gap:4px;text-align:right}.tablehead{color:var(--muted);font-size:10px;padding:0 12px 10px;letter-spacing:.4px}.tablehead>:first-child,.hourrow>:first-child{text-align:left}.hourrow{width:100%;min-height:58px;padding:10px 12px;background:var(--panel);border:1px solid transparent;border-bottom:1px solid var(--line);font-size:13px}.hourrow:first-child{border-radius:15px 15px 0 0}.hourrow:last-child{border-radius:0 0 15px 15px}.hourrow.selected{background:#194350;border:1px solid #51e1cf75;border-radius:10px}.hourrow small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.hourrow .badge{justify-self:end}.daylabel{font-size:11px;color:var(--aqua);padding:17px 6px 8px;text-transform:uppercase;letter-spacing:1px}.more{display:block;width:100%;margin-top:12px;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--panel);font-size:13px}.empty{padding:45px 20px;text-align:center;color:var(--muted);border:1px dashed #355263;border-radius:20px;line-height:1.7}.empty strong{display:block;font-size:20px;color:var(--text);margin-bottom:8px}footer{font-size:11px;line-height:1.7;color:#839eae;text-align:center;margin-top:24px}footer button{color:var(--aqua);background:none;padding:9px}.modal{position:fixed;inset:0;background:#03111bd9;z-index:30;display:flex;align-items:center;justify-content:center;padding:22px;padding-top:calc(22px + env(safe-area-inset-top));padding-bottom:calc(22px + env(safe-area-inset-bottom));backdrop-filter:blur(6px)}.dialog{max-width:470px;max-height:100%;overflow:auto;background:var(--panel);border:1px solid #365366;border-radius:24px;padding:23px}.dialog h2{font-size:23px}.dialog h4{margin:22px 0 8px}.dialog p{font-size:13px;color:#b8cdd8;line-height:1.7}.close{background:var(--aqua);color:#082a35;font-weight:700;border-radius:12px;padding:14px;width:100%;margin-top:15px}@keyframes pulse{50%{opacity:.25}}@keyframes wave{to{transform:rotate(360deg)}}@media(min-width:620px){.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:25px}.compass{width:145px;height:145px}.big{font-size:68px}.app{padding-left:28px;padding-right:28px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div class="brand"><div class="brandmark" aria-hidden="true">≈</div><div><h1>brisa</h1><div class="tagline">Viento · Mar · Libertad</div></div></div>
+<button class="iconbtn" id="info" aria-label="Información y criterios">ⓘ</button>
+</header>
+<div class="locationline"><div><div class="eyebrow">Tu próxima escapada</div><h2 id="place">Tarifa</h2><small id="region">Cádiz, España</small></div><button class="iconbtn" id="refresh" aria-label="Actualizar pronóstico">↻</button></div>
+<div class="searchwrap">
+<form id="searchform" class="searchbar" autocomplete="off">
+<label class="searchfield"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Busca una playa o localidad…" aria-label="Buscar playa o localidad" autocomplete="off"></label>
+<button class="locate" id="locate" type="button" aria-label="Usar mi ubicación">⌖</button>
+</form>
+<div id="results" class="results hidden" aria-live="polite"></div>
+</div>
+<div id="status" class="status" role="status"><span class="dot"></span><span id="statusText">Preparando el pronóstico…</span></div>
+<div id="notice" class="notice hidden" role="status"></div>
+<div id="empty" class="empty hidden"><strong>El mar te espera</strong>Busca una localidad de costa o usa tu ubicación para ver el pronóstico.</div>
+<div id="content" class="hidden">
+<section class="hero" aria-label="Condiciones de la hora seleccionada">
+<div class="heroTop"><span class="eyebrow" id="selectedLabel">Condiciones</span><button id="units" class="unit" aria-label="Cambiar unidad del viento">Viento en nudos ⇄</button></div>
+<div class="windmain">
+<div><div class="big"><span id="wind">—</span> <small id="windunit">kt</small></div><div class="windcopy">Rachas <b id="gust">—</b></div><div class="windcopy" id="winddir">Dirección sin datos</div></div>
+<div class="compass" role="img" id="compass" aria-label="Dirección del viento"><span class="north">N</span><span class="east">E</span><span class="south">S</span><span class="west">O</span><div class="needle" id="needle"></div><div class="hub"></div></div>
+</div>
+<div class="ratings"><div class="rating"><span>🏄 Surf</span><span id="surfRating" class="badge unknown">Sin datos</span></div><div class="rating"><span>⛵ Vela</span><span id="sailRating" class="badge unknown">Sin datos</span></div></div>
+</section>
+<section class="metrics" aria-label="Estado del mar">
+<div class="metric"><div class="metricname">≈ Altura de ola</div><div class="metricvalue" id="wave">—</div><div class="metricfoot">Oleaje combinado</div></div>
+<div class="metric"><div class="metricname">◷ Período de ola</div><div class="metricvalue" id="period">—</div><div class="metricfoot">Entre crestas</div></div>
+<div class="metric"><div class="metricname">↗ Mar de fondo</div><div class="metricvalue" id="swell">—</div><div class="metricfoot" id="swellfoot">Dirección de procedencia</div></div>
+<div class="metric"><div class="metricname">♧ Agua</div><div class="metricvalue" id="water">—</div><div class="metricfoot">Temperatura superficial</div></div>
+</section>
+<div class="sectiontitle"><h3>El horizonte, hora a hora</h3><span class="subtle">3 días</span></div>
+<div id="days" class="controls" style="padding-left:0"></div>
+<section class="chartpanel" aria-label="Gráfico horario del pronóstico">
+<div class="controls" id="chartTypes"><button class="chip active" data-metric="wind">Viento</button><button class="chip" data-metric="wave">Olas</button><button class="chip" data-metric="period">Período</button><button class="chip" data-metric="water">Agua</button></div>
+<div class="chartlegend"><span id="chartLegend">Viento y rachas</span><span>Desliza y toca una hora ↔</span></div>
+<div id="chartscroll" class="chartscroll"><canvas id="chart" role="img" aria-label="Pronóstico horario. Utiliza el selector inferior o la tabla para consultar cada hora."></canvas></div>
+<div class="rangebox"><span id="rangeLabel">00:00</span><input id="hourRange" type="range" min="0" max="71" value="0" aria-label="Seleccionar hora del pronóstico"></div>
+</section>
+<div class="sectiontitle forecasttools"><h3>¿Cuándo salir?</h3><select id="sport" class="sportselect" aria-label="Actividad para la valoración"><option value="surf">🏄 Para surfear</option><option value="sail">⛵ Para navegar</option></select></div>
+<div class="legend"><span><i style="background:var(--good)"></i>Bueno</span><span><i style="background:var(--fair)"></i>Regular</span><span><i style="background:var(--poor)"></i>Malo</span><span>Orientativo</span></div>
+<div class="tablehead"><span>HORA</span><span id="tableWind">VIENTO · kt</span><span>OLAS · m</span><span>CONDICIÓN</span></div>
+<div id="hours"></div>
+<button id="more" class="more">Ver todas las horas</button>
+</div>
+<footer>
+Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Pronóstico y modelo marino<br>
+Hora local del destino · No sustituye los avisos oficiales.<br>
+<button id="criteria">Cómo valoramos las condiciones</button>
+</footer>
+</main>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div class="dialog">
+<div class="eyebrow">Antes de entrar al agua</div><h2 id="modalTitle">Lee el mar, no solo los números.</h2>
+<p>Las valoraciones son una guía general para cada hora, no una recomendación de seguridad ni una predicción de la calidad de una playa concreta.</p>
+<h4>🏄 Surf</h4><p><b>Bueno:</b> olas de 0,6 a 2,5 m, período de al menos 7 s y viento de hasta 22 km/h.<br><b>Regular:</b> olas de 0,3 a 3,5 m, período de al menos 5 s y viento de hasta 35 km/h.<br><b>Malo:</b> fuera de esos intervalos.</p>
+<h4>⛵ Vela</h4><p><b>Bueno:</b> viento de 10 a 25 km/h, rachas de hasta 35 km/h y olas de hasta 1,8 m.<br><b>Regular:</b> viento de 6 a 38 km/h, rachas de hasta 48 km/h y olas de hasta 3 m.<br><b>Malo:</b> fuera de esos intervalos.</p>
+<p>Si falta una variable necesaria, mostramos «Sin datos». No se consideran mareas, corrientes, orientación de la costa, viento de tierra, embarcación ni experiencia. Comprueba los avisos y las condiciones locales.</p>
+<p>La flecha señala <b>de dónde viene el viento</b>. El mar de fondo indica también su procedencia. Las olas son el oleaje combinado del modelo, no la altura de la rompiente. El agua es una estimación superficial; puede no estar disponible en todos los modelos o zonas.</p>
+<p>El punto marino puede estar desplazado al mar más cercano. Las búsquedas usan el geocodificador de Open-Meteo: si una playa no aparece, busca su localidad costera.</p>
+<button id="closeModal" class="close">Entendido, vamos al mar</button>
+</div>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const store={
+ async get(k){if(window.Acornix?.db)return Acornix.db.get(k);try{return JSON.parse(localStorage.getItem('brisa_'+k))}catch{return null}},
+ async set(k,v){if(window.Acornix?.db)return Acornix.db.set(k,v);localStorage.setItem('brisa_'+k,JSON.stringify(v))}
+};
+let prefs={unit:'kt',sport:'surf',metric:'wind'},locationData={name:'Tarifa',region:'Cádiz, España',latitude:36.0143,longitude:-5.6044};
+let data=null,selected=0,day='all',expanded=false,visible=[],requestId=0,controller=null,searchController=null,searchTimer,searchId=0,loading=false,chartWidth=0,needleAngle=0,lastFocus=null;
+const ratings={good:'Bueno',fair:'Regular',poor:'Malo',unknown:'Sin datos'};
+const valid=x=>typeof x==='number'&&Number.isFinite(x);
+const fmt=(v,d=1)=>valid(v)?v.toLocaleString('es-ES',{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
+const windValue=v=>valid(v)?v/(prefs.unit==='kt'?1.852:1):null;
+const windText=v=>valid(v)?Math.round(windValue(v)).toString():'—';
+const direction=v=>valid(v)?['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'][Math.round(v/22.5)%16]:'—';
+const dateLabel=(s,short=false)=>new Date(s.slice(0,10)+'T12:00:00').toLocaleDateString('es-ES',short?{weekday:'short',day:'numeric'}:{weekday:'long',day:'numeric',month:'short'});
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function notify(text,retry=false){$('notice').replaceChildren();$('notice').append(document.createTextNode(text));if(retry){let b=document.createElement('button');b.textContent='Reintentar';b.onclick=()=>loadForecast(locationData);$('notice').append(b)}$('notice').classList.remove('hidden')}
+function persist(k,v){return store.set(k,v).catch(()=>notify('No se han podido guardar los datos en este dispositivo.'))}
+function savePrefs(){persist('preferences',prefs)}
+function status(text,busy=false){$('statusText').textContent=text;$('status').classList.toggle('loading',busy)}
+function rating(h,sport){
+ if(!h)return'unknown';
+ if(sport==='surf'){
+ if(![h.wind,h.wave,h.period].every(valid))return'unknown';
+ if(h.wave>=.6&&h.wave<=2.5&&h.period>=7&&h.wind<=22)return'good';
+ if(h.wave>=.3&&h.wave<=3.5&&h.period>=5&&h.wind<=35)return'fair';return'poor';
+ }
+ if(![h.wind,h.gust,h.wave].every(valid))return'unknown';
+ if(h.wind>=10&&h.wind<=25&&h.gust<=35&&h.wave<=1.8)return'good';
+ if(h.wind>=6&&h.wind<=38&&h.gust<=48&&h.wave<=3)return'fair';return'poor';
+}
+async function getJSON(url,signal){const r=await fetch(url,{signal});if(!r.ok)throw new Error('Servicio no disponible');return r.json()}
+function showLocation(){$('place').textContent=locationData.name;$('region').textContent=locationData.region||`${fmt(locationData.latitude,3)}°, ${fmt(locationData.longitude,3)}°`}
+function updateStatus(cached=false){
+ if(!data)return;
+ const time=new Date(data.saved).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+ const age=Date.now()-data.saved;
+ status(`${cached?'Guardado en el dispositivo':'Actualizado'} · ${time}${age>3600000?' · puede estar desactualizado':''} · ${data.timezone}`,false);
+}
+async function loadForecast(loc){
+ const id=++requestId;controller?.abort();controller=new AbortController();const signal=controller.signal;loading=true;
+ const changed=!data||data.latitude!==loc.latitude||data.longitude!==loc.longitude;
+ locationData={...loc};showLocation();persist('location',locationData);
+ if(changed){data=null;$('content').classList.add('hidden');$('empty').classList.remove('hidden');$('empty').innerHTML='<strong>Buscando viento y olas…</strong>Consultando los modelos de Open-Meteo.'}
+ $('notice').classList.add('hidden');status('Conectando con el viento y el mar…',true);$('refresh').disabled=true;
+ try{
+ const params=new URLSearchParams({latitude:loc.latitude,longitude:loc.longitude,timezone:'auto',forecast_days:'3'});
+ const weatherURL='https://api.open-meteo.com/v1/forecast?'+params+'&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m&current=wind_speed_10m&wind_speed_unit=kmh';
+ const marineBase='https://marine-api.open-meteo.com/v1/marine?'+params+'&cell_selection=sea&hourly=wave_height,wave_period,swell_wave_direction';
+ const marinePromise=(async()=>{try{return await getJSON(marineBase+',sea_surface_temperature',signal)}catch(e){if(signal.aborted)throw e;return getJSON(marineBase,signal)}})();
+ const results=await Promise.allSettled([getJSON(weatherURL,signal),marinePromise]);
+ if(id!==requestId)return;
+ if(results[0].status!=='fulfilled')throw new Error('weather');
+ const w=results[0].value,m=results[1].status==='fulfilled'?results[1].value:null;
+ if(!w.hourly?.time?.length)throw new Error('empty');
+ const marineMap=new Map((m?.hourly?.time||[]).map((t,i)=>[t,i]));
+ const hours=w.hourly.time.slice(0,72).map((t,i)=>{
+ const j=marineMap.get(t),mh=m?.hourly;
+ return{time:t,wind:w.hourly.wind_speed_10m?.[i]??null,gust:w.hourly.wind_gusts_10m?.[i]??null,dir:w.hourly.wind_direction_10m?.[i]??null,wave:mh?.wave_height?.[j]??null,period:mh?.wave_period?.[j]??null,swell:mh?.swell_wave_direction?.[j]??null,water:mh?.sea_surface_temperature?.[j]??null};
+ });
+ data={hours,saved:Date.now(),timezone:w.timezone||'Hora local',now:w.current?.time,latitude:loc.latitude,longitude:loc.longitude,location:{...loc},marineAvailable:hours.some(h=>valid(h.wave))};
+ selected=Math.max(0,hours.findIndex(h=>h.time.slice(0,13)===(w.current?.time||'').slice(0,13)));day='all';expanded=false;
+ persist('forecast',data);render();updateStatus();
+ if(!data.marineAvailable)notify('No hay datos marinos para este punto. Prueba una localidad más próxima a la costa. El viento sigue disponible.');
+ }catch(e){
+ if(id!==requestId||signal.aborted)return;
+ if(data){updateStatus(true);notify('No se pudo actualizar. Mostramos el último pronóstico guardado; comprueba su fecha.',true)}
+ else{status('Sin conexión con el pronóstico');$('empty').innerHTML='<strong>No pudimos consultar el mar</strong>Revisa tu conexión o busca otra localidad costera.';notify('El servicio no está disponible en este momento.',true)}
+ }finally{if(id===requestId){loading=false;$('refresh').disabled=false;$('status').classList.remove('loading')}}
+}
+function render(){
+ if(!data?.hours?.length)return;
+ $('content').classList.remove('hidden');$('empty').classList.add('hidden');
+ $('sport').value=prefs.sport;
+ $('chartTypes').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.metric===prefs.metric));
+ $('units').textContent=`Viento en ${prefs.unit==='kt'?'nudos':'km/h'} ⇄`;$('windunit').textContent=prefs.unit;$('tableWind').textContent='VIENTO · '+prefs.unit;
+ renderDays();renderSelected();renderHours();drawChart();
+}
+function renderDays(){
+ const dates=[...new Set(data.hours.map(h=>h.time.slice(0,10)))];
+ $('days').replaceChildren();
+ [['all','72 horas'],...dates.map(d=>[d,dateLabel(d,true)])].forEach(([value,label])=>{
+ const b=document.createElement('button');b.className='chip'+(day===value?' active':'');b.textContent=label;b.setAttribute('aria-pressed',day===value);
+ b.onclick=()=>{day=value;expanded=false;const ids=getVisible();if(!ids.includes(selected))selected=ids[0];render()};$('days').append(b);
+ });
+ visible=getVisible();$('hourRange').max=visible.length-1;$('hourRange').value=Math.max(0,visible.indexOf(selected));
+}
+function getVisible(){return data.hours.map((h,i)=>i).filter(i=>day==='all'||data.hours[i].time.startsWith(day))}
+function renderSelected(){
+ const h=data.hours[selected];if(!h)return;
+ const now=h.time.slice(0,13)===(data.now||'').slice(0,13);
+ $('selectedLabel').textContent=`${now?'Ahora · ':''}${dateLabel(h.time,true)} · ${h.time.slice(11,16)}`;
+ $('wind').textContent=windText(h.wind);$('gust').textContent=windText(h.gust)+' '+prefs.unit;
+ $('winddir').textContent=valid(h.dir)?`Del ${direction(h.dir)} · ${Math.round(h.dir)}°`:'Dirección sin datos';
+ $('needle').style.opacity=valid(h.dir)?1:.15;
+ if(valid(h.dir)){let difference=((h.dir-needleAngle)%360+540)%360-180;needleAngle+=difference;$('needle').style.transform=`rotate(${needleAngle}deg)`}
+ $('compass').setAttribute('aria-label',valid(h.dir)?`Viento procedente del ${direction(h.dir)}, ${Math.round(h.dir)} grados`:'Sin datos de dirección');
+ $('wave').innerHTML=fmt(h.wave)+' <small>m</small>';$('period').innerHTML=fmt(h.period)+' <small>s</small>';$('water').innerHTML=fmt(h.water)+' <small>°C</small>';
+ $('swell').textContent=direction(h.swell);$('swellfoot').textContent=valid(h.swell)?`Desde ${Math.round(h.swell)}°`:'Dirección no disponible';
+ for(const [sport,id]of[['surf','surfRating'],['sail','sailRating']]){const r=rating(h,sport);$(id).className='badge '+r;$(id).textContent=ratings[r]}
+ $('rangeLabel').textContent=h.time.slice(8,10)+' · '+h.time.slice(11,16);$('hourRange').value=Math.max(0,visible.indexOf(selected));$('hourRange').setAttribute('aria-valuetext',dateLabel(h.time)+' '+h.time.slice(11,16));
+}
+function renderHours(){
+ const ids=expanded?visible:visible.slice(0,12);let date='';
+ $('hours').innerHTML=ids.map(i=>{
+ const h=data.hours[i],r=rating(h,prefs.sport);let heading='';
+ if(date!==h.time.slice(0,10)){date=h.time.slice(0,10);heading=`<div class="daylabel">${escapeHTML(dateLabel(h.time))}</div>`}
+ return heading+`<button class="hourrow ${i===selected?'selected':''}" data-index="${i}" aria-label="${escapeHTML(dateLabel(h.time))}, ${h.time.slice(11,16)}; viento ${windText(h.wind)} ${prefs.unit}, olas ${fmt(h.wave)} metros; ${ratings[r]}"><span><b>${h.time.slice(11,16)}</b><small>${h.time.slice(0,13)===(data.now||'').slice(0,13)?'Ahora':''}</small></span><span>${windText(h.wind)} <small>racha ${windText(h.gust)} · ${direction(h.dir)}</small></span><span>${fmt(h.wave)}<small>${fmt(h.period)} s</small></span><span class="badge ${r}">${ratings[r]}</span></button>`;
+ }).join('');
+ $('more').classList.toggle('hidden',visible.length<=12);$('more').textContent=expanded?'Mostrar menos':`Ver las ${visible.length} horas`;
+}
+function selectHour(i,scroll=false){
+ selected=i;renderSelected();renderHours();drawChart();
+ if(scroll){const p=visible.indexOf(i),el=$('chartscroll');el.scrollTo({left:Math.max(0,44+p*chartStep()-el.clientWidth/2),behavior:'smooth'})}
+}
+function chartStep(){return Math.max(visible.length>30?24:20,($('chartscroll').clientWidth-65)/Math.max(1,visible.length-1))}
+function drawChart(){
+ if(!data||!visible.length)return;
+ const canvas=$('chart'),scroller=$('chartscroll'),height=192,step=chartStep();chartWidth=Math.max(scroller.clientWidth,65+(visible.length-1)*step);
+ const ratio=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.round(chartWidth*ratio);canvas.height=height*ratio;canvas.style.width=chartWidth+'px';canvas.style.height=height+'px';
+ const ctx=canvas.getContext('2d');ctx.scale(ratio,ratio);
+ const metric=prefs.metric;
+ const field=metric==='wind'?'wind':metric;
+ const vals=visible.map(i=>metric==='wind'?windValue(data.hours[i].wind):data.hours[i][field]);
+ const gusts=visible.map(i=>windValue(data.hours[i].gust));
+ const nums=(metric==='wind'?[...vals,...gusts]:vals).filter(valid);
+ const labels={wind:`━━ Viento · ┄ Rachas (${prefs.unit})`,wave:'Altura de ola (m)',period:'Período de ola (s)',water:'Temperatura del agua (°C)'};
+ $('chartLegend').textContent=labels[metric];
+ let min=metric==='water'&&nums.length?Math.floor(Math.min(...nums)-1):0;
+ let max=nums.length?Math.max(...nums)*1.15:1;if(max<=min)max=min+1;
+ const top=16,bottom=150,x=i=>44+i*step,y=v=>bottom-(v-min)/(max-min)*(bottom-top);
+ ctx.font='10px system-ui';ctx.textAlign='left';ctx.textBaseline='middle';
+ for(let j=0;j<4;j++){const value=min+(max-min)*j/3,yy=y(value);ctx.strokeStyle='rgba(180,218,238,.10)';ctx.beginPath();ctx.moveTo(39,yy);ctx.lineTo(chartWidth-10,yy);ctx.stroke();ctx.fillStyle='#98b5c6';ctx.fillText(value.toLocaleString('es-ES',{maximumFractionDigits:1}),5,yy)}
+ const drawSeries=(values,color,dashed=false)=>{
+ ctx.strokeStyle=color;ctx.lineWidth=dashed?1.6:2.6;ctx.setLineDash(dashed?[4,4]:[]);ctx.beginPath();let started=false;
+ values.forEach((v,i)=>{if(!valid(v)){started=false;return}if(!started){ctx.moveTo(x(i),y(v));started=true}else ctx.lineTo(x(i),y(v))});ctx.stroke();ctx.setLineDash([]);
+ };
+ if(metric==='wind')drawSeries(gusts,'#86bfff',true);
+ drawSeries(vals,'#51e1cf');
+ ctx.textAlign='center';
+ visible.forEach((id,i)=>{
+ const t=data.hours[id].time;
+ if(i===0||parseInt(t.slice(11,13))%3===0){ctx.fillStyle='#9db9c9';ctx.fillText(t.slice(11,16),x(i),171)}
+ if(t.slice(11,13)==='00'||i===0){ctx.fillStyle='#51e1cf';ctx.font='9px system-ui';ctx.fillText(t.slice(8,10)+'/'+t.slice(5,7),x(i),185);ctx.font='10px system-ui'}
+ });
+ const p=visible.indexOf(selected);
+ if(p>=0){ctx.strokeStyle='#e1fbf3aa';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(x(p),10);ctx.lineTo(x(p),155);ctx.stroke();ctx.setLineDash([]);if(valid(vals[p])){ctx.beginPath();ctx.arc(x(p),y(vals[p]),5,0,Math.PI*2);ctx.fillStyle='#51e1cf';ctx.fill();ctx.strokeStyle='#e9fff9';ctx.lineWidth=2;ctx.stroke()}}
+ if(!nums.length){ctx.fillStyle='#b4cbd5';ctx.textAlign='center';ctx.font='13px system-ui';ctx.fillText('Sin datos para esta variable',Math.min(chartWidth,scroller.clientWidth)/2,80)}
+}
+$('hours').onclick=e=>{const b=e.target.closest('[data-index]');if(b)selectHour(+b.dataset.index,true)};
+$('hourRange').oninput=e=>selectHour(visible[+e.target.value],true);
+let pointerStart=null;
+$('chart').addEventListener('pointerdown',e=>{pointerStart={x:e.clientX,y:e.clientY}});
+$('chart').addEventListener('pointerup',e=>{if(!pointerStart||Math.abs(e.clientX-pointerStart.x)>9||Math.abs(e.clientY-pointerStart.y)>9)return;const rect=$('chart').getBoundingClientRect(),p=Math.max(0,Math.min(visible.length-1,Math.round((e.clientX-rect.left-44)/chartStep())));selectHour(visible[p])});
+$('more').onclick=()=>{expanded=!expanded;renderHours()};
+$('units').onclick=()=>{prefs.unit=prefs.unit==='kt'?'km/h':'kt';savePrefs();render()};
+$('sport').onchange=e=>{prefs.sport=e.target.value;savePrefs();renderHours()};
+$('chartTypes').onclick=e=>{const b=e.target.closest('[data-metric]');if(!b)return;prefs.metric=b.dataset.metric;savePrefs();render()};
+$('refresh').onclick=()=>loadForecast(locationData);
+$('locate').onclick=()=>{
+ if(!navigator.geolocation){notify('Este dispositivo no permite obtener la ubicación. Busca una localidad.');return}
+ $('locate').disabled=true;status('Buscando tu ubicación…',true);
+ navigator.geolocation.getCurrentPosition(p=>{
+ $('locate').disabled=false;loadForecast({name:'Mi ubicación',region:'Punto costero más cercano en el modelo',latitude:+p.coords.latitude.toFixed(4),longitude:+p.coords.longitude.toFixed(4)});
+ },e=>{$('locate').disabled=false;if(data)updateStatus(true);else status('Ubicación no disponible');notify(e.code===1?'No se concedió acceso a tu ubicación. Puedes habilitarlo en los permisos de la app o buscar una localidad.':'No pudimos obtener tu ubicación. Activa la localización o busca una localidad.')},{enableHighAccuracy:true,timeout:15000,maximumAge:120000});
+};
+async function searchPlaces(){
+ const q=$('search').value.trim();if(q.length<2)return;
+ searchController?.abort();searchController=new AbortController();const id=++searchId;
+ $('results').classList.remove('hidden');$('results').innerHTML='<div class="resultnote">Buscando lugares…</div>';
+ try{
+ const r=await getJSON('https://geocoding-api.open-meteo.com/v1/search?'+new URLSearchParams({name:q,count:'8',language:'es',format:'json'}),searchController.signal);
+ if(id!==searchId)return;
+ $('results').replaceChildren();
+ if(!r.results?.length){$('results').innerHTML='<div class="resultnote">No encontramos ese lugar. Prueba con la localidad costera más cercana.</div>';return}
+ r.results.forEach(p=>{const b=document.createElement('button');b.type='button';const title=document.createElement('strong');title.textContent=p.name;const sub=document.createElement('small');const region=[p.admin1,p.country].filter(Boolean).join(', ');sub.textContent=region;b.append(title,sub);b.onclick=()=>{$('search').value='';$('results').classList.add('hidden');loadForecast({name:p.name,region,latitude:p.latitude,longitude:p.longitude})};$('results').append(b)});
+ }catch(e){if(id===searchId&&e.name!=='AbortError')$('results').innerHTML='<div class="resultnote">No pudimos buscar. Revisa la conexión y vuelve a intentarlo.</div>'}
+}
+$('search').oninput=()=>{
+ clearTimeout(searchTimer);searchController?.abort();searchId++;
+ if($('search').value.trim().length<2){$('results').classList.add('hidden');return}
+ searchTimer=setTimeout(searchPlaces,450);
+};
+$('searchform').onsubmit=e=>{e.preventDefault();clearTimeout(searchTimer);searchPlaces();$('search').blur()};
+document.addEventListener('click',e=>{if(!e.target.closest('.searchwrap'))$('results').classList.add('hidden')});
+function openModal(){lastFocus=document.activeElement;$('modal').classList.remove('hidden');$('closeModal').focus()}
+function closeModal(){$('modal').classList.add('hidden');lastFocus?.focus()}
+$('info').onclick=openModal;$('criteria').onclick=openModal;$('closeModal').onclick=closeModal;
+$('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('results').classList.add('hidden')}if(e.key==='Tab'&&!$('modal').classList.contains('hidden')){e.preventDefault();$('closeModal').focus()}});
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawChart,100)});
+async function reload(){
+ try{
+ const [p,l,c]=await Promise.all([store.get('preferences'),store.get('location'),store.get('forecast')]);
+ if(p)prefs={...prefs,...p};
+ if(!['wind','wave','period','water'].includes(prefs.metric))prefs.metric='wind';
+ if(!['kt','km/h'].includes(prefs.unit))prefs.unit='kt';
+ if(!['surf','sail'].includes(prefs.sport))prefs.sport='surf';
+ if(l&&valid(l.latitude)&&valid(l.longitude))locationData=l;
+ showLocation();
+ if(c?.hours?.length&&c.latitude===locationData.latitude&&c.longitude===locationData.longitude){
+ data=c;selected=Math.max(0,c.hours.findIndex(h=>h.time.slice(0,13)===(c.now||'').slice(0,13)));day='all';render();updateStatus(true);
+ }
+ }catch{notify('No pudimos recuperar tus preferencias. Puedes seguir usando la app.')}
+ loadForecast(locationData);
+}
+window.addEventListener('acornixdata',reload);
+reload();
+</script>
+</body>
+</html>

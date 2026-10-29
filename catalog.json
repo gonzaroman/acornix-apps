@@ -195,6 +195,31 @@
       "trending": 0
     },
     {
+      "id": "wind-and-waves",
+      "name": "Wind and Waves",
+      "emoji": "🌰",
+      "category": "weather",
+      "description": "Wind, gusts, waves, swell and water temperature for any beach, with a 3-day chart that rates each hour for surfing and sailing.",
+      "prompt": "A wind and waves app for surfers and sailors using the free Open-Meteo forecast and marine APIs with no key. Search a beach or use my location. Show wind speed, gusts and direction with an animated compass arrow, wave height, wave period and swell direction, water temperature, and a 3 day hourly chart. Rate each hour as good, fair or poor for surfing and for sailing with colours.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 35652,
+      "sha256": "cf50e3d473f0210891a8acac688e0dfca5fb9b3f6c574f51360c157708c22d83",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "will-it-rain",
       "name": "Will It Rain",
       "emoji": "🌦️",
