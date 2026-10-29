@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Photo Filters</title>
+<style>
+  :root { --bg:#0e0e10; --card:#1b1b1f; --ink:#f2f2f5; --muted:#8d8d98; --a:#ffcc33; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:10px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:20px; flex:1; }
+  .btn { padding:9px 13px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; display:inline-block; }
+  .btn.main { background:var(--a); color:#111; }
+  input[type=file] { display:none; }
+  .view { flex:1; min-height:0; display:grid; place-items:center; position:relative; border-radius:18px; background:repeating-conic-gradient(#18181c 0 25%,#1d1d22 0 50%) 0 0/24px 24px; overflow:hidden; }
+  .view canvas { max-width:100%; max-height:100%; touch-action:none; }
+  .empty { text-align:center; color:var(--muted); font-weight:700; padding:20px; line-height:1.6; }
+  .empty .big { font-size:60px; }
+  .hold { position:absolute; top:10px; left:10px; padding:5px 10px; border-radius:10px; background:#0009; font-size:12px; font-weight:800; pointer-events:none; }
+  .filters { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+  .filters::-webkit-scrollbar { display:none; }
+  .f { flex:none; width:68px; text-align:center; font-size:11px; font-weight:800; color:var(--muted); background:none; padding:0; }
+  .f canvas { width:68px; height:68px; border-radius:12px; display:block; margin-bottom:4px; border:2px solid transparent; object-fit:cover; }
+  .f.on { color:var(--a); } .f.on canvas { border-color:var(--a); }
+  .tabs { display:flex; gap:6px; }
+  .tabs button { flex:1; padding:8px; border-radius:10px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); }
+  .tabs button.on { color:var(--ink); background:#2a2a30; }
+  .adj { display:grid; grid-template-columns:auto 1fr auto; gap:6px 10px; align-items:center; font-size:13px; font-weight:700; color:var(--muted); }
+  .adj input { accent-color:var(--a); }
+  .adj b { color:var(--ink); min-width:34px; text-align:right; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>📷 <span id="ttl"></span></h1><label class="btn"><input type="file" id="file" accept="image/*">🖼️</label><label class="btn"><input type="file" id="cam" accept="image/*" capture="environment">📸</label><button class="btn main" id="save"></button></div>
+  <div class="view" id="view"><div class="empty" id="empty"><div class="big">🌄</div></div><canvas id="out" hidden></canvas><span class="hold" id="hold" hidden></span></div>
+  <div class="tabs"><button id="tF" class="on"></button><button id="tA"></button></div>
+  <div class="filters" id="filters"></div>
+  <div class="adj" id="adj" hidden></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Filtros', save:'Guardar', empty:'Abre una foto de la galería 🖼️ o haz una con la cámara 📸', hold:'Original', filters:'Filtros', adjust:'Ajustes', saved:'Guardada en esta app', adj:['Brillo','Contraste','Saturación','Calidez','Viñeta','Grano'] }
+ : { title:'Photo Filters', save:'Save', empty:'Open a photo from your gallery 🖼️ or take one with the camera 📸', hold:'Original', filters:'Filters', adjust:'Adjust', saved:'Saved in this app', adj:['Brightness','Contrast','Saturation','Warmth','Vignette','Grain'] };
+// Each filter: a canvas filter string plus optional warmth/vignette/grain.
+const FILTERS = [
+  ['Original', 'none'], ['Vivid', 'saturate(1.45) contrast(1.1)'], ['Warm', 'sepia(.25) saturate(1.2)', { warm: 18 }], ['Cool', 'saturate(.95) hue-rotate(-8deg)', { warm: -20 }],
+  ['Noir', 'grayscale(1) contrast(1.35) brightness(.95)', { vig: .5 }], ['Mono', 'grayscale(1)'], ['Vintage', 'sepia(.55) contrast(.9) brightness(1.05) saturate(.8)', { vig: .4, grain: .15 }],
+  ['Fade', 'contrast(.8) brightness(1.1) saturate(.75)'], ['Drama', 'contrast(1.4) saturate(1.2) brightness(.9)', { vig: .55 }], ['Pop', 'saturate(1.9) contrast(1.15)'],
+  ['Dream', 'brightness(1.12) saturate(1.25) blur(.5px)', { warm: 10 }], ['Night', 'hue-rotate(190deg) saturate(.6) brightness(.85) contrast(1.2)', { vig: .6 }],
+];
+const $ = id => document.getElementById(id), out = $('out'), ctx = out.getContext('2d');
+let img = null, fi = 0, adj = [100, 100, 100, 0, 0, 0], tab = 0;
+['ttl', 'save', 'hold', 'tF', 'tA'].forEach((id, i) => $(id).textContent = [T.title, T.save, T.hold, T.filters, T.adjust][i]);
+$('empty').innerHTML += T.empty;
+function load(file) {
+  if (!file) return; const im = new Image();
+  im.onload = () => { const max = 2048, s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); img = c; fi = 0; adj = [100, 100, 100, 0, 0, 0]; $('empty').hidden = true; out.hidden = false; thumbs(); render(); URL.revokeObjectURL(im.src); };
+  im.src = URL.createObjectURL(file);
+}
+$('file').onchange = e => { load(e.target.files[0]); e.target.value = ''; };
+$('cam').onchange = e => { load(e.target.files[0]); e.target.value = ''; };
+function draw(target, src, f, a, w, h) {
+  const g = target.getContext('2d'), [, filt, extra = {}] = f;
+  target.width = w; target.height = h;
+  g.filter = `${filt === 'none' ? '' : filt} brightness(${a[0] / 100}) contrast(${a[1] / 100}) saturate(${a[2] / 100})`.trim();
+  g.drawImage(src, 0, 0, w, h); g.filter = 'none';
+  const warm = (extra.warm || 0) + a[3];
+  if (warm) { g.globalCompositeOperation = 'soft-light'; g.fillStyle = warm > 0 ? `rgba(255,140,30,${warm / 80})` : `rgba(40,120,255,${-warm / 80})`; g.fillRect(0, 0, w, h); g.globalCompositeOperation = 'source-over'; }
+  const vig = (extra.vig || 0) + a[4] / 100;
+  if (vig) { const r = g.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .3, w / 2, h / 2, Math.max(w, h) * .75); r.addColorStop(0, 'rgba(0,0,0,0)'); r.addColorStop(1, `rgba(0,0,0,${Math.min(.9, vig)})`); g.fillStyle = r; g.fillRect(0, 0, w, h); }
+  const grain = (extra.grain || 0) + a[5] / 100;
+  if (grain) { const n = document.createElement('canvas'); n.width = 256; n.height = 256; const nc = n.getContext('2d'), d = nc.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255 * grain * .5; } nc.putImageData(d, 0, 0); g.globalCompositeOperation = 'overlay'; g.fillStyle = g.createPattern(n, 'repeat'); g.fillRect(0, 0, w, h); g.globalCompositeOperation = 'source-over'; }
+}
+let showOrig = false;
+function render() { if (!img) return; if (showOrig) { out.width = img.width; out.height = img.height; ctx.drawImage(img, 0, 0); } else draw(out, img, FILTERS[fi], adj, img.width, img.height); }
+function thumbs() {
+  const s = 136 / Math.min(img.width, img.height), sw = img.width * s, sh = img.height * s, small = document.createElement('canvas'); small.width = 136; small.height = 136; small.getContext('2d').drawImage(img, (136 - sw) / 2, (136 - sh) / 2, sw, sh);
+  $('filters').innerHTML = '';
+  FILTERS.forEach((f, i) => { const b = document.createElement('button'); b.className = 'f' + (i === fi ? ' on' : ''); const c = document.createElement('canvas'); draw(c, small, f, [100, 100, 100, 0, 0, 0], 136, 136); b.append(c, f[0]); b.onclick = () => { fi = i; [...$('filters').children].forEach((x, k) => x.classList.toggle('on', k === i)); render(); }; $('filters').appendChild(b); });
+}
+function adjUI() {
+  const R = [[50, 150], [50, 150], [0, 200], [-50, 50], [0, 100], [0, 100]];
+  $('adj').innerHTML = T.adj.map((n, i) => `<span>${n}</span><input type="range" min="${R[i][0]}" max="${R[i][1]}" value="${adj[i]}" data-i="${i}"><b>${adj[i]}</b>`).join('');
+  $('adj').querySelectorAll('input').forEach(r => r.oninput = () => { adj[+r.dataset.i] = +r.value; r.nextElementSibling.textContent = r.value; render(); });
+}
+$('tF').onclick = () => { tab = 0; $('tF').classList.add('on'); $('tA').classList.remove('on'); $('filters').hidden = false; $('adj').hidden = true; };
+$('tA').onclick = () => { tab = 1; $('tA').classList.add('on'); $('tF').classList.remove('on'); $('filters').hidden = true; $('adj').hidden = false; adjUI(); };
+// Press and hold the photo to compare with the original.
+out.addEventListener('pointerdown', () => { showOrig = true; $('hold').hidden = false; render(); });
+['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => out.addEventListener(ev, () => { if (!showOrig) return; showOrig = false; $('hold').hidden = true; render(); }));
+$('save').onclick = async () => {
+  if (!img) return; const url = out.toDataURL('image/jpeg', .92), name = `photo-${FILTERS[fi][0].toLowerCase()}-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+</script>
+</body>
+</html>

@@ -1638,6 +1638,31 @@
       "trending": 0
     },
     {
+      "id": "photo-filters",
+      "name": "Photo Filters",
+      "emoji": "📷",
+      "category": "photo-video",
+      "description": "Twelve filters like Vintage, Noir and Dream plus sliders for brightness, warmth, vignette and grain. Hold the photo to compare with the original.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9554,
+      "sha256": "73c9e3d3ac2eb856c71351c65fb8a3ee3e6052d945788023e3cf430aa01f44ed",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pace-calculator",
       "name": "Pace Calculator",
       "emoji": "🏃",

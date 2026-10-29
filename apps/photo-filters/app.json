@@ -1,0 +1,15 @@
+{
+  "id": "photo-filters",
+  "name": "Photo Filters",
+  "emoji": "📷",
+  "category": "photo-video",
+  "description": "Twelve filters like Vintage, Noir and Dream plus sliders for brightness, warmth, vignette and grain. Hold the photo to compare with the original.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false,
+  "issue": 12
+}
