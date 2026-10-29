@@ -1,0 +1,14 @@
+{
+  "id": "truth-or-dare",
+  "name": "Truth or Dare",
+  "emoji": "🎲",
+  "category": "entertainment",
+  "description": "Add the players, pick a level from kids to bold, and let the phone choose truths and dares.",
+  "prompt": "A Truth or Dare game for groups: add players, choose kids, friends or bold level, it picks whose turn it is and shows a truth or a dare card, all fun and friendly.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": "dragon-quest-ai",
+  "name": "Story Adventure",
+  "emoji": "🐉",
+  "category": "entertainment",
+  "description": "Your AI narrates an adventure where you choose what happens: fantasy, space, pirates and more.",
+  "prompt": "An interactive story game where my AI is the narrator: I choose a world like fantasy, space or pirates, name my hero, and each turn it writes the story with three choices or I type my own action, with health and inventory, saved to continue later.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

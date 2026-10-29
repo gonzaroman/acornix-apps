@@ -1,8 +1,8 @@
 {
   "assets": {
     "block-drop": {
-      "asset": 688998636,
-      "base": 0,
+      "asset": 689038867,
+      "base": 1,
       "count": 0
     },
     "bmi": {
@@ -30,8 +30,38 @@
       "base": 0,
       "count": 0
     },
+    "charades": {
+      "asset": 689038539,
+      "base": 0,
+      "count": 0
+    },
+    "decision-wheel": {
+      "asset": 689038579,
+      "base": 0,
+      "count": 0
+    },
+    "dragon-quest-ai": {
+      "asset": 689038801,
+      "base": 0,
+      "count": 0
+    },
     "drummer": {
       "asset": 688546820,
+      "base": 0,
+      "count": 0
+    },
+    "emoji-movies": {
+      "asset": 689038711,
+      "base": 0,
+      "count": 0
+    },
+    "fortune-cookie": {
+      "asset": 689038621,
+      "base": 0,
+      "count": 0
+    },
+    "magic-8-ball": {
+      "asset": 689038773,
       "base": 0,
       "count": 0
     },
@@ -112,6 +142,26 @@
     },
     "sudoku": {
       "asset": 688998804,
+      "base": 0,
+      "count": 0
+    },
+    "trivia-night": {
+      "asset": 689038412,
+      "base": 0,
+      "count": 0
+    },
+    "truth-or-dare": {
+      "asset": 689038496,
+      "base": 0,
+      "count": 0
+    },
+    "twenty-questions-ai": {
+      "asset": 689038667,
+      "base": 0,
+      "count": 0
+    },
+    "would-you-rather": {
+      "asset": 689038460,
       "base": 0,
       "count": 0
     }

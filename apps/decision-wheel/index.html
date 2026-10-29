@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Decision Wheel</title>
+<style>
+  :root { --bg:#fdf7f0; --ink:#2d2a3e; --muted:#8a8499; --card:#fff; --line:#efe6db; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { min-height:100%; display:flex; flex-direction:column; align-items:center; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 20px); gap:14px; }
+  header { width:100%; max-width:480px; display:flex; gap:8px; align-items:center; }
+  header select { flex:1; padding:12px; border-radius:14px; border:1px solid var(--line); background:var(--card); font:inherit; font-weight:700; color:var(--ink); }
+  .ic { width:46px; height:46px; border-radius:14px; background:var(--card); border:1px solid var(--line); font-size:18px; }
+  #wheelBox { position:relative; width:min(88vw,400px); aspect-ratio:1; }
+  canvas { width:100%; height:100%; display:block; filter:drop-shadow(0 12px 24px #2d2a3e33); }
+  #pointer { position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:16px solid transparent; border-right:16px solid transparent; border-top:30px solid var(--ink); filter:drop-shadow(0 3px 2px #0003); z-index:2; }
+  #spin { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:26%; aspect-ratio:1; border-radius:50%; background:var(--ink); color:#fff; font-weight:900; font-size:clamp(14px,4vw,18px); box-shadow:0 0 0 6px #fff, 0 6px 16px #0004; }
+  #spin:active { transform:translate(-50%,-50%) scale(.95); }
+  #result { min-height:56px; font-size:26px; font-weight:900; text-align:center; transition:transform .3s; }
+  #result.pop { animation:pop .5s; }
+  @keyframes pop { 40% { transform:scale(1.25); } }
+  .items { width:100%; max-width:480px; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:12px; }
+  .wname { width:100%; padding:10px 8px; margin-bottom:6px; border-radius:12px; font-size:20px; font-weight:800; outline:none; background:transparent; }
+  .wname:focus { background:#f6f1ea; }
+  .items h3 { margin:2px 4px 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .item { display:flex; align-items:center; gap:8px; padding:6px 4px; }
+  .dot { width:14px; height:14px; border-radius:50%; flex:none; }
+  .item input { flex:1; padding:8px; border-radius:10px; background:transparent; outline:none; }
+  .item input:focus { background:#f6f1ea; }
+  .item button { width:34px; height:34px; border-radius:10px; color:var(--muted); font-size:16px; }
+  .add { display:flex; gap:8px; margin-top:6px; }
+  .add input { flex:1; padding:12px; border-radius:12px; background:#f6f1ea; outline:none; }
+  .add button { padding:0 16px; border-radius:12px; background:var(--ink); color:#fff; font-weight:800; }
+  .opt { display:flex; align-items:center; gap:8px; margin:10px 4px 2px; font-size:14px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header><select id="wheelSel"></select><button class="ic" id="newWheel">＋</button><button class="ic" id="delWheel">🗑</button></header>
+  <div id="wheelBox"><div id="pointer"></div><canvas id="c"></canvas><button id="spin"></button></div>
+  <div id="result"></div>
+  <div class="items"><input id="wheelName" class="wname" maxlength="30"><h3 id="itemsTitle"></h3><div id="list"></div>
+    <form class="add" id="addForm"><input id="newItem" maxlength="30"><button>+</button></form>
+    <label class="opt"><input type="checkbox" id="removeWinner"> <span id="removeLbl"></span></label>
+  </div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { spin:'GIRAR', options:'Opciones', add:'Añadir opción', remove:'Quitar la ganadora después de cada giro', newName:'Ruleta', need:'Añade al menos 2 opciones',
+  defaults:[['¿Qué cenamos?',['🍕 Pizza','🍣 Sushi','🍔 Hamburguesa','🌮 Tacos','🥗 Ensalada','🍝 Pasta']],['¿Quién friega?',['Ana','Luis','Marta','Pablo']],['Sí o no',['Sí','No','Sí','No']]] }
+ : { spin:'SPIN', options:'Options', add:'Add an option', remove:'Remove the winner after each spin', newName:'Wheel', need:'Add at least 2 options',
+  defaults:[['What\'s for dinner?',['🍕 Pizza','🍣 Sushi','🍔 Burger','🌮 Tacos','🥗 Salad','🍝 Pasta']],['Who does the dishes?',['Anna','Luke','Mia','Paul']],['Yes or no',['Yes','No','Yes','No']]] };
+const $ = id => document.getElementById(id);
+$('spin').textContent = T.spin; $('itemsTitle').textContent = T.options; $('newItem').placeholder = T.add; $('removeLbl').textContent = T.remove;
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const COLORS = ['#ff6b6b','#ffa94d','#ffd43b','#69db7c','#38d9a9','#4dabf7','#748ffc','#da77f2','#f783ac','#a9e34b'];
+const c = $('c'), g = c.getContext('2d');
+let wheels, cur = 0, angle = 0, spinning = false, audio, lastTick = -1;
+function wheel() { return wheels[cur]; }
+function save() { store.set('wheels', { wheels, cur }); }
+function size() { const r = c.getBoundingClientRect(), d = devicePixelRatio || 1; c.width = r.width * d; c.height = r.height * d; draw(); }
+function draw() {
+  const items = wheel().items, n = Math.max(items.length, 1), R = c.width / 2, cx = R, cy = R;
+  if (R < 30) return;
+  g.clearRect(0, 0, c.width, c.height);
+  g.beginPath(); g.arc(cx, cy, R - 2, 0, 7); g.fillStyle = '#fff'; g.fill();
+  items.forEach((it, i) => {
+    const a0 = angle + i * 2 * Math.PI / n - Math.PI / 2, a1 = a0 + 2 * Math.PI / n;
+    g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R - 10, a0, a1); g.closePath();
+    g.fillStyle = COLORS[i % COLORS.length]; g.fill();
+    g.strokeStyle = '#fff'; g.lineWidth = R * .015; g.stroke();
+    g.save(); g.translate(cx, cy); g.rotate((a0 + a1) / 2);
+    g.fillStyle = '#2d2a3e'; g.font = `700 ${Math.max(11, R * (n > 8 ? .07 : .085))}px system-ui`; g.textAlign = 'right'; g.textBaseline = 'middle';
+    let label = it; while (g.measureText(label).width > R * .58 && label.length > 3) label = label.slice(0, -2) + '…';
+    g.fillText(label, R * .86, 0); g.restore();
+  });
+  for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2; g.beginPath(); g.arc(cx + Math.cos(a) * (R - 5), cy + Math.sin(a) * (R - 5), R * .012, 0, 7); g.fillStyle = '#ffffffcc'; g.fill(); }
+}
+function tick() { try { audio = audio || new AudioContext(); const o = audio.createOscillator(), a = audio.createGain(); o.frequency.value = 1400; a.gain.value = .03; o.connect(a); a.connect(audio.destination); a.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + .03); o.start(); o.stop(audio.currentTime + .03); } catch (e) {} }
+function spin() {
+  const items = wheel().items;
+  if (spinning) return;
+  if (items.length < 2) { $('result').textContent = T.need; return; }
+  spinning = true; $('result').textContent = ''; $('result').classList.remove('pop');
+  const start = angle, total = Math.PI * 2 * (5 + Math.random() * 4) + Math.random() * Math.PI * 2, dur = 4200 + Math.random() * 1200, t0 = performance.now();
+  const n = items.length;
+  (function frame(t) {
+    const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+    angle = start + total * e; draw();
+    const seg = Math.floor(((-angle % (2 * Math.PI)) + 4 * Math.PI) % (2 * Math.PI) / (2 * Math.PI / n));
+    if (seg !== lastTick) { lastTick = seg; tick(); }
+    if (p < 1) requestAnimationFrame(frame); else done();
+  })(t0);
+}
+function winnerIndex() { const n = wheel().items.length, a = ((-angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI); return Math.floor(a / (2 * Math.PI / n)) % n; }
+function done() {
+  spinning = false;
+  const i = winnerIndex(), w = wheel().items[i];
+  $('result').textContent = '🎉 ' + w; void $('result').offsetWidth; $('result').classList.add('pop');
+  buzz([30, 40, 80]);
+  if (wheel().removeWinner) setTimeout(() => { wheel().items.splice(i, 1); save(); renderList(); draw(); }, 1400);
+}
+function renderList() {
+  const box = $('list'); box.innerHTML = '';
+  wheel().items.forEach((it, i) => {
+    const row = document.createElement('div'); row.className = 'item';
+    row.innerHTML = `<span class="dot" style="background:${COLORS[i % COLORS.length]}"></span><input maxlength="30"><button>✕</button>`;
+    const inp = row.querySelector('input'); inp.value = it;
+    inp.onchange = () => { wheel().items[i] = inp.value.trim() || it; save(); draw(); };
+    row.querySelector('button').onclick = () => { wheel().items.splice(i, 1); save(); renderList(); draw(); };
+    box.appendChild(row);
+  });
+  $('removeWinner').checked = !!wheel().removeWinner;
+  $('wheelName').value = wheel().name;
+  const sel = $('wheelSel'); sel.innerHTML = '';
+  wheels.forEach((w, i) => { const o = document.createElement('option'); o.value = i; o.textContent = w.name; sel.appendChild(o); });
+  sel.value = cur;
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('addForm').onsubmit = e => { e.preventDefault(); const v = $('newItem').value.trim(); if (!v || wheel().items.length >= 24) return; wheel().items.push(v); $('newItem').value = ''; save(); renderList(); draw(); };
+$('removeWinner').onchange = e => { wheel().removeWinner = e.target.checked; save(); };
+$('wheelSel').onchange = e => { cur = +e.target.value; angle = 0; $('result').textContent = ''; save(); renderList(); draw(); };
+$('newWheel').onclick = () => { wheels.push({ name: T.newName + ' ' + (wheels.length + 1), items: [] }); cur = wheels.length - 1; save(); renderList(); draw(); $('wheelName').select(); };
+$('wheelName').onchange = e => { wheel().name = e.target.value.trim().slice(0, 30) || wheel().name; save(); renderList(); };
+$('delWheel').onclick = () => { if (wheels.length <= 1) { wheel().items = []; } else { wheels.splice(cur, 1); cur = 0; } save(); renderList(); draw(); };
+$('spin').onclick = spin;
+let dragStart = null;
+c.addEventListener('pointerdown', e => { dragStart = { y: e.clientY, t: performance.now() }; });
+c.addEventListener('pointerup', e => { if (dragStart && Math.abs(e.clientY - dragStart.y) > 40 && performance.now() - dragStart.t < 400) spin(); dragStart = null; });
+addEventListener('resize', size);
+(async () => {
+  const s = await store.get('wheels', null);
+  wheels = s ? s.wheels : T.defaults.map(([name, items]) => ({ name, items: items.slice() })); cur = s ? s.cur : 0;
+  if (!wheels[cur]) cur = 0;
+  renderList(); size();
+})();
+</script>
+</body>
+</html>

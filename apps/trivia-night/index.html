@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Trivia Night</title>
+<style>
+  :root { --bg:#14102b; --card:#221b47; --line:#372d6e; --text:#fff; --muted:#b2a9e6; --good:#2fd47a; --bad:#ff5470; --gold:#ffcf3f; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { background:radial-gradient(circle at 80% -10%,#5b2bd6 0,transparent 50%),radial-gradient(circle at -10% 110%,#d62b8f55 0,transparent 50%),var(--bg); min-height:100%; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 18px); overflow-y:auto; }
+  .screen.on { display:flex; }
+  h1 { margin:8px 0 4px; font-size:34px; letter-spacing:-.5px; }
+  .sub { color:var(--muted); margin:0 0 18px; }
+  .cats { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cat { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:16px; text-align:left; min-height:96px; display:flex; flex-direction:column; justify-content:space-between; }
+  .cat .e { font-size:32px; }
+  .cat b { font-size:16px; }
+  .cat small { color:var(--muted); font-size:12px; }
+  .cat.all { grid-column:1/-1; background:linear-gradient(135deg,#7c3aed,#db2777); border:0; flex-direction:row; align-items:center; min-height:70px; }
+  .best { margin-top:16px; text-align:center; color:var(--muted); font-size:14px; }
+  .bar { display:flex; align-items:center; gap:10px; }
+  .bar .x { width:40px; height:40px; border-radius:12px; background:var(--card); }
+  .progress { flex:1; height:8px; border-radius:4px; background:var(--card); overflow:hidden; }
+  .progress i { display:block; height:100%; background:linear-gradient(90deg,var(--gold),#ff8a3d); transition:width .3s; }
+  .score { font-weight:800; font-variant-numeric:tabular-nums; }
+  .meta { display:flex; justify-content:space-between; margin:16px 0 8px; color:var(--muted); font-size:13px; font-weight:700; }
+  .streak { color:var(--gold); }
+  .timer { height:6px; border-radius:3px; background:var(--card); overflow:hidden; margin-bottom:18px; }
+  .timer i { display:block; height:100%; background:var(--good); width:100%; }
+  .q { font-size:23px; font-weight:800; line-height:1.3; margin:6px 0 22px; min-height:90px; }
+  .answers { display:flex; flex-direction:column; gap:10px; }
+  .a { background:var(--card); border:2px solid var(--line); border-radius:18px; padding:16px; text-align:left; font-size:17px; font-weight:600; display:flex; gap:12px; align-items:center; transition:transform .1s; }
+  .a:active { transform:scale(.98); }
+  .a .l { width:30px; height:30px; border-radius:10px; background:#ffffff14; display:grid; place-items:center; font-size:14px; font-weight:800; flex:none; }
+  .a.good { border-color:var(--good); background:#2fd47a22; }
+  .a.bad { border-color:var(--bad); background:#ff547022; animation:shake .35s; }
+  .a.gone { opacity:.25; pointer-events:none; }
+  @keyframes shake { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+  .tools { display:flex; gap:10px; margin-top:auto; padding-top:16px; }
+  .tool { flex:1; padding:13px; border-radius:16px; background:var(--card); border:1px solid var(--line); font-weight:700; }
+  .tool:disabled { opacity:.35; }
+  .result { text-align:center; margin:auto 0; }
+  .result .big { font-size:72px; }
+  .result h2 { font-size:30px; margin:6px 0; }
+  .result p { color:var(--muted); }
+  .primary { width:100%; padding:16px; border-radius:18px; background:linear-gradient(135deg,var(--gold),#ff8a3d); color:#2b1600; font-weight:900; font-size:17px; margin-top:14px; }
+  .ghost { width:100%; padding:14px; border-radius:18px; background:var(--card); font-weight:700; margin-top:10px; }
+</style>
+</head>
+<body>
+<section class="screen on" id="home">
+  <h1>🎉 Trivia Night</h1>
+  <p class="sub" id="homeSub"></p>
+  <div class="cats" id="cats"></div>
+  <div class="best" id="bestLine"></div>
+</section>
+<section class="screen" id="game">
+  <div class="bar"><button class="x" id="quit">✕</button><div class="progress"><i id="prog"></i></div><span class="score" id="score">0</span></div>
+  <div class="meta"><span id="qnum"></span><span class="streak" id="streak"></span></div>
+  <div class="timer"><i id="timerBar"></i></div>
+  <div class="q" id="question"></div>
+  <div class="answers" id="answers"></div>
+  <div class="tools"><button class="tool" id="fifty">50 : 50</button><button class="tool" id="skip"></button></div>
+</section>
+<section class="screen" id="end">
+  <div class="result"><div class="big" id="endEmoji"></div><h2 id="endTitle"></h2><p id="endText"></p>
+    <button class="primary" id="again"></button><button class="ghost" id="home2"></button></div>
+</section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { sub:'Elige un tema. 10 preguntas, 15 segundos cada una.', all:'Mezcla de todo', q:'Pregunta', streak:'🔥 Racha', skip:'Saltar ⏭', best:'Mejor puntuación', again:'Jugar otra vez', home:'Elegir tema', of:'de', correct:'aciertos', titles:['¡Sigue practicando!','¡Nada mal!','¡Muy bien!','¡Genio!'] , n:'preguntas' }
+ : { sub:'Pick a topic. 10 questions, 15 seconds each.', all:'Mix of everything', q:'Question', streak:'🔥 Streak', skip:'Skip ⏭', best:'Best score', again:'Play again', home:'Choose topic', of:'of', correct:'correct', titles:['Keep practising!','Not bad!','Great job!','Genius!'], n:'questions' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// [question EN, question ES, [answers EN], [answers ES]] — the first answer is the right one.
+const BANK = {
+  geo: { e:'🌍', n:['Geography','Geografía'], q:[
+    ['What is the largest ocean?','¿Cuál es el océano más grande?',['Pacific','Atlantic','Indian','Arctic'],['Pacífico','Atlántico','Índico','Ártico']],
+    ['What is the capital of Australia?','¿Cuál es la capital de Australia?',['Canberra','Sydney','Melbourne','Perth'],['Canberra','Sídney','Melbourne','Perth']],
+    ['Which is the longest river in South America?','¿Cuál es el río más largo de Sudamérica?',['Amazon','Paraná','Orinoco','Magdalena'],['Amazonas','Paraná','Orinoco','Magdalena']],
+    ['Mount Everest sits on the border of Nepal and…','El Everest está en la frontera de Nepal y…',['China','India','Bhutan','Pakistan'],['China','India','Bután','Pakistán']],
+    ['Which country has the most islands?','¿Qué país tiene más islas?',['Sweden','Indonesia','Philippines','Greece'],['Suecia','Indonesia','Filipinas','Grecia']],
+    ['What is the smallest country in the world?','¿Cuál es el país más pequeño del mundo?',['Vatican City','Monaco','San Marino','Malta'],['Ciudad del Vaticano','Mónaco','San Marino','Malta']],
+    ['Which desert is the largest hot desert?','¿Cuál es el desierto cálido más grande?',['Sahara','Gobi','Kalahari','Atacama'],['Sahara','Gobi','Kalahari','Atacama']],
+    ['In which country is Machu Picchu?','¿En qué país está Machu Picchu?',['Peru','Bolivia','Chile','Ecuador'],['Perú','Bolivia','Chile','Ecuador']],
+    ['Which city is crossed by the Danube?','¿Qué ciudad cruza el Danubio?',['Budapest','Prague','Warsaw','Rome'],['Budapest','Praga','Varsovia','Roma']],
+    ['How many continents are there?','¿Cuántos continentes hay?',['7','5','6','8'],['7','5','6','8']] ]},
+  sci: { e:'🔬', n:['Science','Ciencia'], q:[
+    ['What planet is known as the Red Planet?','¿Qué planeta es el planeta rojo?',['Mars','Venus','Jupiter','Mercury'],['Marte','Venus','Júpiter','Mercurio']],
+    ['What gas do plants absorb?','¿Qué gas absorben las plantas?',['Carbon dioxide','Oxygen','Nitrogen','Helium'],['Dióxido de carbono','Oxígeno','Nitrógeno','Helio']],
+    ['What is H2O?','¿Qué es el H2O?',['Water','Salt','Hydrogen peroxide','Ozone'],['Agua','Sal','Agua oxigenada','Ozono']],
+    ['How many bones does an adult human have?','¿Cuántos huesos tiene un adulto?',['206','186','226','256'],['206','186','226','256']],
+    ['What is the hardest natural material?','¿Cuál es el material natural más duro?',['Diamond','Quartz','Iron','Granite'],['Diamante','Cuarzo','Hierro','Granito']],
+    ['What does a thermometer measure?','¿Qué mide un termómetro?',['Temperature','Pressure','Humidity','Speed'],['Temperatura','Presión','Humedad','Velocidad']],
+    ['Which planet has the most visible rings?','¿Qué planeta tiene los anillos más visibles?',['Saturn','Uranus','Neptune','Earth'],['Saturno','Urano','Neptuno','Tierra']],
+    ['What is the closest star to Earth?','¿Cuál es la estrella más cercana a la Tierra?',['The Sun','Proxima Centauri','Sirius','Polaris'],['El Sol','Próxima Centauri','Sirio','Polaris']],
+    ['What part of the cell holds the DNA?','¿Qué parte de la célula guarda el ADN?',['Nucleus','Membrane','Ribosome','Wall'],['Núcleo','Membrana','Ribosoma','Pared']],
+    ['At what temperature does water boil at sea level?','¿A qué temperatura hierve el agua a nivel del mar?',['100 °C','90 °C','120 °C','80 °C'],['100 °C','90 °C','120 °C','80 °C']] ]},
+  his: { e:'🏛️', n:['History','Historia'], q:[
+    ['Who painted the Mona Lisa?','¿Quién pintó la Mona Lisa?',['Leonardo da Vinci','Michelangelo','Raphael','Botticelli'],['Leonardo da Vinci','Miguel Ángel','Rafael','Botticelli']],
+    ['In which year did humans first land on the Moon?','¿En qué año llegó el ser humano a la Luna?',['1969','1959','1975','1981'],['1969','1959','1975','1981']],
+    ['Which ancient people built the pyramids of Giza?','¿Qué pueblo construyó las pirámides de Guiza?',['Egyptians','Romans','Greeks','Maya'],['Egipcios','Romanos','Griegos','Mayas']],
+    ['In which year did the Berlin Wall fall?','¿En qué año cayó el Muro de Berlín?',['1989','1991','1979','1985'],['1989','1991','1979','1985']],
+    ['Who was the first person in space?','¿Quién fue la primera persona en el espacio?',['Yuri Gagarin','Neil Armstrong','Buzz Aldrin','John Glenn'],['Yuri Gagarin','Neil Armstrong','Buzz Aldrin','John Glenn']],
+    ['Which empire built the Colosseum?','¿Qué imperio construyó el Coliseo?',['Roman','Ottoman','Persian','Byzantine'],['Romano','Otomano','Persa','Bizantino']],
+    ['Who wrote Don Quixote?','¿Quién escribió el Quijote?',['Miguel de Cervantes','Lope de Vega','Shakespeare','Calderón'],['Miguel de Cervantes','Lope de Vega','Shakespeare','Calderón']],
+    ['Which ship sank in 1912 on its first voyage?','¿Qué barco se hundió en 1912 en su primer viaje?',['Titanic','Lusitania','Britannic','Olympic'],['Titanic','Lusitania','Britannic','Olympic']],
+    ['Where were the first modern Olympic Games held?','¿Dónde se celebraron los primeros Juegos Olímpicos modernos?',['Athens','Paris','London','Rome'],['Atenas','París','Londres','Roma']],
+    ['Who invented the light bulb that became popular?','¿Quién popularizó la bombilla?',['Thomas Edison','Nikola Tesla','Alexander Bell','James Watt'],['Thomas Edison','Nikola Tesla','Alexander Bell','James Watt']] ]},
+  pop: { e:'🎬', n:['Movies & Music','Cine y música'], q:[
+    ['Which band sang "Bohemian Rhapsody"?','¿Qué grupo cantaba "Bohemian Rhapsody"?',['Queen','The Beatles','ABBA','Coldplay'],['Queen','The Beatles','ABBA','Coldplay']],
+    ['What is the name of the toy cowboy in Toy Story?','¿Cómo se llama el vaquero de Toy Story?',['Woody','Buzz','Jessie','Rex'],['Woody','Buzz','Jessie','Rex']],
+    ['Which wizard school does Harry Potter attend?','¿A qué escuela va Harry Potter?',['Hogwarts','Durmstrang','Beauxbatons','Ilvermorny'],['Hogwarts','Durmstrang','Beauxbatons','Ilvermorny']],
+    ['How many strings does a standard guitar have?','¿Cuántas cuerdas tiene una guitarra normal?',['6','4','5','7'],['6','4','5','7']],
+    ['In The Lion King, what is Simba\'s father called?','En El Rey León, ¿cómo se llama el padre de Simba?',['Mufasa','Scar','Rafiki','Zazu'],['Mufasa','Scar','Rafiki','Zazu']],
+    ['Which instrument has 88 keys?','¿Qué instrumento tiene 88 teclas?',['Piano','Organ','Accordion','Harp'],['Piano','Órgano','Acordeón','Arpa']],
+    ['Who is Mickey Mouse\'s girlfriend?','¿Quién es la novia de Mickey Mouse?',['Minnie','Daisy','Clarabelle','Pluto'],['Minnie','Daisy','Clarabella','Pluto']],
+    ['What colour is the ogre Shrek?','¿De qué color es el ogro Shrek?',['Green','Blue','Brown','Grey'],['Verde','Azul','Marrón','Gris']],
+    ['Which film features the ship "Black Pearl"?','¿En qué película sale el barco "Perla Negra"?',['Pirates of the Caribbean','Hook','Titanic','Moana'],['Piratas del Caribe','Hook','Titanic','Vaiana']],
+    ['Which superhero is from Wakanda?','¿Qué superhéroe es de Wakanda?',['Black Panther','Thor','Iron Man','Hulk'],['Black Panther','Thor','Iron Man','Hulk']] ]},
+  sport: { e:'⚽', n:['Sports','Deportes'], q:[
+    ['How many players does a football team have on the field?','¿Cuántos jugadores tiene un equipo de fútbol en el campo?',['11','10','9','12'],['11','10','9','12']],
+    ['In which sport do you score a "try"?','¿En qué deporte se marca un "ensayo"?',['Rugby','Cricket','Baseball','Hockey'],['Rugby','Críquet','Béisbol','Hockey']],
+    ['How long is a marathon?','¿Cuánto mide un maratón?',['42.195 km','40 km','45 km','21.1 km'],['42,195 km','40 km','45 km','21,1 km']],
+    ['Which country has won the most football World Cups?','¿Qué país ha ganado más Mundiales de fútbol?',['Brazil','Germany','Italy','Argentina'],['Brasil','Alemania','Italia','Argentina']],
+    ['What is the highest score with three darts?','¿Cuál es la puntuación máxima con tres dardos?',['180','150','200','170'],['180','150','200','170']],
+    ['In tennis, what is a score of zero called?','En tenis, ¿cómo se llama el cero?',['Love','Nil','Zero','Duck'],['Love (nada)','Nulo','Cero','Pato']],
+    ['How many rings are on the Olympic flag?','¿Cuántos aros tiene la bandera olímpica?',['5','4','6','7'],['5','4','6','7']],
+    ['Which sport uses a shuttlecock?','¿Qué deporte usa un volante?',['Badminton','Squash','Padel','Table tennis'],['Bádminton','Squash','Pádel','Tenis de mesa']],
+    ['How many points is a basket from far away worth?','¿Cuánto vale una canasta desde lejos?',['3','2','4','1'],['3','2','4','1']],
+    ['In which sport would you perform a "slam dunk"?','¿En qué deporte se hace un "mate"?',['Basketball','Volleyball','Handball','Water polo'],['Baloncesto','Voleibol','Balonmano','Waterpolo']] ]},
+  nature: { e:'🦁', n:['Animals','Animales'], q:[
+    ['What is the fastest land animal?','¿Cuál es el animal terrestre más rápido?',['Cheetah','Lion','Horse','Pronghorn'],['Guepardo','León','Caballo','Berrendo']],
+    ['How many legs does a spider have?','¿Cuántas patas tiene una araña?',['8','6','10','12'],['8','6','10','12']],
+    ['What is the largest animal ever?','¿Cuál es el animal más grande que ha existido?',['Blue whale','African elephant','T. rex','Giant squid'],['Ballena azul','Elefante africano','T. rex','Calamar gigante']],
+    ['Which bird cannot fly?','¿Qué ave no puede volar?',['Penguin','Eagle','Parrot','Swallow'],['Pingüino','Águila','Loro','Golondrina']],
+    ['What do pandas mostly eat?','¿Qué comen sobre todo los pandas?',['Bamboo','Fish','Fruit','Insects'],['Bambú','Peces','Fruta','Insectos']],
+    ['A group of lions is called a…','Un grupo de leones se llama…',['Pride','Pack','Herd','School'],['Manada (pride)','Jauría','Rebaño','Banco']],
+    ['Which animal has the longest neck?','¿Qué animal tiene el cuello más largo?',['Giraffe','Camel','Ostrich','Llama'],['Jirafa','Camello','Avestruz','Llama']],
+    ['How many hearts does an octopus have?','¿Cuántos corazones tiene un pulpo?',['3','1','2','8'],['3','1','2','8']],
+    ['What is a baby kangaroo called?','¿Cómo se llama la cría del canguro?',['Joey','Cub','Kid','Calf'],['Joey','Cachorro','Cabrito','Ternero']],
+    ['Which mammal can truly fly?','¿Qué mamífero puede volar de verdad?',['Bat','Flying squirrel','Sugar glider','Colugo'],['Murciélago','Ardilla voladora','Petauro','Colugo']] ]}
+};
+let pool, idx, score, streak, bestStreak, correct, timerT, left, used5050, answered, bests = {}, cat;
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function home() {
+  $('homeSub').textContent = T.sub;
+  const box = $('cats'); box.innerHTML = '';
+  const all = document.createElement('button'); all.className = 'cat all'; all.innerHTML = `<span class="e">🎲</span><b style="margin-left:12px">${T.all}</b>`; all.onclick = () => start('all'); box.appendChild(all);
+  Object.entries(BANK).forEach(([k, c]) => {
+    const b = document.createElement('button'); b.className = 'cat';
+    b.innerHTML = `<span class="e">${c.e}</span><div><b>${c.n[L]}</b><br><small>${bests[k] != null ? '🏆 ' + bests[k] : c.q.length + ' ' + T.n}</small></div>`;
+    b.onclick = () => start(k); box.appendChild(b);
+  });
+  $('bestLine').textContent = bests.all != null ? T.best + ' (' + T.all + '): ' + bests.all : '';
+  show('home');
+}
+function start(k) {
+  cat = k;
+  const qs = k === 'all' ? Object.values(BANK).flatMap(c => c.q) : BANK[k].q;
+  pool = shuffle(qs.slice()).slice(0, 10);
+  idx = 0; score = 0; streak = 0; bestStreak = 0; correct = 0; used5050 = false;
+  $('fifty').disabled = false; $('skip').textContent = T.skip;
+  show('game'); ask();
+}
+function ask() {
+  answered = false;
+  const q = pool[idx];
+  $('qnum').textContent = `${T.q} ${idx + 1} ${T.of} ${pool.length}`;
+  $('streak').textContent = streak >= 2 ? `${T.streak} ×${streak}` : '';
+  $('prog').style.width = (idx / pool.length * 100) + '%';
+  $('score').textContent = score;
+  $('question').textContent = q[L];
+  const answers = q[2 + L].map((a, i) => ({ a, right: i === 0 }));
+  shuffle(answers);
+  const box = $('answers'); box.innerHTML = '';
+  answers.forEach((x, i) => {
+    const b = document.createElement('button'); b.className = 'a';
+    b.innerHTML = `<span class="l">${'ABCD'[i]}</span><span></span>`; b.lastChild.textContent = x.a;
+    b.dataset.right = x.right; b.onclick = () => pick(b); box.appendChild(b);
+  });
+  left = 15000; clearInterval(timerT);
+  const bar = $('timerBar');
+  timerT = setInterval(() => {
+    left -= 100; bar.style.width = (left / 150) + '%'; bar.style.background = left < 5000 ? 'var(--bad)' : 'var(--good)';
+    if (left <= 0) { clearInterval(timerT); pick(null); }
+  }, 100);
+}
+function pick(b) {
+  if (answered) return; answered = true; clearInterval(timerT);
+  const btns = [...$('answers').children];
+  btns.forEach(x => { if (x.dataset.right === 'true') x.classList.add('good'); });
+  if (b && b.dataset.right === 'true') {
+    streak++; correct++; bestStreak = Math.max(bestStreak, streak);
+    score += 100 + Math.round(left / 150) + (streak - 1) * 20; buzz(20);
+  } else { if (b) b.classList.add('bad'); streak = 0; buzz([50, 40, 50]); }
+  $('score').textContent = score;
+  setTimeout(next, 1100);
+}
+function next() { idx++; if (idx < pool.length) ask(); else end(); }
+async function end() {
+  $('prog').style.width = '100%';
+  const ratio = correct / pool.length, tier = ratio >= .9 ? 3 : ratio >= .7 ? 2 : ratio >= .4 ? 1 : 0;
+  $('endEmoji').textContent = ['📚', '👍', '🌟', '🏆'][tier];
+  $('endTitle').textContent = T.titles[tier];
+  $('endText').textContent = `${correct} ${T.of} ${pool.length} ${T.correct} · ${score} pts · 🔥 ${bestStreak}`;
+  if (bests[cat] == null || score > bests[cat]) { bests[cat] = score; await store.set('bests', bests); }
+  $('again').textContent = T.again; $('home2').textContent = T.home;
+  show('end');
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('fifty').onclick = () => {
+  if (used5050 || answered) return; used5050 = true; $('fifty').disabled = true;
+  shuffle([...$('answers').children].filter(b => b.dataset.right !== 'true')).slice(0, 2).forEach(b => b.classList.add('gone'));
+};
+$('skip').onclick = () => { if (!answered) { answered = true; clearInterval(timerT); streak = 0; next(); } };
+$('quit').onclick = () => { clearInterval(timerT); home(); };
+$('again').onclick = () => start(cat);
+$('home2').onclick = home;
+(async () => { bests = await store.get('bests', {}); home(); })();
+</script>
+</body>
+</html>

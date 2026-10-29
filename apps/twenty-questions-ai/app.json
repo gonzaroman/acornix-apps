@@ -1,0 +1,14 @@
+{
+  "id": "twenty-questions-ai",
+  "name": "20 Questions",
+  "emoji": "🔮",
+  "category": "entertainment",
+  "description": "Think of anything and your AI tries to guess it with yes or no questions.",
+  "prompt": "A 20 questions game where my AI asks me yes or no questions to guess what I'm thinking of, with categories like animals, famous people or food, and a score of AI against me.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

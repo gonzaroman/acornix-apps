@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Fortune Cookie</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; font-family:Georgia,"Times New Roman",serif; color:#5b2a0e;
+    background:radial-gradient(circle at 50% 40%,#c0392b 0,#7b1414 70%,#4a0b0b 100%); }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:calc(env(safe-area-inset-top) + 16px) 20px calc(env(safe-area-inset-bottom) + 20px); }
+  h1 { position:absolute; top:calc(env(safe-area-inset-top) + 16px); margin:0; color:#ffd77a; font-size:26px; letter-spacing:2px; text-shadow:0 2px 0 #0004; }
+  .lanterns { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:0 18px; pointer-events:none; }
+  .lantern { width:44px; height:58px; border-radius:22px; background:radial-gradient(circle at 40% 35%,#ffb347,#e8590c); box-shadow:0 0 30px #ff922b88; margin-top:calc(env(safe-area-inset-top) + 50px); position:relative; animation:sway 4s ease-in-out infinite; transform-origin:top center; }
+  .lantern::before { content:''; position:absolute; left:50%; top:-40px; width:2px; height:40px; background:#ffd77a88; }
+  .lantern:nth-child(2) { animation-delay:-2s; }
+  @keyframes sway { 50% { transform:rotate(6deg); } }
+  #cookieBox { position:relative; width:min(80vw,320px); aspect-ratio:1.2; }
+  .half { position:absolute; inset:0; display:grid; place-items:center; font-size:min(52vw,220px); line-height:1; filter:drop-shadow(0 14px 18px #0007); transition:transform .7s cubic-bezier(.3,1.5,.5,1); }
+  .left { clip-path:inset(0 50% 0 0); } .right { clip-path:inset(0 0 0 50%); }
+  #cookieBox.open .left { transform:translate(-28%,26%) rotate(-28deg); }
+  #cookieBox.open .right { transform:translate(28%,26%) rotate(28deg); }
+  #cookieBox.shake { animation:shake .5s; }
+  @keyframes shake { 20% { transform:rotate(-6deg); } 40% { transform:rotate(6deg); } 60% { transform:rotate(-4deg); } 80% { transform:rotate(3deg); } }
+  #paper { position:absolute; left:50%; top:46%; transform:translate(-50%,-50%) scaleX(0); width:min(88vw,380px); background:linear-gradient(#fffdf6,#f8f0dc); padding:20px 22px; text-align:center; font-size:20px; line-height:1.4; font-style:italic; box-shadow:0 8px 20px #0005; transition:transform .6s .25s cubic-bezier(.3,1.3,.5,1); border-radius:4px; z-index:3; }
+  #cookieBox.open #paper { transform:translate(-50%,-50%) scaleX(1); }
+  #paper .nums { margin-top:12px; font-style:normal; font-size:13px; letter-spacing:2px; color:#b5651d; font-family:system-ui,sans-serif; font-weight:700; }
+  .hint { color:#ffd77acc; font-family:system-ui,sans-serif; font-weight:600; font-size:15px; text-align:center; min-height:22px; }
+  .row { display:flex; gap:10px; opacity:0; transition:opacity .4s .6s; pointer-events:none; }
+  .row.show { opacity:1; pointer-events:auto; }
+  .row button { padding:13px 18px; border-radius:16px; background:#ffd77a; font-family:system-ui,sans-serif; font-weight:800; color:#5b2a0e; box-shadow:0 4px 0 #b5651d; }
+  .row .ghost { background:#ffffff22; color:#ffd77a; box-shadow:none; }
+  .count { position:absolute; bottom:calc(env(safe-area-inset-bottom) + 14px); color:#ffd77a99; font-family:system-ui,sans-serif; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="lanterns"><div class="lantern"></div><div class="lantern"></div></div>
+<div id="app">
+  <h1>🥠 FORTUNE</h1>
+  <button id="cookieBox" aria-label="Cookie">
+    <div class="half left">🥠</div>
+    <div class="half right">🥠</div>
+    <div id="paper"><div id="fortune"></div><div class="nums" id="nums"></div></div>
+  </button>
+  <div class="hint" id="hint"></div>
+  <div class="row" id="row"><button class="ghost" id="share"></button><button id="another"></button></div>
+</div>
+<div class="count" id="count"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { hint:'Toca la galleta para abrirla', another:'Otra galleta', share:'Compartir', lucky:'NÚMEROS DE LA SUERTE', opened:'galletas abiertas', one:'galleta abierta' }
+ : { hint:'Tap the cookie to crack it open', another:'Another cookie', share:'Share', lucky:'LUCKY NUMBERS', opened:'cookies opened', one:'cookie opened' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const F = [
+  ['A pleasant surprise is waiting for you.','Te espera una sorpresa agradable.'],
+  ['Your hard work is about to pay off.','Tu esfuerzo está a punto de dar frutos.'],
+  ['Someone is thinking of you right now.','Alguien está pensando en ti ahora mismo.'],
+  ['Now is the perfect time to try something new.','Es el momento perfecto para probar algo nuevo.'],
+  ['A small kindness today will come back to you.','Un pequeño gesto amable hoy volverá a ti.'],
+  ['Adventure is closer than you think.','La aventura está más cerca de lo que crees.'],
+  ['You will soon laugh until it hurts.','Pronto te reirás hasta que te duela la tripa.'],
+  ['The best is yet to come.','Lo mejor está por llegar.'],
+  ['Trust the little voice that says "go for it".','Haz caso a esa vocecita que dice "adelante".'],
+  ['A good friend will bring good news.','Un buen amigo te traerá buenas noticias.'],
+  ['Your creativity will open an unexpected door.','Tu creatividad abrirá una puerta inesperada.'],
+  ['Today is a good day to say yes.','Hoy es un buen día para decir que sí.'],
+  ['Patience now, celebration later.','Paciencia ahora, celebración después.'],
+  ['You are braver than you believe.','Eres más valiente de lo que crees.'],
+  ['A long-forgotten idea will come back stronger.','Una idea olvidada volverá con más fuerza.'],
+  ['Good things come to those who snack.','Las cosas buenas llegan a quien merienda.'],
+  ['Help! I\'m trapped in a cookie factory.','¡Socorro! Estoy atrapado en una fábrica de galletas.'],
+  ['You will find something you lost.','Encontrarás algo que habías perdido.'],
+  ['Your smile is your superpower today.','Hoy tu sonrisa es tu superpoder.'],
+  ['A journey of a thousand miles begins with a nap.','Un viaje de mil kilómetros empieza con una siesta.'],
+  ['The stars say: drink more water.','Las estrellas dicen: bebe más agua.'],
+  ['Someone will ask for your advice. Give it kindly.','Alguien te pedirá consejo. Dáselo con cariño.'],
+  ['Luck is what happens when preparation meets chance.','La suerte es cuando la preparación encuentra la oportunidad.'],
+  ['You will make a new friend in an unlikely place.','Harás un nuevo amigo en un lugar inesperado.'],
+  ['Do not fear the cookie. Fear running out of cookies.','No temas a la galleta. Teme quedarte sin galletas.'],
+  ['Every expert was once a beginner.','Todo experto fue una vez principiante.'],
+  ['Your next idea is a good one. Write it down.','Tu próxima idea es buena. Apúntala.'],
+  ['Happiness is homemade.','La felicidad se hace en casa.'],
+  ['Big journeys start with small steps.','Los grandes viajes empiezan con pasos pequeños.'],
+  ['This cookie predicts a great week.','Esta galleta predice una semana genial.']
+];
+let open = false, opened = 0, last = -1;
+const $ = id => document.getElementById(id);
+$('hint').textContent = T.hint; $('another').textContent = T.another; $('share').textContent = T.share;
+function crack() {
+  if (open) return;
+  const box = $('cookieBox'); box.classList.add('shake'); buzz(30);
+  setTimeout(() => {
+    box.classList.remove('shake');
+    let k; do { k = Math.floor(Math.random() * F.length); } while (k === last); last = k;
+    $('fortune').textContent = '“' + F[k][L] + '”';
+    const nums = new Set(); while (nums.size < 6) nums.add(1 + Math.floor(Math.random() * 49));
+    $('nums').textContent = T.lucky + ': ' + [...nums].sort((a, b) => a - b).join(' · ');
+    box.classList.add('open'); open = true; buzz([20, 30, 60]); crunch();
+    $('hint').textContent = ''; $('row').classList.add('show');
+    opened++; store.set('opened', opened); $('count').textContent = opened + ' ' + (opened === 1 ? T.one : T.opened);
+  }, 450);
+}
+function reset() { $('cookieBox').classList.remove('open'); $('row').classList.remove('show'); open = false; $('hint').textContent = T.hint; }
+function crunch() { try { const a = new AudioContext(), len = a.sampleRate * .18, b = a.createBuffer(1, len, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); const s = a.createBufferSource(), f = a.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2500; s.buffer = b; s.connect(f); f.connect(a.destination); s.start(); } catch (e) {} }
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('cookieBox').onclick = crack;
+$('another').onclick = reset;
+$('share').onclick = async () => { const text = '🥠 ' + $('fortune').textContent; try { if (window.Acornix) await Acornix.share(text); else if (navigator.share) await navigator.share({ text }); else await navigator.clipboard.writeText(text); } catch (e) {} };
+(async () => { opened = await store.get('opened', 0); if (opened) $('count').textContent = opened + ' ' + (opened === 1 ? T.one : T.opened); })();
+</script>
+</body>
+</html>

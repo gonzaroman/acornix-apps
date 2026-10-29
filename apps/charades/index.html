@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Charades</title>
+<style>
+  :root { --bg:#ffcc33; --ink:#2b1d00; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  .screen.on { display:flex; }
+  #menu { background:linear-gradient(180deg,#ffcc33,#ff9f1c); overflow-y:auto; }
+  h1 { font-size:40px; margin:6px 0 2px; font-weight:900; letter-spacing:-1px; }
+  .sub { margin:0 0 14px; font-weight:600; opacity:.75; }
+  .decks { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .deck { background:#fff; border-radius:22px; padding:16px 14px; text-align:left; box-shadow:0 5px 0 #c97a00; display:flex; flex-direction:column; gap:6px; }
+  .deck .e { font-size:34px; }
+  .deck b { font-size:17px; }
+  .deck small { opacity:.6; font-weight:600; }
+  .times { display:flex; gap:8px; margin:14px 0 4px; }
+  .tm { flex:1; padding:10px; border-radius:14px; background:#ffffff88; font-weight:800; }
+  .tm.on { background:var(--ink); color:#fff; }
+  .how { font-size:13px; font-weight:600; opacity:.75; line-height:1.45; margin-top:12px; }
+  #ready, #play { align-items:center; justify-content:center; text-align:center; }
+  #ready { background:#2b1d00; color:#fff; }
+  #ready .count { font-size:140px; font-weight:900; }
+  #play { transition:background .2s; }
+  #play.good { background:#2fd47a; } #play.pass { background:#ff5470; }
+  .word { font-size:clamp(40px,11vw,80px); font-weight:900; line-height:1.05; padding:0 10px; }
+  .timer { position:absolute; top:calc(env(safe-area-inset-top) + 14px); font-size:28px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .pts { position:absolute; top:calc(env(safe-area-inset-top) + 18px); right:18px; font-weight:800; }
+  .btns { position:absolute; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 14px); display:flex; gap:12px; padding:0 16px; }
+  .btns button { flex:1; padding:18px; border-radius:20px; font-weight:900; font-size:18px; color:#fff; }
+  .btns .p { background:#ff5470; } .btns .g { background:#2fd47a; }
+  #results { background:#fff6d6; overflow-y:auto; }
+  #results h2 { font-size:34px; margin:10px 0 2px; }
+  .list { margin:14px 0; display:flex; flex-direction:column; gap:6px; }
+  .list div { padding:12px 14px; border-radius:14px; font-weight:700; background:#fff; display:flex; justify-content:space-between; }
+  .list .ok { color:#11804a; } .list .no { color:#c4253d; text-decoration:line-through; opacity:.7; }
+  .main { padding:16px; border-radius:18px; background:var(--ink); color:#fff; font-weight:900; font-size:17px; margin-top:auto; }
+  .ghost { padding:14px; border-radius:18px; background:#ffffff; font-weight:800; margin-top:10px; }
+</style>
+</head>
+<body>
+<section class="screen on" id="menu">
+  <h1>🎭 Charades</h1><p class="sub" id="sub"></p>
+  <div class="decks" id="decks"></div>
+  <div class="times" id="times"></div>
+  <p class="how" id="how"></p>
+</section>
+<section class="screen" id="ready"><div id="readyTxt" style="font-weight:800;opacity:.8"></div><div class="count" id="count">3</div></section>
+<section class="screen" id="play">
+  <div class="timer" id="timer"></div><div class="pts" id="pts"></div>
+  <div class="word" id="word"></div>
+  <div class="btns"><button class="p" id="passBtn"></button><button class="g" id="goodBtn"></button></div>
+</section>
+<section class="screen" id="results"><h2 id="resTitle"></h2><div id="resSub" style="font-weight:700;opacity:.7"></div><div class="list" id="list"></div><button class="main" id="again"></button><button class="ghost" id="toMenu"></button></section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { sub:'Pon el móvil en tu frente. Tus amigos te dan pistas sin decir la palabra.', how:'Quien adivina toca ¡Acierto! o Pasar sin mirar la palabra. Ideal en grupo.', words:'palabras', ready:'Pon el móvil en la frente', pass:'Pasar', good:'¡Acierto!', score:'¡Has acertado', of:'de', again:'Otra ronda', menu:'Cambiar tema', end:'¡Tiempo!' }
+ : { sub:'Hold the phone on your forehead. Your friends give clues without saying the word.', how:'The guesser taps Got it! or Pass without looking at the word. Best with a group.', words:'words', ready:'Place the phone on your forehead', pass:'Pass', good:'Got it!', score:'You got', of:'of', again:'Another round', menu:'Change topic', end:'Time!' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const DECKS = [
+  ['🐘', ['Animals','Animales'], 'Elephant|Elefante,Penguin|Pingüino,Kangaroo|Canguro,Octopus|Pulpo,Giraffe|Jirafa,Monkey|Mono,Snake|Serpiente,Chicken|Gallina,Frog|Rana,Shark|Tiburón,Butterfly|Mariposa,Crab|Cangrejo,Owl|Búho,Horse|Caballo,Bear|Oso,Bat|Murciélago,Duck|Pato,Spider|Araña,Lion|León,Dolphin|Delfín'],
+  ['🎬', ['Movies','Películas'], 'Titanic|Titanic,Frozen|Frozen,Star Wars|Star Wars,Jaws|Tiburón,Harry Potter|Harry Potter,Shrek|Shrek,The Lion King|El Rey León,Spider-Man|Spider-Man,Jurassic Park|Jurassic Park,Toy Story|Toy Story,Finding Nemo|Buscando a Nemo,Avatar|Avatar,E.T.|E.T.,Ghostbusters|Cazafantasmas,Up|Up,Rocky|Rocky,Cars|Cars,Batman|Batman,Coco|Coco,King Kong|King Kong'],
+  ['🏃', ['Actions','Acciones'], 'Brushing teeth|Lavarse los dientes,Swimming|Nadar,Driving|Conducir,Cooking|Cocinar,Sneezing|Estornudar,Dancing|Bailar,Fishing|Pescar,Skiing|Esquiar,Taking a selfie|Hacerse un selfi,Juggling|Hacer malabares,Painting a wall|Pintar una pared,Climbing|Escalar,Yawning|Bostezar,Surfing|Hacer surf,Knitting|Tejer,Boxing|Boxear,Sleeping|Dormir,Typing|Escribir a máquina,Playing guitar|Tocar la guitarra,Washing dishes|Fregar platos'],
+  ['👩‍🚒', ['Jobs','Profesiones'], 'Firefighter|Bombero,Doctor|Médico,Pilot|Piloto,Chef|Cocinero,Teacher|Profesor,Magician|Mago,Astronaut|Astronauta,Dentist|Dentista,Photographer|Fotógrafo,Farmer|Granjero,Police officer|Policía,Hairdresser|Peluquero,Waiter|Camarero,Painter|Pintor,Builder|Albañil,Singer|Cantante,Lifeguard|Socorrista,Mechanic|Mecánico,Vet|Veterinario,Clown|Payaso'],
+  ['🧸', ['Objects','Objetos'], 'Umbrella|Paraguas,Toothbrush|Cepillo de dientes,Scissors|Tijeras,Ladder|Escalera,Balloon|Globo,Camera|Cámara,Pillow|Almohada,Hammer|Martillo,Glasses|Gafas,Kite|Cometa,Clock|Reloj,Bicycle|Bicicleta,Candle|Vela,Remote control|Mando a distancia,Hair dryer|Secador,Backpack|Mochila,Telescope|Telescopio,Trumpet|Trompeta,Key|Llave,Microwave|Microondas'],
+  ['🌍', ['Famous places','Lugares famosos'], 'Eiffel Tower|Torre Eiffel,Pyramids|Pirámides,Great Wall|Gran Muralla,Statue of Liberty|Estatua de la Libertad,Big Ben|Big Ben,Colosseum|Coliseo,Sagrada Familia|Sagrada Familia,Taj Mahal|Taj Mahal,Mount Everest|Everest,Niagara Falls|Cataratas del Niágara,Machu Picchu|Machu Picchu,Disneyland|Disneyland,Leaning Tower of Pisa|Torre de Pisa,Sydney Opera House|Ópera de Sídney,Stonehenge|Stonehenge,Hollywood|Hollywood,Amazon|Amazonas,Sahara|Sáhara,North Pole|Polo Norte,Venice|Venecia']
+].map(([e, n, w]) => ({ e, n, words: w.split(',').map(x => x.split('|')) }));
+let deck, seconds = 60, queue, results, left, timerT, locked = false;
+const $ = id => document.getElementById(id);
+$('sub').textContent = T.sub; $('how').textContent = T.how; $('readyTxt').textContent = T.ready; $('passBtn').textContent = T.pass; $('goodBtn').textContent = T.good;
+$('again').textContent = T.again; $('toMenu').textContent = T.menu;
+DECKS.forEach((d, i) => { const b = document.createElement('button'); b.className = 'deck'; b.innerHTML = `<span class="e">${d.e}</span><b>${d.n[L]}</b><small>${d.words.length} ${T.words}</small>`; b.onclick = () => start(i); $('decks').appendChild(b); });
+[30, 60, 90].forEach(s => { const b = document.createElement('button'); b.className = 'tm'; b.textContent = s + 's'; b.onclick = () => { seconds = s; store.set('seconds', s); times(); }; $('times').appendChild(b); });
+function times() { document.querySelectorAll('.tm').forEach(b => b.classList.toggle('on', b.textContent === seconds + 's')); }
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function start(i) {
+  deck = i; queue = shuffle(DECKS[i].words.slice()); results = [];
+  show('ready'); let n = 3; $('count').textContent = n;
+  const t = setInterval(() => { n--; buzz(30); if (n <= 0) { clearInterval(t); play(); } else $('count').textContent = n; }, 900);
+}
+function play() {
+  show('play'); left = seconds; next();
+  $('timer').textContent = left; updatePts();
+  timerT = setInterval(() => { left--; $('timer').textContent = left; if (left <= 5 && left > 0) buzz(40); if (left <= 0) finish(); }, 1000);
+}
+function next() { if (!queue.length) return finish(); $('word').textContent = queue[0][L]; $('play').className = 'screen on'; locked = false; }
+function mark(ok) {
+  if (locked || !queue.length) return; locked = true;
+  results.push({ w: queue.shift()[L], ok });
+  $('play').classList.add(ok ? 'good' : 'pass'); $('word').textContent = ok ? '✓' : '⏭';
+  buzz(ok ? [30, 30, 30] : 60); updatePts();
+  setTimeout(next, 650);
+}
+function updatePts() { $('pts').textContent = '✓ ' + results.filter(r => r.ok).length; }
+function finish() {
+  clearInterval(timerT); buzz([100, 50, 100]);
+  const ok = results.filter(r => r.ok).length;
+  $('resTitle').textContent = T.end + ' 🎉'; $('resSub').textContent = `${T.score} ${ok} ${T.of} ${results.length}`;
+  $('list').innerHTML = ''; results.forEach(r => { const d = document.createElement('div'); d.className = r.ok ? 'ok' : 'no'; d.textContent = r.w; d.insertAdjacentHTML('beforeend', `<span>${r.ok ? '✓' : '✗'}</span>`); $('list').appendChild(d); });
+  show('results');
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('goodBtn').onclick = () => mark(true); $('passBtn').onclick = () => mark(false);
+$('again').onclick = () => start(deck); $('toMenu').onclick = () => show('menu');
+(async () => { seconds = await store.get('seconds', 60); times(); })();
+</script>
+</body>
+</html>

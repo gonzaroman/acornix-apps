@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Magic 8 Ball</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 50% 45%,#2b1a5a 0,#0a0618 65%); }
+  button, input { font:inherit; color:inherit; border:0; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; padding:calc(env(safe-area-inset-top) + 16px) 18px calc(env(safe-area-inset-bottom) + 18px); }
+  .stars { position:fixed; inset:0; pointer-events:none; background-image:radial-gradient(1px 1px at 20% 30%,#fff8,transparent),radial-gradient(1px 1px at 70% 20%,#fff6,transparent),radial-gradient(2px 2px at 85% 60%,#fff5,transparent),radial-gradient(1px 1px at 30% 80%,#fff7,transparent),radial-gradient(1px 1px at 55% 50%,#fff4,transparent),radial-gradient(2px 2px at 10% 60%,#fff4,transparent); }
+  h1 { margin:0; font-size:22px; letter-spacing:4px; color:#c9b8ff; font-weight:800; }
+  #q { width:min(90vw,420px); padding:15px 18px; border-radius:18px; background:#ffffff12; border:1px solid #ffffff22; text-align:center; outline:none; font-size:16px; user-select:text; -webkit-user-select:text; }
+  #ball { position:relative; width:min(78vw,330px); aspect-ratio:1; border-radius:50%; cursor:pointer; background:radial-gradient(circle at 32% 28%,#6b6b80 0,#1d1d28 22%,#050508 62%); box-shadow:0 30px 60px #000a, inset -20px -30px 60px #000, 0 0 80px #7b5cff33; }
+  #ball::after { content:''; position:absolute; left:18%; top:12%; width:28%; height:18%; border-radius:50%; background:radial-gradient(#ffffff55,transparent 70%); transform:rotate(-30deg); }
+  #ball.shake { animation:shake .9s cubic-bezier(.36,.07,.19,.97); }
+  @keyframes shake { 10%,90% { transform:translate(-3px,1px) rotate(-2deg); } 20%,80% { transform:translate(6px,-2px) rotate(3deg); } 30%,50%,70% { transform:translate(-10px,3px) rotate(-5deg); } 40%,60% { transform:translate(10px,-3px) rotate(5deg); } }
+  #window { position:absolute; left:50%; top:50%; width:46%; aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle,#0b1a6b,#020414 75%); box-shadow:inset 0 0 20px #000; display:grid; place-items:center; overflow:hidden; }
+  #tri { width:86%; aspect-ratio:1.15; clip-path:polygon(50% 100%,0 8%,100% 8%); background:linear-gradient(#3d5bff,#1d2fb0); display:flex; align-items:flex-start; justify-content:center; padding:16% 18% 0; text-align:center; font-weight:800; font-size:clamp(10px,3.1vw,14px); line-height:1.15; text-transform:uppercase; color:#e8ecff; opacity:0; transform:scale(.6) rotate(10deg); transition:opacity .8s, transform .8s; }
+  #tri.on { opacity:1; transform:none; }
+  #eight { position:absolute; font-size:64px; font-weight:900; color:#111; background:#fff; width:42%; aspect-ratio:1; border-radius:50%; display:grid; place-items:center; left:50%; top:50%; transform:translate(-50%,-50%); transition:opacity .4s; }
+  #ball.reveal #eight { opacity:0; }
+  .hint { color:#b9aee6; font-size:14px; text-align:center; min-height:20px; }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div id="app">
+  <h1>MAGIC 8 BALL</h1>
+  <input id="q" maxlength="80">
+  <div id="ball"><div id="window"><div id="tri"></div></div><div id="eight">8</div></div>
+  <div class="hint" id="hint"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { q:'Haz una pregunta de sí o no…', hint:'Toca la bola o agita el móvil',
+  a:['Es seguro','Sin duda','Sí, definitivamente','Puedes contar con ello','Tal como lo veo, sí','Lo más probable','Pinta bien','Sí','Las señales dicen que sí','Respuesta confusa, inténtalo de nuevo','Pregunta más tarde','Mejor no te lo digo ahora','No puedo predecirlo ahora','Concéntrate y pregunta otra vez','No cuentes con ello','Mi respuesta es no','Mis fuentes dicen que no','No pinta muy bien','Muy dudoso','Ni lo sueñes'] }
+ : { q:'Ask a yes or no question…', hint:'Tap the ball or shake your phone',
+  a:['It is certain','Without a doubt','Yes, definitely','You may rely on it','As I see it, yes','Most likely','Outlook good','Yes','Signs point to yes','Reply hazy, try again','Ask again later','Better not tell you now','Cannot predict now','Concentrate and ask again','Don\'t count on it','My reply is no','My sources say no','Outlook not so good','Very doubtful','Not in a million years'] };
+const $ = id => document.getElementById(id);
+$('q').placeholder = T.q; $('hint').textContent = T.hint;
+let busy = false, lastShake = 0;
+function ask() {
+  if (busy) return; busy = true;
+  const ball = $('ball'), tri = $('tri');
+  tri.classList.remove('on'); ball.classList.remove('reveal'); ball.classList.remove('shake'); void ball.offsetWidth; ball.classList.add('shake');
+  buzz([40, 60, 40, 60, 40]); document.activeElement.blur();
+  setTimeout(() => {
+    tri.textContent = T.a[Math.floor(Math.random() * T.a.length)];
+    ball.classList.add('reveal'); tri.classList.add('on'); busy = false;
+  }, 950);
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('ball').onclick = ask;
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') ask(); });
+addEventListener('devicemotion', e => {
+  const a = e.accelerationIncludingGravity; if (!a) return;
+  const force = Math.abs(a.x || 0) + Math.abs(a.y || 0) + Math.abs(a.z || 0);
+  if (force > 32 && Date.now() - lastShake > 1500) { lastShake = Date.now(); ask(); }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>20 Questions</title>
+<style>
+  :root { --bg:#0c0a1d; --card:#1a1636; --line:#2f2860; --text:#f3f0ff; --muted:#a39bd8; --glow:#b06bff; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 14px);
+    background:radial-gradient(circle at 50% 20%,#3b1d7a 0,transparent 55%),var(--bg); }
+  header { display:flex; align-items:center; justify-content:space-between; }
+  header b { font-size:20px; }
+  header button { padding:8px 12px; border-radius:12px; background:var(--card); font-size:13px; font-weight:700; }
+  .orb { width:140px; height:140px; margin:18px auto 8px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#f3e8ff,#b06bff 40%,#3b1d7a 75%); box-shadow:0 0 60px #b06bff88, inset 0 -10px 30px #0006; display:grid; place-items:center; font-size:54px; flex:none; }
+  .orb.think { animation:think 1.4s ease-in-out infinite; }
+  @keyframes think { 50% { box-shadow:0 0 100px #b06bffcc, inset 0 -10px 30px #0006; transform:scale(1.04); } }
+  .qn { text-align:center; color:var(--muted); font-weight:700; font-size:13px; letter-spacing:2px; }
+  .q { text-align:center; font-size:24px; font-weight:800; line-height:1.3; margin:10px 6px 0; min-height:96px; }
+  .answers { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:auto; }
+  .answers button { padding:17px; border-radius:18px; font-weight:800; font-size:17px; background:var(--card); border:1px solid var(--line); }
+  .answers .yes { background:#1f8f5a; border-color:#2fd47a; } .answers .no { background:#8f1f3a; border-color:#ff5470; }
+  .answers button:disabled { opacity:.4; }
+  .log { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:12px 0; max-height:30vh; overflow-y:auto; }
+  .log span { font-size:12px; padding:5px 9px; border-radius:999px; background:var(--card); color:var(--muted); }
+  .start { margin:auto 0; text-align:center; }
+  .start h1 { font-size:32px; margin:6px 0; }
+  .start p { color:var(--muted); line-height:1.5; }
+  .cats { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0; }
+  .cats button { padding:10px 14px; border-radius:999px; background:var(--card); border:1px solid var(--line); font-weight:700; }
+  .cats button.on { border-color:var(--glow); background:#b06bff33; }
+  .main { width:100%; padding:16px; border-radius:18px; background:linear-gradient(135deg,#b06bff,#ff6bd5); color:#1a0730; font-weight:900; font-size:17px; }
+  .guess { display:flex; gap:10px; margin-top:auto; }
+  .guess button { flex:1; padding:16px; border-radius:18px; font-weight:900; font-size:16px; }
+  .err { color:#ffb3c1; text-align:center; font-size:14px; margin:8px 0; }
+  .score { text-align:center; color:var(--muted); font-size:13px; margin-top:10px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'20 Preguntas', intro:'Piensa en algo. Tu IA intentará adivinarlo haciéndote preguntas de sí o no.', think:'Piensa en…', cats:['✨ Lo que sea','🐾 Un animal','🧑 Un famoso','🍎 Una comida','🧸 Un objeto','🎬 Un personaje'],
+  start:'¡Ya lo tengo pensado!', yes:'Sí', no:'No', maybe:'A veces', idk:'No sé', question:'PREGUNTA', of:'DE', isIt:'¿Es…', right:'¡Sí, acertaste!', wrong:'No, sigue', again:'Jugar otra vez', won:'¡Te he adivinado!', lost:'¡Me rindo! ¿Qué era?', reveal:'Contármelo', thinking:'Pensando…', restart:'Reiniciar',
+  noAi:'Abre esta app en Acornix y conecta tu IA para jugar.', failed:'No he podido pensar. Toca para reintentar.', record:'Partidas', aiWins:'la IA', youWin:'tú', lang:'Spanish' }
+ : { title:'20 Questions', intro:'Think of something. Your AI will try to guess it by asking yes or no questions.', think:'Think of…', cats:['✨ Anything','🐾 An animal','🧑 A famous person','🍎 A food','🧸 An object','🎬 A character'],
+  start:'I\'ve got one!', yes:'Yes', no:'No', maybe:'Sometimes', idk:'Don\'t know', question:'QUESTION', of:'OF', isIt:'Is it…', right:'Yes, you got it!', wrong:'No, keep going', again:'Play again', won:'I guessed it!', lost:'I give up! What was it?', reveal:'Tell me', thinking:'Thinking…', restart:'Restart',
+  noAi:'Open this app in Acornix and connect your AI to play.', failed:'I couldn\'t think. Tap to try again.', record:'Games', aiWins:'AI', youWin:'you', lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const app = document.getElementById('app');
+let cat = 0, history = [], current = null, wins = { ai: 0, you: 0 }, busy = false;
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function header() { return `<header><b>🔮 ${T.title}</b><button id="restart">${T.restart}</button></header>`; }
+function bind() { const r = document.getElementById('restart'); if (r) r.onclick = home; }
+function home() {
+  history = []; current = null;
+  app.innerHTML = `${header()}<div class="start"><div class="orb">🔮</div><h1>${T.title}</h1><p>${T.intro}</p><div class="cats">${T.cats.map((c, i) => `<button data-i="${i}" class="${i === cat ? 'on' : ''}">${c}</button>`).join('')}</div>
+    <button class="main" id="go">${T.start}</button><div class="score">${T.record}: ${T.aiWins} ${wins.ai} · ${T.youWin} ${wins.you}</div></div>`;
+  app.querySelectorAll('.cats button').forEach(b => b.onclick = () => { cat = +b.dataset.i; home(); });
+  document.getElementById('go').onclick = next; bind();
+}
+function renderQuestion() {
+  const n = history.length + 1;
+  app.innerHTML = `${header()}<div class="orb">🔮</div><div class="qn">${T.question} ${Math.min(n, 20)} ${T.of} 20</div><div class="q" id="q"></div>
+    <div class="log">${history.map(h => `<span>${esc(h.q)} → ${esc(h.a)}</span>`).join('')}</div>
+    <div class="answers"><button class="yes" data-a="${T.yes}">${T.yes}</button><button class="no" data-a="${T.no}">${T.no}</button><button data-a="${T.maybe}">${T.maybe}</button><button data-a="${T.idk}">${T.idk}</button></div>`;
+  document.getElementById('q').textContent = current.question;
+  app.querySelectorAll('.answers button').forEach(b => b.onclick = () => { history.push({ q: current.question, a: b.dataset.a }); next(); });
+  bind();
+}
+function renderGuess() {
+  app.innerHTML = `${header()}<div class="orb">🎯</div><div class="qn">${T.isIt}</div><div class="q" id="q"></div>
+    <div class="guess"><button style="background:#8f1f3a" id="wrong">${T.wrong}</button><button style="background:#1f8f5a" id="right">${T.right}</button></div>`;
+  document.getElementById('q').textContent = current.guess + '?';
+  document.getElementById('right').onclick = () => end(true);
+  document.getElementById('wrong').onclick = () => { history.push({ q: T.isIt + ' ' + current.guess + '?', a: T.no }); if (history.length >= 20) end(false); else next(); };
+  bind();
+}
+async function end(aiWon) {
+  if (aiWon) wins.ai++; else wins.you++;
+  await store.set('wins', wins); buzz(aiWon ? [30, 40, 80] : [80, 40, 30]);
+  app.innerHTML = `${header()}<div class="start"><div class="orb">${aiWon ? '🏆' : '🙈'}</div><h1>${aiWon ? T.won : T.lost}</h1><p>${aiWon ? esc(current.guess) : ''}</p><button class="main" id="go">${T.again}</button><div class="score">${T.aiWins} ${wins.ai} · ${T.youWin} ${wins.you}</div></div>`;
+  document.getElementById('go').onclick = home; bind();
+}
+async function next() {
+  if (busy) return;
+  if (!window.Acornix) { app.innerHTML = `${header()}<div class="start"><div class="orb">🧠</div><p>${T.noAi}</p></div>`; bind(); return; }
+  busy = true;
+  app.innerHTML = `${header()}<div class="orb think">🔮</div><div class="q">${T.thinking}</div>`; bind();
+  const asked = history.map((h, i) => `${i + 1}. ${h.q} -> ${h.a}`).join('\n') || '(none yet)';
+  const mustGuess = history.length >= 19;
+  try {
+    const r = await Acornix.askAI(
+      `We are playing 20 questions. The player is thinking of: ${T.cats[cat].replace(/^\S+\s/, '')}.\nQuestions so far:\n${asked}\n` +
+      (mustGuess ? 'This is the last turn: make your best guess now.' : 'Ask the next yes/no question that splits the remaining possibilities best, or guess if you are fairly sure (after at least 5 questions).'),
+      { json: true, system: `You are a clever, playful 20 questions player. Write in ${T.lang}. Reply only with JSON: {"question":"a short yes/no question"} or {"guess":"your guess, a few words"}. Never repeat a question.` });
+    if (!r || (!r.question && !r.guess)) throw new Error('');
+    current = { question: r.question, guess: r.guess };
+    busy = false;
+    if (current.guess) renderGuess(); else renderQuestion();
+  } catch (e) {
+    busy = false;
+    app.innerHTML = `${header()}<div class="start"><div class="orb">😵</div><p class="err">${T.failed}</p><p class="err">${esc(e && e.message || '')}</p><button class="main" id="go">↻</button></div>`;
+    document.getElementById('go').onclick = next; bind();
+  }
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+(async () => { wins = await store.get('wins', wins); home(); })();
+</script>
+</body>
+</html>

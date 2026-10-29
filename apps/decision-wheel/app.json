@@ -1,0 +1,14 @@
+{
+  "id": "decision-wheel",
+  "name": "Decision Wheel",
+  "emoji": "🎡",
+  "category": "entertainment",
+  "description": "Can't decide? Make your own wheels, add options and spin with ticking sounds.",
+  "prompt": "A spinning decision wheel with colourful slices, ticking sound, several saved wheels I can name, editable options and an option to remove the winner after each spin.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

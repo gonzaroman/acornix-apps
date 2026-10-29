@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Story Adventure</title>
+<style>
+  :root { --bg:#120d08; --paper:#f4e6c8; --ink:#3a2a17; --muted:#8a6f4a; --accent:#b4471f; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:Georgia,"Times New Roman",serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; background:radial-gradient(circle at 50% 0,#3b2610 0,var(--bg) 70%); }
+  header { display:flex; align-items:center; gap:10px; padding:calc(env(safe-area-inset-top) + 10px) 14px 10px; color:#f4e6c8; }
+  header b { flex:1; font-size:18px; letter-spacing:.5px; }
+  header button { padding:8px 12px; border-radius:12px; background:#ffffff14; font-family:system-ui,sans-serif; font-size:13px; font-weight:700; }
+  #book { flex:1; overflow-y:auto; margin:0 10px; border-radius:18px 18px 0 0; background:linear-gradient(#f7ebd0,#efdcb4); box-shadow:inset 0 0 40px #b08a5444; padding:22px 20px 14px; }
+  .page { font-size:18px; line-height:1.6; margin-bottom:18px; white-space:pre-wrap; }
+  .page:first-letter { font-size:2.4em; float:left; line-height:.9; margin:4px 6px 0 0; color:var(--accent); font-weight:700; }
+  .you { font-family:system-ui,sans-serif; font-size:14px; font-weight:700; color:var(--accent); margin:-6px 0 16px; }
+  .status { font-family:system-ui,sans-serif; font-size:12px; color:var(--muted); border-top:1px dashed #b08a54; padding-top:6px; margin:-8px 0 18px; }
+  #choices { background:#efdcb4; margin:0 10px; padding:6px 12px 10px; display:flex; flex-direction:column; gap:8px; }
+  .choice { text-align:left; padding:13px 14px; border-radius:14px; background:#fff8e6; border:1px solid #d9bf8c; font-size:16px; box-shadow:0 2px 0 #d9bf8c; }
+  .choice:active { transform:translateY(2px); box-shadow:none; }
+  form { display:flex; gap:8px; margin:0 10px; padding:0 12px calc(env(safe-area-inset-bottom) + 12px); background:#efdcb4; border-radius:0 0 18px 18px; margin-bottom:8px; }
+  form input { flex:1; padding:13px; border-radius:14px; background:#fff8e6; border:1px solid #d9bf8c; outline:none; }
+  form button { padding:0 16px; border-radius:14px; background:var(--accent); color:#fff; font-family:system-ui,sans-serif; font-weight:800; }
+  .start { padding:8px 4px; }
+  .start h1 { margin:0 0 6px; font-size:30px; color:var(--accent); }
+  .start p { line-height:1.5; }
+  .genres { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+  .genre { padding:16px 10px; border-radius:16px; background:#fff8e6; border:2px solid #d9bf8c; font-size:15px; text-align:center; }
+  .genre span { display:block; font-size:30px; margin-bottom:4px; }
+  .genre.on { border-color:var(--accent); background:#ffe9d2; }
+  .namebox input { width:100%; padding:13px; border-radius:14px; background:#fff8e6; border:1px solid #d9bf8c; outline:none; margin:6px 0 12px; }
+  .go { width:100%; padding:16px; border-radius:16px; background:var(--accent); color:#fff; font-family:system-ui,sans-serif; font-weight:900; font-size:17px; }
+  .wait { font-style:italic; color:var(--muted); }
+  .wait::after { content:'…'; animation:dots 1.2s steps(3) infinite; }
+  .err { font-family:system-ui,sans-serif; color:#a11; font-size:14px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header><b>🐉 <span id="ttl"></span></b><button id="newBtn"></button></header>
+  <div id="book"></div>
+  <div id="choices"></div>
+  <form id="act"><input id="actIn" maxlength="140"><button>➜</button></form>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Aventura', new:'Nueva', intro:'Tu IA será el narrador de una aventura donde tú decides qué pasa. Elige un mundo y ponle nombre a tu héroe.', name:'Nombre del héroe', start:'Empezar la aventura',
+  genres:[['🐉','Fantasía épica'],['🚀','Espacio'],['🕵️','Misterio'],['🏴‍☠️','Piratas'],['🏚️','Casa encantada'],['🌆','Ciberpunk']], act:'O escribe lo que haces…', you:'Tú', wait:'El narrador escribe', noAi:'Abre esta app en Acornix y conecta tu IA para jugar.', failed:'El narrador se ha quedado sin palabras. Inténtalo otra vez.', lang:'Spanish', end:'FIN' }
+ : { title:'Adventure', new:'New', intro:'Your AI becomes the narrator of an adventure where you decide what happens. Pick a world and name your hero.', name:'Hero name', start:'Begin the adventure',
+  genres:[['🐉','Epic fantasy'],['🚀','Space'],['🕵️','Mystery'],['🏴‍☠️','Pirates'],['🏚️','Haunted house'],['🌆','Cyberpunk']], act:'Or type what you do…', you:'You', wait:'The narrator is writing', noAi:'Open this app in Acornix and connect your AI to play.', failed:'The narrator ran out of words. Try again.', lang:'English', end:'THE END' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('newBtn').textContent = T.new; $('actIn').placeholder = T.act;
+let game = null, genre = 0, busy = false;
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function setup() {
+  game = null; $('choices').innerHTML = ''; $('act').style.display = 'none';
+  $('book').innerHTML = `<div class="start"><h1>📜 ${T.title}</h1><p>${T.intro}</p><div class="genres">${T.genres.map((g, i) => `<button class="genre ${i === genre ? 'on' : ''}" data-i="${i}"><span>${g[0]}</span>${g[1]}</button>`).join('')}</div>
+    <div class="namebox">${T.name}<input id="hero" maxlength="20" value="${ES ? 'Alex' : 'Alex'}"></div><button class="go" id="go">${T.start}</button></div>`;
+  $('book').querySelectorAll('.genre').forEach(b => b.onclick = () => { genre = +b.dataset.i; $('book').querySelectorAll('.genre').forEach(x => x.classList.toggle('on', x === b)); });
+  $('go').onclick = () => { game = { genre, hero: $('hero').value.trim() || 'Alex', turns: [] }; turn(null); };
+}
+function render() {
+  const book = $('book'); book.innerHTML = '';
+  game.turns.forEach(t => {
+    if (t.action) { const y = document.createElement('div'); y.className = 'you'; y.textContent = '➜ ' + t.action; book.appendChild(y); }
+    const p = document.createElement('div'); p.className = 'page'; p.textContent = t.story; book.appendChild(p);
+    if (t.status) { const s = document.createElement('div'); s.className = 'status'; s.textContent = t.status; book.appendChild(s); }
+  });
+  const last = game.turns[game.turns.length - 1];
+  const box = $('choices'); box.innerHTML = '';
+  if (last && !last.ended) {
+    (last.choices || []).forEach(c => { const b = document.createElement('button'); b.className = 'choice'; b.textContent = c; b.onclick = () => turn(c); box.appendChild(b); });
+    $('act').style.display = 'flex';
+  } else if (last && last.ended) {
+    box.innerHTML = `<div style="text-align:center;padding:10px;font-weight:700;color:var(--accent)">— ${T.end} —</div>`; $('act').style.display = 'none';
+  }
+  book.scrollTop = book.scrollHeight;
+}
+async function turn(action) {
+  if (busy) return;
+  if (!window.Acornix) { $('book').insertAdjacentHTML('beforeend', `<p class="err">${T.noAi}</p>`); return; }
+  busy = true;
+  if (game.turns.length) render();
+  $('choices').innerHTML = `<div class="wait" style="padding:8px">${T.wait}</div>`; $('act').style.display = 'none';
+  const recent = game.turns.slice(-6).map(t => (t.action ? `PLAYER: ${t.action}\n` : '') + `NARRATOR: ${t.story}`).join('\n\n');
+  const summary = game.summary ? `Story so far (summary): ${game.summary}\n\n` : '';
+  try {
+    const r = await Acornix.askAI(
+      (game.turns.length ? `${summary}Recent turns:\n${recent}\n\nThe player now does: ${action}\nContinue the story.` : `Start a new ${T.genres[game.genre][1]} adventure. The hero is called ${game.hero}.`),
+      { json: true, system: `You are a vivid, witty narrator of an interactive ${T.genres[game.genre][1]} adventure for all ages. Write in ${T.lang}, second person, 60-110 words per turn, with sensory detail and a hook. ` +
+        `Track health (out of 10) and inventory. Let bold actions have consequences; the story may end (victory or defeat) after about 15-25 turns. ` +
+        `Reply only with JSON: {"story":"…","choices":["three short, different options"],"status":"❤️ 8/10 · 🎒 items","summary":"one-paragraph summary of the whole story so far","ended":false}` });
+    if (!r || !r.story) throw new Error('');
+    game.turns.push({ action, story: r.story, choices: (r.choices || []).slice(0, 3), status: r.status || '', ended: !!r.ended });
+    if (r.summary) game.summary = r.summary;
+    await store.set('game', game);
+    busy = false; render(); buzz(15);
+  } catch (e) {
+    busy = false; render();
+    $('choices').insertAdjacentHTML('afterbegin', `<p class="err">${T.failed} ${esc(e && e.message || '')}</p>`);
+    const retry = document.createElement('button'); retry.className = 'choice'; retry.textContent = '↻'; retry.onclick = () => turn(action); $('choices').prepend(retry);
+  }
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('act').onsubmit = e => { e.preventDefault(); const v = $('actIn').value.trim(); if (!v) return; $('actIn').value = ''; turn(v); };
+$('newBtn').onclick = () => { store.set('game', null); setup(); };
+(async () => { const g = await store.get('game', null); if (g && g.turns && g.turns.length) { game = g; genre = g.genre; render(); } else setup(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Emoji Movies</title>
+<style>
+  :root { --bg:#101018; --card:#1c1c2b; --line:#2c2c44; --gold:#ffd23f; --muted:#9d9dbd; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; background:none; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+  header { display:flex; align-items:center; justify-content:space-between; }
+  header b { font-size:20px; }
+  .stats { display:flex; gap:8px; }
+  .pill { padding:6px 12px; border-radius:999px; background:var(--card); font-weight:800; font-size:14px; }
+  .screen { position:relative; margin:18px 0 10px; border-radius:24px; padding:30px 12px; text-align:center; background:linear-gradient(180deg,#26203f,#141224); border:3px solid #3a3260; box-shadow:0 0 0 6px #1c1c2b, 0 20px 40px #0008; }
+  .screen::before, .screen::after { content:''; position:absolute; top:-14px; width:22px; height:22px; border-radius:50%; background:var(--gold); box-shadow:0 0 14px var(--gold); }
+  .screen::before { left:20%; } .screen::after { right:20%; }
+  .emoji { font-size:clamp(40px,13vw,64px); letter-spacing:4px; line-height:1.2; }
+  .lvl { color:var(--muted); font-size:12px; font-weight:800; letter-spacing:2px; margin-top:10px; }
+  .hint { min-height:22px; text-align:center; color:var(--gold); font-weight:700; font-size:14px; }
+  .opts { display:flex; flex-direction:column; gap:10px; margin-top:auto; }
+  .opt { padding:16px; border-radius:16px; background:var(--card); border:2px solid var(--line); font-weight:700; font-size:16px; text-align:left; }
+  .opt.good { border-color:#2fd47a; background:#2fd47a22; } .opt.bad { border-color:#ff5470; background:#ff547022; }
+  .row { display:flex; gap:10px; margin-top:10px; }
+  .row button { flex:1; padding:13px; border-radius:14px; background:var(--card); font-weight:700; font-size:14px; }
+  .row button:disabled { opacity:.35; }
+  .done { margin:auto 0; text-align:center; }
+  .done .big { font-size:80px; }
+  .done h2 { font-size:30px; margin:6px 0; }
+  .done p { color:var(--muted); }
+  .main { width:100%; padding:16px; border-radius:18px; background:var(--gold); color:#2b2000; font-weight:900; font-size:17px; margin-top:12px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { title:'Pelis con emojis', hint:'💡 Pista', skip:'Saltar ⏭', level:'PELÍCULA', of:'DE', hintPrefix:'Año: ', genre:'Género: ', end:'¡Fin de la sesión!', again:'Jugar otra vez', pts:'puntos', right:'aciertos' }
+ : { title:'Emoji Movies', hint:'💡 Hint', skip:'Skip ⏭', level:'MOVIE', of:'OF', hintPrefix:'Year: ', genre:'Genre: ', end:'That\'s a wrap!', again:'Play again', pts:'points', right:'right' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// [emoji, EN title, ES title, year, genre EN, genre ES]
+const M = [
+  ['🦁👑','The Lion King','El Rey León',1994,'Animation','Animación'], ['🚢🧊💔','Titanic','Titanic',1997,'Drama','Drama'],
+  ['🕷️🧑','Spider-Man','Spider-Man',2002,'Superheroes','Superhéroes'], ['🦖🏝️🚙','Jurassic Park','Jurassic Park',1993,'Adventure','Aventura'],
+  ['❄️👸⛄','Frozen','Frozen',2013,'Animation','Animación'], ['🧙‍♂️💍🌋','The Lord of the Rings','El Señor de los Anillos',2001,'Fantasy','Fantasía'],
+  ['🐠🔍','Finding Nemo','Buscando a Nemo',2003,'Animation','Animación'], ['🦈🏊','Jaws','Tiburón',1975,'Thriller','Suspense'],
+  ['👽📞🏠','E.T.','E.T.',1982,'Sci-fi','Ciencia ficción'], ['🏠🎈👴','Up','Up',2009,'Animation','Animación'],
+  ['🤠🚀🧸','Toy Story','Toy Story',1995,'Animation','Animación'], ['👻🚫🔫','Ghostbusters','Cazafantasmas',1984,'Comedy','Comedia'],
+  ['⚡👓🧙','Harry Potter','Harry Potter',2001,'Fantasy','Fantasía'], ['🥊🐯🏃','Rocky','Rocky',1976,'Sport','Deporte'],
+  ['🦍🏙️✈️','King Kong','King Kong',2005,'Adventure','Aventura'], ['🧪🤢🟢','Shrek','Shrek',2001,'Animation','Animación'],
+  ['🐀👨‍🍳🇫🇷','Ratatouille','Ratatouille',2007,'Animation','Animación'], ['🌌⚔️👨‍👦','Star Wars','La guerra de las galaxias',1977,'Sci-fi','Ciencia ficción'],
+  ['🕰️🚗⚡','Back to the Future','Regreso al futuro',1985,'Sci-fi','Ciencia ficción'], ['💀🎸🌼','Coco','Coco',2017,'Animation','Animación'],
+  ['🐼🥋','Kung Fu Panda','Kung Fu Panda',2008,'Animation','Animación'], ['🧞🪔🐒','Aladdin','Aladdín',1992,'Animation','Animación'],
+  ['🌹👹🏰','Beauty and the Beast','La Bella y la Bestia',1991,'Animation','Animación'], ['🏴‍☠️💀⛵','Pirates of the Caribbean','Piratas del Caribe',2003,'Adventure','Aventura'],
+  ['🤖🌱🚀','WALL-E','WALL-E',2008,'Animation','Animación'], ['🧜‍♀️🦀🎶','The Little Mermaid','La sirenita',1989,'Animation','Animación'],
+  ['🐝🎬','Bee Movie','Bee Movie',2007,'Animation','Animación'], ['🍫🏭🎩','Charlie and the Chocolate Factory','Charlie y la fábrica de chocolate',2005,'Fantasy','Fantasía'],
+  ['🦇🃏','The Dark Knight','El caballero oscuro',2008,'Superheroes','Superhéroes'], ['🧠💭😢😡','Inside Out','Del revés',2015,'Animation','Animación'],
+  ['🚗⚡🏁','Cars','Cars',2006,'Animation','Animación'], ['👨‍🚀🌽🕳️','Interstellar','Interstellar',2014,'Sci-fi','Ciencia ficción'],
+  ['🦸‍♂️🛡️⭐','Captain America','Capitán América',2011,'Superheroes','Superhéroes'], ['🐉🏝️🧒','How to Train Your Dragon','Cómo entrenar a tu dragón',2010,'Animation','Animación'],
+  ['👰🏃‍♀️💍','Runaway Bride','Novia a la fuga',1999,'Comedy','Comedia'], ['🏃🍫🪶','Forrest Gump','Forrest Gump',1994,'Drama','Drama'],
+  ['🐟🐟🌊🔁','Finding Dory','Buscando a Dory',2016,'Animation','Animación'], ['🦊🐰🚓','Zootopia','Zootrópolis',2016,'Animation','Animación'],
+  ['🕶️💊🐇','The Matrix','Matrix',1999,'Sci-fi','Ciencia ficción'], ['🌊🛶🐔','Moana','Vaiana',2016,'Animation','Animación']
+];
+const app = document.getElementById('app');
+let order, i, score, right, hinted, answered, best = 0;
+function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+function start() { order = shuffle([...M.keys()]).slice(0, 10); i = 0; score = 0; right = 0; show(); }
+function show() {
+  const m = M[order[i]]; hinted = 0; answered = false;
+  const wrongs = shuffle(M.filter(x => x !== m)).slice(0, 3);
+  const opts = shuffle([m, ...wrongs]);
+  app.innerHTML = `<header><b>🎬 ${T.title}</b><div class="stats"><span class="pill">⭐ ${score}</span></div></header>
+    <div class="screen"><div class="emoji">${m[0]}</div><div class="lvl">${T.level} ${i + 1} ${T.of} ${order.length}</div></div>
+    <div class="hint" id="hint"></div>
+    <div class="opts">${opts.map(o => `<button class="opt" data-ok="${o === m}">${o[1 + L]}</button>`).join('')}</div>
+    <div class="row"><button id="hintBtn">${T.hint}</button><button id="skip">${T.skip}</button></div>`;
+  app.querySelectorAll('.opt').forEach(b => b.onclick = () => answer(b));
+  document.getElementById('hintBtn').onclick = () => {
+    hinted++; const h = document.getElementById('hint');
+    h.textContent = hinted === 1 ? T.genre + m[4 + L] : T.genre + m[4 + L] + ' · ' + T.hintPrefix + m[3];
+    if (hinted >= 2) document.getElementById('hintBtn').disabled = true;
+  };
+  document.getElementById('skip').onclick = () => { if (!answered) next(); };
+}
+function answer(b) {
+  if (answered) return; answered = true;
+  app.querySelectorAll('.opt').forEach(x => { if (x.dataset.ok === 'true') x.classList.add('good'); });
+  if (b.dataset.ok === 'true') { score += 30 - hinted * 10; right++; buzz(20); } else { b.classList.add('bad'); buzz([50, 40, 50]); }
+  setTimeout(next, 1000);
+}
+async function next() {
+  i++;
+  if (i < order.length) return show();
+  if (score > best) { best = score; await store.set('best', best); }
+  app.innerHTML = `<div class="done"><div class="big">🍿</div><h2>${T.end}</h2><p>${right}/${order.length} ${T.right} · ${score} ${T.pts} · 🏆 ${best}</p><button class="main" id="again">${T.again}</button></div>`;
+  document.getElementById('again').onclick = start;
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+(async () => { best = await store.get('best', 0); start(); })();
+</script>
+</body>
+</html>

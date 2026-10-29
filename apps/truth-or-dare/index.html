@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Truth or Dare</title>
+<style>
+  :root { --bg:#0e0a1f; --card:#1c1538; --line:#33285f; --truth:#2ec5ff; --dare:#ff3d7f; --muted:#a59cd6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, input { font:inherit; color:inherit; border:0; }
+  button { cursor:pointer; background:none; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 18px); overflow-y:auto;
+    background:radial-gradient(circle at 0 0,#2ec5ff33 0,transparent 40%),radial-gradient(circle at 100% 100%,#ff3d7f33 0,transparent 40%),var(--bg); }
+  .screen.on { display:flex; }
+  h1 { font-size:36px; margin:6px 0 4px; line-height:1.05; }
+  h1 .t { color:var(--truth); } h1 .d { color:var(--dare); }
+  .sub { color:var(--muted); margin:0 0 18px; }
+  label { font-size:13px; font-weight:700; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .add { display:flex; gap:8px; margin:8px 0 12px; }
+  .add input { flex:1; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--line); outline:none; user-select:text; -webkit-user-select:text; }
+  .add button { padding:0 18px; border-radius:14px; background:#fff; color:#111; font-weight:800; font-size:20px; }
+  .players { display:flex; flex-wrap:wrap; gap:8px; min-height:44px; }
+  .pl { padding:9px 12px; border-radius:999px; background:var(--card); border:1px solid var(--line); font-weight:700; display:flex; gap:8px; align-items:center; }
+  .pl span { opacity:.6; }
+  .levels { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:8px 0 18px; }
+  .lv { padding:12px 6px; border-radius:14px; background:var(--card); border:1px solid var(--line); font-weight:700; font-size:14px; }
+  .lv.on { border-color:#fff; background:#ffffff22; }
+  .go { margin-top:auto; padding:17px; border-radius:18px; background:linear-gradient(90deg,var(--truth),var(--dare)); font-weight:900; font-size:18px; }
+  .go:disabled { opacity:.35; }
+  .turn { text-align:center; margin-top:10px; }
+  .turn small { color:var(--muted); font-weight:700; letter-spacing:2px; }
+  .turn .name { font-size:40px; font-weight:900; margin:4px 0; }
+  .choice { display:flex; flex-direction:column; gap:14px; margin:auto 0; }
+  .big { padding:34px 20px; border-radius:28px; font-size:30px; font-weight:900; letter-spacing:1px; box-shadow:0 10px 30px #0006; }
+  .big.t { background:linear-gradient(135deg,#2ec5ff,#4361ee); }
+  .big.d { background:linear-gradient(135deg,#ff3d7f,#ff8a3d); }
+  .card { margin:auto 0; border-radius:28px; padding:30px 22px; text-align:center; animation:flip .45s ease-out; box-shadow:0 14px 40px #0008; }
+  .card.t { background:linear-gradient(160deg,#2ec5ff,#4361ee); } .card.d { background:linear-gradient(160deg,#ff3d7f,#ff8a3d); }
+  @keyframes flip { from { transform:rotateY(90deg) scale(.9); opacity:0; } }
+  .card .kind { font-weight:900; letter-spacing:3px; opacity:.8; font-size:14px; }
+  .card .text { font-size:25px; font-weight:800; line-height:1.3; margin:14px 0 4px; }
+  .row { display:flex; gap:10px; }
+  .row button { flex:1; padding:15px; border-radius:16px; background:var(--card); border:1px solid var(--line); font-weight:800; }
+  .row .ok { background:#fff; color:#111; }
+  .top { display:flex; justify-content:space-between; align-items:center; }
+  .top button { padding:8px 12px; border-radius:12px; background:var(--card); font-weight:700; font-size:13px; }
+</style>
+</head>
+<body>
+<section class="screen on" id="setup">
+  <h1><span class="t" id="tT"></span><br><span class="d" id="tD"></span></h1>
+  <p class="sub" id="sub"></p>
+  <label id="lPlayers"></label>
+  <form class="add" id="addForm"><input id="name" maxlength="16" autocomplete="off"><button>+</button></form>
+  <div class="players" id="players"></div>
+  <label style="margin-top:18px" id="lLevel"></label>
+  <div class="levels" id="levels"></div>
+  <button class="go" id="start"></button>
+</section>
+<section class="screen" id="play">
+  <div class="top"><button id="back">✕</button><button id="skipPlayer"></button></div>
+  <div class="turn"><small id="turnLbl"></small><div class="name" id="who"></div></div>
+  <div class="choice" id="choice"><button class="big t" id="pickT"></button><button class="big d" id="pickD"></button><button class="row" style="justify-content:center"><span></span></button></div>
+  <div id="cardBox" style="display:none;flex-direction:column;flex:1"></div>
+</section>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { truth:'Verdad', dare:'Reto', sub:'Añade a los jugadores y elige el nivel. Todo es apto para pasarlo bien en grupo.', players:'Jugadores', name:'Nombre', level:'Nivel', levels:['🧒 Niños','😄 Amigos','🔥 Atrevido'], start:'¡Empezar!', turn:'LE TOCA A', done:'¡Hecho! ✓', other:'Otra', random:'🎲 Al azar', skip:'Pasar turno', min:'Añade al menos 2 jugadores' }
+ : { truth:'Truth', dare:'Dare', sub:'Add the players and pick a level. Everything is meant for having fun together.', players:'Players', name:'Name', level:'Level', levels:['🧒 Kids','😄 Friends','🔥 Bold'], start:'Start!', turn:'IT\'S YOUR TURN', done:'Done! ✓', other:'Another', random:'🎲 Random', skip:'Skip turn', min:'Add at least 2 players' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// [EN, ES] per level: 0 kids, 1 friends, 2 bold (still friendly).
+const TRUTHS = [
+  [['What is your favourite animal and why?','¿Cuál es tu animal favorito y por qué?'],['What is the funniest thing that ever happened to you at school?','¿Qué es lo más gracioso que te ha pasado en el cole?'],['If you could be any superhero, who would you be?','Si pudieras ser un superhéroe, ¿cuál serías?'],['What food do you hate the most?','¿Qué comida odias más?'],['What do you want to be when you grow up?','¿Qué quieres ser de mayor?'],['Have you ever pretended to be asleep?','¿Alguna vez te has hecho el dormido?'],['What is the best present you ever got?','¿Cuál es el mejor regalo que te han hecho?'],['Who is your favourite cartoon character?','¿Cuál es tu personaje de dibujos favorito?']],
+  [['What is the most embarrassing song on your playlist?','¿Cuál es la canción más vergonzosa de tu lista?'],['What is a habit you are secretly proud of?','¿Qué costumbre tuya te enorgullece en secreto?'],['Who in this room would survive longest in a zombie film?','¿Quién de aquí sobreviviría más en una peli de zombis?'],['What is the last lie you told?','¿Cuál es la última mentira que has dicho?'],['What is your most useless talent?','¿Cuál es tu talento más inútil?'],['Which app do you open the most?','¿Qué app abres más?'],['What would you do with a million euros tomorrow?','¿Qué harías mañana con un millón de euros?'],['What is the weirdest thing you have eaten?','¿Qué es lo más raro que has comido?'],['What is your guilty pleasure TV show?','¿Qué serie ves aunque te dé vergüenza?']],
+  [['What is the most daring thing you have ever done?','¿Qué es lo más atrevido que has hecho?'],['Who was your first crush?','¿Quién fue tu primer amor platónico?'],['What is something you have never told anyone here?','¿Qué es algo que nunca has contado a nadie de aquí?'],['What is your biggest fear?','¿Cuál es tu mayor miedo?'],['What is the worst date you have been on?','¿Cuál ha sido tu peor cita?'],['What is a rule you have broken?','¿Qué norma has roto?'],['Which person here would you swap lives with for a day?','¿Con quién de aquí cambiarías la vida un día?'],['What is the pettiest thing you have done?','¿Qué es lo más mezquino que has hecho?']]
+];
+const DARES = [
+  [['Do your best animal impression for 10 seconds.','Imita a un animal durante 10 segundos.'],['Hop on one foot until your next turn.','Salta a la pata coja hasta tu próximo turno.'],['Make the funniest face you can.','Pon la cara más graciosa que puedas.'],['Sing the chorus of a song you love.','Canta el estribillo de una canción que te guste.'],['Walk like a robot around the room.','Camina como un robot por la habitación.'],['Say the alphabet backwards as far as you can.','Di el abecedario al revés hasta donde llegues.'],['Tell a joke. If nobody laughs, tell another one.','Cuenta un chiste. Si nadie se ríe, otro.'],['Do 10 jumping jacks.','Haz 10 saltos de tijera.']],
+  [['Talk in an accent until your next turn.','Habla con un acento hasta tu próximo turno.'],['Show the last photo in your gallery.','Enseña la última foto de tu galería.'],['Let the group choose your profile emoji for a day.','Deja que el grupo elija tu emoji de perfil por un día.'],['Do your best runway walk.','Desfila como en una pasarela.'],['Speak only in questions for two rounds.','Habla solo con preguntas durante dos rondas.'],['Dance with no music for 15 seconds.','Baila sin música durante 15 segundos.'],['Read your last sent message out loud.','Lee en voz alta tu último mensaje enviado.'],['Let someone draw a moustache on you with a pen.','Deja que te pinten un bigote con boli.'],['Give a dramatic speech about a spoon.','Da un discurso dramático sobre una cuchara.']],
+  [['Call a friend and sing happy birthday, even if it is not their birthday.','Llama a un amigo y cántale cumpleaños feliz aunque no sea su cumpleaños.'],['Let the group write your next social media status.','Deja que el grupo escriba tu próximo estado.'],['Eat a spoonful of something chosen by the group.','Come una cucharada de algo que elija el grupo.'],['Do a 20-second plank.','Haz una plancha de 20 segundos.'],['Send a sweet compliment to the third person in your contacts.','Envía un piropo bonito a la tercera persona de tus contactos.'],['Swap a piece of clothing with the player to your left.','Cámbiale una prenda al jugador de tu izquierda.'],['Do your best stand-up comedy for 30 seconds.','Haz un monólogo de humor de 30 segundos.'],['Post an embarrassing childhood photo (or show it).','Enseña una foto vergonzosa de cuando eras pequeño.']]
+];
+let players = [], level = 1, turn = 0, used = new Set();
+const $ = id => document.getElementById(id);
+$('tT').textContent = T.truth + ' ' + (ES ? 'o' : 'or'); $('tD').textContent = T.dare; $('sub').textContent = T.sub;
+$('lPlayers').textContent = T.players; $('lLevel').textContent = T.level; $('name').placeholder = T.name; $('start').textContent = T.start;
+$('pickT').textContent = '🤔 ' + T.truth.toUpperCase(); $('pickD').textContent = '🔥 ' + T.dare.toUpperCase();
+$('choice').lastElementChild.firstChild.textContent = T.random; $('choice').lastElementChild.className = 'row'; $('choice').lastElementChild.style.cssText = 'padding:14px;border-radius:16px;background:var(--card);font-weight:800';
+$('turnLbl').textContent = T.turn; $('skipPlayer').textContent = T.skip;
+T.levels.forEach((n, i) => { const b = document.createElement('button'); b.className = 'lv'; b.textContent = n; b.onclick = () => { level = i; save(); renderSetup(); }; $('levels').appendChild(b); });
+function save() { store.set('setup', { players, level }); }
+function renderSetup() {
+  const box = $('players'); box.innerHTML = '';
+  players.forEach((p, i) => { const b = document.createElement('button'); b.className = 'pl'; b.innerHTML = '<b></b><span>✕</span>'; b.firstChild.textContent = p; b.onclick = () => { players.splice(i, 1); save(); renderSetup(); }; box.appendChild(b); });
+  document.querySelectorAll('.lv').forEach((b, i) => b.classList.toggle('on', i === level));
+  $('start').disabled = players.length < 2; $('start').textContent = players.length < 2 ? T.min : T.start;
+}
+$('addForm').onsubmit = e => { e.preventDefault(); const v = $('name').value.trim(); if (v && players.length < 16) { players.push(v); $('name').value = ''; save(); renderSetup(); } };
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+$('start').onclick = () => { turn = Math.floor(Math.random() * players.length); show('play'); nextTurn(false); };
+function nextTurn(advance = true) { if (advance) turn = (turn + 1) % players.length; $('who').textContent = players[turn]; $('choice').style.display = 'flex'; $('cardBox').style.display = 'none'; }
+function pick(kind) {
+  const list = (kind === 't' ? TRUTHS : DARES)[level];
+  let k, tries = 0; do { k = Math.floor(Math.random() * list.length); } while (used.has(kind + level + k) && tries++ < 30);
+  used.add(kind + level + k); if (used.size > 40) used.clear();
+  $('choice').style.display = 'none';
+  const box = $('cardBox'); box.style.display = 'flex';
+  box.innerHTML = `<div class="card ${kind}"><div class="kind">${(kind === 't' ? T.truth : T.dare).toUpperCase()}</div><div class="text"></div></div><div class="row"><button id="again">${T.other}</button><button class="ok" id="done">${T.done}</button></div>`;
+  box.querySelector('.text').textContent = list[k][L];
+  $('again').onclick = () => pick(kind); $('done').onclick = () => nextTurn();
+  buzz(20);
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('pickT').onclick = () => pick('t'); $('pickD').onclick = () => pick('d');
+$('choice').lastElementChild.onclick = () => pick(Math.random() < .5 ? 't' : 'd');
+$('back').onclick = () => show('setup'); $('skipPlayer').onclick = () => nextTurn();
+(async () => { const s = await store.get('setup', null); if (s) { players = s.players || []; level = s.level ?? 1; } renderSetup(); })();
+</script>
+</body>
+</html>

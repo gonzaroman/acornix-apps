@@ -1,0 +1,14 @@
+{
+  "id": "emoji-movies",
+  "name": "Emoji Movies",
+  "emoji": "🎬",
+  "category": "entertainment",
+  "description": "Guess the film from a few emoji, with hints and ten movies per round.",
+  "prompt": "A guess the movie from emoji quiz with forty famous films, four options, hints with the genre and year, ten movies per round and a best score.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

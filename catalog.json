@@ -28,6 +28,75 @@
       "trending": 0
     },
     {
+      "id": "would-you-rather",
+      "name": "Would You Rather",
+      "emoji": "🤔",
+      "category": "entertainment",
+      "description": "Party, silly and deep dilemmas: everyone taps their choice and you reveal how the group split.",
+      "prompt": "A Would You Rather party game with three decks of questions, two big colourful halves to tap, a vote counter so the whole group can vote and a reveal with percentages.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11004,
+      "sha256": "99168432bac12935ae7ed1482ff28c783cc29c4a33476c7aad5bc03da7e8e57a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "truth-or-dare",
+      "name": "Truth or Dare",
+      "emoji": "🎲",
+      "category": "entertainment",
+      "description": "Add the players, pick a level from kids to bold, and let the phone choose truths and dares.",
+      "prompt": "A Truth or Dare game for groups: add players, choose kids, friends or bold level, it picks whose turn it is and shows a truth or a dare card, all fun and friendly.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 14256,
+      "sha256": "e4a23ab2c66447e411fe328099fdf60b8dbb7752d8a6a0bb9f89d185838b3091",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "trivia-night",
+      "name": "Trivia Night",
+      "emoji": "❓",
+      "category": "entertainment",
+      "description": "Ten quick questions on geography, science, history, movies, sports or animals, with streaks and a 50:50.",
+      "prompt": "A trivia quiz with built-in questions in English and Spanish about geography, science, history, movies and music, sports and animals, ten questions per round with a 15 second timer, streak bonus, 50:50 and best score per topic.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 21210,
+      "sha256": "44f31ba6d1f0d28aec200536c25f7dd3631a662f921bbecff1290e0db4b4a6f7",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "sudoku",
       "name": "Sudoku",
       "emoji": "🧩",
@@ -47,6 +116,31 @@
       ],
       "size": 13932,
       "sha256": "ae048794d8121f9ea0f4603ad429cbdb15c3bae23f054cd463af9e5d360df8c7",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "dragon-quest-ai",
+      "name": "Story Adventure",
+      "emoji": "🐉",
+      "category": "entertainment",
+      "description": "Your AI narrates an adventure where you choose what happens: fantasy, space, pirates and more.",
+      "prompt": "An interactive story game where my AI is the narrator: I choose a world like fantasy, space or pirates, name my hero, and each turn it writes the story with three choices or I type my own action, with health and inventory, saved to continue later.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10067,
+      "sha256": "3c0ae791fdce6cb7192308ba15d1e8efdcc3516e90786fea946dc5361ea03ce5",
       "downloads": 0,
       "trending": 0
     },
@@ -189,6 +283,121 @@
       "trending": 0
     },
     {
+      "id": "magic-8-ball",
+      "name": "Magic 8 Ball",
+      "emoji": "🎱",
+      "category": "entertainment",
+      "description": "Ask a yes or no question, shake or tap the ball and read your answer.",
+      "prompt": "A realistic Magic 8 Ball: type a question, shake the phone or tap the ball, it shakes and the blue triangle floats up with one of the twenty classic answers.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 5866,
+      "sha256": "ecedbe79ef1196979347618f786a8ede871de20f32cdd91fb03cf9ff59e6d5c4",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "fortune-cookie",
+      "name": "Fortune Cookie",
+      "emoji": "🥠",
+      "category": "entertainment",
+      "description": "Crack open a cookie for a fortune and your lucky numbers.",
+      "prompt": "A fortune cookie app: tap the cookie, it shakes and cracks in two halves, a paper with a funny or wise fortune and six lucky numbers appears, with crunch sound and share button.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9883,
+      "sha256": "476f6e9aaaf95d22a672b7f6d0e735f1efee9083cf27495010465ebb5349ae49",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "emoji-movies",
+      "name": "Emoji Movies",
+      "emoji": "🎬",
+      "category": "entertainment",
+      "description": "Guess the film from a few emoji, with hints and ten movies per round.",
+      "prompt": "A guess the movie from emoji quiz with forty famous films, four options, hints with the genre and year, ten movies per round and a best score.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9342,
+      "sha256": "8df48d233a8c19fa0aaf910969f7f3227e5d4a913501ae5bc5dadf8ffde184e2",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "decision-wheel",
+      "name": "Decision Wheel",
+      "emoji": "🎡",
+      "category": "entertainment",
+      "description": "Can't decide? Make your own wheels, add options and spin with ticking sounds.",
+      "prompt": "A spinning decision wheel with colourful slices, ticking sound, several saved wheels I can name, editable options and an option to remove the winner after each spin.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11121,
+      "sha256": "9a83096cc2149f484d0aef5ec51949035f98da866279bfdcf214f476e08e3387",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "charades",
+      "name": "Charades",
+      "emoji": "🎭",
+      "category": "entertainment",
+      "description": "Guess the word on your forehead before time runs out: animals, movies, actions, jobs and more.",
+      "prompt": "A Heads Up style charades game: the phone shows a word from a deck like animals, movies or jobs, friends give clues, a 30, 60 or 90 second timer, got it and pass buttons and a results list.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11062,
+      "sha256": "9e8b6cdbc809d8b94819500963b2d6755f6aab512455b8dc6bbc71d3e0340208",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "brick-breaker",
       "name": "Brick Breaker",
       "emoji": "🏓",
@@ -230,9 +439,9 @@
         "index.html"
       ],
       "size": 16183,
-      "sha256": "19e89d366af924c9b9f57f867efa0ae77ba340e478ada624f4272f9db2eb42f7",
-      "downloads": 0,
-      "trending": 0
+      "sha256": "26056a5995f5927daaef0341639d6cfca9f367ce4cdec92157360737f16c8d40",
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "merge-2048",
@@ -254,6 +463,31 @@
       ],
       "size": 10020,
       "sha256": "f388ec364d7be9b372e64c6dda88e76320d54eb6d3eb5030d8abf8855c62c138",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "twenty-questions-ai",
+      "name": "20 Questions",
+      "emoji": "🔮",
+      "category": "entertainment",
+      "description": "Think of anything and your AI tries to guess it with yes or no questions.",
+      "prompt": "A 20 questions game where my AI asks me yes or no questions to guess what I'm thinking of, with categories like animals, famous people or food, and a score of AI against me.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-29",
+      "updated": "2026-10-29",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9997,
+      "sha256": "71b563bc535c1b7aff20147fc069120c187196ddd1cc3bb13d87bb19ef1d9c7f",
       "downloads": 0,
       "trending": 0
     },

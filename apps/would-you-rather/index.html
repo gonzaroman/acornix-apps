@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Would You Rather</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { margin:0; height:100%; overflow:hidden; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#fff; background:#111; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; }
+  .opt { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px 26px; text-align:center; overflow:hidden; transition:flex .35s; }
+  #a { background:linear-gradient(160deg,#ff4d6d,#ff8e3c); padding-top:calc(env(safe-area-inset-top) + 40px); }
+  #b { background:linear-gradient(160deg,#3a86ff,#8338ec); padding-bottom:calc(env(safe-area-inset-bottom) + 40px); }
+  .opt .txt { font-size:clamp(20px,6vw,30px); font-weight:800; line-height:1.25; max-width:520px; text-shadow:0 2px 12px #0003; position:relative; z-index:1; }
+  .opt .count { margin-top:12px; font-size:15px; font-weight:700; opacity:.85; position:relative; z-index:1; min-height:20px; }
+  .opt .fill { position:absolute; left:0; bottom:0; top:0; width:0; background:#ffffff26; transition:width .6s cubic-bezier(.2,.8,.2,1); }
+  .opt .pct { font-size:46px; font-weight:900; position:relative; z-index:1; display:none; }
+  .revealed .pct { display:block; }
+  .opt.tap { animation:tap .25s; }
+  @keyframes tap { 50% { transform:scale(.97); } }
+  #or { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:74px; height:74px; border-radius:50%; background:#111; border:5px solid #fff; display:grid; place-items:center; font-weight:900; font-size:18px; z-index:5; box-shadow:0 6px 20px #0006; }
+  #bar { position:absolute; left:0; right:0; top:0; display:flex; justify-content:space-between; align-items:center; padding:calc(env(safe-area-inset-top) + 8px) 12px; z-index:6; }
+  #ttl { font-size:17px; font-weight:900; text-shadow:0 2px 8px #0004; }
+  #bar button { padding:8px 12px; border-radius:12px; background:#0003; font-weight:700; font-size:13px; backdrop-filter:blur(6px); }
+  #bottom { position:absolute; left:0; right:0; bottom:0; display:flex; gap:10px; padding:12px 14px calc(env(safe-area-inset-bottom) + 12px); z-index:6; }
+  #bottom button { flex:1; padding:14px; border-radius:16px; background:#000a; font-weight:800; font-size:15px; backdrop-filter:blur(6px); }
+  #bottom .main { background:#fff; color:#111; }
+  #hint { position:absolute; left:50%; top:calc(50% + 52px); transform:translateX(-50%); z-index:5; font-size:12px; font-weight:700; background:#0006; padding:5px 10px; border-radius:10px; white-space:nowrap; }
+  @media (orientation:landscape) { #app { flex-direction:row; } #a { padding-top:28px; } #b { padding-bottom:28px; } #bottom { left:auto; width:320px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <button class="opt" id="a"><div class="fill"></div><div class="pct"></div><div class="txt"></div><div class="count"></div></button>
+  <button class="opt" id="b"><div class="fill"></div><div class="pct"></div><div class="txt"></div><div class="count"></div></button>
+</div>
+<div id="or"></div>
+<div id="hint"></div>
+<div id="bar"><button id="deckBtn"></button><b id="ttl"></b><button id="resetBtn">↺</button></div>
+<div id="bottom"><button id="revealBtn"></button><button class="main" id="nextBtn"></button></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const L = ES ? 1 : 0;
+const T = ES ? { title:'¿Qué prefieres…?', or:'O', hint:'Cada uno toca su opción', reveal:'Ver resultado', next:'Siguiente ➜', votes:'votos', vote:'voto', decks:['🎉 Fiesta','🤪 Locuras','💭 Profundas'] }
+ : { title:'Would you rather…', or:'OR', hint:'Everyone taps their choice', reveal:'Reveal', next:'Next ➜', votes:'votes', vote:'vote', decks:['🎉 Party','🤪 Silly','💭 Deep'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const DECKS = [
+  [ // party
+    [['be able to fly','be invisible'],['poder volar','ser invisible']],
+    [['always be 10 minutes late','always be 20 minutes early'],['llegar siempre 10 minutos tarde','llegar siempre 20 minutos antes']],
+    [['live without music','live without movies'],['vivir sin música','vivir sin películas']],
+    [['have a rewind button for your life','have a pause button'],['tener un botón para rebobinar tu vida','tener un botón de pausa']],
+    [['explore space','explore the deep ocean'],['explorar el espacio','explorar el fondo del mar']],
+    [['speak every language','play every instrument'],['hablar todos los idiomas','tocar todos los instrumentos']],
+    [['only eat pizza forever','never eat pizza again'],['comer solo pizza para siempre','no volver a comer pizza']],
+    [['be famous','be rich but unknown'],['ser famoso','ser rico pero desconocido']],
+    [['have a dragon','be a dragon'],['tener un dragón','ser un dragón']],
+    [['live in the city','live in the countryside'],['vivir en la ciudad','vivir en el campo']],
+    [['never use social media again','never watch TV again'],['no usar más redes sociales','no ver más la tele']],
+    [['travel to the past','travel to the future'],['viajar al pasado','viajar al futuro']],
+    [['have summer all year','have winter all year'],['tener verano todo el año','tener invierno todo el año']],
+    [['know how you will die','know when you will die'],['saber cómo morirás','saber cuándo morirás']]
+  ],
+  [ // silly
+    [['have spaghetti for hair','sweat maple syrup'],['tener espaguetis por pelo','sudar sirope de arce']],
+    [['talk like a pirate forever','sing everything you say'],['hablar como un pirata para siempre','cantar todo lo que dices']],
+    [['have a tail','have wings that don\'t work'],['tener cola','tener alas que no funcionan']],
+    [['sneeze confetti','hiccup bubbles'],['estornudar confeti','tener hipo de burbujas']],
+    [['fight one horse-sized duck','fight 100 duck-sized horses'],['luchar contra un pato del tamaño de un caballo','luchar contra 100 caballos del tamaño de un pato']],
+    [['have fingers as long as your legs','legs as long as your fingers'],['tener dedos tan largos como las piernas','piernas tan largas como los dedos']],
+    [['only whisper','only shout'],['hablar siempre susurrando','hablar siempre gritando']],
+    [['be a giant hamster','a tiny elephant'],['ser un hámster gigante','un elefante diminuto']],
+    [['wear clown shoes every day','a clown nose every day'],['llevar zapatos de payaso cada día','nariz de payaso cada día']],
+    [['have a laugh like a dolphin','a voice like a cartoon'],['reír como un delfín','tener voz de dibujos animados']],
+    [['eat a bug','let a bug crawl on you for a minute'],['comerte un bicho','dejar que un bicho te recorra un minuto']],
+    [['live in a treehouse','live in a castle made of candy'],['vivir en una casa del árbol','vivir en un castillo de chuches']]
+  ],
+  [ // deep
+    [['know every answer','be able to ask any question to anyone'],['saber todas las respuestas','poder preguntar lo que quieras a quien quieras']],
+    [['have more time','have more money'],['tener más tiempo','tener más dinero']],
+    [['be loved by many','be deeply loved by a few'],['que te quiera mucha gente','que te quieran mucho unos pocos']],
+    [['relive your best day','skip your worst day'],['revivir tu mejor día','saltarte tu peor día']],
+    [['be the funniest person in the room','the smartest'],['ser la persona más graciosa de la sala','la más lista']],
+    [['change the past','see the future'],['cambiar el pasado','ver el futuro']],
+    [['have a job you love that pays little','a job you hate that pays a lot'],['un trabajo que te encanta y paga poco','uno que odias y paga mucho']],
+    [['never feel fear','never feel sadness'],['no sentir nunca miedo','no sentir nunca tristeza']],
+    [['live 200 years','live a normal life twice'],['vivir 200 años','vivir dos veces una vida normal']],
+    [['always say what you think','never speak again'],['decir siempre lo que piensas','no volver a hablar']],
+    [['read minds','be impossible to lie to'],['leer mentes','que nadie pueda mentirte']],
+    [['give up your phone for a year','give up sweets for a year'],['dejar el móvil un año','dejar el dulce un año']]
+  ]
+];
+let deck = 0, order, i, votes = [0, 0], revealed = false;
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('or').textContent = T.or; $('hint').textContent = T.hint; $('revealBtn').textContent = T.reveal; $('nextBtn').textContent = T.next;
+function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+function setDeck(d) { deck = d; order = shuffle([...DECKS[d].keys()]); i = 0; $('deckBtn').textContent = T.decks[d] + ' ▾'; store.set('deck', d); show(); }
+function show() {
+  const q = DECKS[deck][order[i % order.length]][L];
+  votes = [0, 0]; revealed = false; $('app').classList.remove('revealed');
+  ['a', 'b'].forEach((id, k) => { const el = $(id); el.querySelector('.txt').textContent = q[k].charAt(0).toUpperCase() + q[k].slice(1); el.querySelector('.fill').style.width = '0'; el.style.flex = '1'; });
+  count();
+}
+function count() { ['a', 'b'].forEach((id, k) => $(id).querySelector('.count').textContent = votes[k] ? votes[k] + ' ' + (votes[k] === 1 ? T.vote : T.votes) : ''); }
+function vote(k) {
+  if (revealed) return;
+  votes[k]++; count(); buzz(12);
+  const el = $(['a', 'b'][k]); el.classList.remove('tap'); void el.offsetWidth; el.classList.add('tap');
+}
+function reveal() {
+  const total = votes[0] + votes[1] || 1; revealed = true; $('app').classList.add('revealed');
+  ['a', 'b'].forEach((id, k) => {
+    const p = Math.round(votes[k] / total * 100), el = $(id);
+    el.querySelector('.pct').textContent = p + '%'; el.querySelector('.fill').style.width = p + '%';
+    el.style.flex = String(.6 + p / 100);
+  });
+  buzz([20, 30, 20]);
+}
+function buzz(p) { try { if (window.Acornix) Acornix.vibrate(p); else if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+$('a').onclick = () => vote(0); $('b').onclick = () => vote(1);
+$('revealBtn').onclick = reveal;
+$('nextBtn').onclick = () => { i++; show(); };
+$('resetBtn').onclick = () => { votes = [0, 0]; revealed = false; show(); };
+$('deckBtn').onclick = () => setDeck((deck + 1) % DECKS.length);
+(async () => setDeck(await store.get('deck', 0)))();
+</script>
+</body>
+</html>

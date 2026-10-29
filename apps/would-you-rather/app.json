@@ -1,0 +1,14 @@
+{
+  "id": "would-you-rather",
+  "name": "Would You Rather",
+  "emoji": "🤔",
+  "category": "entertainment",
+  "description": "Party, silly and deep dilemmas: everyone taps their choice and you reveal how the group split.",
+  "prompt": "A Would You Rather party game with three decks of questions, two big colourful halves to tap, a vote counter so the whole group can vote and a reveal with percentages.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

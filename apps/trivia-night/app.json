@@ -1,0 +1,14 @@
+{
+  "id": "trivia-night",
+  "name": "Trivia Night",
+  "emoji": "❓",
+  "category": "entertainment",
+  "description": "Ten quick questions on geography, science, history, movies, sports or animals, with streaks and a 50:50.",
+  "prompt": "A trivia quiz with built-in questions in English and Spanish about geography, science, history, movies and music, sports and animals, ten questions per round with a 15 second timer, streak bonus, 50:50 and best score per topic.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

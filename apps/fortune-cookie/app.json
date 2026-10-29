@@ -1,0 +1,14 @@
+{
+  "id": "fortune-cookie",
+  "name": "Fortune Cookie",
+  "emoji": "🥠",
+  "category": "entertainment",
+  "description": "Crack open a cookie for a fortune and your lucky numbers.",
+  "prompt": "A fortune cookie app: tap the cookie, it shakes and cracks in two halves, a paper with a funny or wise fortune and six lucky numbers appears, with crunch sound and share button.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

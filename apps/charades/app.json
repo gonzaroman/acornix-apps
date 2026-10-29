@@ -1,0 +1,14 @@
+{
+  "id": "charades",
+  "name": "Charades",
+  "emoji": "🎭",
+  "category": "entertainment",
+  "description": "Guess the word on your forehead before time runs out: animals, movies, actions, jobs and more.",
+  "prompt": "A Heads Up style charades game: the phone shows a word from a deck like animals, movies or jobs, friends give clues, a 30, 60 or 90 second timer, got it and pass buttons and a results list.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}

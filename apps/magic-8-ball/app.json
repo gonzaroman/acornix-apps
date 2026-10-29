@@ -1,0 +1,14 @@
+{
+  "id": "magic-8-ball",
+  "name": "Magic 8 Ball",
+  "emoji": "🎱",
+  "category": "entertainment",
+  "description": "Ask a yes or no question, shake or tap the ball and read your answer.",
+  "prompt": "A realistic Magic 8 Ball: type a question, shake the phone or tap the ball, it shakes and the blue triangle floats up with one of the twenty classic answers.",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-10-29",
+  "updated": "2026-10-29",
+  "featured": false
+}
