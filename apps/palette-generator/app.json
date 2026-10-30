@@ -1,0 +1,15 @@
+{
+  "id": "palette-generator",
+  "name": "Palette Generator",
+  "emoji": "🌰",
+  "category": "graphics-design",
+  "description": "Beautiful colour palettes with one tap: lock the colours you like, pick a harmony, or describe a mood and your AI invents one with names.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 23
+}

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Palette Generator</title>
+<style>
+  :root { --bg:#ffffff; --ink:#1d1d1f; --muted:#86868b; --line:#ececf0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); }
+  .top { display:flex; align-items:center; gap:8px; padding:10px 14px; }
+  .top h1 { margin:0; font-size:20px; flex:1; }
+  .b { padding:9px 13px; border-radius:12px; background:#f2f2f5; font-weight:800; font-size:14px; }
+  .cols { flex:1; display:flex; flex-direction:column; min-height:0; }
+  .col { flex:1; display:flex; align-items:center; padding:0 18px; gap:12px; position:relative; transition:background .35s; }
+  .col .hex { font:800 22px ui-monospace,Menlo,monospace; letter-spacing:1px; flex:1; }
+  .col .nm { position:absolute; left:18px; bottom:6px; font-size:12px; font-weight:700; opacity:.7; }
+  .col button { width:42px; height:42px; border-radius:50%; background:#ffffff26; font-size:17px; }
+  .col.lt { color:#1d1d1f; } .col.lt button { background:#0000000f; }
+  .col.dk { color:#fff; }
+  .bot { padding:12px 14px calc(env(safe-area-inset-bottom) + 12px); display:flex; flex-direction:column; gap:10px; }
+  .modes { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+  .modes::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 12px; border-radius:20px; background:#f2f2f5; font-weight:800; font-size:13px; color:var(--muted); }
+  .chip.on { background:var(--ink); color:#fff; }
+  .acts { display:flex; gap:8px; }
+  .gen { flex:1; padding:15px; border-radius:16px; background:var(--ink); color:#fff; font-weight:900; font-size:16px; }
+  .ai { display:flex; gap:8px; }
+  .ai input { flex:1; min-width:0; padding:12px 14px; border-radius:14px; border:2px solid var(--line); font:inherit; outline:none; }
+  .ai input:focus { border-color:var(--ink); }
+  .ai button { padding:0 16px; border-radius:14px; background:linear-gradient(135deg,#7b2ff7,#f107a3); color:#fff; font-weight:900; }
+  .err { color:#d70015; font-size:13px; font-weight:700; }
+  .sheet { position:fixed; inset:0; background:#0006; display:flex; align-items:flex-end; }
+  .sheet .in { background:#fff; width:100%; max-height:75vh; overflow:auto; border-radius:22px 22px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sheet h3 { margin:0 0 12px; }
+  .sv { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .sv .st { flex:1; display:flex; height:44px; border-radius:12px; overflow:hidden; cursor:pointer; }
+  .sv .st i { flex:1; }
+  .sv .x { background:none; color:var(--muted); font-size:18px; padding:8px; }
+  .toast { position:fixed; left:50%; top:calc(env(safe-area-inset-top) + 60px); transform:translate(-50%,-30px); opacity:0; padding:9px 16px; border-radius:20px; background:var(--ink); color:#fff; font-weight:800; transition:.25s; pointer-events:none; }
+  .toast.on { opacity:1; transform:translate(-50%,0); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🎨 <span id="ttl"></span></h1><button class="b" id="keep">⭐</button><button class="b" id="lib">📚</button></div>
+  <div class="cols" id="cols"></div>
+  <div class="bot">
+    <div class="modes" id="modes"></div>
+    <div class="ai"><input id="mood" maxlength="80"><button id="ask">✨</button></div>
+    <div class="err" id="err"></div>
+    <div class="acts"><button class="gen" id="gen"></button></div>
+  </div>
+</div>
+<div class="sheet" id="sheet" hidden><div class="in"><h3 id="lLib"></h3><div id="saved"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Paletas', gen:'🎲 Generar', mood:'Describe un ambiente: café en París, bosque…', modes:['Al azar', 'Análogos', 'Complementarios', 'Tríada', 'Monocromo', 'Pastel'], copy:'Copiado', kept:'Paleta guardada', lib:'Tus paletas', none:'Aún no has guardado ninguna. Toca ⭐.', noAi:'Para inventar paletas con IA abre la app en Acornix con tu IA conectada.', failed:'No he podido: ', lang:'Spanish' }
+ : { title:'Palettes', gen:'🎲 Generate', mood:'Describe a mood: Paris café, misty forest…', modes:['Random', 'Analogous', 'Complementary', 'Triad', 'Monochrome', 'Pastel'], copy:'Copied', kept:'Palette kept', lib:'Your palettes', none:'Nothing kept yet. Tap ⭐.', noAi:'To make palettes with AI, open the app in Acornix with your AI connected.', failed:'Couldn\'t do it: ', lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('gen').textContent = T.gen; $('mood').placeholder = T.mood; $('lLib').textContent = T.lib;
+let cols = [], mode = 0, saved = [];
+const hsl2hex = (h, s, l) => { s /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); return '#' + [f(0), f(8), f(4)].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join(''); };
+const lum = h => { const [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return .299 * r + .587 * g + .114 * b; };
+const R = (a, b) => a + Math.random() * (b - a);
+function make() {
+  const h = R(0, 360), out = [];
+  for (let i = 0; i < 5; i++) {
+    let hh, s, l;
+    if (mode === 0) { hh = R(0, 360); s = R(35, 85); l = R(25, 80); }
+    else if (mode === 1) { hh = h + (i - 2) * 22; s = R(50, 80); l = 22 + i * 14; }
+    else if (mode === 2) { hh = i < 3 ? h : h + 180; s = R(45, 85); l = [25, 50, 80, 45, 70][i]; }
+    else if (mode === 3) { hh = h + (i % 3) * 120; s = R(50, 80); l = [35, 55, 65, 80, 25][i]; }
+    else if (mode === 4) { hh = h; s = R(30, 70); l = 15 + i * 17; }
+    else { hh = h + i * 72 + R(-10, 10); s = R(55, 80); l = R(78, 88); }
+    out.push({ hex: hsl2hex(((hh % 360) + 360) % 360, s, l) });
+  }
+  return mode === 1 || mode === 4 ? out : out.sort((a, b) => lum(a.hex) - lum(b.hex));
+}
+function generate() { const n = make(); cols = cols.length ? cols.map((c, i) => c.lock ? c : n[i]) : n; render(); }
+function render() {
+  $('cols').innerHTML = cols.map((c, i) => `<div class="col ${lum(c.hex) > .6 ? 'lt' : 'dk'}" style="background:${c.hex}" data-i="${i}"><span class="hex">${c.hex.toUpperCase()}</span><button data-l="${i}">${c.lock ? '🔒' : '🔓'}</button>${c.name ? `<span class="nm">${c.name.replace(/[<>&]/g, '')}</span>` : ''}</div>`).join('');
+  $('cols').querySelectorAll('[data-l]').forEach(b => b.onclick = e => { e.stopPropagation(); const c = cols[+b.dataset.l]; c.lock = !c.lock; render(); });
+  $('cols').querySelectorAll('.col').forEach(d => d.onclick = async () => { const h = cols[+d.dataset.i].hex.toUpperCase(); try { await navigator.clipboard.writeText(h); } catch (e) {} toast(`${T.copy} ${h}`); });
+  $('modes').innerHTML = T.modes.map((m, i) => `<button class="chip ${i === mode ? 'on' : ''}" data-i="${i}">${m}</button>`).join('');
+  $('modes').querySelectorAll('.chip').forEach(b => b.onclick = () => { mode = +b.dataset.i; generate(); });
+}
+function toast(t) { $('toast').textContent = t; $('toast').classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => $('toast').classList.remove('on'), 1300); try { window.Acornix && Acornix.vibrate(8); } catch (e) {} }
+$('gen').onclick = generate;
+addEventListener('keydown', e => { if (e.code === 'Space' && document.activeElement !== $('mood')) { e.preventDefault(); generate(); } });
+$('keep').onclick = () => { saved.unshift({ t: Date.now(), cols: cols.map(c => ({ hex: c.hex, name: c.name })) }); saved = saved.slice(0, 60); store.set('saved', saved); toast(T.kept); };
+function lib() {
+  $('saved').innerHTML = saved.length ? saved.map((p, i) => `<div class="sv"><div class="st" data-i="${i}">${p.cols.map(c => `<i style="background:${c.hex}"></i>`).join('')}</div><button class="x" data-x="${i}">✕</button></div>`).join('') : `<p style="color:#86868b">${T.none}</p>`;
+  $('saved').querySelectorAll('.st').forEach(s => s.onclick = () => { cols = saved[+s.dataset.i].cols.map(c => ({ ...c })); $('sheet').hidden = true; render(); });
+  $('saved').querySelectorAll('[data-x]').forEach(b => b.onclick = () => { saved.splice(+b.dataset.x, 1); store.set('saved', saved); lib(); });
+}
+$('lib').onclick = () => { lib(); $('sheet').hidden = false; };
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').hidden = true; };
+async function askAI() {
+  const m = $('mood').value.trim(); $('err').textContent = ''; if (!m) { $('mood').focus(); return; }
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('ask').textContent = '⏳'; $('ask').disabled = true;
+  try {
+    const r = await Acornix.askAI(`A colour palette for: ${m}`, { json: true, system: `You are a colour designer. Create a beautiful, usable 5-colour palette that captures the mood, ordered from darkest to lightest. Give each colour a short evocative name in ${T.lang} (2 or 3 words). Reply only with JSON: {"colors":[{"hex":"#rrggbb","name":"..."}]}` });
+    const c = (r && r.colors || []).filter(x => /^#[0-9a-f]{6}$/i.test(x.hex)).slice(0, 5);
+    if (c.length < 3) throw new Error('?');
+    cols = c.map(x => ({ hex: x.hex.toLowerCase(), name: String(x.name || '').slice(0, 30) })); render(); $('mood').blur();
+  } catch (e) { $('err').textContent = T.failed + (e.message || ''); }
+  $('ask').textContent = '✨'; $('ask').disabled = false;
+}
+$('ask').onclick = askAI; $('mood').onkeydown = e => { if (e.key === 'Enter') askAI(); };
+(async () => { saved = await store.get('saved', []); generate(); })();
+</script>
+</body>
+</html>
