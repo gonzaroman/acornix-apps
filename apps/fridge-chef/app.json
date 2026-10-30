@@ -1,0 +1,15 @@
+{
+  "id": "fridge-chef",
+  "name": "Fridge Chef",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "Snap your fridge or type what you have and your AI suggests three recipes you can cook now, with what is missing.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 52
+}

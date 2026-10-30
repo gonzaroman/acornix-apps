@@ -538,6 +538,32 @@
       "trending": 0
     },
     {
+      "id": "fridge-chef",
+      "name": "Fridge Chef",
+      "emoji": "🌰",
+      "category": "food-drink",
+      "description": "Snap your fridge or type what you have and your AI suggests three recipes you can cook now, with what is missing.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11851,
+      "sha256": "d8b054595ef67326f482f8e94bc0f8b51434fa039e976ff96c482ca08a462c44",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "drinks",
       "name": "Drinks",
       "emoji": "🌰",
