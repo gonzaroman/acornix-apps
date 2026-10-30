@@ -1,0 +1,15 @@
+{
+  "id": "pantry",
+  "name": "Pantry",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "What you have in the fridge, freezer and cupboard, with expiry warnings. Snap your groceries and your AI adds them with dates.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 47
+}

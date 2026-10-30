@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pantry</title>
+<style>
+  :root { --bg:#f6f4ef; --card:#fff; --ink:#26231d; --muted:#8f887a; --a:#2f9e44; --warn:#f08c00; --bad:#e03131; --line:#e9e4d8; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .alert { background:#fff4e6; border:2px solid #ffd8a8; border-radius:16px; padding:12px 14px; margin-bottom:12px; font-weight:700; line-height:1.45; }
+  .places { display:flex; gap:6px; background:#ebe7dc; padding:4px; border-radius:16px; margin-bottom:12px; }
+  .places button { flex:1; padding:10px 4px; border-radius:12px; font-weight:800; font-size:13px; color:var(--muted); background:none; } .places button.on { background:#fff; color:var(--ink); box-shadow:0 1px 4px #0001; }
+  .it { display:flex; align-items:center; gap:12px; background:var(--card); border-radius:16px; padding:11px 12px; margin-bottom:7px; box-shadow:0 2px 0 var(--line); }
+  .it .e { font-size:26px; width:34px; text-align:center; } .it .i { flex:1; min-width:0; } .it b { display:block; font-size:15px; } .it small { font-weight:700; font-size:12px; }
+  .it .q { display:flex; align-items:center; gap:6px; } .it .q button { width:30px; height:30px; border-radius:50%; background:#f1eee6; font-weight:900; } .it .q span { min-width:22px; text-align:center; font-weight:900; }
+  .ok { color:var(--a); } .soon { color:var(--warn); } .exp { color:var(--bad); } .none { color:var(--muted); }
+  .fab { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(env(safe-area-inset-bottom) + 18px); display:flex; gap:8px; }
+  .fab button, .fab label { padding:14px 20px; border-radius:30px; background:var(--a); color:#fff; font-weight:900; font-size:15px; box-shadow:0 8px 24px #2f9e4455; white-space:nowrap; } .fab label { background:var(--ink); }
+  input[type=file] { display:none; }
+  .empty { text-align:center; padding:40px 20px; color:var(--muted); font-weight:600; line-height:1.6; } .empty .big { font-size:56px; }
+  .sheet { position:fixed; inset:0; background:#26231d66; display:flex; align-items:flex-end; z-index:5; }
+  .sheet .in { width:100%; max-height:88vh; overflow:auto; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sheet h3 { margin:0 0 12px; }
+  .f { margin-bottom:12px; } .f label { display:block; font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:0 0 6px 2px; }
+  .f input { width:100%; padding:12px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; color:var(--ink); }
+  .chips { display:flex; gap:7px; flex-wrap:wrap; } .chip { padding:8px 12px; border-radius:20px; background:#fff; border:2px solid var(--line); font-weight:800; font-size:13px; } .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .row { display:flex; gap:8px; } .row button { flex:1; padding:13px; border-radius:14px; font-weight:900; background:#fff; } .row .go { background:var(--a); color:#fff; } .row .del { flex:0 0 auto; color:var(--bad); padding:13px 18px; }
+  .found { background:#fff; border-radius:14px; padding:4px 12px; margin-bottom:12px; } .found div { display:flex; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); } .found div:last-child { border:0; } .found input { width:20px; height:20px; accent-color:var(--a); }
+  .busy { text-align:center; padding:30px; color:var(--muted); font-weight:800; } .err { color:var(--bad); font-weight:700; font-size:14px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🥫 <span id="ttl"></span></h1>
+  <div class="alert" id="alert" hidden></div>
+  <div class="places" id="places"></div>
+  <div class="err" id="err"></div>
+  <div id="list"></div>
+</div>
+<div class="fab"><label><input type="file" id="snap" accept="image/*" capture="environment">📸 <span id="lSnap"></span></label><button id="add"></button></div>
+<div class="sheet" id="sheet" hidden><div class="in" id="sheetIn"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Despensa', places:['Todo', '🧊 Nevera', '❄️ Congelador', '🗄️ Despensa'], snap:'Foto', add:'＋ Añadir', name:'Producto', exp:'Caduca (opcional)', qty:'Cantidad', where:'Dónde', save:'Guardar', cancel:'Cancelar', edit:'Editar', expired:'Caducado', today:'Caduca hoy', inD:n => n === 1 ? 'Caduca mañana' : `Caduca en ${n} días`, ago:n => n === 1 ? 'Caducó ayer' : `Caducó hace ${n} días`, noDate:'Sin fecha', alert:(n, l) => `⏰ ${n === 1 ? 'Úsalo pronto' : `Usa pronto ${n} cosas`}: ${l}`, empty:'Apunta lo que tienes y te avisaré antes de que caduque. Haz una foto de la compra y tu IA la añade por ti.', reading:'Mirando tu compra…', found:'He encontrado esto', addSel:'Añadir', noAi:'Para añadir desde foto abre la app en Acornix con tu IA conectada.', failed:'No he podido: ', lang:'Spanish' }
+ : { title:'Pantry', places:['All', '🧊 Fridge', '❄️ Freezer', '🗄️ Cupboard'], snap:'Photo', add:'＋ Add', name:'Item', exp:'Expires (optional)', qty:'Quantity', where:'Where', save:'Save', cancel:'Cancel', edit:'Edit', expired:'Expired', today:'Expires today', inD:n => n === 1 ? 'Expires tomorrow' : `Expires in ${n} days`, ago:n => n === 1 ? 'Expired yesterday' : `Expired ${n} days ago`, noDate:'No date', alert:(n, l) => `⏰ ${n === 1 ? 'Use it soon' : `Use ${n} things soon`}: ${l}`, empty:'Note what you have and I\'ll warn you before it goes off. Snap your groceries and your AI adds them for you.', reading:'Looking at your groceries…', found:'I found these', addSel:'Add', noAi:'To add from a photo, open the app in Acornix with your AI connected.', failed:'Couldn\'t do it: ', lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id), DAY = 864e5;
+$('ttl').textContent = T.title; $('lSnap').textContent = T.snap; $('add').textContent = T.add;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let items = [], place = 0;
+const save = () => store.set('items', items);
+const daysTo = d => { if (!d) return null; const a = new Date(d + 'T00:00:00'), b = new Date(); b.setHours(0, 0, 0, 0); return Math.round((a - b) / DAY); };
+const status = d => d == null ? ['none', T.noDate] : d < 0 ? ['exp', T.ago(-d)] : d === 0 ? ['exp', T.today] : d <= 3 ? ['soon', T.inD(d)] : ['ok', T.inD(d)];
+// A guess at the emoji from the name, so typing is enough.
+const EMO = [[/milk|leche/, '🥛'], [/egg|huevo/, '🥚'], [/chees|queso/, '🧀'], [/yog/, '🥣'], [/butter|mantequ/, '🧈'], [/chicken|pollo/, '🍗'], [/meat|carne|beef|ternera|cerdo|pork/, '🥩'], [/fish|pescado|salm|atún|tuna/, '🐟'], [/bread|pan\b/, '🍞'], [/apple|manzana/, '🍎'], [/banan|plátano/, '🍌'], [/tomat/, '🍅'], [/lettuce|lechuga|salad|ensalada|spinach|espinaca|kale|cabbage|col\b/, '🥬'], [/chickpea|lentil|lenteja/, '🥫'], [/\bpeas?\b|guisante/, '🫛'], [/broccoli|brócoli/, '🥦'], [/pepper|pimiento/, '🫑'], [/mushroom|champiñ|seta/, '🍄'], [/corn|maíz/, '🌽'], [/orange|naranja/, '🍊'], [/grape|uva/, '🍇'], [/ham|jamón|bacon|beicon/, '🥓'], [/sausage|salchich/, '🌭'], [/coffee|café/, '☕'], [/chocolate/, '🍫'], [/water|agua/, '💧'], [/flour|harina/, '🌾'], [/sugar|azúcar/, '🍬'], [/^cream|nata/, '🥛'], [/carrot|zanahoria/, '🥕'], [/potato|patata/, '🥔'], [/onion|cebolla/, '🧅'], [/rice|arroz/, '🍚'], [/pasta|macarr|espagu/, '🍝'], [/ice cream|helado/, '🍦'], [/pizza/, '🍕'], [/juice|zumo/, '🧃'], [/beer|cerveza/, '🍺'], [/wine|vino/, '🍷'], [/oil|aceite/, '🫒'], [/can|lata|bean|alubia|garbanz/, '🥫'], [/berr|fresa|strawb/, '🍓'], [/lemon|limón/, '🍋'], [/avocad|aguacate/, '🥑']];
+const emo = n => (EMO.find(([r]) => r.test(n.toLowerCase())) || [0, '🛒'])[1];
+function render() {
+  $('places').innerHTML = T.places.map((p, i) => `<button class="${i === place ? 'on' : ''}" data-i="${i}">${p}</button>`).join('');
+  $('places').querySelectorAll('button').forEach(b => b.onclick = () => { place = +b.dataset.i; render(); });
+  const soon = items.filter(i => { const d = daysTo(i.exp); return d != null && d <= 2; });
+  $('alert').hidden = !soon.length; $('alert').textContent = soon.length ? T.alert(soon.length, soon.slice(0, 4).map(i => i.name).join(', ')) : '';
+  const L = items.map((it, i) => ({ it, i, d: daysTo(it.exp) })).filter(x => !place || x.it.place === place).sort((a, b) => (a.d ?? 1e9) - (b.d ?? 1e9));
+  $('list').innerHTML = L.length ? L.map(({ it, i, d }) => { const [c, txt] = status(d); return `<div class="it"><div class="e">${it.emoji}</div><div class="i" data-e="${i}"><b>${esc(it.name)}</b><small class="${c}">${txt}</small></div><div class="q"><button data-m="${i}">−</button><span>${it.qty}</span><button data-p="${i}">＋</button></div></div>`; }).join('') : `<div class="empty"><div class="big">🧺</div>${T.empty}</div>`;
+  $('list').querySelectorAll('[data-m]').forEach(b => b.onclick = () => { const it = items[+b.dataset.m]; it.qty--; if (it.qty <= 0) items.splice(+b.dataset.m, 1); save(); render(); });
+  $('list').querySelectorAll('[data-p]').forEach(b => b.onclick = () => { items[+b.dataset.p].qty++; save(); render(); });
+  $('list').querySelectorAll('[data-e]').forEach(b => b.onclick = () => edit(+b.dataset.e));
+}
+function edit(i) {
+  const it = i == null ? { name: '', exp: '', qty: 1, place: place || 1 } : items[i]; let pl = it.place;
+  $('sheetIn').innerHTML = `<h3>${i == null ? T.add.replace('＋ ', '') : T.edit}</h3><div class="f"><label>${T.name}</label><input id="n" maxlength="40" value="${esc(it.name)}"></div><div class="f"><label>${T.exp}</label><input id="d" type="date" value="${it.exp || ''}"></div><div class="f"><label>${T.qty}</label><input id="q" type="number" min="1" max="99" value="${it.qty}"></div><div class="f"><label>${T.where}</label><div class="chips" id="pl">${T.places.slice(1).map((p, k) => `<button class="chip ${k + 1 === pl ? 'on' : ''}" data-k="${k + 1}">${p}</button>`).join('')}</div></div><div class="row">${i == null ? '' : '<button class="del" id="x">🗑️</button>'}<button id="c">${T.cancel}</button><button class="go" id="o">${T.save}</button></div>`;
+  $('sheet').hidden = false; if (i == null) setTimeout(() => $('n').focus(), 80);
+  $('pl').querySelectorAll('.chip').forEach(b => b.onclick = () => { pl = +b.dataset.k; $('pl').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); });
+  $('c').onclick = () => $('sheet').hidden = true; if ($('x')) $('x').onclick = () => { items.splice(i, 1); save(); render(); $('sheet').hidden = true; };
+  $('o').onclick = () => { const name = $('n').value.trim(); if (!name) return; const n = { name, emoji: emo(name), exp: $('d').value || '', qty: Math.max(1, +$('q').value || 1), place: pl }; if (i == null) items.push(n); else items[i] = n; save(); render(); $('sheet').hidden = true; };
+}
+$('add').onclick = () => edit(null);
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').hidden = true; };
+function shrink(file, max) { return new Promise(res => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', .85)); URL.revokeObjectURL(im.src); }; im.src = URL.createObjectURL(file); }); }
+$('snap').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return; $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('sheetIn').innerHTML = `<div class="busy">🔍 ${T.reading}</div>`; $('sheet').hidden = false;
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const r = await Acornix.askAI(`List the groceries in this photo. Today is ${today}.`, { images: [await shrink(f, 1280)], json: true, system: `You recognise groceries in photos of shopping bags, fridges, cupboards or receipts. For each product estimate a realistic use-by date from today for a typical opened or fresh product (null for long-life items) and where to keep it (1 fridge, 2 freezer, 3 cupboard). Names in ${T.lang}, short. Reply only with JSON: {"items":[{"name":"","qty":1,"exp":"YYYY-MM-DD or null","place":1}]}` });
+    const got = (r && r.items || []).filter(x => x && x.name).slice(0, 30); if (!got.length) throw new Error('?');
+    $('sheetIn').innerHTML = `<h3>${T.found}</h3><div class="found">${got.map((x, k) => `<div><input type="checkbox" checked data-k="${k}"><span style="font-size:22px">${emo(x.name)}</span><b style="flex:1">${esc(x.name)}</b><small>${x.exp ? new Date(x.exp + 'T00:00:00').toLocaleDateString(ES ? 'es' : 'en', { day: 'numeric', month: 'short' }) : ''}</small></div>`).join('')}</div><div class="row"><button id="c">${T.cancel}</button><button class="go" id="o">${T.addSel}</button></div>`;
+    $('c').onclick = () => $('sheet').hidden = true;
+    $('o').onclick = () => { $('sheetIn').querySelectorAll('input:checked').forEach(cb => { const x = got[+cb.dataset.k]; items.push({ name: String(x.name), emoji: emo(String(x.name)), exp: /^\d{4}-\d{2}-\d{2}$/.test(x.exp || '') ? x.exp : '', qty: Math.max(1, Math.round(+x.qty || 1)), place: [1, 2, 3].includes(+x.place) ? +x.place : 3 }); }); save(); render(); $('sheet').hidden = true; try { Acornix.vibrate(20); } catch (er) {} };
+  } catch (er) { $('sheet').hidden = true; $('err').textContent = T.failed + (er.message || ''); }
+};
+(async () => { items = await store.get('items', []); render(); })();
+</script>
+</body>
+</html>
