@@ -1,0 +1,15 @@
+{
+  "id": "outfit-advisor",
+  "name": "Outfit Advisor",
+  "emoji": "🌰",
+  "category": "lifestyle",
+  "description": "Snap your outfit, pick the occasion and your AI gives honest, kind feedback, tweaks to try and colours that go with it.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 42
+}

@@ -197,6 +197,32 @@
       "trending": 0
     },
     {
+      "id": "outfit-advisor",
+      "name": "Outfit Advisor",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Snap your outfit, pick the occasion and your AI gives honest, kind feedback, tweaks to try and colours that go with it.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10072,
+      "sha256": "f6e7d373aca61720e6dd110a36dbc890159bcb627b9994d7f7c9f7de258a84a7",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "mood-journal",
       "name": "Mood Journal",
       "emoji": "🌰",
