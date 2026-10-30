@@ -171,6 +171,29 @@
       "trending": 0
     },
     {
+      "id": "mood-journal",
+      "name": "Mood Journal",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "One tap a day to log how you feel, with tags like sleep, work or friends, a colour calendar, streaks and what lifts your mood most.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11052,
+      "sha256": "e30c3b684b18ea4ed791676805db501be12fe344d95931ada6cb8a294b617a91",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "logo-maker",
       "name": "Logo Maker",
       "emoji": "🔠",

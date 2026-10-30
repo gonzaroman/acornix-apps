@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mood Journal</title>
+<style>
+  :root { --bg:#fbf7f2; --card:#fff; --ink:#2d2a26; --muted:#9a9187; --line:#efe8df; --a:#ff8a5b; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 2px; font-size:26px; }
+  .sub { color:var(--muted); font-weight:600; margin-bottom:16px; }
+  .card { background:var(--card); border-radius:22px; padding:16px; box-shadow:0 2px 0 var(--line); margin-bottom:14px; }
+  .q { font-weight:800; font-size:17px; margin-bottom:12px; }
+  .moods { display:flex; justify-content:space-between; gap:4px; }
+  .moods button { flex:1; background:none; font-size:34px; padding:8px 0; border-radius:16px; transition:transform .15s; }
+  .moods button small { display:block; font-size:11px; font-weight:800; color:var(--muted); margin-top:2px; }
+  .moods button.on { background:#fff1e8; transform:scale(1.08); }
+  .tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
+  .tag { padding:7px 11px; border-radius:20px; background:#f5efe8; font-weight:700; font-size:13px; }
+  .tag.on { background:var(--ink); color:#fff; }
+  textarea { width:100%; margin-top:12px; min-height:70px; border:2px solid var(--line); border-radius:14px; padding:11px 12px; font:inherit; outline:none; resize:vertical; background:#fffdfa; color:var(--ink); }
+  textarea:focus { border-color:var(--a); }
+  .save { width:100%; margin-top:12px; padding:14px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; font-size:16px; }
+  .save:disabled { opacity:.4; }
+  .head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .head b { font-size:16px; } .head span { color:var(--muted); font-size:13px; font-weight:700; }
+  .nav { display:flex; gap:6px; } .nav button { width:34px; height:34px; border-radius:50%; background:#f5efe8; font-weight:900; }
+  .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .cal .d { aspect-ratio:1; border-radius:10px; display:grid; place-items:center; font-size:12px; font-weight:800; color:#c5bcb1; background:#f8f3ed; }
+  .cal .d.has { color:#fff; font-size:18px; }
+  .cal .d.today { outline:2px solid var(--ink); }
+  .cal .w { text-align:center; font-size:11px; font-weight:800; color:var(--muted); }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+  .stat { background:#f8f3ed; border-radius:14px; padding:10px; text-align:center; }
+  .stat b { display:block; font-size:22px; } .stat span { font-size:11px; font-weight:800; color:var(--muted); }
+  .bars { display:grid; gap:6px; margin-top:12px; }
+  .bar { display:grid; grid-template-columns:90px 1fr 40px; gap:8px; align-items:center; font-size:13px; font-weight:700; }
+  .bar .t { height:10px; border-radius:6px; background:#f5efe8; overflow:hidden; } .bar .t i { display:block; height:100%; border-radius:6px; }
+  .bar small { color:var(--muted); text-align:right; }
+  .entry { display:flex; gap:12px; padding:10px 0; border-top:1px solid var(--line); }
+  .entry .e { font-size:28px; } .entry .when { font-size:12px; color:var(--muted); font-weight:700; }
+  .entry p { margin:3px 0 0; font-size:14px; line-height:1.4; } .entry .tg { font-size:12px; color:var(--muted); margin-top:3px; }
+  .entry .x { margin-left:auto; background:none; color:#c5bcb1; align-self:flex-start; }
+  .empty { color:var(--muted); text-align:center; padding:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🙂 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <div class="card"><div class="q" id="q"></div><div class="moods" id="moods"></div><div class="tags" id="tags"></div><textarea id="note"></textarea><button class="save" id="save" disabled></button></div>
+  <div class="card"><div class="head"><b id="month"></b><div class="nav"><button id="prev">‹</button><button id="next">›</button></div></div><div class="cal" id="cal"></div><div class="stats" id="stats"></div><div class="bars" id="bars"></div></div>
+  <div class="card"><div class="head"><b id="lRecent"></b></div><div id="recent"></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Diario de ánimo', sub:'Un toque al día para entender cómo te sientes', q:'¿Cómo estás ahora?', note:'¿Algo que quieras recordar? (opcional)', save:'Guardar', saved:'Guardado ✓', moods:['Fatal', 'Mal', 'Normal', 'Bien', 'Genial'], tags:['😴 Sueño', '💼 Trabajo', '🏃 Deporte', '👨‍👩‍👧 Familia', '❤️ Pareja', '🧑‍🤝‍🧑 Amigos', '🍕 Comida', '☀️ Tiempo', '📚 Estudios', '🤒 Salud'], recent:'Últimas entradas', avg:'Media del mes', streak:'Días seguidos', days:'Días anotados', better:'Lo que más te anima', none:'Aún no hay entradas.', locale:'es', wd:['L', 'M', 'X', 'J', 'V', 'S', 'D'] }
+ : { title:'Mood Journal', sub:'One tap a day to understand how you feel', q:'How are you right now?', note:'Anything you want to remember? (optional)', save:'Save', saved:'Saved ✓', moods:['Awful', 'Bad', 'Okay', 'Good', 'Great'], tags:['😴 Sleep', '💼 Work', '🏃 Exercise', '👨‍👩‍👧 Family', '❤️ Partner', '🧑‍🤝‍🧑 Friends', '🍕 Food', '☀️ Weather', '📚 Study', '🤒 Health'], recent:'Recent entries', avg:'Month average', streak:'Day streak', days:'Days logged', better:'What lifts you most', none:'No entries yet.', locale:'en', wd:['M', 'T', 'W', 'T', 'F', 'S', 'S'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const EMO = ['😫', '😕', '😐', '🙂', '😄'], COL = ['#e5484d', '#f76b15', '#ffc53d', '#8ec07c', '#30a46c'];
+const $ = id => document.getElementById(id);
+['ttl', 'sub', 'q', 'save', 'lRecent'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.q, T.save, T.recent][i]); $('note').placeholder = T.note;
+let entries = [], mood = -1, tags = new Set(), month = new Date(); month.setDate(1);
+const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+function form() {
+  $('moods').innerHTML = EMO.map((e, i) => `<button class="${i === mood ? 'on' : ''}" data-i="${i}">${e}<small>${T.moods[i]}</small></button>`).join('');
+  $('moods').querySelectorAll('button').forEach(b => b.onclick = () => { mood = +b.dataset.i; form(); try { window.Acornix && Acornix.vibrate(8); } catch (e) {} });
+  $('tags').innerHTML = T.tags.map((t, i) => `<button class="tag ${tags.has(i) ? 'on' : ''}" data-i="${i}">${t}</button>`).join('');
+  $('tags').querySelectorAll('.tag').forEach(b => b.onclick = () => { const i = +b.dataset.i; tags.has(i) ? tags.delete(i) : tags.add(i); form(); });
+  $('save').disabled = mood < 0;
+}
+$('save').onclick = () => {
+  if (mood < 0) return; entries.unshift({ t: Date.now(), day: key(new Date()), m: mood, tags: [...tags], note: $('note').value.trim() });
+  store.set('entries', entries); mood = -1; tags = new Set(); $('note').value = ''; form(); render();
+  $('save').textContent = T.saved; setTimeout(() => $('save').textContent = T.save, 1500);
+};
+// One value per day: the average of that day's entries.
+function byDay() { const m = {}; entries.forEach(e => (m[e.day] = m[e.day] || []).push(e.m)); const o = {}; for (const k in m) o[k] = m[k].reduce((a, b) => a + b, 0) / m[k].length; return o; }
+function render() {
+  const days = byDay(), y = month.getFullYear(), mo = month.getMonth(), first = (new Date(y, mo, 1).getDay() + 6) % 7, n = new Date(y, mo + 1, 0).getDate(), today = key(new Date());
+  $('month').textContent = month.toLocaleDateString(T.locale, { month: 'long', year: 'numeric' });
+  let h = T.wd.map(w => `<div class="w">${w}</div>`).join('') + '<div></div>'.repeat(first);
+  for (let d = 1; d <= n; d++) { const k = key(new Date(y, mo, d)), v = days[k]; h += v != null ? `<div class="d has ${k === today ? 'today' : ''}" style="background:${COL[Math.round(v)]}">${EMO[Math.round(v)]}</div>` : `<div class="d ${k === today ? 'today' : ''}">${d}</div>`; }
+  $('cal').innerHTML = h;
+  const inMonth = Object.keys(days).filter(k => k.startsWith(`${y}-${String(mo + 1).padStart(2, '0')}`)), avg = inMonth.length ? inMonth.reduce((a, k) => a + days[k], 0) / inMonth.length : null;
+  let streak = 0; for (let d = new Date(); days[key(d)] != null; d.setDate(d.getDate() - 1)) streak++;
+  $('stats').innerHTML = `<div class="stat"><b>${avg == null ? '–' : EMO[Math.round(avg)]}</b><span>${T.avg}</span></div><div class="stat"><b>${streak}</b><span>${T.streak}</span></div><div class="stat"><b>${inMonth.length}</b><span>${T.days}</span></div>`;
+  // Average mood when each tag is present, best first.
+  const tagAvg = T.tags.map((t, i) => { const es = entries.filter(e => e.tags.includes(i)); return { t, n: es.length, v: es.length ? es.reduce((a, e) => a + e.m, 0) / es.length : 0 }; }).filter(x => x.n >= 2).sort((a, b) => b.v - a.v).slice(0, 4);
+  $('bars').innerHTML = tagAvg.length ? `<div style="font-weight:800;font-size:13px;color:var(--muted);margin-top:4px">${T.better}</div>` + tagAvg.map(x => `<div class="bar"><span>${x.t}</span><div class="t"><i style="width:${x.v / 4 * 100}%;background:${COL[Math.round(x.v)]}"></i></div><small>${EMO[Math.round(x.v)]}</small></div>`).join('') : '';
+  $('recent').innerHTML = entries.length ? entries.slice(0, 15).map((e, i) => `<div class="entry"><div class="e">${EMO[e.m]}</div><div><div class="when">${new Date(e.t).toLocaleString(T.locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>${e.note ? `<p>${esc(e.note)}</p>` : ''}${e.tags.length ? `<div class="tg">${e.tags.map(t => T.tags[t]).join(' · ')}</div>` : ''}</div><button class="x" data-i="${i}">✕</button></div>`).join('') : `<div class="empty">${T.none}</div>`;
+  $('recent').querySelectorAll('.x').forEach(b => b.onclick = () => { entries.splice(+b.dataset.i, 1); store.set('entries', entries); render(); });
+}
+$('prev').onclick = () => { month.setMonth(month.getMonth() - 1); render(); };
+$('next').onclick = () => { month.setMonth(month.getMonth() + 1); render(); };
+(async () => { entries = await store.get('entries', []); form(); render(); })();
+</script>
+</body>
+</html>
