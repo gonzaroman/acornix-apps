@@ -804,6 +804,32 @@
       "trending": 0
     },
     {
+      "id": "drawing-stories",
+      "name": "Drawing Stories",
+      "emoji": "📷",
+      "category": "kids",
+      "description": "Snap a child's drawing and your AI turns it into a magical story, read out loud.",
+      "prompt": "Take a photo of a child's drawing with the camera and Acornix.askAI with the image writes a short magical bedtime story about what is in the drawing, read it aloud with Acornix.speak, and keep a gallery of drawings with their stories.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 28820,
+      "sha256": "ac6a0688eef11297ca77289df45515e07f4994aa92468060a07e117ec93b2594",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "countries-visited",
       "name": "Countries Visited",
       "emoji": "🌍",
