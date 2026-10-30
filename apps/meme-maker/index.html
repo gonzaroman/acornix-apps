@@ -94,7 +94,7 @@ cv.addEventListener('pointermove', e => { if (drag < 0) return; const [x, y] = t
 cv.addEventListener('pointerup', () => { drag = -1; });
 $('save').onclick = async () => {
   const url = cv.toDataURL('image/jpeg', .92), name = `meme-${Date.now()}.jpg`;
-  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); Acornix.vibrate(15); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (er) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, url); Acornix.vibrate(15); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (er) {}
 };
 setSize(1080, 1080); $('t1').value = T.tpls[0][1]; $('t2').value = T.tpls[0][2]; ui(); draw();
 document.fonts && document.fonts.ready.then(draw);

@@ -94,7 +94,7 @@ out.addEventListener('pointerdown', () => { showOrig = true; $('hold').hidden = 
 ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => out.addEventListener(ev, () => { if (!showOrig) return; showOrig = false; $('hold').hidden = true; render(); }));
 $('save').onclick = async () => {
   if (!img) return; const url = out.toDataURL('image/jpeg', .92), name = `photo-${FILTERS[fi][0].toLowerCase()}-${Date.now()}.jpg`;
-  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
 };
 </script>
 </body>

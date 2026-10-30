@@ -84,7 +84,7 @@ function draw() {
 }
 $('saveImg').onclick = async () => {
   const data = $('c').toDataURL('image/png');
-  try { if (window.Acornix) { await Acornix.files.save('business-card.png', data); $('msg').textContent = T.saved; } else { const a = document.createElement('a'); a.href = data; a.download = 'business-card.png'; a.click(); $('msg').textContent = T.dl; } } catch (e) { $('msg').textContent = e.message || ''; }
+  try { if (window.Acornix) { await Acornix.files.export('business-card.png', data); } else { const a = document.createElement('a'); a.href = data; a.download = 'business-card.png'; a.click(); $('msg').textContent = T.dl; } } catch (e) { $('msg').textContent = e.message || ''; }
 };
 $('contact').onclick = async () => { const text = [st.name, [st.role, st.company].filter(Boolean).join(' · '), st.phone && '📞 ' + st.phone, st.email && '✉️ ' + st.email, st.web && '🌐 ' + st.web].filter(Boolean).join('\n'); try { if (window.Acornix) await Acornix.share(text); else if (navigator.share) await navigator.share({ text }); else await navigator.clipboard.writeText(text); } catch (e) {} };
 let flip = 0; $('c').onclick = () => { flip += 360; $('c').style.transform = `rotateY(${flip}deg)`; };

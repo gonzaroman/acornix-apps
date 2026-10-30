@@ -876,17 +876,17 @@
       "prompt": "A football tactics board with formations like 4-4-2, 4-3-3, 3-5-2 and 7-a-side, draggable numbered players and ball, an optional opponent, arrows for passes and dashed lines for runs, undo, and saving the board as an image.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [],
       "files": [
         "index.html"
       ],
-      "size": 9190,
-      "sha256": "8b0e38452e9020dfcdb6469ef4d8c40bea4e478caf431ace0c6c68b3d66fecf2",
+      "size": 9168,
+      "sha256": "835da07a87e36a065ac00c69679a6dbba4c21e56647f1137a7431205df0c4ef2",
       "downloads": 0,
       "trending": 0
     },
@@ -1041,9 +1041,9 @@
       "prompt": "A stop motion studio with the camera: snap frames with onion skin of the previous one, a film strip, undo and duplicate, play the animation at a chosen fps and save it as a video.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [
@@ -1052,8 +1052,8 @@
       "files": [
         "index.html"
       ],
-      "size": 9278,
-      "sha256": "57201b1cc1c65b31733e77debc7082b35bde0fed11bfd0552b7ba5b6283e1848",
+      "size": 9256,
+      "sha256": "f55f52bb2dc37ee8639f61cfe2baa012d0f21a5c5290b6602f414240275373a6",
       "downloads": 0,
       "trending": 0
     },
@@ -1447,9 +1447,9 @@
       "prompt": "A receipt scanner: I take a photo of a shopping receipt and my AI reads the shop, date, every item with its price, the total and a category, saves it, adds up the month and exports everything to CSV.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [
@@ -1459,10 +1459,10 @@
       "files": [
         "index.html"
       ],
-      "size": 9560,
-      "sha256": "57c973e9fbace5f920eec15e6d80228bd8733928cf75f13d0c17ac4c281ebb8e",
-      "downloads": 0,
-      "trending": 0
+      "size": 9522,
+      "sha256": "80dd0955470a113fee5835c85cd2a6ff464de4ee8284013fb3245bdb7580359a",
+      "downloads": 2,
+      "trending": 2
     },
     {
       "id": "random-picker",
@@ -1620,9 +1620,9 @@
       "prompt": "Turn a photo into pixel art: choose the number of pixels, retro palettes like Game Boy, PICO-8, NES, CGA and 1-bit, ordered dithering, and save a crisp scaled up PNG.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [
@@ -1631,8 +1631,8 @@
       "files": [
         "index.html"
       ],
-      "size": 7755,
-      "sha256": "4e20eb11267d42ab2a620d78d2c4f7d64e7a6dfab9cab043a903549ef17a171c",
+      "size": 7733,
+      "sha256": "848dbb5c4f43c463f66fa1c64fd3ec349e6c9cfda1890f3afca4cf9b3f93ed64",
       "downloads": 0,
       "trending": 0
     },
@@ -1696,9 +1696,9 @@
       "prompt": "Extract the main colours of a photo with k-means, show where each colour is in the photo, copy hex codes, choose 3 to 8 colours, keep palettes and save a palette card image.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [
@@ -1707,8 +1707,8 @@
       "files": [
         "index.html"
       ],
-      "size": 11277,
-      "sha256": "2bab4fe4f404b2a889bf6a16cbe5cab90281dab1dfd1fe941f90d0d8c871c9e1",
+      "size": 11260,
+      "sha256": "53261b9057d6dea44f989b00c343422dc5a6b65060a9b3397aff7b19becabab0",
       "downloads": 0,
       "trending": 0
     },
@@ -1721,9 +1721,9 @@
       "prompt": "A photo filter app: open or take a photo, pick from twelve filters with live thumbnails, fine-tune brightness, contrast, saturation, warmth, vignette and grain, hold to compare and save the result.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [
@@ -1732,8 +1732,8 @@
       "files": [
         "index.html"
       ],
-      "size": 9554,
-      "sha256": "73c9e3d3ac2eb856c71351c65fb8a3ee3e6052d945788023e3cf430aa01f44ed",
+      "size": 9532,
+      "sha256": "c9d67c916dd67d1f2e380f1da4dfff0558d328ee35e5a296d028da4ed356b8e7",
       "downloads": 0,
       "trending": 0
     },
@@ -1772,9 +1772,9 @@
       "prompt": "A photo booth with the front camera: a 3 2 1 countdown, four shots with a flash, colour, black and white, retro or pop looks, and a strip or grid with the date to save.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [
@@ -1783,8 +1783,8 @@
       "files": [
         "index.html"
       ],
-      "size": 8448,
-      "sha256": "11f08900028dd9139012960f1a5c1775fff97856e092409da2a93f3341f31f90",
+      "size": 8426,
+      "sha256": "9c15fcfb660edd264d6160342a2f266cae4ca980cfab2ce53e9322da86e610c0",
       "downloads": 0,
       "trending": 0
     },
@@ -2008,17 +2008,17 @@
       "prompt": "A meme maker with top and bottom text in bold outlined capitals over my photo or a ready made emoji background, draggable text, text size and colour, and a few classic templates.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [],
       "files": [
         "index.html"
       ],
-      "size": 8744,
-      "sha256": "5f084d736931a6040bbdc20a2574729f7613be1794f41314de2070da93580d90",
+      "size": 8722,
+      "sha256": "dc3ac66989f467f6ba400deb32043adf2d1c9888aabfc763a0acd152c81abd09",
       "downloads": 0,
       "trending": 0
     },
@@ -2882,17 +2882,17 @@
       "prompt": "A photo collage maker with eight layouts, square, portrait, story and landscape shapes, background colours, spacing and corner sliders, where you tap a cell to add a photo, drag to frame it and pinch to zoom.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [],
       "files": [
         "index.html"
       ],
-      "size": 9319,
-      "sha256": "0784a95711811b2a1c95032cebecb52b32d121bd69f39791c3031954a7640e0e",
+      "size": 9297,
+      "sha256": "31843e9401d03689b8157645609d310c9b0e8cb60deddccd8b039fb57d87c997",
       "downloads": 0,
       "trending": 0
     },
@@ -2976,19 +2976,19 @@
       "prompt": "A business card maker with my name, job title, company, phone, email and website, four templates like modern, classic, bold and minimal, colours, a flip animation, saving it as an image and sharing the contact.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [],
       "files": [
         "index.html"
       ],
-      "size": 8465,
-      "sha256": "782a202ffeb6ed4a41f72048e792ebe7f631e8f05de09712de0754c9e64b8bd7",
-      "downloads": 0,
-      "trending": 0
+      "size": 8435,
+      "sha256": "7558b2db6ec329151fbdc713dd82a0af555609d8c0ca39999ec6c6349769bf0b",
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "bubble-level",
@@ -3091,17 +3091,17 @@
       "prompt": "A before and after photo comparer with a draggable slider, side by side and stacked layouts, editable labels, and saving the comparison as an image.",
       "author": "gonzaroman",
       "language": "en",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-29",
-      "updated": "2026-10-29",
+      "updated": "2026-10-30",
       "featured": false,
       "official": true,
       "tags": [],
       "files": [
         "index.html"
       ],
-      "size": 8268,
-      "sha256": "764a700afa6cb054ebd63fe132cead371f86520f9a75a675591b7dd5c0acc33a",
+      "size": 8246,
+      "sha256": "e43ad5f0313039e2ff245886948fc9f745defdaccda3fcae9068d5899ff630cb",
       "downloads": 0,
       "trending": 0
     },

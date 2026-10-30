@@ -95,7 +95,7 @@ $('csv').onclick = async () => {
   const rows = [['date', 'merchant', 'category', 'item', 'price', 'currency']];
   receipts.forEach(r => (r.items && r.items.length ? r.items : [{ name: 'TOTAL', price: r.total }]).forEach(i => rows.push([r.date, r.merchant, r.category, i.name, i.price, r.currency])));
   const csv = rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  try { if (window.Acornix) { const file = await Acornix.files.save('receipts.csv', 'data:text/csv;base64,' + btoa(unescape(encodeURIComponent(csv)))); await Acornix.share(csv); } else { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'receipts.csv'; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.share('receipts.csv', 'data:text/csv;base64,' + btoa(unescape(encodeURIComponent(csv)))); } else { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'receipts.csv'; a.click(); } } catch (e) {}
 };
 (async () => { receipts = await store.get('receipts', []); render(); })();
 </script>

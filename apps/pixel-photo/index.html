@@ -93,7 +93,7 @@ $('px').oninput = render;
 $('dith').onclick = () => { dither = !dither; $('dith').classList.toggle('on', dither); render(); };
 $('save').onclick = async () => {
   if (!img) return; const url = out.toDataURL('image/png'), name = `pixel-${Date.now()}.png`;
-  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
 };
 $('pxV').textContent = $('px').value; pals();
 </script>

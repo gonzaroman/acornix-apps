@@ -16,7 +16,7 @@
       "count": 0
     },
     "before-and-after": {
-      "asset": 690284962,
+      "asset": 690386276,
       "base": 0,
       "count": 0
     },
@@ -56,8 +56,8 @@
       "count": 0
     },
     "business-card": {
-      "asset": 689236415,
-      "base": 0,
+      "asset": 690386334,
+      "base": 1,
       "count": 0
     },
     "calculator": {
@@ -91,7 +91,7 @@
       "count": 0
     },
     "collage": {
-      "asset": 690284603,
+      "asset": 690386394,
       "base": 0,
       "count": 0
     },
@@ -316,7 +316,7 @@
       "count": 0
     },
     "meme-maker": {
-      "asset": 690284720,
+      "asset": 690386469,
       "base": 0,
       "count": 0
     },
@@ -396,7 +396,7 @@
       "count": 0
     },
     "photo-booth": {
-      "asset": 690284780,
+      "asset": 690386565,
       "base": 0,
       "count": 0
     },
@@ -406,12 +406,12 @@
       "count": 0
     },
     "photo-filters": {
-      "asset": 690284539,
+      "asset": 690386521,
       "base": 0,
       "count": 0
     },
     "photo-palette": {
-      "asset": 690285009,
+      "asset": 690386615,
       "base": 0,
       "count": 0
     },
@@ -436,7 +436,7 @@
       "count": 0
     },
     "pixel-photo": {
-      "asset": 690284831,
+      "asset": 690386656,
       "base": 0,
       "count": 0
     },
@@ -476,8 +476,8 @@
       "count": 0
     },
     "receipt-scanner-ai": {
-      "asset": 689202058,
-      "base": 0,
+      "asset": 690386837,
+      "base": 2,
       "count": 0
     },
     "reef-aquarium": {
@@ -571,7 +571,7 @@
       "count": 0
     },
     "stop-motion": {
-      "asset": 690284867,
+      "asset": 690386725,
       "base": 0,
       "count": 0
     },
@@ -601,7 +601,7 @@
       "count": 0
     },
     "tactics-board": {
-      "asset": 690285500,
+      "asset": 690386781,
       "base": 0,
       "count": 0
     },

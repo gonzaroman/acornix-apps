@@ -99,7 +99,7 @@ async function saveImage() {
   const w = W / colors.length; colors.forEach((o, i) => { g.fillStyle = hex(o.c); g.fillRect(i * w, ph, w + 1, 220); g.fillStyle = lum(o.c) > .6 ? '#22201c' : '#fff'; g.font = '800 28px ui-monospace,monospace'; g.textAlign = 'center'; g.fillText(hex(o.c).toUpperCase(), i * w + w / 2, ph + 196); });
   g.fillStyle = '#8a837a'; g.font = '700 30px system-ui'; g.textAlign = 'center'; g.fillText('🎨 ' + T.title, W / 2, H - 30);
   const url = c.toDataURL('image/jpeg', .92), name = `palette-${Date.now()}.jpg`;
-  try { if (window.Acornix) { await Acornix.files.save(name, url); toast(T.imgSaved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
 }
 function savedUI() {
   $('lSaved').hidden = !saved.length;

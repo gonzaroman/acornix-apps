@@ -101,7 +101,7 @@ $('export').onclick = async () => {
   rec.stop(); await done;
   const blob = new Blob(parts, { type: 'video/webm' }), name = `stop-motion-${Date.now()}.webm`;
   const url = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); });
-  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
   $('export').textContent = T.exp; ui();
 };
 ui(); start();

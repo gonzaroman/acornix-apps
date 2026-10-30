@@ -7,8 +7,8 @@
   "prompt": "A receipt scanner: I take a photo of a shopping receipt and my AI reads the shop, date, every item with its price, the total and a category, saves it, adds up the month and exports everything to CSV.",
   "author": "gonzaroman",
   "language": "en",
-  "version": 1,
+  "version": 2,
   "added": "2026-10-29",
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "featured": false
 }

@@ -7,9 +7,9 @@
   "prompt": "Turn a photo into pixel art: choose the number of pixels, retro palettes like Game Boy, PICO-8, NES, CGA and 1-bit, ordered dithering, and save a crisp scaled up PNG.",
   "author": "gonzaroman",
   "language": "en",
-  "version": 1,
+  "version": 2,
   "added": "2026-10-29",
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "featured": false,
   "issue": 15
 }

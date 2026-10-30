@@ -7,9 +7,9 @@
   "prompt": "A photo filter app: open or take a photo, pick from twelve filters with live thumbnails, fine-tune brightness, contrast, saturation, warmth, vignette and grain, hold to compare and save the result.",
   "author": "gonzaroman",
   "language": "en",
-  "version": 1,
+  "version": 2,
   "added": "2026-10-29",
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "featured": false,
   "issue": 12
 }

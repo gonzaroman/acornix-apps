@@ -7,9 +7,9 @@
   "prompt": "A before and after photo comparer with a draggable slider, side by side and stacked layouts, editable labels, and saving the comparison as an image.",
   "author": "gonzaroman",
   "language": "en",
-  "version": 1,
+  "version": 2,
   "added": "2026-10-29",
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "featured": false,
   "issue": 19
 }

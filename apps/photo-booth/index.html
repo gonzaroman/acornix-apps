@@ -98,7 +98,7 @@ function compose() {
 $('again').onclick = () => { $('result').hidden = true; };
 $('save').onclick = async () => {
   const name = `photo-booth-${Date.now()}.jpg`;
-  try { if (window.Acornix) { await Acornix.files.save(name, stripUrl); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = stripUrl; a.download = name; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, stripUrl); } else { const a = document.createElement('a'); a.href = stripUrl; a.download = name; a.click(); } } catch (e) {}
   $('result').hidden = true;
 };
 chips(); start();

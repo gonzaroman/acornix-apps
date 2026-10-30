@@ -99,7 +99,7 @@ $('tools').querySelectorAll('[data-t]').forEach(b => b.onclick = () => { tool = 
 $('rivalB').onclick = () => { hist.push(JSON.stringify(st)); st.rival = !st.rival; st.tokens = st.tokens.filter(t => t.team !== 1); if (st.rival) st.tokens.push(...place('4-4-2', 1)); save(); draw(); paintBars(); };
 $('undoB').onclick = () => { if (hist.length) { st = JSON.parse(hist.pop()); save(); draw(); paintBars(); } };
 $('clearB').onclick = () => { hist.push(JSON.stringify(st)); st.lines = []; save(); draw(); };
-$('snapB').onclick = async () => { try { const url = cv.toDataURL('image/png'); if (window.Acornix) { await Acornix.files.save(`tactics-${st.form}-${Date.now()}.png`, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = 'tactics.png'; a.click(); } } catch (e) {} };
+$('snapB').onclick = async () => { try { const url = cv.toDataURL('image/png'); if (window.Acornix) { await Acornix.files.export(`tactics-${st.form}-${Date.now()}.png`, url); } else { const a = document.createElement('a'); a.href = url; a.download = 'tactics.png'; a.click(); } } catch (e) {} };
 (async () => { const s = await store.get('board', null); if (s && s.tokens && s.tokens.length) st = s; else st.tokens = [...place(st.form, 0), { team: 2, x: .5, y: .5 }]; paintBars(); size(); })();
 </script>
 </body>

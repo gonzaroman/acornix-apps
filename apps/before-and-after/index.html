@@ -89,7 +89,7 @@ cv.addEventListener('pointermove', e => { if (dragging) setSplit(e); });
 cv.addEventListener('pointerup', () => { dragging = false; });
 $('save').onclick = async () => {
   const url = cv.toDataURL('image/jpeg', .92), name = `before-after-${Date.now()}.jpg`;
-  try { if (window.Acornix) { await Acornix.files.save(name, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
 };
 modes(); size(); draw();
 </script>

@@ -95,7 +95,7 @@ $('file').onchange = e => {
 };
 $('save').onclick = async () => {
   draw(true); const url = cv.toDataURL('image/jpeg', .92); draw();
-  try { if (window.Acornix) { await Acornix.files.save(`collage-${Date.now()}.jpg`, url); Acornix.toast(T.saved); } else { const a = document.createElement('a'); a.href = url; a.download = 'collage.jpg'; a.click(); } } catch (er) {}
+  try { if (window.Acornix) { await Acornix.files.export(`collage-${Date.now()}.jpg`, url); } else { const a = document.createElement('a'); a.href = url; a.download = 'collage.jpg'; a.click(); } } catch (er) {}
 };
 size(); ui(); draw();
 </script>

@@ -7,9 +7,9 @@
   "prompt": "Extract the main colours of a photo with k-means, show where each colour is in the photo, copy hex codes, choose 3 to 8 colours, keep palettes and save a palette card image.",
   "author": "gonzaroman",
   "language": "en",
-  "version": 1,
+  "version": 2,
   "added": "2026-10-29",
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "featured": false,
   "issue": 20
 }
