@@ -334,6 +334,29 @@
       "trending": 0
     },
     {
+      "id": "returns-tracker",
+      "name": "Returns Tracker",
+      "emoji": "🌰",
+      "category": "shopping",
+      "description": "Never miss a return deadline: orders, countdowns and refund status in one place.",
+      "prompt": "Track online orders and returns: shop, item, price, order date, return deadline with a countdown, status from ordered to refunded, and reminders of returns about to expire.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 29224,
+      "sha256": "af43541eb8fb5a0383ef0464bb9031e9115d3f3c4e9a94a176aa7db82e6d01e6",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "recipe-box",
       "name": "Recipe Box",
       "emoji": "📒",

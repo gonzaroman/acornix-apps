@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f7f8f3">
+<title>En camino · Pedidos y devoluciones</title>
+<style>
+:root{--bg:#f7f8f3;--ink:#223c32;--muted:#78847a;--green:#286c4e;--lime:#ddeb9b;--line:#e4e8df;--purple:#7460a2;--red:#b74c48}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button,input,select,textarea{outline-offset:4px}button{touch-action:manipulation}svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}button{border:0}header,main{max-width:720px;margin:auto}header{padding:calc(22px + env(safe-area-inset-top)) 22px 12px;display:flex;align-items:center;gap:12px}.brand{height:44px;width:44px;border-radius:15px;background:var(--green);color:var(--lime);display:grid;place-items:center}.brand svg{width:27px;height:27px}.wordmark{flex:1}.wordmark strong{font-size:20px;letter-spacing:-.7px}.wordmark small{display:block;color:var(--muted);font-size:11px;margin-top:2px;letter-spacing:.6px}.icon-btn{width:44px;height:44px;background:white;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--ink)}main{padding:14px 20px calc(112px + env(safe-area-inset-bottom))}.eyebrow{text-transform:uppercase;letter-spacing:1.5px;font-size:10px;font-weight:800;color:var(--muted)}h1{font-size:31px;letter-spacing:-1.3px;line-height:1.15;margin:9px 0 9px}p{line-height:1.5}.intro{color:var(--muted);font-size:13px;margin:0 0 22px}.overview{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.stat{border-radius:22px;padding:18px;background:var(--green);color:white;position:relative;overflow:hidden}.stat.alt{background:#eae5f4;color:#5e4c7c}.stat-top{display:flex;align-items:center;justify-content:space-between;font-size:11px;gap:5px}.stat-top svg{width:19px;height:19px;opacity:.7}.stat-value{font-size:33px;font-weight:700;letter-spacing:-1.5px;margin-top:12px}.stat-foot{font-size:11px;opacity:.75;margin-top:1px}.reminder-banner{background:#f3ebd1;border:1px solid #e9ddb5;padding:14px;border-radius:18px;display:flex;gap:12px;align-items:center;width:100%;text-align:left;color:#73602f;margin-bottom:22px}.reminder-banner>svg{background:#fff8e3;box-sizing:content-box;padding:9px;border-radius:13px}.reminder-banner div{flex:1}.reminder-banner strong{display:block;font-size:13px}.reminder-banner span{font-size:11px;display:block;margin-top:3px}.search{display:flex;align-items:center;background:white;border:1px solid var(--line);padding:0 14px;border-radius:15px;gap:9px;margin:19px 0 14px;color:var(--muted)}.search input{border:0;background:transparent;width:100%;min-width:0;height:48px;color:var(--ink);font-size:14px;outline:0}.chips{display:flex;gap:7px;overflow:auto;scrollbar-width:none;margin:0 -20px 21px;padding:0 20px}.chips::-webkit-scrollbar{display:none}.chip{flex-shrink:0;white-space:nowrap;padding:10px 15px;border-radius:30px;font-size:12px;background:#edf0e8;color:#647268}.chip.selected{background:var(--ink);color:white}.section-label{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px;font-size:14px;font-weight:700}.section-label span{font-size:11px;font-weight:400;color:var(--muted)}.card{border:1px solid var(--line);background:#fff;border-radius:21px;padding:17px;margin-bottom:12px;cursor:pointer;animation:appear .25s ease}.card-top{display:flex;gap:12px;align-items:center}.shop-icon{width:43px;height:43px;background:#edf2e9;color:#668459;border-radius:14px;display:grid;place-items:center;font-weight:750;font-size:18px}.card:nth-child(3n+2) .shop-icon{background:#eee9f6;color:#8871a7}.card:nth-child(3n) .shop-icon{background:#f7ede1;color:#ad8351}.card-title{flex:1;min-width:0}.card-title strong{font-size:14px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-title small{color:var(--muted);font-size:11px;display:block;margin-top:3px}.price{font-size:14px;font-weight:700}.item-name{font-size:14px;font-weight:550;margin:15px 0 12px;overflow-wrap:anywhere}.card-bottom{display:flex;gap:6px;justify-content:space-between;align-items:center;border-top:1px solid #f0f2ed;padding-top:12px;flex-wrap:wrap}.badge{font-size:10px;font-weight:650;display:inline-flex;gap:5px;align-items:center;padding:6px 9px;border-radius:8px;background:#eef2e9;color:#617657}.badge:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.badge.purple{background:#f0ebf8;color:#80619d}.badge.blue{background:#eaf1f8;color:#547b9c}.badge.gray{background:#f1f1f0;color:#81817e}.countdown{font-size:11px;color:#6e8071;display:flex;align-items:center;gap:4px}.countdown svg{width:14px;height:14px}.countdown.urgent{color:#a67728}.countdown.overdue{color:var(--red)}.empty{padding:35px 18px;text-align:center;background:#fff;border:1px dashed #d9e0d1;border-radius:24px;margin-top:14px}.empty-art{width:88px;height:88px;border-radius:28px;background:#eef3df;display:grid;place-items:center;color:var(--green);margin:0 auto 20px;transform:rotate(-5deg)}.empty-art svg{width:45px;height:45px}.empty h2{font-size:20px;letter-spacing:-.5px;margin:0 0 8px}.empty p{font-size:13px;color:var(--muted);max-width:270px;margin:0 auto 22px}.primary{background:var(--green);color:white;border-radius:14px;min-height:49px;padding:13px 20px;font-weight:650;font-size:14px;display:inline-flex;justify-content:center;align-items:center;gap:8px}.primary:active,.icon-btn:active{transform:scale(.97)}.secondary{background:#eef1e9;color:var(--ink);min-height:47px;border-radius:13px;padding:12px 17px;font-size:13px;font-weight:600}.full{width:100%}.note{font-size:11px;color:var(--muted);line-height:1.6}.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:10px 15px calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;z-index:10;backdrop-filter:blur(16px)}.nav-item{background:none;color:#8b948b;min-width:80px;min-height:49px;display:flex;align-items:center;flex-direction:column;gap:4px;font-size:10px;position:relative}.nav-item.active{color:var(--green);font-weight:750}.nav-item.active:before{content:"";position:absolute;top:-11px;width:25px;height:3px;border-radius:5px;background:var(--green)}.nav-count{position:absolute;top:-3px;left:calc(50% + 6px);font-size:9px;background:#b95d42;color:#fff;min-width:15px;height:15px;border-radius:12px;display:grid;place-items:center;padding:0 3px}.floating-add{background:var(--green);color:white;border:0}.overlay{position:fixed;inset:0;z-index:30;background:rgba(24,43,33,.42);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}.overlay[hidden]{display:none}.sheet{width:100%;max-width:650px;max-height:94dvh;background:var(--bg);border-radius:28px 28px 0 0;overflow-y:auto;padding:10px 22px calc(25px + env(safe-area-inset-bottom));animation:slide .25s ease}.handle{width:36px;height:4px;border-radius:5px;background:#d6ddd1;margin:0 auto 18px}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}.sheet-head h2{font-size:23px;letter-spacing:-.7px;margin:0}.sheet-head .icon-btn{width:36px;height:36px}.field{display:block;margin-bottom:17px}.field>span{font-size:12px;font-weight:650;display:block;margin-bottom:8px}.field input,.field select,.field textarea{width:100%;height:49px;border:1px solid #dce2d6;border-radius:12px;background:#fff;padding:12px;color:var(--ink);font-size:15px;min-width:0}.field textarea{height:84px;resize:vertical}.field small{font-size:10px;color:var(--muted);display:block;margin-top:6px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-error{font-size:12px;color:var(--red);margin-bottom:12px}.detail-hero{background:white;border:1px solid var(--line);border-radius:20px;padding:19px;margin-bottom:19px}.detail-hero h3{font-size:22px;margin:12px 0 7px;overflow-wrap:anywhere}.detail-shop{font-size:13px;color:var(--muted)}.detail-price{font-size:25px;letter-spacing:-1px;font-weight:700;margin:12px 0}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0}.detail-grid small{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.detail-grid strong{font-size:13px}.detail-notes{white-space:pre-wrap;font-size:13px;overflow-wrap:anywhere;background:#edf1e8;padding:14px;border-radius:12px;margin-bottom:20px}.danger{color:var(--red);background:#f7e9e6}.actions{display:flex;gap:10px;margin-top:12px}.actions>*{flex:1}.delete-check{background:#f8e8e5;border:1px solid #efd2cc;padding:15px;border-radius:14px;margin-top:14px;font-size:13px}.toast{position:fixed;z-index:100;bottom:calc(94px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#223c32;color:white;border-radius:14px;padding:13px 19px;font-size:12px;width:max-content;max-width:90%;box-shadow:0 8px 25px #213b3225}.toast[hidden]{display:none}.loading{text-align:center;color:var(--muted);padding:45px;font-size:14px}@keyframes slide{from{transform:translateY(35px);opacity:.6}to{transform:translateY(0);opacity:1}}@keyframes appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}@media(min-width:650px){.overlay{align-items:center;padding:25px}.sheet{border-radius:28px;max-height:90dvh}.bottom-nav{left:50%;transform:translateX(-50%);max-width:720px;border-radius:22px 22px 0 0}main{padding-top:24px}}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true"><defs>
+<symbol id="box" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5v10l-9 5-9-5zM3 7l9 5 9-5M12 12v10M7 4.8l9 5"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="return" viewBox="0 0 24 24"><path d="M8 4 3 9l5 5M3 9h11a6 6 0 0 1 0 12h-3"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#f7f8f3"/><circle cx="15" cy="17" r="3" fill="#f7f8f3"/></symbol>
+<symbol id="chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+</defs></svg>
+<header>
+<div class="brand"><svg><use href="#box"/></svg></div>
+<div class="wordmark"><strong>En camino</strong><small>COMPRA CON TRANQUILIDAD</small></div>
+<button class="icon-btn" id="settingsBtn" aria-label="Ajustes"><svg><use href="#settings"/></svg></button>
+<button class="icon-btn floating-add" id="addBtn" aria-label="Añadir pedido"><svg><use href="#plus"/></svg></button>
+</header>
+<main id="main"><div class="loading">Preparando tus pedidos…</div></main>
+<nav class="bottom-nav" aria-label="Navegación principal">
+<button class="nav-item active" data-tab="orders"><svg><use href="#box"/></svg>Pedidos</button>
+<button class="nav-item" data-tab="returns"><svg><use href="#return"/></svg>Devoluciones</button>
+<button class="nav-item" data-tab="reminders"><svg><use href="#bell"/></svg>Avisos<span class="nav-count" id="noticeCount" hidden></span></button>
+</nav>
+<div class="overlay" id="overlay" hidden><section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></section></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s);
+const icon=n=>`<svg aria-hidden="true"><use href="#${n}"/></svg>`;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const statuses={ordered:'Pedido realizado',shipped:'En camino',received:'Recibido',returning:'Devolución solicitada',returned:'Devuelto',refunded:'Reembolsado',cancelled:'Cancelado'};
+const next={ordered:['shipped','Marcar como enviado'],shipped:['received','Marcar como recibido'],received:['returning','Iniciar devolución'],returning:['returned','Marcar como devuelto'],returned:['refunded','Marcar como reembolsado']};
+let state={orders:[],remindDays:7},tab='orders',filter='all',query='',ready=false,toastTimer,modalKind='',selectedId='',previousFocus,saveChain=Promise.resolve();
+const storage={
+ async get(){if(window.Acornix)return await Acornix.db.get('enCamino.v1');const raw=localStorage.getItem('enCamino.v1');return raw?JSON.parse(raw):null},
+ async set(value){if(window.Acornix)return await Acornix.db.set('enCamino.v1',value);localStorage.setItem('enCamino.v1',JSON.stringify(value))}
+};
+function persist(){const snapshot=JSON.parse(JSON.stringify(state));saveChain=saveChain.catch(()=>{}).then(()=>storage.set(snapshot));saveChain.catch(()=>toast('No se pudo guardar. Comprueba el almacenamiento e inténtalo de nuevo.'));return saveChain}
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function plusDays(date,n){const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function days(date){return Math.round((Date.parse(date+'T00:00:00Z')-Date.parse(today()+'T00:00:00Z'))/86400000)}
+function dateText(date){return date?new Date(date+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):'Sin fecha'}
+function money(n){return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n)}
+function canReturn(o){return !['returned','refunded','cancelled'].includes(o.status)}
+function reminders(){return state.orders.filter(o=>canReturn(o)&&o.deadline&&days(o.deadline)<=state.remindDays).sort((a,b)=>a.deadline.localeCompare(b.deadline))}
+function badge(o){return `<span class="badge ${['returning','returned'].includes(o.status)?'purple':['ordered','shipped'].includes(o.status)?'blue':o.status==='cancelled'?'gray':''}">${esc(statuses[o.status]||o.status)}</span>`}
+function countdown(o){
+ if(!canReturn(o))return `<span class="countdown">${o.status==='returned'?'Reembolso pendiente':o.status==='refunded'?'Importe recuperado':'Seguimiento cerrado'}</span>`;
+ if(!o.deadline)return `<span class="countdown">Sin plazo de devolución</span>`;
+ const d=days(o.deadline);return `<span class="countdown ${d<0?'overdue':d<=state.remindDays?'urgent':''}">${icon('clock')}${d<0?`Venció hace ${-d} ${d===-1?'día':'días'}`:d===0?'Vence hoy':d===1?'Queda 1 día':`Quedan ${d} días`}</span>`;
+}
+function card(o){return `<article class="card" tabindex="0" role="button" data-id="${esc(o.id)}" aria-label="Ver ${esc(o.item)}"><div class="card-top"><div class="shop-icon">${esc(o.shop.slice(0,1).toUpperCase())}</div><div class="card-title"><strong>${esc(o.shop)}</strong><small>${dateText(o.date)}</small></div><div class="price">${money(o.price)}</div></div><div class="item-name">${esc(o.item)}</div><div class="card-bottom">${badge(o)}${countdown(o)}</div></article>`}
+function empty(title,text,action=false){return `<div class="empty"><div class="empty-art">${icon(tab==='reminders'?'bell':tab==='returns'?'return':'box')}</div><h2>${title}</h2><p>${text}</p>${action?`<button class="primary" id="emptyAdd">${icon('plus')}Añadir mi primer pedido</button>`:''}</div>`}
+function render(){
+ if(!ready)return;
+ const active=state.orders.filter(o=>!['refunded','cancelled'].includes(o.status));
+ const returning=state.orders.filter(o=>['returning','returned'].includes(o.status));
+ const notices=reminders(),upcoming=notices.filter(o=>days(o.deadline)>=0);
+ let html='';
+ if(tab==='orders'){
+ html=`<div class="eyebrow">Todo bajo control</div><h1>Tus compras, sin líos.</h1><p class="intro">Del primer clic al último día de devolución.</p><div class="overview"><div class="stat"><div class="stat-top">En seguimiento ${icon('box')}</div><div class="stat-value">${active.length}</div><div class="stat-foot">pedidos activos</div></div><div class="stat alt"><div class="stat-top">Devoluciones ${icon('return')}</div><div class="stat-value">${returning.length}</div><div class="stat-foot">en proceso</div></div></div>`;
+ if(notices.length)html+=`<button class="reminder-banner" id="showNotices">${icon('bell')}<div><strong>${upcoming.length?`${upcoming.length} ${upcoming.length===1?'plazo a punto de vencer':'plazos a punto de vencer'}`:'Tienes plazos vencidos'}</strong><span>Revisa tus devoluciones y no pierdas la fecha.</span></div>${icon('chevron')}</button>`;
+ }else if(tab==='returns'){
+ html=`<div class="eyebrow">Una segunda oportunidad</div><h1>Devoluciones</h1><p class="intro">Sigue cada devolución hasta recuperar tu dinero.</p>`;
+ }else{
+ html=`<div class="eyebrow">Que no se te pase</div><h1>Tus avisos</h1><p class="intro">Plazos vencidos o que terminan en los próximos ${state.remindDays} días.</p>`;
+ }
+ html+=`<div class="search">${icon('search')}<input id="search" type="search" placeholder="Buscar tienda o artículo" aria-label="Buscar tienda o artículo" value="${esc(query)}"></div>`;
+ if(tab!=='reminders'){
+ const options=tab==='orders'?[['all','Todos'],['active','Activos'],['received','Recibidos'],['completed','Finalizados']]:[['all','Todas'],['returning','Por enviar'],['returned','Por reembolsar'],['refunded','Reembolsadas']];
+ html+=`<div class="chips">${options.map(([key,label])=>`<button class="chip ${filter===key?'selected':''}" data-filter="${key}">${label}</button>`).join('')}</div>`;
+ }
+ html+=`<div class="section-label">${tab==='orders'?'Mis pedidos':tab==='returns'?'Seguimiento de devoluciones':'No pierdas de vista'}<span id="resultCount"></span></div><div id="cards"></div>`;
+ if(tab==='reminders')html+=`<p class="note">Los avisos aparecen aquí al abrir la app. Se calculan con la fecha límite que indiques; comprueba siempre las condiciones de cada tienda.</p>`;
+ $('#main').innerHTML=html;renderCards();
+ document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+ $('#noticeCount').hidden=!notices.length;$('#noticeCount').textContent=notices.length;
+ $('#search').addEventListener('input',e=>{query=e.target.value;renderCards()});
+ document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render()});
+ if($('#showNotices'))$('#showNotices').onclick=()=>switchTab('reminders');
+}
+function renderCards(){
+ let list=tab==='reminders'?reminders():state.orders.filter(o=>tab!=='returns'||['returning','returned','refunded'].includes(o.status));
+ if(filter!=='all'&&tab!=='reminders')list=list.filter(o=>filter==='active'?!['refunded','cancelled'].includes(o.status):filter==='completed'?['refunded','cancelled'].includes(o.status):o.status===filter);
+ const q=query.trim().toLocaleLowerCase('es');list=list.filter(o=>`${o.shop} ${o.item}`.toLocaleLowerCase('es').includes(q));
+ if(tab!=='reminders')list.sort((a,b)=>b.created-a.created);
+ $('#resultCount').textContent=`${list.length} ${list.length===1?'registro':'registros'}`;
+ $('#cards').innerHTML=list.length?list.map(card).join(''):query||filter!=='all'?empty('Sin coincidencias','Prueba otra búsqueda o cambia el filtro.'):tab==='orders'?empty('Empieza con tu próxima compra','Guarda el pedido y su plazo. Nosotros llevamos la cuenta atrás.',true):tab==='returns'?empty('Nada que devolver','Abre un pedido recibido y pulsa «Iniciar devolución» para seguir su progreso.'):empty('Todo está al día','No hay plazos próximos a vencer ni vencidos. Tus siguientes avisos aparecerán aquí.');
+ document.querySelectorAll('[data-id]').forEach(c=>{c.onclick=()=>detail(c.dataset.id);c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();detail(c.dataset.id)}}});
+ if($('#emptyAdd'))$('#emptyAdd').onclick=()=>form();
+}
+function switchTab(t){tab=t;filter='all';query='';render();window.scrollTo({top:0,behavior:'smooth'})}
+function showSheet(title,content,kind){
+ previousFocus=document.activeElement;modalKind=kind;
+ $('#sheet').innerHTML=`<div class="handle"></div><div class="sheet-head"><h2 id="sheetTitle">${title}</h2><button class="icon-btn" id="closeSheet" aria-label="Cerrar">${icon('close')}</button></div>${content}`;
+ $('#overlay').hidden=false;document.body.style.overflow='hidden';$('#closeSheet').onclick=closeSheet;$('#sheet').scrollTop=0;
+ setTimeout(()=>$('#closeSheet')?.focus(),30);
+}
+function closeSheet(){$('#overlay').hidden=true;document.body.style.overflow='';modalKind='';if(previousFocus?.isConnected)previousFocus.focus()}
+function form(id){
+ const o=state.orders.find(o=>o.id===id),base=o||{shop:'',item:'',price:'',date:today(),deadline:plusDays(today(),30),status:'ordered',notes:''};
+ selectedId=id||'';
+ showSheet(o?'Editar pedido':'Nuevo pedido',`<form id="orderForm">
+ <label class="field"><span>Tienda</span><input name="shop" placeholder="Ej. Zara, Amazon, Mango…" value="${esc(base.shop)}" required maxlength="100" autocomplete="organization"></label>
+ <label class="field"><span>Artículo</span><input name="item" placeholder="¿Qué has comprado?" value="${esc(base.item)}" required maxlength="200"></label>
+ <div class="form-row"><label class="field"><span>Precio (€)</span><input name="price" type="text" inputmode="decimal" placeholder="0,00" value="${esc(base.price===''?'':String(base.price).replace('.',','))}" required></label><label class="field"><span>Fecha del pedido</span><input name="date" type="date" value="${esc(base.date)}" required></label></div>
+ <label class="field"><span>Último día para devolver</span><input name="deadline" type="date" value="${esc(base.deadline)}"><small>${o?'Deja el campo vacío si no hay plazo.':'Sugerimos 30 días desde el pedido. Ajusta el plazo real de la tienda.'}</small></label>
+ <label class="field"><span>Estado</span><select name="status">${Object.entries(statuses).map(([k,v])=>`<option value="${k}" ${base.status===k?'selected':''}>${v}</option>`).join('')}</select></label>
+ <label class="field"><span>Notas <span style="font-weight:400;color:var(--muted)">(opcional)</span></span><textarea name="notes" maxlength="3000" placeholder="Número de pedido, instrucciones de devolución…">${esc(base.notes)}</textarea></label>
+ <div id="formError" class="form-error" role="status"></div><button class="primary full" type="submit">${icon(o?'check':'plus')}${o?'Actualizar pedido':'Añadir pedido'}</button></form>`,'form');
+ let deadlineTouched=!!o;
+ const formEl=$('#orderForm');
+ formEl.elements.deadline.oninput=()=>deadlineTouched=true;
+ formEl.elements.date.onchange=()=>{if(!deadlineTouched&&formEl.elements.date.value)formEl.elements.deadline.value=plusDays(formEl.elements.date.value,30)};
+ formEl.onsubmit=async e=>{
+ e.preventDefault();const f=new FormData(formEl),price=Number(String(f.get('price')).trim().replace(',','.'));
+ const error=msg=>$('#formError').textContent=msg;
+ if(!String(f.get('shop')).trim()||!String(f.get('item')).trim())return error('Escribe la tienda y el artículo.');
+ if(!Number.isFinite(price)||price<0||price>999999999)return error('Introduce un precio válido, sin símbolo de moneda.');
+ if(f.get('deadline')&&f.get('deadline')<f.get('date'))return error('El plazo de devolución no puede ser anterior al pedido.');
+ const record={id:o?.id||(globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(16).slice(2)),created:o?.created||Date.now(),shop:String(f.get('shop')).trim(),item:String(f.get('item')).trim(),price:Math.round(price*100)/100,date:f.get('date'),deadline:f.get('deadline'),status:f.get('status'),notes:String(f.get('notes')).trim()};
+ if(o)state.orders=state.orders.map(v=>v.id===o.id?record:v);else state.orders.push(record);
+ persist();closeSheet();render();toast(o?'Pedido actualizado':'Pedido añadido. Ya llevamos la cuenta.');
+ };
+}
+function detail(id){
+ const o=state.orders.find(o=>o.id===id);if(!o)return;selectedId=id;
+ showSheet('Tu pedido',`<div class="detail-hero"><div class="detail-shop">${esc(o.shop)}</div><h3>${esc(o.item)}</h3>${badge(o)}<div class="detail-price">${money(o.price)}</div>${countdown(o)}</div>
+ <div class="detail-grid"><div><small>FECHA DEL PEDIDO</small><strong>${dateText(o.date)}</strong></div><div><small>LÍMITE DE DEVOLUCIÓN</small><strong>${dateText(o.deadline)}</strong></div></div>
+ ${o.notes?`<div class="detail-notes">${esc(o.notes)}</div>`:''}
+ <label class="field"><span>Actualizar estado</span><select id="statusSelect">${Object.entries(statuses).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v}</option>`).join('')}</select></label>
+ ${next[o.status]?`<button class="primary full" id="nextStatus">${icon(o.status==='received'?'return':'check')}${next[o.status][1]}</button>`:''}
+ ${o.status==='received'&&o.deadline&&days(o.deadline)<0?'<p class="note">El plazo indicado ya venció. Comprueba con la tienda si aún acepta la devolución.</p>':''}
+ <div class="actions"><button class="secondary" id="editOrder">Editar pedido</button><button class="secondary danger" id="deleteOrder">Eliminar</button></div><div id="deleteArea"></div>`,'detail');
+ $('#editOrder').onclick=()=>form(id);
+ $('#statusSelect').onchange=e=>updateStatus(id,e.target.value);
+ if($('#nextStatus'))$('#nextStatus').onclick=()=>updateStatus(id,next[o.status][0]);
+ $('#deleteOrder').onclick=()=>{
+ $('#deleteArea').innerHTML=`<div class="delete-check">¿Eliminar este pedido? Esta acción no se puede deshacer.<div class="actions"><button class="secondary" id="cancelDelete">Conservar</button><button class="secondary danger" id="confirmDelete">Sí, eliminar</button></div></div>`;
+ $('#cancelDelete').onclick=()=>$('#deleteArea').innerHTML='';
+ $('#confirmDelete').onclick=()=>{state.orders=state.orders.filter(v=>v.id!==id);persist();closeSheet();render();toast('Pedido eliminado')};
+ $('#deleteArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+ };
+}
+function updateStatus(id,status){const o=state.orders.find(o=>o.id===id);if(!o)return;o.status=status;persist();render();detail(id);toast('Estado actualizado')}
+function settings(){
+ showSheet('Tus avisos',`<div class="detail-hero" style="display:flex;gap:13px;align-items:center">${icon('bell')}<div><strong style="font-size:14px">Un poco de margen, mucha calma.</strong><p class="note" style="margin:5px 0 0">Elige cuándo destacar un plazo de devolución.</p></div></div><label class="field"><span>Avisarme cuando queden…</span><select id="remindDays">${[1,3,5,7,14].map(n=>`<option value="${n}" ${state.remindDays===n?'selected':''}>${n} ${n===1?'día':'días'}</option>`).join('')}</select></label><p class="note">Los cambios se guardan automáticamente. Los avisos se muestran dentro de esta app, no como notificaciones del teléfono.</p><p class="note">Los pedidos devueltos, reembolsados o cancelados dejan de generar avisos de plazo. Un artículo devuelto sigue en seguimiento hasta recibir el reembolso.</p>`,'settings');
+ $('#remindDays').onchange=e=>{state.remindDays=Number(e.target.value);persist();render();toast('Preferencia guardada')};
+}
+function toast(text){clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,3600)}
+async function reload(){
+ try{const saved=await storage.get();if(saved&&Array.isArray(saved.orders))state={orders:saved.orders,remindDays:[1,3,5,7,14].includes(saved.remindDays)?saved.remindDays:7};ready=true;render();if(modalKind==='detail'){if(state.orders.some(o=>o.id===selectedId))detail(selectedId);else closeSheet()}}
+ catch(e){ready=true;render();toast('No se han podido cargar los datos. Vuelve a abrir la app.')}
+}
+$('#addBtn').onclick=()=>{if(ready)form()};
+$('#settingsBtn').onclick=()=>{if(ready)settings()};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+$('#overlay').onclick=e=>{if(e.target===$('#overlay'))closeSheet()};
+document.addEventListener('keydown',e=>{
+ if($('#overlay').hidden)return;
+ if(e.key==='Escape')closeSheet();
+ if(e.key==='Tab'){
+ const focusables=[...$('#sheet').querySelectorAll('button,input,select,textarea,[tabindex="0"]')].filter(el=>!el.disabled);
+ const first=focusables[0],last=focusables[focusables.length-1];
+ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
+ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
+ }
+});
+window.addEventListener('acornixdata',reload);
+let lastDay=today();
+setInterval(()=>{if(today()!==lastDay){lastDay=today();render();if(modalKind==='detail')detail(selectedId)}},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){render();if(modalKind==='detail')detail(selectedId)}});
+reload();
+})();
+</script>
+</body>
+</html>
