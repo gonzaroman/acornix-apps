@@ -2,6 +2,32 @@
   "version": 1,
   "apps": [
     {
+      "id": "star-finder-ar",
+      "name": "Star Finder AR",
+      "emoji": "🌰",
+      "category": "education",
+      "description": "Point your phone at the sky and see the real stars, constellations, planets and the Moon labelled on the camera. Find any planet with an arrow and travel in time.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera",
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 33158,
+      "sha256": "4225444e00dc63d229daa645b655cde7abf829b8bacbfd94ec259596441d06cc",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "spirograph",
       "name": "Spirograph",
       "emoji": "🌀",
