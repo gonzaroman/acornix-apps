@@ -337,6 +337,31 @@
       "trending": 0
     },
     {
+      "id": "birthdays",
+      "name": "Birthdays",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Never forget a birthday: countdowns, ages, gift notes, and a warm message written by your AI ready to send.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13238,
+      "sha256": "2a228f4c36903d9be29ab874ca14e23b23745a012e624e22c11ec3b8d7b21406",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "avatar-maker",
       "name": "Avatar Maker",
       "emoji": "🧑‍🎨",

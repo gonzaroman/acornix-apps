@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Birthdays</title>
+<style>
+  :root { --bg:#fff5f8; --card:#fff; --ink:#33202a; --muted:#9c8590; --a:#e64980; --line:#f8e1ea; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  h1 { margin:0 0 14px; font-size:26px; }
+  .hero { position:relative; overflow:hidden; border-radius:24px; padding:20px; color:#fff; background:linear-gradient(135deg,#f06595,#cc5de8); margin-bottom:16px; box-shadow:0 10px 30px #e6498033; }
+  .hero small { font-weight:800; opacity:.85; text-transform:uppercase; letter-spacing:.6px; font-size:12px; }
+  .hero h2 { margin:4px 0 2px; font-size:26px; } .hero p { margin:0; font-weight:600; opacity:.95; }
+  .hero .big { position:absolute; right:14px; top:10px; font-size:56px; }
+  .hero .acts { display:flex; gap:8px; margin-top:14px; } .hero .acts button { padding:9px 14px; border-radius:12px; background:#ffffff33; font-weight:800; font-size:14px; }
+  .confetti { position:absolute; inset:0; pointer-events:none; }
+  .confetti i { position:absolute; top:-10px; width:8px; height:12px; border-radius:2px; animation:fall 3s linear infinite; }
+  @keyframes fall { to { transform:translateY(220px) rotate(540deg); } }
+  .month { font-size:13px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin:16px 4px 8px; }
+  .p { display:flex; align-items:center; gap:12px; background:var(--card); border-radius:18px; padding:12px 14px; margin-bottom:8px; box-shadow:0 2px 0 var(--line); cursor:pointer; }
+  .p .day { width:48px; height:52px; border-radius:14px; background:#fff0f6; display:flex; flex-direction:column; align-items:center; justify-content:center; flex:none; }
+  .p .day b { font-size:20px; line-height:1; } .p .day span { font-size:11px; font-weight:800; color:var(--a); text-transform:uppercase; }
+  .p .info { flex:1; min-width:0; } .p .info b { display:block; font-size:16px; } .p .info small { color:var(--muted); font-weight:600; }
+  .p .left { font-weight:900; color:var(--a); font-size:14px; text-align:right; white-space:nowrap; }
+  .fab { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(env(safe-area-inset-bottom) + 18px); padding:15px 26px; border-radius:30px; background:var(--a); color:#fff; font-weight:900; font-size:16px; box-shadow:0 8px 24px #e6498055; }
+  .empty { text-align:center; padding:50px 20px; color:var(--muted); font-weight:600; line-height:1.6; } .empty .big { font-size:60px; }
+  .sheet { position:fixed; inset:0; background:#33202a66; display:flex; align-items:flex-end; z-index:5; }
+  .sheet .in { width:100%; max-height:90vh; overflow:auto; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sheet h3 { margin:0 0 12px; }
+  .f { margin-bottom:12px; } .f label { display:block; font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:0 0 6px 2px; }
+  .f input, .f select, .f textarea { width:100%; padding:12px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; color:var(--ink); }
+  .f textarea { min-height:70px; resize:vertical; }
+  .dates { display:grid; grid-template-columns:1fr 1.6fr 1.2fr; gap:8px; }
+  .acts2 { display:flex; gap:8px; } .acts2 button { flex:1; padding:14px; border-radius:16px; font-weight:900; } .acts2 .ok { background:var(--a); color:#fff; } .acts2 .del { flex:0 0 auto; padding:14px 18px; background:#fff0f0; color:#e03131; }
+  .msgbox { background:#fff; border-radius:16px; padding:12px; border:2px solid var(--line); margin-bottom:12px; }
+  .msgbox p { margin:0 0 8px; line-height:1.45; white-space:pre-wrap; } .msgbox .row { display:flex; gap:8px; flex-wrap:wrap; } .msgbox .row button { padding:8px 12px; border-radius:12px; background:#fff0f6; font-weight:800; font-size:13px; }
+  .err { color:#e03131; font-weight:700; font-size:14px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎂 <span id="ttl"></span></h1>
+  <div id="hero"></div>
+  <div id="list"></div>
+</div>
+<button class="fab" id="add"></button>
+<div class="sheet" id="sheet" hidden><div class="in">
+  <h3 id="sTitle"></h3>
+  <div class="f"><label id="lName"></label><input id="name" maxlength="40"></div>
+  <div class="f"><label id="lDate"></label><div class="dates"><select id="dd"></select><select id="mm"></select><input id="yy" type="number" inputmode="numeric" min="1900" max="2100"></div></div>
+  <div class="f"><label id="lRel"></label><select id="rel"></select></div>
+  <div class="f"><label id="lNotes"></label><textarea id="notes" maxlength="300"></textarea></div>
+  <div class="msgbox" id="msgbox" hidden></div>
+  <div class="acts2"><button class="del" id="del">🗑️</button><button class="ok" id="ok"></button></div>
+</div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Cumpleaños', add:'＋ Añadir cumpleaños', newB:'Nuevo cumpleaños', edit:'Editar', name:'Nombre', date:'Fecha (el año es opcional)', year:'Año', rel:'Quién es', notes:'Ideas de regalo, gustos…', ok:'Guardar', today:'¡Hoy es su cumpleaños!', next:'El próximo', turns:n => `Cumple ${n}`, in:n => n === 1 ? 'mañana' : `en ${n} días`, inShort:n => n === 0 ? '¡Hoy!' : n === 1 ? 'Mañana' : `${n} días`, empty:'Añade los cumpleaños de tu gente y nunca se te olvidará ninguno.', write:'✨ Escribir felicitación', share:'📤 Enviar', copy:'📋 Copiar', again:'🔄 Otra', writing:'Escribiendo…', noAi:'Para escribir felicitaciones con IA abre la app en Acornix con tu IA conectada.', failed:'No he podido: ', rels:['Familia', 'Pareja', 'Amigo/a', 'Trabajo', 'Otro'], lang:'Spanish', locale:'es', plain:n => `¡Feliz cumpleaños, ${n}! 🎉 Que pases un día genial.` }
+ : { title:'Birthdays', add:'＋ Add birthday', newB:'New birthday', edit:'Edit', name:'Name', date:'Date (year is optional)', year:'Year', rel:'Who they are', notes:'Gift ideas, things they love…', ok:'Save', today:'It\'s their birthday today!', next:'Next up', turns:n => `Turns ${n}`, in:n => n === 1 ? 'tomorrow' : `in ${n} days`, inShort:n => n === 0 ? 'Today!' : n === 1 ? 'Tomorrow' : `${n} days`, empty:'Add your people\'s birthdays and never forget one again.', write:'✨ Write a message', share:'📤 Send', copy:'📋 Copy', again:'🔄 Another', writing:'Writing…', noAi:'To write messages with AI, open this app in Acornix with your AI connected.', failed:'Couldn\'t do it: ', rels:['Family', 'Partner', 'Friend', 'Work', 'Other'], lang:'English', locale:'en', plain:n => `Happy birthday, ${n}! 🎉 Have a wonderful day.` };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id), DAY = 864e5;
+['ttl', 'add', 'lName', 'lDate', 'lRel', 'ok'].forEach((id, i) => $(id).textContent = [T.title, T.add, T.name, T.date, T.rel, T.ok][i]); $('lNotes').textContent = '🎁'; $('notes').placeholder = T.notes; $('yy').placeholder = T.year;
+const MONTHS = Array.from({ length: 12 }, (_, i) => new Date(2000, i, 1).toLocaleDateString(T.locale, { month: 'long' }));
+$('dd').innerHTML = Array.from({ length: 31 }, (_, i) => `<option>${i + 1}</option>`).join('');
+$('mm').innerHTML = MONTHS.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+$('rel').innerHTML = T.rels.map((r, i) => `<option value="${i}">${r}</option>`).join('');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let people = [], editing = null;
+// Days until the next birthday (0 = today); 29 February is celebrated on 28 February in other years.
+function nextOf(p) {
+  const now = new Date(), t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const at = y => { const leap = new Date(y, 1, 29).getMonth() === 1; return new Date(y, p.m, p.m === 1 && p.d === 29 && !leap ? 28 : p.d); };
+  let d = at(now.getFullYear()); if (d < t0) d = at(now.getFullYear() + 1);
+  return { days: Math.round((d - t0) / DAY), date: d, age: p.y ? d.getFullYear() - p.y : null };
+}
+function render() {
+  const L = people.map((p, i) => ({ p, i, n: nextOf(p) })).sort((a, b) => a.n.days - b.n.days);
+  if (!L.length) { $('hero').innerHTML = ''; $('list').innerHTML = `<div class="empty"><div class="big">🎈</div>${T.empty}</div>`; return; }
+  const h = L[0], today = h.n.days === 0;
+  $('hero').innerHTML = `<div class="hero">${today ? `<div class="confetti">${Array.from({ length: 24 }, (_, k) => `<i style="left:${k * 4.2}%;background:${['#fff', '#ffd43b', '#69db7c', '#74c0fc'][k % 4]};animation-delay:${(k % 7) * .4}s"></i>`).join('')}</div>` : ''}<div class="big">${today ? '🥳' : '🎁'}</div><small>${today ? T.today : T.next}</small><h2>${esc(h.p.name)}</h2><p>${h.n.date.toLocaleDateString(T.locale, { weekday: 'long', day: 'numeric', month: 'long' })}${today ? '' : ' · ' + T.in(h.n.days)}${h.n.age ? ' · ' + T.turns(h.n.age) : ''}</p><div class="acts"><button id="hMsg">${T.write}</button></div></div>`;
+  $('hMsg').onclick = () => { openSheet(h.i); writeMsg(); };
+  let lastM = -1, html = '';
+  L.forEach(({ p, i, n }) => { const m = n.date.getMonth(); if (m !== lastM) { html += `<div class="month">${MONTHS[m]}</div>`; lastM = m; }
+    html += `<div class="p" data-i="${i}"><div class="day"><b>${n.date.getDate()}</b><span>${MONTHS[m].slice(0, 3)}</span></div><div class="info"><b>${esc(p.name)}</b><small>${T.rels[p.rel || 0]}${n.age ? ' · ' + T.turns(n.age) : ''}</small></div><div class="left">${T.inShort(n.days)}</div></div>`; });
+  $('list').innerHTML = html;
+  $('list').querySelectorAll('.p').forEach(b => b.onclick = () => openSheet(+b.dataset.i));
+}
+const save = () => store.set('people', people);
+function openSheet(i) {
+  editing = i; const p = i == null ? { name: '', d: new Date().getDate(), m: new Date().getMonth(), y: '', rel: 2, notes: '' } : people[i];
+  $('sTitle').textContent = i == null ? T.newB : T.edit; $('name').value = p.name; $('dd').value = p.d; $('mm').value = p.m; $('yy').value = p.y || ''; $('rel').value = p.rel || 0; $('notes').value = p.notes || '';
+  $('del').hidden = i == null; $('msgbox').hidden = i == null; if (i != null) msgUI(''); $('sheet').hidden = false;
+}
+$('add').onclick = () => openSheet(null);
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').hidden = true; };
+$('ok').onclick = () => {
+  const name = $('name').value.trim(); if (!name) { $('name').focus(); return; }
+  const y = +$('yy').value, p = { name, d: +$('dd').value, m: +$('mm').value, y: y >= 1900 && y <= new Date().getFullYear() ? y : null, rel: +$('rel').value, notes: $('notes').value.trim() };
+  if (editing == null) people.push(p); else people[editing] = p; save(); render(); $('sheet').hidden = true;
+};
+$('del').onclick = () => { if (editing != null) { people.splice(editing, 1); save(); render(); } $('sheet').hidden = true; };
+let msg = '';
+function msgUI(text, err) {
+  msg = text || T.plain(people[editing].name);
+  $('msgbox').innerHTML = `${err ? `<p class="err">${esc(err)}</p>` : ''}<p>${esc(msg)}</p><div class="row"><button id="mAi">${text ? T.again : T.write}</button><button id="mCopy">${T.copy}</button><button id="mShare">${T.share}</button></div>`;
+  $('mAi').onclick = writeMsg;
+  $('mCopy').onclick = async () => { try { await navigator.clipboard.writeText(msg); window.Acornix && Acornix.toast('✓'); } catch (e) {} };
+  $('mShare').onclick = async () => { try { if (window.Acornix) await Acornix.share(msg); else if (navigator.share) await navigator.share({ text: msg }); } catch (e) {} };
+}
+async function writeMsg() {
+  const p = people[editing]; if (!p) return;
+  if (!window.Acornix) { msgUI('', T.noAi); return; }
+  $('msgbox').innerHTML = `<p>✍️ ${T.writing}</p>`;
+  try {
+    const n = nextOf(p), text = await Acornix.askAI(`Write a birthday message for ${p.name} (${T.rels[p.rel || 0]}).${n.age ? ` They turn ${n.age}.` : ''}${p.notes ? ` Things they love: ${p.notes}.` : ''}`, { system: `You write warm, personal birthday messages that sound like a real person wrote them, not a card. 2 to 4 short sentences, one or two emojis, a touch of humour if it fits the relationship. Write in ${T.lang}. Reply with the message only.` });
+    msgUI(String(text).trim().replace(/^"|"$/g, ''));
+  } catch (e) { msgUI('', T.failed + (e.message || '')); }
+}
+(async () => { people = await store.get('people', []); render(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "id": "birthdays",
+  "name": "Birthdays",
+  "emoji": "🌰",
+  "category": "lifestyle",
+  "description": "Never forget a birthday: countdowns, ages, gift notes, and a warm message written by your AI ready to send.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 38
+}
