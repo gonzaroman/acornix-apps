@@ -242,6 +242,29 @@
       "trending": 0
     },
     {
+      "id": "size-converter",
+      "name": "Size Converter",
+      "emoji": "🌰",
+      "category": "shopping",
+      "description": "Convert shoe, clothing and ring sizes between EU, UK, US and Japan, and save your own.",
+      "prompt": "A clothes and shoe size converter between EU, UK, US and Japan for men, women and kids, plus ring sizes, with your own sizes saved for quick lookup.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 31965,
+      "sha256": "e56e7f4809589f881691a6d3727a0543da227ae2b8e66a6b11ae0ffdea5460ad",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "shopping-list",
       "name": "Shopping List",
       "emoji": "📝",

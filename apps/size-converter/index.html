@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f6f8f5">
+<title>Talla a talla</title>
+<style>
+:root{--bg:#f6f8f5;--paper:#fff;--ink:#182e32;--muted:#71817e;--green:#137d68;--mint:#e4f4eb;--line:#e5ebe5;--orange:#f3a26d;--shadow:0 8px 30px #213c3010}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px}
+button,input,select{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7dc9b4;outline-offset:3px}
+button{color:inherit}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.wrap{max-width:600px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 20px calc(32px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;gap:11px;margin-bottom:28px}
+.logo{height:44px;width:44px;border-radius:15px;display:grid;place-items:center;background:var(--green);color:white;transform:rotate(-5deg)}
+.logo svg{transform:rotate(5deg);width:25px;height:25px}
+.brand{font-size:19px;font-weight:800;letter-spacing:-.6px}
+.tag{font-size:11px;color:var(--muted);margin-top:2px}
+.header-btn{margin-left:auto;background:white;border:1px solid var(--line);width:44px;height:44px;border-radius:15px;display:grid;place-items:center}
+h1{font-size:32px;line-height:1.13;letter-spacing:-1.3px;margin:0 0 10px;font-weight:800}
+h1 span{color:var(--green)}
+.lead{margin:0 0 25px;color:var(--muted);font-size:14px;line-height:1.6}
+.categories{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:19px}
+.cat{border:1px solid var(--line);background:#fff;border-radius:18px;min-height:85px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:13px;font-weight:650;transition:background .18s,transform .18s}
+.cat svg{width:26px;height:26px}
+.cat.active{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 6px 15px #137d6826}
+.cat:active,.primary:active{transform:scale(.97)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:19px;box-shadow:var(--shadow)}
+.section-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:1.6px;color:var(--muted)}
+.guide-btn{padding:5px 0 5px 8px;background:transparent;border:0;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--green);min-height:36px;font-weight:650}
+.guide-btn svg{height:16px;width:16px}
+.segments{display:flex;padding:4px;background:#f0f4f0;border-radius:13px;gap:3px;margin-bottom:16px}
+.segments button{border:0;background:none;flex:1;padding:10px 4px;border-radius:10px;font-size:12px;font-weight:650;min-height:42px}
+.segments button.active{background:white;color:var(--green);box-shadow:0 2px 5px #102a1710}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field label{font-size:12px;font-weight:650;color:#536963}
+.select-wrap{position:relative}
+.select-wrap:after{content:"";width:7px;height:7px;border-right:2px solid #71817e;border-bottom:2px solid #71817e;position:absolute;right:16px;top:20px;transform:rotate(45deg);pointer-events:none}
+select,input{width:100%;color:var(--ink);background:#fff;border:1px solid #dce5de;border-radius:12px;min-height:50px;padding:11px 35px 11px 13px;outline:none}
+select{appearance:none;-webkit-appearance:none}
+input{padding-right:13px}
+input:focus,select:focus{border-color:var(--green)}
+#clothingField{margin-bottom:16px}
+.inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.divider{display:flex;align-items:center;gap:11px;margin:22px 0 17px;color:#9ba9a0}
+.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}
+.divider span{display:grid;place-items:center;background:#f4f7f3;border-radius:50%;width:29px;height:29px}
+.divider svg{height:16px;width:16px}
+.result-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.result-head h2{font-size:14px;margin:0;font-weight:750}
+.badge{font-size:10px;font-weight:650;padding:5px 8px;border-radius:7px;background:#fff3e7;color:#a67035}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result{border:1px solid var(--line);background:#fafbf8;border-radius:15px;padding:13px 14px;min-height:99px;position:relative;animation:appear .22s ease-out}
+.result.origin{background:var(--mint);border-color:#bddfcc}
+.country{display:flex;align-items:center;gap:6px;font-size:11px;color:#697e74;font-weight:700}
+.country-dot{width:7px;height:7px;border-radius:50%;background:#b1c5b9}
+.origin .country-dot{background:var(--green)}
+.size{font-size:29px;line-height:1.2;letter-spacing:-.7px;font-weight:780;margin-top:7px;color:#243f35;overflow-wrap:anywhere}
+.unit{font-size:10px;color:#71857b;margin-top:3px;line-height:1.3}
+.result.origin .size{color:var(--green)}
+.info{display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.6;color:var(--muted);margin:14px 0 17px}
+.info svg{width:15px;height:15px;margin-top:2px}
+.primary{width:100%;min-height:49px;border:0;border-radius:13px;background:var(--green);color:white;font-weight:700;font-size:14px;display:flex;justify-content:center;align-items:center;gap:8px;transition:transform .15s}
+.primary svg{width:19px;height:19px}
+.saved-section{margin-top:28px}
+.saved-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.saved-title h2{margin:0;font-size:18px;letter-spacing:-.5px}
+.count{font-size:11px;color:var(--green);background:#e4eee6;padding:4px 9px;border-radius:20px}
+.saved-list{display:flex;flex-direction:column;gap:10px}
+.empty{border:1px dashed #cad8cc;border-radius:18px;padding:24px 20px;display:flex;align-items:center;gap:14px}
+.empty-icon{width:43px;height:43px;border-radius:14px;background:#e8efe6;color:#74967d;display:grid;place-items:center;flex-shrink:0}
+.empty strong{display:block;font-size:13px;margin-bottom:4px}
+.empty p{font-size:12px;line-height:1.5;color:var(--muted);margin:0}
+.saved-card{display:flex;align-items:center;background:#fff;border:1px solid var(--line);border-radius:17px;padding:4px 8px 4px 4px;box-shadow:0 3px 10px #153b1d04}
+.saved-main{display:flex;flex:1;align-items:center;gap:11px;text-align:left;background:none;border:0;padding:11px 7px;min-width:0}
+.saved-icon{display:grid;place-items:center;width:39px;height:43px;border-radius:12px;background:#f0f5ed;color:var(--green);flex-shrink:0}
+.saved-copy{min-width:0}
+.saved-name{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved-context{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}
+.saved-sizes{font-size:11px;color:var(--green);font-weight:650;margin-top:5px;line-height:1.5}
+.icon-btn{border:0;background:none;min-height:44px;min-width:40px;color:#91a097;display:grid;place-items:center;border-radius:11px}
+.icon-btn svg{width:18px;height:18px}
+footer{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:25px;font-size:10px;color:#8b9c91}
+footer svg{width:13px;height:13px}
+.modal-back{position:fixed;inset:0;z-index:50;background:#132a266b;backdrop-filter:blur(5px);display:flex;align-items:flex-end;justify-content:center;padding:14px 14px calc(14px + env(safe-area-inset-bottom));animation:fade .18s}
+.modal{width:100%;max-width:520px;max-height:calc(92dvh - env(safe-area-inset-top));overflow-y:auto;border-radius:26px;background:#fff;padding:23px;box-shadow:0 15px 70px #071c2b40;animation:slide .22s}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.modal h2{font-size:22px;letter-spacing:-.5px;margin:0}
+.modal h3{font-size:14px;margin:19px 0 7px}
+.modal p{font-size:13px;line-height:1.7;color:var(--muted);margin:8px 0 17px}
+.modal .field{margin:17px 0}
+.modal .primary{margin-top:18px}
+.modal-summary{background:var(--mint);padding:15px;border-radius:14px;color:var(--green);font-size:13px;line-height:1.8}
+.secondary{background:#f0f4f0;border:0;border-radius:13px;min-height:46px;width:100%;margin-top:10px;font-weight:650}
+.danger{background:#bc4d4d}
+.tip{padding:12px 14px;background:#fff6e9;border-radius:12px;font-size:12px;line-height:1.6;color:#956d3b;margin:15px 0}
+.steps{padding:0;list-style:none;counter-reset:step}
+.steps li{counter-increment:step;display:flex;align-items:flex-start;gap:11px;font-size:13px;line-height:1.65;margin:15px 0;color:#5b7068}
+.steps li:before{content:counter(step);flex-shrink:0;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:var(--mint);color:var(--green);font-size:11px;font-weight:800}
+.toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#203c33;color:#fff;padding:13px 19px;border-radius:14px;z-index:100;font-size:13px;box-shadow:0 5px 24px #0002;width:max-content;max-width:calc(100% - 34px);text-align:center;animation:appear .2s}
+[hidden]{display:none!important}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slide{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media(min-width:540px){.wrap{padding-left:30px;padding-right:30px}.panel{padding:24px}.modal-back{align-items:center}.result{min-height:106px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="m4 14 10-10a2 2 0 0 1 3 0l3 3a2 2 0 0 1 0 3L10 20a2 2 0 0 1-3 0l-3-3a2 2 0 0 1 0-3Z"/><path d="m12 6 3 3m-6 0 2 2m-5 1 3 3m-6 0 2 2"/></symbol>
+<symbol id="i-shoe" viewBox="0 0 24 24"><path d="M3 5h5c0 3 1 5 4 6l7 3c2 .8 3 2 3 4v2H2V9c0-2 0-3 1-4Z"/><path d="M2 17h20m-10-6-1 3m4-2-1 3M3 8h4"/></symbol>
+<symbol id="i-shirt" viewBox="0 0 24 24"><path d="m8 3-6 4 3 5 3-2v11h8V10l3 2 3-5-6-4a4 4 0 0 1-8 0Z"/></symbol>
+<symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="15" r="7"/><path d="m8 3 2-2h4l2 2-4 5-4-5Zm0 0h8m-6-2 2 7 2-7"/></symbol>
+<symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16l-6-4-6 4Z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></symbol>
+<symbol id="i-switch" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+</svg>
+<div class="wrap">
+<header>
+<div class="logo"><svg><use href="#i-ruler"/></svg></div>
+<div><div class="brand">Talla a talla</div><div class="tag">Menos dudas. Mejor ajuste.</div></div>
+<button class="header-btn" id="goSaved" aria-label="Ver mis tallas"><svg><use href="#i-bookmark"/></svg></button>
+</header>
+<main>
+<h1>Tu talla.<br><span>Sin fronteras.</span></h1>
+<p class="lead">Convierte, compara y guarda tus medidas.</p>
+<nav class="categories" aria-label="Tipo de talla">
+<button class="cat active" data-cat="shoes" aria-pressed="true"><svg><use href="#i-shoe"/></svg>Calzado</button>
+<button class="cat" data-cat="clothes" aria-pressed="false"><svg><use href="#i-shirt"/></svg>Ropa</button>
+<button class="cat" data-cat="rings" aria-pressed="false"><svg><use href="#i-ring"/></svg>Anillos</button>
+</nav>
+<section class="panel" aria-label="Conversor de tallas">
+<div class="section-top"><span class="eyebrow">ENCUENTRA TU EQUIVALENCIA</span><button class="guide-btn" id="guideBtn"><svg><use href="#i-ruler"/></svg>Cómo medir</button></div>
+<div class="segments" id="audience" aria-label="Para quién">
+<button data-person="women" class="active" aria-pressed="true">Mujer</button>
+<button data-person="men" aria-pressed="false">Hombre</button>
+<button data-person="kids" aria-pressed="false">Peques</button>
+</div>
+<div class="field" id="clothingField" hidden>
+<label for="garment">Tipo de prenda</label>
+<div class="select-wrap"><select id="garment"></select></div>
+</div>
+<div class="inputs">
+<div class="field"><label for="system">Sistema de origen</label><div class="select-wrap"><select id="system"><option value="EU">EU · Europa</option><option value="UK">UK · Reino Unido</option><option value="US">US · Estados Unidos</option><option value="JP">JP · Japón</option></select></div></div>
+<div class="field"><label for="sizeSelect">Tu talla</label><div class="select-wrap"><select id="sizeSelect"></select></div></div>
+</div>
+<div class="divider"><span><svg><use href="#i-switch"/></svg></span></div>
+<div class="result-head"><h2>Así se ve tu talla</h2><span class="badge">Guía orientativa</span></div>
+<div class="results" id="results" aria-live="polite"></div>
+<div class="info"><svg><use href="#i-info"/></svg><span id="conversionNote"></span></div>
+<button class="primary" id="saveBtn"><svg><use href="#i-bookmark"/></svg>Guardar mi talla</button>
+</section>
+<section class="saved-section" id="savedSection">
+<div class="saved-title"><h2>Mi pequeño tallario</h2><span class="count" id="savedCount">0 guardadas</span></div>
+<div class="saved-list" id="savedList"></div>
+</section>
+<footer><svg><use href="#i-lock"/></svg>Tus tallas, guardadas en este dispositivo.</footer>
+</main>
+</div>
+<div id="modalHost"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const systems=['EU','UK','US','JP'];
+const names={EU:'Europa',UK:'Reino Unido',US:'Estados Unidos',JP:'Japón'};
+const people={women:'Mujer',men:'Hombre',kids:'Peques'};
+const categories={shoes:'Calzado',clothes:'Ropa',rings:'Anillos'};
+const icons={shoes:'shoe',clothes:'shirt',rings:'ring'};
+const key='tallaAtalla.v1';
+const defaults={cat:'shoes',person:'women',garment:'general',system:'EU',index:7};
+let state={selection:{...defaults},saved:[]};
+let saveQueue=Promise.resolve(), toastTimer, lastFocus, modalClose;
+const hasDB=!!(window.Acornix && window.Acornix.db);
+const store={
+ async get(){return hasDB?await Acornix.db.get(key):JSON.parse(localStorage.getItem(key)||'null')},
+ async set(data){if(hasDB)await Acornix.db.set(key,data);else localStorage.setItem(key,JSON.stringify(data))}
+};
+const shoeWomen=[
+[34,1.5,4,21],[34.5,2,4.5,21.5],[35,2.5,5,22],[35.5,3,5.5,22.5],
+[36,3.5,6,23],[37,4,6.5,23.5],[37.5,4.5,7,24],[38,5,7.5,24.5],
+[38.5,5.5,8,25],[39,6,8.5,25.5],[40,6.5,9,26],[40.5,7,9.5,26.5],
+[41,7.5,10,27],[42,8,10.5,27.5],[42.5,8.5,11,28],[43,9,11.5,28.5],[44,9.5,12,29]
+];
+const shoeMen=[
+[38,4.5,5.5,23.5],[38.5,5,6,24],[39,5.5,6.5,24.5],[40,6,7,25],
+[40.5,6.5,7.5,25.5],[41,7,8,26],[42,7.5,8.5,26.5],[42.5,8,9,27],
+[43,8.5,9.5,27.5],[44,9,10,28],[44.5,9.5,10.5,28.5],[45,10,11,29],
+[45.5,10.5,11.5,29.5],[46,11,12,30],[47,12,13,31],[48,13,14,32],[49,14,15,33]
+];
+const shoeKids=[
+[18,'2','3',11],[19,'3','4',11.5],[20,'4','5',12],[21,'4.5','5.5',12.5],
+[22,'5','6',13],[23,'6','7',14],[24,'7','8',15],[25,'7.5','8.5',15.5],
+[26,'8','9',16],[27,'9','10',17],[28,'10','11',17.5],[29,'11','12',18],
+[30,'11.5','12.5',18.5],[31,'12','13',19],[32,'13','1 juvenil',20],
+[33,'1 juvenil','2 juvenil',20.5],[34,'2 juvenil','3 juvenil',21.5],[35,'2.5 juvenil','3.5 juvenil',22]
+];
+const clothesWomen=[
+[32,4,0,5,'XXS'],[34,6,2,7,'XS'],[36,8,4,9,'S'],[38,10,6,11,'M'],
+[40,12,8,13,'M–L'],[42,14,10,15,'L'],[44,16,12,17,'XL'],
+[46,18,14,19,'XXL'],[48,20,16,21,'3XL'],[50,22,18,23,'4XL']
+];
+const clothesMen=[
+[44,34,34,'S','XS–S'],[46,36,36,'M','S'],[48,38,38,'L','M'],
+[50,40,40,'LL','L'],[52,42,42,'3L','XL'],[54,44,44,'4L','XXL'],
+[56,46,46,'5L','3XL'],[58,48,48,'6L','4XL']
+];
+const trousersMen=[
+[40,28,28,71],[42,30,30,76],[44,32,32,81],[46,34,34,86],
+[48,36,36,91],[50,38,38,96],[52,40,40,101],[54,42,42,106]
+];
+const clothesKids=[
+[56,'0–1 mes','Recién nacido',50,'0–1 mes'],[62,'1–3 meses','0–3 meses',60,'1–3 meses'],
+[68,'3–6 meses','3–6 meses',70,'3–6 meses'],[74,'6–9 meses','6–9 meses',75,'6–9 meses'],
+[80,'9–12 meses','12 meses',80,'9–12 meses'],[86,'12–18 meses','18 meses',85,'12–18 meses'],
+[92,'18–24 meses','2T',90,'18–24 meses'],[98,'2–3 años','3T',95,'2–3 años'],
+[104,'3–4 años','4T',100,'3–4 años'],[110,'4–5 años','5',110,'4–5 años'],
+[116,'5–6 años','6',120,'5–6 años'],[122,'6–7 años','7',125,'6–7 años'],
+[128,'7–8 años','8',130,'7–8 años'],[140,'9–10 años','10',140,'9–10 años'],
+[152,'11–12 años','12',150,'11–12 años'],[164,'13–14 años','14',160,'13–14 años']
+];
+// EU indica la circunferencia redondeada; el diámetro y la circunferencia conservan la medida de referencia.
+const rings=[
+[44,'F',3,4,44.2],[45,'G',3.5,5,45.5],[47,'H',4,7,46.8],
+[48,'I',4.5,8,48.0],[49,'J½',5,9,49.3],[51,'L',5.5,10,50.6],
+[52,'M',6,12,51.9],[53,'N',6.5,13,53.1],[54,'O',7,14,54.4],
+[56,'P',7.5,15,55.7],[57,'Q',8,16,57.0],[58,'Q½',8.5,17,58.3],
+[60,'R½',9,18,59.5],[61,'S½',9.5,19,60.8],[62,'T½',10,20,62.1],
+[63,'U½',10.5,22,63.4],[65,'V½',11,23,64.6],[66,'W½',11.5,24,65.9],
+[67,'Y',12,25,67.2],[68,'Z',12.5,26,68.5],[70,'Z+1',13,27,69.7]
+];
+const number=n=>typeof n==='number'?n.toLocaleString('es-ES',{maximumFractionDigits:1}):String(n);
+const svg=name=>`<svg aria-hidden="true"><use href="#i-${name}"/></svg>`;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function table(s=state.selection){
+ if(s.cat==='rings')return rings;
+ if(s.cat==='shoes')return s.person==='men'?shoeMen:s.person==='kids'?shoeKids:shoeWomen;
+ if(s.person==='kids')return clothesKids;
+ if(s.person==='men')return s.garment==='trousers'?trousersMen:clothesMen;
+ return clothesWomen;
+}
+function normalise(s){
+ const v={...defaults,...s};
+ if(!categories[v.cat])v.cat='shoes';
+ if(!people[v.person])v.person='women';
+ if(!systems.includes(v.system))v.system='EU';
+ if(!['general','trousers'].includes(v.garment))v.garment='general';
+ const t=table(v);v.index=Math.max(0,Math.min(t.length-1,parseInt(v.index,10)||0));
+ return v;
+}
+function unit(s,sys){
+ if(s.cat==='shoes')return sys==='JP'?'Longitud nominal · cm':(s.person==='kids'?'Talla infantil':'Talla de calzado');
+ if(s.cat==='rings')return sys==='EU'?'Contorno aprox. · mm':sys==='JP'?'Número japonés':'Talla de anillo';
+ if(s.person==='kids')return sys==='EU'||sys==='JP'?'Estatura aprox. · cm':'Edad / talla orientativa';
+ if(s.person==='men'&&s.garment==='trousers')return sys==='JP'?'Cintura aprox. · cm':sys==='EU'?'Talla de pantalón':'Cintura · pulgadas';
+ return s.person==='men'?(sys==='EU'?'Talla de chaqueta':sys==='JP'?'Talla japonesa':'Pecho · pulgadas'):'Talla de prenda';
+}
+function context(s){
+ if(s.cat==='rings')return 'Anillos · Todas las personas';
+ let text=categories[s.cat]+' · '+people[s.person];
+ if(s.cat==='clothes')text+=' · '+(s.person==='kids'?'Por estatura':s.garment==='trousers'?'Pantalones':'Prendas superiores');
+ return text;
+}
+function persist(){
+ const snapshot=JSON.parse(JSON.stringify(state));
+ saveQueue=saveQueue.catch(()=>{}).then(()=>store.set(snapshot)).catch(()=>toast('No se pudo guardar. Revisa el almacenamiento.'));
+ return saveQueue;
+}
+function toast(text){
+ clearTimeout(toastTimer);$('toast').textContent=text;$('toast').hidden=false;
+ toastTimer=setTimeout(()=>$('toast').hidden=true,3300);
+}
+function fillSizes(){
+ const s=state.selection,idx=systems.indexOf(s.system);
+ $('sizeSelect').innerHTML=table().map((row,i)=>`<option value="${i}">${esc(number(row[idx]))}${(s.cat==='shoes'&&s.system==='JP')?' cm':''}</option>`).join('');
+ $('sizeSelect').value=s.index;
+}
+function renderConverter(){
+ const s=state.selection;
+ document.querySelectorAll('[data-cat]').forEach(b=>{const active=b.dataset.cat===s.cat;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active);});
+ $('audience').hidden=s.cat==='rings';
+ document.querySelectorAll('[data-person]').forEach(b=>{const active=b.dataset.person===s.person;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active);});
+ $('clothingField').hidden=s.cat!=='clothes'||s.person==='kids';
+ $('garment').innerHTML=s.person==='men'?'<option value="general">Camisetas, camisas y chaquetas</option><option value="trousers">Pantalones</option>':'<option value="general">Vestidos y prendas superiores</option><option value="trousers">Pantalones y faldas</option>';
+ $('garment').value=s.garment;
+ $('system').value=s.system;fillSizes();renderResults();
+}
+function renderResults(){
+ const s=state.selection,row=table()[s.index];
+ $('results').innerHTML=systems.map((sys,i)=>`<div class="result ${sys===s.system?'origin':''}"><div class="country"><span class="country-dot"></span>${sys} · ${names[sys]}</div><div class="size">${esc(number(row[i]))}</div><div class="unit">${unit(s,sys)}</div></div>`).join('');
+ let note='';
+ if(s.cat==='shoes')note=s.person==='kids'?'Tallas infantiles aproximadas. «Juvenil» indica el cambio de numeración. Comprueba la longitud y la guía de la marca.':'Las equivalencias varían según la marca y la horma. Japón usa una longitud nominal en centímetros.';
+ else if(s.cat==='rings')note=`Contorno de referencia: ${number(row[4])} mm · Diámetro interior: ${number(row[4]/Math.PI)} mm. EU y Japón se muestran por aproximación.`;
+ else if(s.person==='kids')note='La estatura es más útil que la edad. Las edades y las equivalencias japonesas son aproximadas; revisa la guía de la marca.';
+ else if(s.person==='men')note=s.garment==='trousers'?'Guía de pantalones por cintura. Las tallas EU no corresponden a las tallas EU de chaqueta. Verifica siempre la tabla de la marca.':'Guía de prendas superiores basada en tallas de chaqueta. Camisetas y camisas pueden usar otras escalas; revisa la marca.';
+ else note='Equivalencias generales de confección. El corte, las medidas y las tallas pueden variar mucho entre marcas.';
+ $('conversionNote').textContent=note;
+}
+function renderSaved(){
+ const list=state.saved;
+ $('savedCount').textContent=`${list.length} ${list.length===1?'guardada':'guardadas'}`;
+ if(!list.length){
+ $('savedList').innerHTML=`<div class="empty"><div class="empty-icon">${svg('bookmark')}</div><div><strong>Un lugar para tus tallas</strong><p>Guarda las tuyas y las de tu familia.<br>La próxima vez, estarán aquí.</p></div></div>`;return;
+ }
+ $('savedList').innerHTML=list.map(item=>{
+ const s=normalise(item.selection),row=table(s)[s.index];
+ return `<div class="saved-card"><button class="saved-main" data-open="${esc(item.id)}" aria-label="Consultar ${esc(item.name)}"><div class="saved-icon">${svg(icons[s.cat])}</div><div class="saved-copy"><div class="saved-name">${esc(item.name)}</div><div class="saved-context">${esc(context(s))}</div><div class="saved-sizes">${systems.map((sys,i)=>`${sys} ${esc(number(row[i]))}`).join(' · ')}</div></div></button><button class="icon-btn" data-delete="${esc(item.id)}" aria-label="Eliminar ${esc(item.name)}">${svg('trash')}</button></div>`;
+ }).join('');
+}
+function change(reset=false){
+ if(reset)state.selection.index=Math.min(state.selection.cat==='rings'?6:state.selection.cat==='clothes'?3:7,table().length-1);
+ renderConverter();persist();
+}
+document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{
+ if(state.selection.cat===b.dataset.cat)return;
+ state.selection.cat=b.dataset.cat;change(true);
+}));
+document.querySelectorAll('[data-person]').forEach(b=>b.addEventListener('click',()=>{
+ if(state.selection.person===b.dataset.person)return;
+ state.selection.person=b.dataset.person;change(true);
+}));
+$('garment').addEventListener('change',()=>{state.selection.garment=$('garment').value;change(true)});
+$('system').addEventListener('change',()=>{state.selection.system=$('system').value;fillSizes();renderResults();persist()});
+$('sizeSelect').addEventListener('change',()=>{state.selection.index=Number($('sizeSelect').value);renderResults();persist()});
+$('goSaved').addEventListener('click',()=>$('savedSection').scrollIntoView({behavior:'smooth',block:'start'}));
+function closeModal(){
+ if(!$('modalHost').firstChild)return;
+ $('modalHost').innerHTML='';document.body.style.overflow='';
+ if(lastFocus&&lastFocus.isConnected)lastFocus.focus();
+ modalClose=null;
+}
+function openModal(title,body){
+ lastFocus=document.activeElement;
+ $('modalHost').innerHTML=`<div class="modal-back"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">${esc(title)}</h2><button class="icon-btn" id="closeModal" aria-label="Cerrar">${svg('close')}</button></div>${body}</section></div>`;
+ document.body.style.overflow='hidden';
+ $('closeModal').onclick=closeModal;
+ $('modalHost').firstChild.addEventListener('click',e=>{if(e.target.classList.contains('modal-back'))closeModal()});
+ modalClose=closeModal;
+ setTimeout(()=>{const target=$('modalHost').querySelector('input')||$('closeModal');if(target)target.focus();},70);
+}
+document.addEventListener('keydown',e=>{
+ if(!modalClose)return;
+ if(e.key==='Escape')closeModal();
+ if(e.key==='Tab'){
+ const items=[...$('modalHost').querySelectorAll('button,input,select')].filter(el=>!el.disabled);
+ if(!items.length)return;
+ const first=items[0],last=items[items.length-1];
+ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+ }
+});
+$('saveBtn').addEventListener('click',()=>{
+ const selected=JSON.parse(JSON.stringify(state.selection)),row=table(selected)[selected.index];
+ openModal('Una talla para recordar',`<p>Ponle un nombre para encontrarla de un vistazo.</p><form id="saveForm"><div class="field"><label for="sizeName">Nombre o persona</label><input id="sizeName" maxlength="50" placeholder="Ej.: Mis zapatillas, Ana, Leo…" required autocomplete="off"></div><div class="modal-summary"><strong>${esc(context(selected))}</strong><br>${systems.map((sys,i)=>`${sys} ${esc(number(row[i]))}`).join(' &nbsp;·&nbsp; ')}</div><button type="submit" class="primary">${svg('check')}Guardar talla</button></form>`);
+ $('saveForm').onsubmit=e=>{
+ e.preventDefault();
+ const name=$('sizeName').value.trim();
+ if(!name){$('sizeName').focus();toast('Escribe un nombre para esta talla.');return}
+ const existing=state.saved.find(x=>x.name.toLocaleLowerCase()===name.toLocaleLowerCase()&&JSON.stringify(x.selection)===JSON.stringify(selected));
+ if(existing){closeModal();toast('Esta talla ya está en tu tallario.');return}
+ state.saved.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,8),name,selection:selected});
+ persist();renderSaved();closeModal();toast('Talla añadida a tu tallario.');
+ };
+});
+$('savedList').addEventListener('click',e=>{
+ const open=e.target.closest('[data-open]'),remove=e.target.closest('[data-delete]');
+ if(open){
+ const item=state.saved.find(x=>x.id===open.dataset.open);if(!item)return;
+ state.selection=normalise(item.selection);renderConverter();persist();
+ document.querySelector('.categories').scrollIntoView({behavior:'smooth',block:'start'});toast('Consultando: '+item.name);
+ }
+ if(remove){
+ const item=state.saved.find(x=>x.id===remove.dataset.delete);if(!item)return;
+ openModal('¿Eliminar esta talla?',`<p>Se quitará <strong>${esc(item.name)}</strong> de tu tallario. Tus otras tallas no cambiarán.</p><button class="primary danger" id="confirmDelete">${svg('trash')}Eliminar talla</button><button class="secondary" id="cancelDelete">Conservar talla</button>`);
+ $('cancelDelete').onclick=closeModal;
+ $('confirmDelete').onclick=()=>{state.saved=state.saved.filter(x=>x.id!==item.id);persist();closeModal();renderSaved();toast('Talla eliminada.')};
+ }
+});
+$('guideBtn').addEventListener('click',()=>{
+ const s=state.selection;
+ if(s.cat==='shoes'){
+ openModal('Mide tu pie',`<p>Unos minutos de medida pueden ahorrarte una devolución.</p><ol class="steps"><li>Ponte de pie sobre una hoja, con el talón junto a una pared y los calcetines que vas a usar.</li><li>Marca el extremo del dedo más largo y mide desde la pared hasta esa marca, en centímetros.</li><li>Mide los dos pies y usa el más largo. Consulta esa longitud en la tabla de la marca.</li></ol><div class="tip">En calzado infantil, comprueba la holgura que recomienda el fabricante. No confundas longitud del pie con longitud interior del zapato.</div><p>La talla japonesa indica una longitud nominal en cm; esta tabla es una referencia, no una garantía de ajuste.</p>`);
+ }else if(s.cat==='clothes'){
+ openModal('La medida manda',`<p>Utiliza una cinta flexible, sin apretar y sobre ropa fina.</p><ol class="steps"><li><span><strong>Pecho:</strong> rodea la parte más ancha del torso, con la cinta horizontal.</span></li><li><span><strong>Cintura:</strong> mide el contorno de tu cintura natural. Para pantalones, comprueba también dónde se apoya la cinturilla.</span></li><li><span><strong>Cadera:</strong> mide la parte más ancha. En peques, mide la estatura sin zapatos.</span></li></ol><div class="tip">No existe una equivalencia universal de ropa. Compara tus medidas con las de la marca, especialmente en camisas, vaqueros y prendas ajustadas.</div><p>Esta guía usa tallas generales de confección; no incluye largos, copas de sujetador ni tallas de cuello de camisa.</p>`);
+ }else{
+ openModal('Encuentra tu talla de anillo',`<ol class="steps"><li>Rodea el dedo con una tira de papel estrecha, sin apretar. Debe poder pasar por el nudillo.</li><li>Marca donde se solapa y mide el largo en milímetros. Esa es la circunferencia.</li><li>Repite la medida con las manos a temperatura normal. Una joyería puede confirmar el ajuste exacto.</li></ol><div class="field"><label for="ringMeasure">Circunferencia del dedo · mm</label><input id="ringMeasure" type="text" inputmode="decimal" placeholder="Ej.: 54,4" autocomplete="off"></div><button class="primary" id="findRing">${svg('ruler')}Buscar talla más cercana</button><div class="tip">Las equivalencias se redondean. Los anillos anchos suelen necesitar un ajuste diferente. Esta tabla abarca contornos de 44,2 a 69,7 mm.</div>`);
+ $('findRing').onclick=()=>{
+ const raw=$('ringMeasure').value.trim().replace(',','.');
+ const value=Number(raw);
+ if(!raw||!Number.isFinite(value)||value<44.2||value>69.7){toast('Introduce un contorno entre 44,2 y 69,7 mm.');$('ringMeasure').focus();return}
+ let best=0;rings.forEach((r,i)=>{if(Math.abs(r[4]-value)<Math.abs(rings[best][4]-value))best=i});
+ state.selection.index=best;state.selection.system='EU';renderConverter();persist();closeModal();toast('Mostrando la equivalencia más cercana.');
+ };
+ }
+});
+async function reload(){
+ try{
+ await saveQueue;
+ const data=await store.get();
+ if(data&&typeof data==='object'){
+ state.selection=normalise(data.selection);
+ state.saved=Array.isArray(data.saved)?data.saved.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&x.selection).map(x=>({...x,selection:normalise(x.selection)})):[];
+ }else state={selection:{...defaults},saved:[]};
+ renderConverter();renderSaved();
+ }catch(err){toast('No se pudieron cargar las tallas guardadas.');}
+}
+window.addEventListener('acornixdata',()=>{closeModal();reload()});
+renderConverter();renderSaved();reload();
+})();
+</script>
+</body>
+</html>
