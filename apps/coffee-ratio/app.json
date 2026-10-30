@@ -1,0 +1,15 @@
+{
+  "id": "coffee-ratio",
+  "name": "Coffee Ratio",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "The right coffee and water for V60, French press, AeroPress, moka, espresso or cold brew, with a guided brew timer.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 48
+}
