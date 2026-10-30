@@ -100,6 +100,32 @@
       "trending": 0
     },
     {
+      "id": "recipe-box",
+      "name": "Recipe Box",
+      "emoji": "🌰",
+      "category": "food-drink",
+      "description": "Keep your recipes with photos, tags, servings that rescale the quantities and a cook mode that keeps the screen on. Snap a cookbook page and your AI copies it.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 19190,
+      "sha256": "d52e7d26a35b04d1b8cf77abe1ee5bdbee6a9edd05fac4de0e592c67d2d5198f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "plant-care",
       "name": "Plant Care",
       "emoji": "🪴",

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Recipe Box</title>
+<style>
+  :root { --bg:#fffaf3; --card:#fff; --ink:#2b2118; --muted:#9b8b7b; --a:#d9480f; --line:#f1e6d8; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .search { width:100%; padding:13px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; margin-bottom:10px; color:var(--ink); }
+  .tags { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-bottom:12px; } .tags::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:7px 12px; border-radius:20px; background:#fff; border:2px solid var(--line); font-weight:800; font-size:13px; } .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .r { background:var(--card); border-radius:18px; overflow:hidden; box-shadow:0 2px 0 var(--line); cursor:pointer; text-align:left; padding:0; }
+  .r .pic { aspect-ratio:4/3; background:#fde8d7 center/cover; display:grid; place-items:center; font-size:44px; }
+  .r .t { padding:10px 12px 12px; } .r b { display:block; font-size:15px; line-height:1.25; } .r small { color:var(--muted); font-weight:700; font-size:12px; }
+  .fab { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(env(safe-area-inset-bottom) + 18px); display:flex; gap:8px; }
+  .fab button, .fab label { padding:14px 20px; border-radius:30px; background:var(--a); color:#fff; font-weight:900; font-size:15px; box-shadow:0 8px 24px #d9480f55; white-space:nowrap; }
+  .fab label { background:var(--ink); box-shadow:0 8px 24px #0003; }
+  input[type=file] { display:none; }
+  .empty { grid-column:1/-1; text-align:center; padding:40px 20px; color:var(--muted); font-weight:600; line-height:1.6; } .empty .big { font-size:56px; }
+  .view { position:fixed; inset:0; background:var(--bg); overflow:auto; z-index:5; }
+  .view .hero { height:220px; background:#fde8d7 center/cover; display:grid; place-items:center; font-size:80px; position:relative; }
+  .view .bar { position:absolute; left:12px; right:12px; top:calc(env(safe-area-inset-top) + 10px); display:flex; gap:8px; }
+  .view .bar button { padding:9px 13px; border-radius:14px; background:#ffffffe6; font-weight:800; font-size:15px; box-shadow:0 2px 8px #0002; } .view .bar .sp { flex:1; }
+  .view .in { max-width:600px; margin:0 auto; padding:16px 16px calc(env(safe-area-inset-bottom) + 30px); }
+  .view h2 { margin:0 0 6px; font-size:24px; } .meta { color:var(--muted); font-weight:700; margin-bottom:14px; }
+  .serv { display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:8px 12px; margin-bottom:14px; font-weight:800; width:max-content; }
+  .serv button { width:32px; height:32px; border-radius:50%; background:#fde8d7; font-weight:900; font-size:18px; }
+  h3 { margin:16px 0 8px; font-size:17px; }
+  .ing { display:flex; gap:10px; padding:9px 4px; border-bottom:1px solid var(--line); cursor:pointer; } .ing.got { color:var(--muted); text-decoration:line-through; }
+  .ing b { min-width:72px; color:var(--a); }
+  .step { display:flex; gap:12px; padding:10px 0; } .step .n { width:28px; height:28px; border-radius:50%; background:var(--a); color:#fff; display:grid; place-items:center; font-weight:900; flex:none; } .step p { margin:3px 0 0; line-height:1.5; }
+  .cook { position:fixed; inset:0; background:#1d1712; color:#fff; z-index:6; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 16px) 20px calc(env(safe-area-inset-bottom) + 20px); }
+  .cook .top { display:flex; justify-content:space-between; font-weight:800; color:#d6c3b0; }
+  .cook .txt { flex:1; display:grid; place-items:center; font-size:clamp(24px, 6.5vw, 34px); line-height:1.4; text-align:center; padding:20px 4px; }
+  .cook .nav { display:flex; gap:12px; } .cook .nav button { flex:1; padding:18px; border-radius:18px; background:#ffffff1f; font-weight:900; font-size:18px; } .cook .nav .next { background:var(--a); }
+  .edit { position:fixed; inset:0; background:var(--bg); overflow:auto; z-index:7; }
+  .edit .in { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  .f { margin-bottom:12px; } .f label { display:block; font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:0 0 6px 2px; }
+  .f input, .f textarea { width:100%; padding:12px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; color:var(--ink); } .f textarea { min-height:120px; resize:vertical; line-height:1.5; }
+  .two { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .acts { display:flex; gap:8px; } .acts button { flex:1; padding:14px; border-radius:16px; font-weight:900; background:#fff; border:2px solid var(--line); } .acts .ok { background:var(--a); color:#fff; border-color:var(--a); } .acts .del { flex:0 0 auto; color:#c92a2a; }
+  .busy { position:fixed; inset:0; background:#fffaf3ee; display:grid; place-items:center; z-index:9; font-weight:800; color:var(--muted); text-align:center; } .busy span { font-size:48px; display:block; animation:sp 1.6s linear infinite; } @keyframes sp { to { transform:rotate(360deg); } }
+  .err { color:#c92a2a; font-weight:700; margin:8px 2px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📒 <span id="ttl"></span></h1>
+  <input class="search" id="q">
+  <div class="tags" id="tags"></div>
+  <div class="err" id="err"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<div class="fab"><label><input type="file" id="snap" accept="image/*" capture="environment">📸 <span id="lSnap"></span></label><button id="new"></button></div>
+<div class="view" id="view" hidden></div>
+<div class="cook" id="cook" hidden></div>
+<div class="edit" id="edit" hidden><div class="in">
+  <h2 id="eTitle"></h2>
+  <div class="f"><label id="lName"></label><input id="eName" maxlength="60"></div>
+  <div class="two"><div class="f"><label id="lEmoji"></label><input id="eEmoji" maxlength="4"></div><div class="f"><label id="lServ"></label><input id="eServ" type="number" min="1" max="40"></div><div class="f"><label id="lTime"></label><input id="eTime" type="number" min="1" max="1440"></div></div>
+  <div class="f"><label id="lTags"></label><input id="eTags" maxlength="80"></div>
+  <div class="f"><label id="lIng"></label><textarea id="eIng"></textarea></div>
+  <div class="f"><label id="lSteps"></label><textarea id="eSteps"></textarea></div>
+  <div class="f"><label id="lPhoto"></label><label class="btn" style="display:block;padding:12px;border-radius:14px;background:#fff;border:2px dashed var(--line);text-align:center;font-weight:800"><input type="file" id="ePhoto" accept="image/*">🖼️ <span id="ePhotoL"></span></label></div>
+  <div class="acts"><button class="del" id="eDel">🗑️</button><button id="eCancel"></button><button class="ok" id="eOk"></button></div>
+</div></div>
+<div class="busy" id="busy" hidden><div><span>🍳</span><div id="busyT"></div></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Recetario', q:'Busca por nombre o ingrediente', all:'Todas', snap:'Desde foto', add:'＋ Nueva', newR:'Nueva receta', edit:'Editar receta', name:'Nombre', emoji:'Icono', serv:'Raciones', time:'Minutos', tags:'Etiquetas (separadas por comas)', ing:'Ingredientes (uno por línea: 200 g harina)', steps:'Pasos (uno por línea)', photo:'Foto', pick:'Elegir foto', cancel:'Cancelar', ok:'Guardar', ingT:'Ingredientes', stepsT:'Preparación', cook:'👩‍🍳 Modo cocina', min:'min', servT:'raciones', back:'‹ Volver', editB:'✏️', step:(i, n) => `Paso ${i} de ${n}`, prev:'‹ Anterior', next:'Siguiente ›', fin:'¡A comer! 🍽️', reading:'Leyendo la receta…', noAi:'Para leer recetas de fotos abre la app en Acornix con tu IA conectada.', failed:'No he podido leerla: ', empty:'Guarda tus recetas favoritas. Haz una foto de un libro o una nota y tu IA la copia por ti.', lang:'Spanish' }
+ : { title:'Recipe Box', q:'Search by name or ingredient', all:'All', snap:'From photo', add:'＋ New', newR:'New recipe', edit:'Edit recipe', name:'Name', emoji:'Icon', serv:'Servings', time:'Minutes', tags:'Tags (comma separated)', ing:'Ingredients (one per line: 200 g flour)', steps:'Steps (one per line)', photo:'Photo', pick:'Choose photo', cancel:'Cancel', ok:'Save', ingT:'Ingredients', stepsT:'Method', cook:'👩‍🍳 Cook mode', min:'min', servT:'servings', back:'‹ Back', editB:'✏️', step:(i, n) => `Step ${i} of ${n}`, prev:'‹ Back', next:'Next ›', fin:'Enjoy! 🍽️', reading:'Reading the recipe…', noAi:'To read recipes from photos, open the app in Acornix with your AI connected.', failed:'Couldn\'t read it: ', empty:'Keep your favourite recipes. Snap a cookbook page or a note and your AI copies it for you.', lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('q').placeholder = T.q; $('lSnap').textContent = T.snap; $('new').textContent = T.add;
+['lName', 'lEmoji', 'lServ', 'lTime', 'lTags', 'lIng', 'lSteps', 'lPhoto', 'eCancel', 'eOk', 'ePhotoL'].forEach((id, i) => $(id).textContent = [T.name, T.emoji, T.serv, T.time, T.tags, T.ing, T.steps, T.photo, T.cancel, T.ok, T.pick][i]);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let recipes = [], tag = '', editing = null, draftPhoto = null, wake = null;
+const save = () => store.set('recipes', recipes);
+function render() {
+  const tags = [...new Set(recipes.flatMap(r => r.tags || []))].sort(), q = $('q').value.trim().toLowerCase();
+  $('tags').innerHTML = [`<button class="chip ${!tag ? 'on' : ''}" data-t="">${T.all}</button>`, ...tags.map(t => `<button class="chip ${t === tag ? 'on' : ''}" data-t="${esc(t)}">${esc(t)}</button>`)].join('');
+  $('tags').querySelectorAll('.chip').forEach(b => b.onclick = () => { tag = b.dataset.t; render(); });
+  const L = recipes.map((r, i) => ({ r, i })).filter(({ r }) => (!tag || (r.tags || []).includes(tag)) && (!q || (r.name + ' ' + r.ing.join(' ')).toLowerCase().includes(q)));
+  $('grid').innerHTML = L.length ? L.map(({ r, i }) => `<button class="r" data-i="${i}"><div class="pic" style="${r.photo ? `background-image:url(${r.photo})` : ''}">${r.photo ? '' : esc(r.emoji || '🍲')}</div><div class="t"><b>${esc(r.name)}</b><small>⏱ ${r.time || '–'} ${T.min} · ${r.serv} ${T.servT}</small></div></button>`).join('') : `<div class="empty"><div class="big">🍲</div>${T.empty}</div>`;
+  $('grid').querySelectorAll('.r').forEach(b => b.onclick = () => view(+b.dataset.i));
+}
+$('q').oninput = render;
+// Scale "200 g flour" style quantities, fractions too.
+function scale(line, k) {
+  if (k === 1) return line; return line.replace(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)/, m => {
+    const v = m.includes('/') ? m.split(/\s+/).reduce((a, p) => a + (p.includes('/') ? p.split('/')[0] / p.split('/')[1] : +p), 0) : +m.replace(',', '.'), x = v * k;
+    return String(Math.round(x * 100) / 100).replace('.', ES ? ',' : '.');
+  });
+}
+function view(i) {
+  const r = recipes[i]; let serv = r.serv; const got = new Set();
+  const draw = () => {
+    const k = serv / r.serv;
+    $('view').innerHTML = `<div class="hero" style="${r.photo ? `background-image:url(${r.photo})` : ''}">${r.photo ? '' : esc(r.emoji || '🍲')}<div class="bar"><button id="vBack">${T.back}</button><span class="sp"></span><button id="vEdit">${T.editB}</button></div></div><div class="in"><h2>${esc(r.name)}</h2><div class="meta">⏱ ${r.time || '–'} ${T.min}${(r.tags || []).length ? ' · ' + r.tags.map(esc).join(' · ') : ''}</div>
+      <div class="serv"><button id="sMinus">−</button>${serv} ${T.servT}<button id="sPlus">＋</button></div>
+      <button class="chip" id="vCook" style="background:var(--a);color:#fff;border-color:var(--a);padding:11px 16px">${T.cook}</button>
+      <h3>${T.ingT}</h3>${r.ing.map((l, j) => { const s = scale(l, k), m = s.match(/^([\d.,/ ]+\s*(?:g|kg|ml|l|cl|oz|lb|cups?|tazas?|tbsp|tsp|cdas?|cdtas?|cucharadas?|cucharaditas?)?)\s+(.*)$/i); return `<div class="ing ${got.has(j) ? 'got' : ''}" data-j="${j}">${m ? `<b>${esc(m[1])}</b><span>${esc(m[2])}</span>` : `<span>${esc(s)}</span>`}</div>`; }).join('')}
+      <h3>${T.stepsT}</h3>${r.steps.map((s, j) => `<div class="step"><div class="n">${j + 1}</div><p>${esc(s)}</p></div>`).join('')}</div>`;
+    $('vBack').onclick = () => { $('view').hidden = true; };
+    $('vEdit').onclick = () => openEdit(i);
+    $('sMinus').onclick = () => { if (serv > 1) { serv--; draw(); } }; $('sPlus').onclick = () => { serv++; draw(); };
+    $('vCook').onclick = () => cook(r);
+    $('view').querySelectorAll('.ing').forEach(d => d.onclick = () => { const j = +d.dataset.j; got.has(j) ? got.delete(j) : got.add(j); draw(); });
+  };
+  draw(); $('view').hidden = false; $('view').scrollTop = 0;
+}
+// Cook mode: one big step at a time, and the screen stays on.
+async function cook(r) {
+  let s = 0; try { wake = await navigator.wakeLock.request('screen'); } catch (e) {}
+  const draw = () => {
+    const end = s >= r.steps.length;
+    $('cook').innerHTML = `<div class="top"><span>${esc(r.name)}</span><button id="cX" style="background:none;color:#fff;font-size:20px">✕</button></div><div class="txt">${end ? T.fin : esc(r.steps[s])}</div><div class="top" style="justify-content:center;margin-bottom:12px">${end ? '' : T.step(s + 1, r.steps.length)}</div><div class="nav"><button id="cP">${T.prev}</button><button class="next" id="cN">${end ? '✓' : T.next}</button></div>`;
+    $('cX').onclick = close; $('cP').onclick = () => { if (s > 0) { s--; draw(); } }; $('cN').onclick = () => { if (end) close(); else { s++; draw(); try { window.Acornix && Acornix.vibrate(10); } catch (e) {} } };
+  };
+  const close = () => { $('cook').hidden = true; try { wake && wake.release(); } catch (e) {} };
+  draw(); $('cook').hidden = false;
+}
+function openEdit(i) {
+  editing = i; const r = i == null ? { name: '', emoji: '🍲', serv: 2, time: 30, tags: [], ing: [], steps: [] } : recipes[i]; draftPhoto = r.photo || null;
+  $('eTitle').textContent = i == null ? T.newR : T.edit; $('eName').value = r.name; $('eEmoji').value = r.emoji || ''; $('eServ').value = r.serv; $('eTime').value = r.time || '';
+  $('eTags').value = (r.tags || []).join(', '); $('eIng').value = r.ing.join('\n'); $('eSteps').value = r.steps.join('\n'); $('eDel').hidden = i == null; $('ePhotoL').textContent = draftPhoto ? '✓' : T.pick; $('edit').hidden = false;
+}
+$('new').onclick = () => openEdit(null);
+$('eCancel').onclick = () => $('edit').hidden = true;
+$('eDel').onclick = () => { recipes.splice(editing, 1); save(); $('edit').hidden = true; $('view').hidden = true; render(); };
+$('eOk').onclick = () => {
+  const name = $('eName').value.trim(); if (!name) { $('eName').focus(); return; }
+  const lines = id => $(id).value.split('\n').map(x => x.trim()).filter(Boolean);
+  const r = { name, emoji: $('eEmoji').value.trim() || '🍲', serv: Math.max(1, +$('eServ').value || 2), time: +$('eTime').value || null, tags: $('eTags').value.split(',').map(t => t.trim()).filter(Boolean), ing: lines('eIng'), steps: lines('eSteps'), photo: draftPhoto };
+  if (editing == null) recipes.unshift(r); else recipes[editing] = r; save(); $('edit').hidden = true; render(); view(editing == null ? 0 : editing);
+};
+function shrink(file, max, q) { return new Promise(res => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q)); URL.revokeObjectURL(im.src); }; im.src = URL.createObjectURL(file); }); }
+$('ePhoto').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (f) { draftPhoto = await shrink(f, 700, .75); $('ePhotoL').textContent = '✓'; } };
+$('snap').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return; $('err').textContent = '';
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('busyT').textContent = T.reading; $('busy').hidden = false;
+  try {
+    const r = await Acornix.askAI('Copy the recipe in this photo.', { images: [await shrink(f, 1400, .85)], json: true, system: `You transcribe recipes from photos of cookbooks, handwritten notes or screens. Keep quantities exact. Write in ${T.lang} (translate if needed). Reply only with JSON: {"name":"","emoji":"one food emoji","serv":number,"time":minutes,"tags":["1-3 short tags"],"ing":["quantity unit ingredient"],"steps":["one step per item"]}` });
+    if (!r || !r.name || !Array.isArray(r.ing)) throw new Error('?');
+    recipes.unshift({ name: String(r.name), emoji: r.emoji || '🍲', serv: Math.max(1, +r.serv || 2), time: +r.time || null, tags: (r.tags || []).map(String).slice(0, 3), ing: r.ing.map(String), steps: (r.steps || []).map(String), photo: null });
+    save(); render(); view(0); try { Acornix.vibrate(20); } catch (er) {}
+  } catch (er) { $('err').textContent = T.failed + (er.message || ''); }
+  $('busy').hidden = true;
+};
+(async () => { recipes = await store.get('recipes', ES ? [{ name: 'Tortilla de patatas', emoji: '🥔', serv: 4, time: 40, tags: ['España', 'Fácil'], ing: ['5 patatas medianas', '6 huevos', '1 cebolla', '150 ml aceite de oliva', '1 cdta sal'], steps: ['Pela y corta las patatas y la cebolla en láminas finas.', 'Fríelas a fuego medio en el aceite unos 20 minutos, hasta que estén tiernas.', 'Bate los huevos con la sal y mezcla con las patatas escurridas.', 'Cuaja la mezcla en una sartén 3-4 minutos por cada lado.'] }] : [{ name: 'Fluffy pancakes', emoji: '🥞', serv: 4, time: 20, tags: ['Breakfast', 'Easy'], ing: ['200 g flour', '2 eggs', '300 ml milk', '1 tbsp sugar', '2 tsp baking powder', '1 pinch salt'], steps: ['Whisk the flour, sugar, baking powder and salt.', 'Beat in the eggs and milk until smooth.', 'Rest the batter for 5 minutes.', 'Cook ladles of batter on a hot buttered pan until bubbles appear, then flip.'] }]); render(); })();
+</script>
+</body>
+</html>
