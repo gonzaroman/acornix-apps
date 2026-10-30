@@ -54,6 +54,29 @@
       "trending": 0
     },
     {
+      "id": "unit-price",
+      "name": "Unit Price",
+      "emoji": "🌰",
+      "category": "shopping",
+      "description": "Which pack is cheaper? Compare price per kil",
+      "prompt": "Compare the real price of products: enter price and size for two or more items in grams, kilos, millilitres, litres or units, and see the price per kilo or litre and which one is the best deal, highlighted.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 19946,
+      "sha256": "c0ec84dcc705747ddd5ab9c20efb83199e565d80e5bdad3bf4b51a337e5bacfc",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "trip-planner",
       "name": "Trip Planner",
       "emoji": "🧭",

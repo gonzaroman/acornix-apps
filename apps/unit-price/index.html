@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f5f7f4">
+<title>Precio justo</title>
+<style>
+:root{--ink:#193b36;--muted:#72807b;--green:#147c60;--line:#e1e7e1;--bg:#f5f7f4;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit}
+button,select{cursor:pointer}
+button{touch-action:manipulation}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #80c7ac;outline-offset:3px}
+.app{max-width:660px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 20px calc(110px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;gap:11px;margin-bottom:26px}
+.logo{width:45px;height:45px;border-radius:15px;background:var(--ink);color:#c4efb5;display:grid;place-items:center;flex-shrink:0}
+h1{font-size:22px;letter-spacing:-.8px;margin:0;font-weight:800}
+.subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+.header-actions{margin-left:auto;display:flex;gap:7px;align-items:center}
+.currency{width:67px;min-height:43px;border:1px solid var(--line);border-radius:13px;background:white;color:var(--ink);padding:0 7px;font-weight:700}
+.icon-btn{width:43px;height:43px;border:1px solid var(--line);border-radius:13px;background:white;color:var(--muted);display:grid;place-items:center;padding:0}
+svg{display:block}
+.hero{background:var(--ink);border-radius:25px;padding:24px;color:white;position:relative;overflow:hidden;margin-bottom:26px}
+.hero:after{content:"";position:absolute;width:180px;height:180px;right:-90px;top:-85px;border:28px solid #ffffff08;border-radius:50%;pointer-events:none}
+.eyebrow{font-size:10px;letter-spacing:1.9px;font-weight:800;color:#c5e9b4;display:flex;gap:7px;align-items:center;text-transform:uppercase}
+.dot{width:6px;height:6px;border-radius:100%;background:#c5e9b4}
+.hero h2{font-size:27px;line-height:1.18;letter-spacing:-1px;margin:13px 0 10px}
+.hero p{font-size:13px;line-height:1.65;color:#c1d4cc;margin:0;max-width:340px}
+.winner-row{margin-top:17px;padding-top:15px;border-top:1px solid #ffffff24;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.winner-name{font-size:15px;font-weight:750;overflow-wrap:anywhere}
+.winner-price{color:#d0edc0;font-size:13px;margin-top:4px}
+.saving{flex-shrink:0;text-align:right;font-size:22px;font-weight:800;color:#d0edc0;letter-spacing:-.6px}
+.saving small{display:block;font-size:10px;font-weight:500;letter-spacing:0;color:#c1d4cc;margin-top:3px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 13px}
+.section-head h2{font-size:16px;margin:0;letter-spacing:-.3px}
+.count{font-size:11px;color:var(--muted);background:#e9ede7;border-radius:20px;padding:5px 10px}
+.product{border:1.5px solid var(--line);border-radius:22px;padding:17px;background:white;margin-bottom:13px;transition:border-color .2s,box-shadow .2s;animation:enter .25s ease}
+.product.best{border-color:#65a98a;box-shadow:0 3px 16px #1d74540a}
+.product-top{display:flex;align-items:center;gap:9px;margin-bottom:18px}
+.number{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#eef1eb;color:#6e7c72;font-size:12px;font-weight:800;flex-shrink:0}
+.best .number{background:#deefe1;color:var(--green)}
+.name{border:0;background:transparent;min-width:0;width:100%;font-size:15px;font-weight:750;color:var(--ink);padding:5px 0;border-radius:3px;text-overflow:ellipsis}
+.name::placeholder{color:#8b9790;font-weight:500}
+.remove{border:0;width:32px;height:32px;display:grid;place-items:center;background:transparent;color:#9aa39c;border-radius:10px;flex-shrink:0;padding:0}
+.remove:disabled{opacity:.25;cursor:default}
+.fields{display:grid;grid-template-columns:1fr 1.35fr;gap:12px}
+label.field-label{display:block;font-size:10px;color:var(--muted);font-weight:750;letter-spacing:1px;text-transform:uppercase;margin:0 0 7px 2px}
+.input-wrap{display:flex;border:1px solid var(--line);background:#f8faf7;border-radius:12px;height:50px;align-items:center;overflow:hidden}
+.input-wrap:focus-within{border-color:var(--green);box-shadow:0 0 0 2px #147c6010}
+.input-wrap input{width:100%;min-width:0;height:100%;border:0;outline:0;background:transparent;padding:0 12px;font-size:18px;color:var(--ink);font-weight:650}
+.input-wrap input::placeholder{color:#b2bbb4;font-weight:400}
+.money-sign{font-size:14px;color:#829087;padding-right:12px;white-space:nowrap}
+.unit{width:77px;flex-shrink:0;height:34px;border:0;border-left:1px solid var(--line);background:transparent;color:var(--ink);font-weight:650;font-size:13px;padding:0 5px 0 9px}
+.result{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:17px;padding-top:14px;border-top:1px dashed var(--line);min-height:41px}
+.unit-price{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.unit-price small{font-size:12px;font-weight:500;letter-spacing:0;color:var(--muted)}
+.pending{font-size:12px;color:#97a198}
+.badge{font-size:10px;font-weight:750;line-height:1.4;text-align:right;border-radius:7px;padding:6px 8px;max-width:48%;background:#f1f3ef;color:#79857c}
+.best .badge{background:#e5f3df;color:#327647}
+.note{display:flex;gap:8px;color:var(--muted);font-size:11px;line-height:1.6;padding:3px 5px;margin:16px 0}
+.note svg{flex-shrink:0;margin-top:2px}
+.footer{position:fixed;bottom:0;left:0;right:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:#f5f7f4ee;backdrop-filter:blur(16px);border-top:1px solid #e5e9e2;z-index:10}
+.footer-inner{max-width:620px;margin:auto;display:flex;gap:15px;align-items:center}
+.auto{font-size:11px;color:var(--muted);line-height:1.6;flex:1}
+.auto strong{display:block;color:var(--ink);font-size:12px;font-weight:650}
+.primary{border:0;border-radius:14px;background:var(--green);color:white;min-height:50px;padding:0 20px;font-size:14px;font-weight:750;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px #147c6018}
+.primary:active{transform:scale(.98)}
+.overlay{position:fixed;inset:0;background:#102d2877;z-index:30;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)}
+.overlay[hidden]{display:none}
+.dialog{background:var(--bg);padding:25px;border-radius:24px;max-width:350px;width:100%;box-shadow:0 20px 70px #0002}
+.dialog h2{font-size:21px;margin:0 0 10px}
+.dialog p{font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 22px}
+.dialog-actions{display:flex;gap:10px}
+.dialog-actions button{flex:1;min-height:47px;border-radius:12px;border:1px solid var(--line);background:white;color:var(--ink);font-weight:700}
+.dialog-actions .danger{background:var(--ink);color:white;border-color:var(--ink)}
+.toast{position:fixed;z-index:40;bottom:calc(93px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:90%;background:#243c34;color:white;padding:12px 18px;border-radius:12px;font-size:12px;text-align:center;box-shadow:0 6px 20px #0002}
+.toast[hidden]{display:none}
+@keyframes enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:360px){.app{padding-left:14px;padding-right:14px}h1{font-size:20px}.header-actions{gap:4px}.hero{padding:21px}.fields{gap:8px}.input-wrap input{padding:0 9px}.primary{padding:0 13px}.unit{width:70px}.product{padding:14px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div class="logo" aria-hidden="true"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17M6 21h12M4 7h16M5 7l-3 7h6L5 7Zm14 0-3 7h6l-3-7Z"/><path d="M2 14c0 3 6 3 6 0m8 0c0 3 6 3 6 0"/></svg></div>
+<div><h1>Precio justo</h1><div class="subtitle">Más claridad. Mejor compra.</div></div>
+<div class="header-actions">
+<select id="currency" class="currency" aria-label="Moneda"><option value="EUR">€</option><option value="USD">US$</option><option value="MXN">MX$</option><option value="ARS">AR$</option><option value="COP">CO$</option><option value="CLP">CL$</option><option value="PEN">S/</option><option value="GBP">£</option></select>
+<button class="icon-btn" id="reset" aria-label="Iniciar una nueva comparación"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg></button>
+</div>
+</header>
+<section class="hero" aria-label="Resumen de la comparación">
+<div class="eyebrow"><span class="dot"></span>El valor está en los detalles</div>
+<div id="summary"></div>
+</section>
+<div class="section-head"><h2>Tus productos</h2><span class="count" id="count">2 opciones</span></div>
+<div id="products"></div>
+<div class="note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v2"/></svg><span>Comparamos peso con peso, volumen con volumen y unidades con unidades. Incluye la cantidad total del envase.</span></div>
+</main>
+<footer class="footer"><div class="footer-inner"><div class="auto"><strong>Cálculo al instante</strong><span id="saveStatus">Guardado automático</span></div><button class="primary" id="add"><span style="font-size:23px;font-weight:400;line-height:1">+</span> Añadir producto</button></div></footer>
+<div class="overlay" id="resetDialog" hidden role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+<div class="dialog"><h2 id="dialogTitle">¿Empezamos de nuevo?</h2><p>Se borrarán los productos de esta comparación. Tu moneda se mantendrá.</p><div class="dialog-actions"><button id="cancelReset">Cancelar</button><button id="confirmReset" class="danger">Nueva comparación</button></div></div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const key='precio-justo-estado-v1';
+const units={g:{group:'peso',factor:.001,base:'kg'},kg:{group:'peso',factor:1,base:'kg'},ml:{group:'volumen',factor:.001,base:'l'},l:{group:'volumen',factor:1,base:'l'},ud:{group:'unidades',factor:1,base:'ud.'}};
+const symbols={EUR:'€',USD:'US$',MXN:'MX$',ARS:'AR$',COP:'CO$',CLP:'CL$',PEN:'S/',GBP:'£'};
+let state,saveQueue=Promise.resolve(),toastTimer,ready=false,revision=0;
+function item(){return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,8),name:'',price:'',quantity:'',unit:'g'};}
+function initial(){return {currency:'EUR',items:[item(),item()]};}
+const storage={
+async get(){if(window.Acornix?.db)return await Acornix.db.get(key);return JSON.parse(localStorage.getItem(key)||'null');},
+async set(value){if(window.Acornix?.db)return await Acornix.db.set(key,value);localStorage.setItem(key,JSON.stringify(value));}
+};
+function toast(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,3400);}
+function save(){
+revision++;
+const snapshot=JSON.parse(JSON.stringify(state));
+$('saveStatus').textContent='Guardando…';
+saveQueue=saveQueue.catch(()=>{}).then(()=>storage.set(snapshot)).then(()=>{$('saveStatus').textContent='Guardado automático';}).catch(()=>{$('saveStatus').textContent='No se pudo guardar';toast('No se han podido guardar los cambios.');});
+}
+function clean(data){
+if(!data||!Array.isArray(data.items)||data.items.length<2)return initial();
+return {currency:symbols[data.currency]?data.currency:'EUR',items:data.items.map(x=>({id:String(x.id||item().id),name:String(x.name||'').slice(0,65),price:String(x.price??''),quantity:String(x.quantity??''),unit:units[x.unit]?x.unit:'g'}))};
+}
+async function load(){
+const rev=revision;
+try{const data=await storage.get();if(rev!==revision)return;state=clean(data);}
+catch(e){if(!state)state=initial();toast('No se pudieron recuperar los datos guardados.');}
+ready=true;render();
+}
+function number(value){
+const s=String(value).trim().replace(',','.');
+return /^\d*\.?\d+$/.test(s)?Number(s):NaN;
+}
+function money(n){
+let digits=n>0&&n<.01?Math.min(8,Math.max(3,Math.ceil(-Math.log10(n))+1)):2;
+return new Intl.NumberFormat('es-ES',{minimumFractionDigits:2,maximumFractionDigits:digits}).format(n)+' '+symbols[state.currency];
+}
+function percent(n){return new Intl.NumberFormat('es-ES',{maximumFractionDigits:n>0&&n<1?2:1}).format(n);}
+function nameOf(i){return state.items[i].name.trim()||'Producto '+(i+1);}
+function render(){
+$('currency').value=state.currency;
+$('products').replaceChildren();
+state.items.forEach((p,i)=>{
+const card=document.createElement('article');card.className='product';card.dataset.id=p.id;
+card.innerHTML=`<div class="product-top"><span class="number"></span><input class="name" maxlength="65" type="text" autocomplete="off"><button class="remove" aria-label="Eliminar producto"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m7 7 10 10M17 7 7 17"/></svg></button></div><div class="fields"><div><label class="field-label">Precio total</label><div class="input-wrap"><input class="price" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"><span class="money-sign"></span></div></div><div><label class="field-label">Cantidad total</label><div class="input-wrap"><input class="quantity" type="text" inputmode="decimal" placeholder="500" autocomplete="off"><select class="unit" aria-label="Unidad de medida"><option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="l">l</option><option value="ud">ud.</option></select></div></div></div><div class="result"><div class="price-result"></div><span class="badge"></span></div>`;
+card.querySelector('.number').textContent=String(i+1).padStart(2,'0');
+const name=card.querySelector('.name');name.value=p.name;name.placeholder='Producto '+(i+1);name.setAttribute('aria-label','Nombre del producto '+(i+1));
+for(const field of ['price','quantity']){
+const input=card.querySelector('.'+field);input.value=p[field];input.id=p.id+'-'+field;
+card.querySelectorAll('label')[field==='price'?0:1].htmlFor=input.id;
+input.addEventListener('input',()=>{p[field]=input.value;update();save();});
+}
+name.addEventListener('input',()=>{p.name=name.value;update();save();});
+card.querySelector('.unit').value=p.unit;
+card.querySelector('.unit').addEventListener('change',e=>{p.unit=e.target.value;update();save();});
+const remove=card.querySelector('.remove');
+remove.disabled=state.items.length<=2;
+remove.setAttribute('aria-label','Eliminar producto '+(i+1));
+remove.addEventListener('click',()=>{state.items=state.items.filter(x=>x!==p);render();save();});
+$('products').append(card);
+});
+update();
+}
+function update(){
+const groups={peso:[],volumen:[],unidades:[]};
+const results=state.items.map((p,i)=>{
+const price=number(p.price),quantity=number(p.quantity);
+const valid=Number.isFinite(price)&&price>0&&Number.isFinite(quantity)&&quantity>0;
+const value=valid?price/(quantity*units[p.unit].factor):NaN;
+const r={i,value,valid:valid&&Number.isFinite(value)&&value>0,base:units[p.unit].base};
+if(r.valid)groups[units[p.unit].group].push(r);
+return r;
+});
+const comparable=[];
+Object.entries(groups).forEach(([type,list])=>{
+if(list.length<2)return;
+const min=Math.min(...list.map(x=>x.value)),max=Math.max(...list.map(x=>x.value));
+const best=list.filter(x=>Math.abs(x.value-min)<=Math.max(min*1e-9,1e-12));
+list.forEach(r=>{r.best=best.includes(r);r.tied=best.length>1;r.extra=(r.value/min-1)*100;});
+comparable.push({type,list,min,max,best,saving:(1-min/max)*100});
+});
+[...$('products').children].forEach((card,i)=>{
+const r=results[i],p=state.items[i];
+card.classList.toggle('best',!!r.best);
+card.querySelector('.money-sign').textContent=symbols[state.currency];
+const output=card.querySelector('.price-result');output.replaceChildren();
+if(r.valid){
+const amount=document.createElement('span');amount.className='unit-price';amount.textContent=money(r.value);
+const base=document.createElement('small');base.textContent=' / '+r.base;amount.append(base);output.append(amount);
+}else{
+const text=document.createElement('span');text.className='pending';
+text.textContent=p.price.trim()&&p.quantity.trim()?'Introduce valores mayores que 0':'Introduce precio y cantidad';
+output.append(text);
+}
+const badge=card.querySelector('.badge');
+badge.hidden=!r.valid;
+badge.textContent=r.best?(r.tied?'✓ Empate · mejor precio':'✓ Mejor precio'):r.extra!==undefined?'+'+percent(r.extra)+' % más caro':'Sin otra opción comparable';
+});
+$('count').textContent=state.items.length+' opciones';
+const summary=$('summary');summary.replaceChildren();
+const title=document.createElement('h2'),desc=document.createElement('p');
+if(!comparable.length){
+const valid=results.filter(x=>x.valid).length;
+title.textContent=valid?'Un paso más para ahorrar.':'El tamaño engaña. El precio real, no.';
+desc.textContent=valid>=2?'Estas opciones tienen medidas distintas. Añade otra del mismo tipo para encontrar la mejor compra.':valid===1?'Completa otra opción del mismo tipo y descubre cuál sale mejor.':'Añade el precio y la cantidad de al menos dos productos. Nosotros hacemos las cuentas.';
+summary.append(title,desc);
+}else{
+title.textContent='Tu compra más inteligente';
+desc.textContent=comparable.length>1?'La mejor opción de cada categoría, sin mezclar medidas.':'Mismo producto, distinta presentación: decide por el precio real.';
+summary.append(title,desc);
+comparable.forEach(g=>{
+const row=document.createElement('div');row.className='winner-row';
+const left=document.createElement('div');left.style.minWidth='0';
+const name=document.createElement('div');name.className='winner-name';
+name.textContent=g.best.length===1?nameOf(g.best[0].i):g.best.length+' opciones al mejor precio';
+const cost=document.createElement('div');cost.className='winner-price';cost.textContent=money(g.min)+' / '+g.best[0].base;
+left.append(name,cost);
+const right=document.createElement('div');right.className='saving';
+right.textContent=g.saving<1e-7?'Iguales':percent(g.saving)+' %';
+const small=document.createElement('small');small.textContent=g.saving<1e-7?'sin diferencia':'menos que la más cara';right.append(small);
+row.append(left,right);summary.append(row);
+});
+}
+}
+$('currency').addEventListener('change',e=>{if(!ready)return;state.currency=e.target.value;update();save();});
+$('add').addEventListener('click',()=>{
+if(!ready)return;
+state.items.push(item());render();save();
+const last=$('products').lastElementChild;last.scrollIntoView({behavior:'smooth',block:'center'});
+last.querySelector('.name').focus({preventScroll:true});
+});
+function closeDialog(){$('resetDialog').hidden=true;$('reset').focus();}
+$('reset').addEventListener('click',()=>{if(!ready)return;$('resetDialog').hidden=false;$('cancelReset').focus();});
+$('cancelReset').addEventListener('click',closeDialog);
+$('confirmReset').addEventListener('click',()=>{state.items=[item(),item()];render();save();closeDialog();window.scrollTo({top:0,behavior:'smooth'});});
+$('resetDialog').addEventListener('click',e=>{if(e.target===$('resetDialog'))closeDialog();});
+document.addEventListener('keydown',e=>{
+if($('resetDialog').hidden)return;
+if(e.key==='Escape')closeDialog();
+if(e.key==='Tab'){const a=$('cancelReset'),b=$('confirmReset');if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus();}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus();}}
+});
+window.addEventListener('acornixdata',async()=>{await saveQueue;load();});
+state=initial();render();load();
+})();
+</script>
+</body>
+</html>
