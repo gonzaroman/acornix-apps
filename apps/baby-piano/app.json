@@ -1,0 +1,15 @@
+{
+  "id": "baby-piano",
+  "name": "Baby Piano",
+  "emoji": "🎹",
+  "category": "kids",
+  "description": "A colourful piano for little hands with animals, drums and nursery songs to follow.",
+  "prompt": "A baby piano with big colourful keys that play notes with the Web Audio API, each key also shows a bouncing animal that makes a sound, a mode that plays simple nursery songs with lights on the keys to follow, and a drum mode.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 68
+}

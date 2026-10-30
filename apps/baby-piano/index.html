@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#fff8ed">
+<title>Pío Piano</title>
+<style>
+:root{--ink:#392957;--muted:#8c7c9d;--purple:#7954d6;--cream:#fff8ed}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;overscroll-behavior:none}
+button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation;border:0}button:focus-visible,select:focus-visible{outline:3px solid #5732a4;outline-offset:4px}
+.app{max-width:680px;min-height:100dvh;margin:auto;padding:calc(17px + env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:19px}
+header{display:flex;align-items:center;gap:11px}
+.logo{background:#ffdf71;width:49px;height:49px;border-radius:18px;display:grid;place-items:center;font-size:29px;transform:rotate(-7deg);box-shadow:0 4px 0 #f5c85c}
+.brand{flex:1}h1{font-size:26px;letter-spacing:-1px;margin:0;font-weight:900}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px;font-weight:650}
+.icon-button{width:46px;height:46px;border-radius:17px;color:var(--purple);background:#eee5fc;display:grid;place-items:center}
+.icon-button svg{width:23px;height:23px}
+.tabs{display:flex;padding:6px;border-radius:23px;background:#efe8f4;gap:5px}
+.tab{flex:1;min-height:49px;border-radius:18px;background:transparent;color:#8d7d9c;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px}
+.tab.active{background:white;color:var(--purple);box-shadow:0 4px 10px #5e3c8a10}.tab span{font-size:19px}
+.intro{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h2{font-size:22px;margin:0;letter-spacing:-.6px}.intro p{font-size:12px;margin:5px 0 0;color:var(--muted)}
+.badge{flex-shrink:0;font-size:11px;font-weight:800;background:#f0e6fb;color:#9160c6;padding:9px 11px;border-radius:20px}
+.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px 10px;flex:1;min-height:345px}
+.key{--tone:#ff7f87;--shade:#e26672;position:relative;isolation:isolate;background:var(--tone);border-radius:24px;color:white;box-shadow:0 7px 0 var(--shade),inset 0 2px 0 #ffffff60;min-height:163px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:13px 2px 17px;touch-action:none;user-select:none;overflow:visible;transition:transform .1s,box-shadow .1s}
+.key:before{content:"";position:absolute;top:11px;left:13px;width:19px;height:5px;background:#ffffff55;border-radius:5px;transform:rotate(-12deg)}
+.key .animal{display:block;font-size:clamp(35px,10.5vw,59px);line-height:1.1;filter:drop-shadow(0 4px 0 #0000000c);pointer-events:none}
+.note{font-weight:900;font-size:24px;line-height:1.1;text-shadow:0 2px 0 #0000000b}
+.animal-name{font-size:10px;font-weight:800;background:#ffffff30;padding:4px 7px;border-radius:10px;white-space:nowrap}
+.key.down{transform:translateY(5px);box-shadow:0 2px 0 var(--shade),inset 0 2px 0 #ffffff60}
+.key.bounce .animal{animation:bounce .48s ease}
+.key.lit{outline:4px solid white;outline-offset:-6px;filter:brightness(1.09)}
+.key.target:after{content:"★";position:absolute;top:-13px;right:-4px;z-index:2;color:#8d58d9;background:white;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;box-shadow:0 3px 9px #52358325;animation:pulse 1s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-18px) rotate(-12deg)}65%{transform:translateY(-5px) rotate(10deg)}}
+@keyframes pulse{50%{transform:scale(1.17)}}
+.footer-card{background:#fff;border:1px solid #eee5f4;border-radius:22px;padding:15px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 5px 15px #73518c04}
+.footer-icon{font-size:29px;background:#fff1cd;border-radius:15px;width:46px;height:46px;display:grid;place-items:center;flex-shrink:0}
+.footer-card strong{font-size:13px;display:block}.footer-card p{font-size:11px;line-height:1.55;color:var(--muted);margin:4px 0 0}
+.bottom{text-align:center;font-size:11px;color:#b1a2ba;margin:0}
+.song-panel{background:white;border:1px solid #eee5f4;padding:14px;border-radius:22px;display:none}
+.song-panel.visible{display:block}
+.song-top{display:flex;align-items:center;gap:10px}
+.song-top>span{font-size:26px}
+select{min-width:0;width:100%;border:0;background:#f6f0fc;border-radius:12px;padding:12px 9px;color:var(--ink);font-weight:750;font-size:13px}
+.song-actions{display:flex;gap:8px;margin-top:11px}
+.song-actions button{min-height:44px;flex:1;border-radius:13px;background:#eee5fc;color:#7954c0;font-size:12px;font-weight:800}
+.song-actions button.selected{background:var(--purple);color:white}
+.progress{height:5px;border-radius:5px;background:#f0e9f7;overflow:hidden;margin-top:13px}
+.progress div{height:100%;background:#b29ae9;width:0%;transition:width .2s}
+#songStatus{margin:9px 0 0;font-size:11px;color:var(--muted);min-height:16px}
+.overlay{position:fixed;inset:0;background:#30204066;backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.overlay.open{display:flex}
+.sheet{background:var(--cream);width:100%;max-width:480px;border-radius:30px;padding:23px;box-shadow:0 15px 70px #26152f33}
+.sheet-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.sheet h2{font-size:22px}.close{width:42px;height:42px;border-radius:50%;background:#eee5fc;color:var(--purple);font-size:24px}
+.setting{padding:16px 0;border-top:1px solid #e9deef;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.setting label{font-size:14px;font-weight:750}.setting small{display:block;margin-top:5px;font-size:11px;color:var(--muted);font-weight:400}
+input[type=range]{width:130px;accent-color:var(--purple);height:38px}
+.switch{width:53px;height:32px;background:#ded4e8;border-radius:20px;position:relative;flex-shrink:0}
+.switch:after{content:"";position:absolute;left:4px;top:4px;width:24px;height:24px;background:white;border-radius:50%;transition:transform .2s}
+.switch.on{background:var(--purple)}.switch.on:after{transform:translateX(21px)}
+.sheet-info{font-size:11px;line-height:1.6;color:var(--muted);background:white;padding:13px;border-radius:14px;margin:7px 0 0}
+.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;transition:.25s;background:#392957;color:white;border-radius:18px;padding:13px 19px;font-size:12px;text-align:center;max-width:90%;width:max-content;pointer-events:none;z-index:40}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-height:850px){.keys{min-height:410px}.app{gap:23px}}
+@media(max-width:350px){.app{padding-left:12px;padding-right:12px;gap:15px}.key{border-radius:20px;min-height:145px}.animal-name{font-size:9px}.note{font-size:21px}.tab{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div class="logo" aria-hidden="true">🐣</div>
+<div class="brand"><h1>Pío Piano</h1><p>Pequeñas manos, grandes melodías</p></div>
+<button class="icon-button" id="settingsButton" aria-label="Abrir ajustes">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4 6 8H3v8h3l5 4V4Z"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>
+</button>
+</header>
+<nav class="tabs" aria-label="Modo de juego">
+<button class="tab active" data-mode="piano"><span>🎹</span> Piano</button>
+<button class="tab" data-mode="songs"><span>🎵</span> Canciones</button>
+<button class="tab" data-mode="drums"><span>🥁</span> Batería</button>
+</nav>
+<div class="intro">
+<div><h2 id="heading">¡Toca y descubre!</h2><p id="subtitle">Una nota, un animal, una sonrisa.</p></div>
+<span class="badge" id="badge">8 animalitos</span>
+</div>
+<section class="song-panel" id="songPanel" aria-label="Elegir una canción">
+<div class="song-top"><span aria-hidden="true">🎶</span><select id="songSelect" aria-label="Canción"></select></div>
+<div class="song-actions"><button id="listen">▶ Escuchar</button><button id="follow">★ A tu ritmo</button></div>
+<div class="progress"><div id="progress"></div></div>
+<p id="songStatus" aria-live="polite">Escucha o sigue la tecla con estrella.</p>
+</section>
+<section class="keys" id="keys" aria-label="Teclas musicales"></section>
+<div class="footer-card">
+<span class="footer-icon" id="tipIcon">✨</span>
+<div><strong id="tipTitle">¡La música está en tus manos!</strong><p id="tipText">Toca varios animalitos a la vez y crea tu propia canción.</p></div>
+</div>
+<p class="bottom">Hecho para explorar, escuchar y sonreír ♡</p>
+</main>
+<div class="overlay" id="settings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+<section class="sheet">
+<div class="sheet-top"><h2 id="settingsTitle">Ajustes de sonido</h2><button class="close" id="closeSettings" aria-label="Cerrar ajustes">×</button></div>
+<div class="setting"><label for="volume">Volumen<small>Suave para los oídos pequeños</small></label><input type="range" id="volume" min="0" max="100" aria-label="Volumen"></div>
+<div class="setting"><div><label id="animalLabel">Voces de animales</label><small>Acompañan las notas del piano</small></div><button class="switch" id="animalToggle" role="switch" aria-checked="true" aria-labelledby="animalLabel"></button></div>
+<p class="sheet-info">Los animalitos tienen voces de juguete creadas con sonido. Las canciones usan solo el piano para escuchar mejor la melodía.</p>
+</section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const defaults={mode:'piano',volume:55,animals:true,song:0,completed:[]};
+let state={...defaults},audio,master,noiseBuffer,keys=[],playMode=null,step=0,timer=null,litTimers=[],saveChain=Promise.resolve();
+const storage={
+async get(){if(window.Acornix?.db)return await Acornix.db.get('pioPianoSettings');try{return JSON.parse(localStorage.getItem('pioPianoSettings'))}catch{return null}},
+async set(value){if(window.Acornix?.db)return await Acornix.db.set('pioPianoSettings',value);localStorage.setItem('pioPianoSettings',JSON.stringify(value))}
+};
+function save(){const value=JSON.parse(JSON.stringify(state));saveChain=saveChain.catch(()=>{}).then(()=>storage.set(value)).catch(()=>toast('No se pudieron guardar los ajustes.'))}
+const animals=[
+['Do','🐱','Gatito',261.63,'#ff8493','#e46a7a'],
+['Re','🐶','Perrito',293.66,'#ffae61','#e18c45'],
+['Mi','🐥','Pollito',329.63,'#f2cc4f','#d7ad33'],
+['Fa','🐸','Ranita',349.23,'#85c99a','#65ac7a'],
+['Sol','🐮','Vaquita',392,'#6fcbd1','#4fadb5'],
+['La','🦆','Patito',440,'#7da8ed','#608bce'],
+['Si','🐑','Ovejita',493.88,'#b090e0','#9271c1'],
+['Do','🐵','Monito',523.25,'#e994c1','#cd76a7']
+];
+const drums=[
+['Bombo','🥁','¡Pum!'],['Caja','🪘','¡Pa!'],['Platillo','✨','¡Tss!'],['Tom','🔵','¡Tum!'],
+['Palmas','👏','¡Plas!'],['Bongó','🪇','¡Toc!'],['Campana','🔔','¡Tin!'],['Maraca','🎉','¡Chas!']
+];
+const songs=[
+{name:'Estrellita, ¿dónde estás?',notes:[0,0,4,4,5,5,4,3,3,2,2,1,1,0,4,4,3,3,2,2,1,4,4,3,3,2,2,1,0,0,4,4,5,5,4,3,3,2,2,1,1,0],beats:[1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,2]},
+{name:'El corderito',notes:[2,1,0,1,2,2,2,1,1,1,2,4,4,2,1,0,1,2,2,2,2,1,1,2,1,0],beats:[1,1,1,1,1,1,2,1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,2]},
+{name:'Campanitas del lugar',notes:[0,1,2,0,0,1,2,0,2,3,4,2,3,4,4,5,4,3,2,0,4,5,4,3,2,0,0,4,0,0,4,0],beats:[1,1,1,1,1,1,1,1,1,1,2,1,1,2,.5,.5,.5,.5,1,1,.5,.5,.5,.5,1,1,1,1,2,1,1,2]}
+];
+songs.forEach((s,i)=>{const op=document.createElement('option');op.value=i;op.textContent=s.name;$('songSelect').append(op)});
+function toast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),2700)}
+function ensureAudio(){
+try{
+if(!audio){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error();audio=new C();master=audio.createGain();master.gain.value=state.volume/100*.48;const comp=audio.createDynamicsCompressor();comp.threshold.value=-15;comp.ratio.value=7;master.connect(comp);comp.connect(audio.destination);
+noiseBuffer=audio.createBuffer(1,audio.sampleRate,audio.sampleRate);const d=noiseBuffer.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+if(audio.state==='suspended')audio.resume().catch(()=>toast('Toca de nuevo para activar el sonido.'));
+return true;
+}catch{toast('El sonido no está disponible en este dispositivo.');return false}
+}
+function tone(freq,start,dur=.5,type='sine',vol=.4,end=null){
+const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,start);if(end)o.frequency.exponentialRampToValueAtTime(Math.max(end,1),start+dur);
+g.gain.setValueAtTime(.001,start);g.gain.exponentialRampToValueAtTime(Math.max(vol,.002),start+.012);g.gain.exponentialRampToValueAtTime(.001,start+dur);o.connect(g);g.connect(master);o.start(start);o.stop(start+dur+.02);o.onended=()=>{o.disconnect();g.disconnect()};
+}
+function noise(start,dur,vol=.3,hz=1000,kind='highpass'){
+const src=audio.createBufferSource(),g=audio.createGain(),filter=audio.createBiquadFilter();src.buffer=noiseBuffer;filter.type=kind;filter.frequency.value=hz;g.gain.setValueAtTime(vol,start);g.gain.exponentialRampToValueAtTime(.001,start+dur);src.connect(filter);filter.connect(g);g.connect(master);src.start(start);src.stop(start+dur);src.onended=()=>{src.disconnect();filter.disconnect();g.disconnect()};
+}
+function piano(i){const t=audio.currentTime,f=animals[i][3];tone(f,t,.78,'triangle',.38);tone(f*2,t,.45,'sine',.12);tone(f*3,t,.22,'sine',.035)}
+function animal(i){
+const t=audio.currentTime+.07;
+switch(i){
+case 0:tone(650,t,.29,'triangle',.12,1050);tone(1050,t+.24,.3,'triangle',.12,410);break;
+case 1:for(let n=0;n<2;n++){tone(220,t+n*.19,.13,'sawtooth',.055,100);noise(t+n*.19,.09,.07,650,'lowpass')}break;
+case 2:for(let n=0;n<3;n++)tone(1800,t+n*.12,.09,'sine',.13,2900);break;
+case 3:for(let n=0;n<3;n++){tone(120,t+n*.1,.09,'square',.055,70);tone(360,t+n*.1,.08,'sine',.1,140)}break;
+case 4:tone(150,t,.65,'triangle',.2,90);tone(300,t,.6,'sine',.07,180);break;
+case 5:for(let n=0;n<2;n++){tone(560,t+n*.2,.16,'sawtooth',.045,290);tone(820,t+n*.2,.15,'sine',.08,420)}break;
+case 6:for(let n=0;n<5;n++)tone(360+(n%2)*75,t+n*.085,.12,'triangle',.13,300);break;
+case 7:for(let n=0;n<3;n++)tone(530+n*100,t+n*.16,.14,'sine',.16,850+n*100);break;
+}
+}
+function drum(i){
+const t=audio.currentTime;
+switch(i){
+case 0:tone(155,t,.4,'sine',.8,40);break;
+case 1:noise(t,.2,.45,1500);tone(180,t,.13,'triangle',.3,80);break;
+case 2:noise(t,.45,.22,6500);break;
+case 3:tone(280,t,.3,'sine',.6,85);break;
+case 4:for(let n=0;n<3;n++)noise(t+n*.027,.09,.24,1100,'bandpass');break;
+case 5:tone(490,t,.17,'sine',.55,220);tone(700,t,.08,'triangle',.11,360);break;
+case 6:tone(900,t,.7,'sine',.3);tone(1356,t,.45,'sine',.12);tone(2080,t,.3,'sine',.06);break;
+case 7:for(let n=0;n<3;n++)noise(t+n*.07,.065,.25,4200);break;
+}
+}
+function flash(i){
+const k=keys[i];if(!k)return;k.classList.remove('bounce');void k.offsetWidth;k.classList.add('bounce','lit');clearTimeout(litTimers[i]);litTimers[i]=setTimeout(()=>k.classList.remove('lit'),320);
+}
+function tap(i){
+if(!ensureAudio())return;
+if(state.mode==='drums')drum(i);else{piano(i);if(state.mode==='piano'&&state.animals)animal(i)}
+flash(i);
+if(state.mode==='songs'&&playMode==='follow'&&songs[state.song].notes[step]===i){step++;updateProgress();if(step>=songs[state.song].notes.length)finish();else markTarget()}
+}
+function renderKeys(){
+$('keys').replaceChildren();keys=[];
+animals.forEach((a,i)=>{
+const drumMode=state.mode==='drums',d=drums[i],k=document.createElement('button');k.className='key';k.style.setProperty('--tone',a[4]);k.style.setProperty('--shade',a[5]);
+k.setAttribute('aria-label',drumMode?d[0]:`${a[0]} ${i===7?'agudo, ':', '}${a[2]}`);
+k.innerHTML=`<span class="animal" aria-hidden="true">${drumMode?d[1]:a[1]}</span><span class="note" style="${drumMode?'font-size:16px':''}">${drumMode?d[0]:a[0]}</span><span class="animal-name">${drumMode?d[2]:a[2]}</span>`;
+k.addEventListener('pointerdown',e=>{e.preventDefault();k.setPointerCapture(e.pointerId);k.classList.add('down');tap(i)});
+['pointerup','pointercancel','lostpointercapture'].forEach(e=>k.addEventListener(e,()=>k.classList.remove('down')));
+k.addEventListener('click',e=>{if(e.detail===0)tap(i)});
+keys.push(k);$('keys').append(k);
+})
+}
+function setMode(mode,persist=true){
+stop();state.mode=mode;document.querySelectorAll('.tab').forEach(t=>{const on=t.dataset.mode===mode;t.classList.toggle('active',on);t.setAttribute('aria-pressed',on)});
+$('songPanel').classList.toggle('visible',mode==='songs');
+$('heading').textContent=mode==='drums'?'¡Que suene el ritmo!':mode==='songs'?'Pequeñas melodías':'¡Toca y descubre!';
+$('subtitle').textContent=mode==='drums'?'Golpea, mezcla y sigue tu ritmo.':mode==='songs'?'Sigue las luces, nota a nota.':'Una nota, un animal, una sonrisa.';
+$('badge').textContent=mode==='drums'?'8 ritmos':mode==='songs'?'★ A jugar':'8 animalitos';
+$('tipIcon').textContent=mode==='drums'?'🌈':mode==='songs'?'⭐':'✨';
+$('tipTitle').textContent=mode==='drums'?'¡Tu primera banda!':mode==='songs'?'Sin prisa, a tu ritmo':'¡La música está en tus manos!';
+$('tipText').textContent=mode==='drums'?'Prueba el bombo y las palmas juntos. ¡Pum, plas!':mode==='songs'?'En «A tu ritmo», toca la tecla con estrella para continuar.':'Toca varios animalitos a la vez y crea tu propia canción.';
+renderKeys();if(persist)save()
+}
+function updateProgress(){$('progress').style.width=(100*step/songs[state.song].notes.length)+'%';if(playMode)$('songStatus').textContent=playMode==='follow'?`Tu turno · ${step} de ${songs[state.song].notes.length} notas`:`Escuchando · ${step} de ${songs[state.song].notes.length} notas`}
+function markTarget(){keys.forEach((k,i)=>k.classList.toggle('target',playMode==='follow'&&songs[state.song].notes[step]===i))}
+function stop(){
+clearTimeout(timer);timer=null;playMode=null;step=0;
+keys.forEach(k=>k.classList.remove('target','lit'));
+$('listen').textContent='▶ Escuchar';$('follow').textContent='★ A tu ritmo';$('listen').classList.remove('selected');$('follow').classList.remove('selected');$('progress').style.width='0%';$('songStatus').textContent=state.completed.includes(state.song)?'★ ¡Ya has tocado esta canción! ¿Otra vez?':'Escucha o sigue la tecla con estrella.';
+}
+function finish(){
+const guided=playMode==='follow';
+playMode=null;clearTimeout(timer);keys.forEach(k=>k.classList.remove('target'));$('listen').textContent='▶ Escuchar';$('follow').textContent='★ A tu ritmo';$('listen').classList.remove('selected');$('follow').classList.remove('selected');
+$('songStatus').textContent=guided?'🌟 ¡Bravo! Has tocado toda la canción.':'¡Ahora te toca! Prueba «A tu ritmo».';
+if(guided){if(!state.completed.includes(state.song)){state.completed.push(state.song);save()}toast('🌟 ¡Qué bien! Una canción llena de magia.')}
+}
+function autoNext(){
+if(playMode!=='listen')return;
+const s=songs[state.song],i=s.notes[step];piano(i);flash(i);const duration=s.beats[step]*440;step++;updateProgress();
+timer=setTimeout(()=>{if(step>=s.notes.length)finish();else autoNext()},duration);
+}
+$('listen').onclick=()=>{const was=playMode==='listen';stop();if(was||!ensureAudio())return;playMode='listen';$('listen').textContent='■ Detener';$('listen').classList.add('selected');autoNext()};
+$('follow').onclick=()=>{const was=playMode==='follow';stop();if(was||!ensureAudio())return;playMode='follow';$('follow').textContent='■ Terminar';$('follow').classList.add('selected');updateProgress();markTarget()};
+$('songSelect').onchange=()=>{stop();state.song=Number($('songSelect').value);stop();save()};
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setMode(t.dataset.mode));
+function syncSettings(){$('volume').value=state.volume;$('animalToggle').classList.toggle('on',state.animals);$('animalToggle').setAttribute('aria-checked',state.animals);$('songSelect').value=state.song;if(master)master.gain.setTargetAtTime(state.volume/100*.48,audio.currentTime,.03)}
+$('volume').oninput=()=>{state.volume=Number($('volume').value);syncSettings();save()};
+$('animalToggle').onclick=()=>{state.animals=!state.animals;syncSettings();save()};
+$('settingsButton').onclick=()=>{$('settings').classList.add('open');$('closeSettings').focus()};
+function closeSettings(){$('settings').classList.remove('open');$('settingsButton').focus()}
+$('closeSettings').onclick=closeSettings;
+$('settings').onclick=e=>{if(e.target===$('settings'))closeSettings()};
+document.addEventListener('keydown',e=>{
+if(e.key==='Escape')closeSettings();
+if($('settings').classList.contains('open')){
+if(e.key==='Tab'){const items=[$('closeSettings'),$('volume'),$('animalToggle')];const first=items[0],last=items[2];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
+return}
+if(e.target.tagName==='SELECT'||e.repeat)return;
+const n='asdfghjk'.indexOf(e.key.toLowerCase());if(n>=0){e.preventDefault();tap(n)}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();if(audio)audio.suspend().catch(()=>{})}});
+async function reload(){
+try{const saved=await storage.get();if(saved&&typeof saved==='object')state={...defaults,...saved};
+if(!['piano','songs','drums'].includes(state.mode))state.mode='piano';state.song=Math.max(0,Math.min(songs.length-1,Number(state.song)||0));state.volume=Math.max(0,Math.min(100,Number(state.volume)||0));if(!Array.isArray(state.completed))state.completed=[];
+syncSettings();setMode(state.mode,false)
+}catch{syncSettings();setMode(state.mode,false);toast('No se pudieron cargar los ajustes. Puedes seguir jugando.')}
+}
+window.addEventListener('acornixdata',reload);
+reload();
+})();
+</script>
+</body>
+</html>
