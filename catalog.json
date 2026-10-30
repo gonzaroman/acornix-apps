@@ -297,6 +297,29 @@
       "trending": 0
     },
     {
+      "id": "packing-list",
+      "name": "Packing List",
+      "emoji": "📝",
+      "category": "travel",
+      "description": "A smart packing list built from your days, kind of trip and plans, with quantities, sections and progress until your bag is ready.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12830,
+      "sha256": "813038f9fac40e7502b9000e852942681aae269b3098df7c91fb488aa73e1284",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "outfit-advisor",
       "name": "Outfit Advisor",
       "emoji": "👗",

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Packing List</title>
+<style>
+  :root { --bg:#eef4fb; --card:#fff; --ink:#132238; --muted:#6f819a; --a:#1c7ed6; --g:#2f9e44; --line:#dce6f2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .trip { background:var(--card); border-radius:22px; padding:16px; box-shadow:0 2px 0 var(--line); margin-bottom:12px; }
+  .trip input { width:100%; padding:12px 14px; border-radius:14px; border:2px solid var(--line); font:inherit; font-weight:700; outline:none; color:var(--ink); background:#fff; }
+  .lbl { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:12px 2px 7px; }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; } .chip { padding:8px 12px; border-radius:20px; background:#f1f5fa; font-weight:800; font-size:13px; } .chip.on { background:var(--ink); color:#fff; }
+  .days { display:flex; align-items:center; gap:12px; font-weight:900; } .days input { flex:1; accent-color:var(--a); }
+  .make { width:100%; margin-top:14px; padding:14px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; font-size:15px; }
+  .prog { display:flex; align-items:center; gap:12px; margin:4px 0 12px; } .prog .bar { flex:1; height:12px; border-radius:6px; background:#dce6f2; overflow:hidden; } .prog .bar i { display:block; height:100%; background:var(--g); border-radius:6px; transition:width .3s; } .prog b { font-variant-numeric:tabular-nums; }
+  .sec { background:var(--card); border-radius:18px; padding:6px 14px 10px; margin-bottom:10px; box-shadow:0 2px 0 var(--line); }
+  .sec h3 { margin:8px 0 4px; font-size:15px; display:flex; justify-content:space-between; } .sec h3 small { color:var(--muted); font-weight:700; }
+  .it { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid #f0f4f9; cursor:pointer; } .it .ck { width:24px; height:24px; border-radius:8px; border:2px solid var(--line); display:grid; place-items:center; font-size:14px; flex:none; }
+  .it.done { color:var(--muted); text-decoration:line-through; } .it.done .ck { background:var(--g); border-color:var(--g); color:#fff; }
+  .it span { flex:1; } .it em { font-style:normal; color:var(--muted); font-weight:800; font-size:13px; } .it .x { background:none; color:#b8c4d4; padding:0 4px; }
+  .addrow { display:flex; gap:8px; margin-top:8px; } .addrow input { flex:1; min-width:0; padding:9px 12px; border-radius:12px; border:2px solid var(--line); font:inherit; outline:none; color:var(--ink); }
+  .done-all { text-align:center; font-size:20px; font-weight:900; color:var(--g); padding:10px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧳 <span id="ttl"></span></h1>
+  <div class="trip"><input id="dest" maxlength="40">
+    <div class="lbl" id="lDays"></div><div class="days"><input type="range" id="days" min="1" max="30" value="5"><span id="daysV"></span></div>
+    <div class="lbl" id="lType"></div><div class="chips" id="types"></div>
+    <div class="lbl" id="lExtra"></div><div class="chips" id="extras"></div>
+    <button class="make" id="make"></button></div>
+  <div id="list"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Maleta', dest:'¿A dónde vas? (opcional)', days:'Días', type:'Tipo de viaje', extra:'Vas a…', make:'🧳 Hacer mi lista', remake:'🔄 Rehacer la lista', add:'Añadir…', done:'¡Maleta lista! ✈️', d:n => n === 1 ? '1 día' : `${n} días`,
+  types:['🏙️ Ciudad', '🏖️ Playa', '🏔️ Montaña', '❄️ Nieve', '💼 Trabajo', '⛺ Camping'], extras:['🏃 Hacer deporte', '👶 Con bebé', '🐶 Con perro', '✈️ Avión', '🌍 Ir al extranjero', '🎉 Salir de fiesta'],
+  sec:{ docs:'📄 Documentos', clothes:'👕 Ropa', wash:'🧴 Aseo', tech:'🔌 Tecnología', health:'💊 Salud', extra:'✨ Extras' },
+  I:{ id:'DNI / pasaporte', cards:'Tarjetas y algo de efectivo', tickets:'Billetes y reservas', ins:'Seguro de viaje', adapter:'Adaptador de enchufe', under:'Ropa interior', socks:'Calcetines', tees:'Camisetas', trousers:'Pantalones', pyjamas:'Pijama', jumper:'Jersey o sudadera', shoes:'Calzado cómodo', brush:'Cepillo y pasta de dientes', deo:'Desodorante', shampoo:'Champú y gel', sun:'Crema solar', meds:'Medicinas habituales', plasters:'Tiritas y analgésico', phone:'Cargador del móvil', bank:'Batería externa', head:'Auriculares', swim:'Bañador', towel:'Toalla de playa', flip:'Chanclas', glasses:'Gafas de sol', hat:'Gorra o sombrero', boots:'Botas de montaña', fleece:'Forro polar', bottle:'Botella reutilizable', coat:'Abrigo de nieve', gloves:'Guantes y gorro', thermal:'Ropa térmica', laptop:'Portátil y cargador', suit:'Ropa formal', notes:'Libreta', tent:'Tienda y saco', torch:'Linterna', knife:'Navaja', sport:'Ropa de deporte', trainers:'Zapatillas', nappies:'Pañales y toallitas', babyfood:'Comida y biberón', toy:'Juguete favorito', dogfood:'Comida del perro', leash:'Correa y bolsas', vet:'Cartilla del veterinario', liquids:'Bolsa de líquidos (100 ml)', pillow:'Almohada de viaje', party:'Ropa para salir', umbrella:'Paraguas' } }
+ : { title:'Packing List', dest:'Where are you going? (optional)', days:'Days', type:'Kind of trip', extra:'You\'ll be…', make:'🧳 Make my list', remake:'🔄 Remake the list', add:'Add…', done:'All packed! ✈️', d:n => n === 1 ? '1 day' : `${n} days`,
+  types:['🏙️ City', '🏖️ Beach', '🏔️ Mountains', '❄️ Snow', '💼 Business', '⛺ Camping'], extras:['🏃 Exercising', '👶 With a baby', '🐶 With a dog', '✈️ Flying', '🌍 Abroad', '🎉 Going out'],
+  sec:{ docs:'📄 Documents', clothes:'👕 Clothes', wash:'🧴 Toiletries', tech:'🔌 Tech', health:'💊 Health', extra:'✨ Extras' },
+  I:{ id:'ID / passport', cards:'Cards and some cash', tickets:'Tickets and bookings', ins:'Travel insurance', adapter:'Plug adapter', under:'Underwear', socks:'Socks', tees:'T-shirts', trousers:'Trousers', pyjamas:'Pyjamas', jumper:'Jumper or hoodie', shoes:'Comfy shoes', brush:'Toothbrush and paste', deo:'Deodorant', shampoo:'Shampoo and shower gel', sun:'Sunscreen', meds:'Regular medicines', plasters:'Plasters and painkillers', phone:'Phone charger', bank:'Power bank', head:'Headphones', swim:'Swimsuit', towel:'Beach towel', flip:'Flip-flops', glasses:'Sunglasses', hat:'Cap or hat', boots:'Hiking boots', fleece:'Fleece', bottle:'Reusable bottle', coat:'Snow jacket', gloves:'Gloves and beanie', thermal:'Thermals', laptop:'Laptop and charger', suit:'Smart clothes', notes:'Notebook', tent:'Tent and sleeping bag', torch:'Torch', knife:'Pocket knife', sport:'Sports clothes', trainers:'Trainers', nappies:'Nappies and wipes', babyfood:'Baby food and bottle', toy:'Favourite toy', dogfood:'Dog food', leash:'Lead and bags', vet:'Pet passport', liquids:'Liquids bag (100 ml)', pillow:'Travel pillow', party:'Going-out outfit', umbrella:'Umbrella' } };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'lDays', 'lType', 'lExtra', 'make'].forEach((id, i) => $(id).textContent = [T.title, T.days, T.type, T.extra, T.make][i]); $('dest').placeholder = T.dest;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let st = { dest: '', days: 5, type: 0, extras: [], list: [] };
+const save = () => store.set('pack', st);
+// Item keys per section; quantities grow with the number of days (capped, you can do laundry).
+function build() {
+  const d = st.days, n = k => Math.min(k, 7), L = [], add = (sec, key, q) => L.push({ sec, text: T.I[key], q: q || 0, done: false });
+  ['id', 'cards', 'tickets'].forEach(k => add('docs', k)); if (st.extras.includes(4)) { add('docs', 'ins'); add('tech', 'adapter'); }
+  add('clothes', 'under', n(d + 1)); add('clothes', 'socks', n(d + 1)); add('clothes', 'tees', n(d)); add('clothes', 'trousers', Math.max(1, Math.ceil(n(d) / 3))); add('clothes', 'pyjamas', 1); add('clothes', 'jumper', 1); add('clothes', 'shoes', 1);
+  ['brush', 'deo', 'shampoo'].forEach(k => add('wash', k)); ['meds', 'plasters'].forEach(k => add('health', k)); ['phone', 'bank', 'head'].forEach(k => add('tech', k));
+  const ty = { 1: ['swim', 'towel', 'flip', 'glasses', 'hat', 'sun'], 2: ['boots', 'fleece', 'bottle', 'sun', 'glasses'], 3: ['coat', 'gloves', 'thermal', 'sun', 'glasses'], 4: ['laptop', 'suit', 'notes'], 5: ['tent', 'torch', 'knife', 'bottle', 'sun'], 0: ['umbrella'] }[st.type] || [];
+  ty.forEach(k => add(['sun'].includes(k) ? 'wash' : ['laptop'].includes(k) ? 'tech' : ['swim', 'flip', 'hat', 'boots', 'fleece', 'coat', 'gloves', 'thermal', 'suit'].includes(k) ? 'clothes' : 'extra', k));
+  if (st.extras.includes(0)) { add('clothes', 'sport', Math.max(1, Math.ceil(d / 2))); add('clothes', 'trainers'); }
+  if (st.extras.includes(1)) ['nappies', 'babyfood', 'toy'].forEach(k => add('extra', k));
+  if (st.extras.includes(2)) ['dogfood', 'leash', 'vet'].forEach(k => add('extra', k));
+  if (st.extras.includes(3)) { add('wash', 'liquids'); add('extra', 'pillow'); }
+  if (st.extras.includes(5)) add('clothes', 'party');
+  return L.filter((x, i) => L.findIndex(y => y.text === x.text) === i);
+}
+function form() {
+  $('dest').value = st.dest; $('days').value = st.days; $('daysV').textContent = T.d(st.days);
+  $('types').innerHTML = T.types.map((t, i) => `<button class="chip ${i === st.type ? 'on' : ''}" data-i="${i}">${t}</button>`).join('');
+  $('types').querySelectorAll('.chip').forEach(b => b.onclick = () => { st.type = +b.dataset.i; save(); form(); });
+  $('extras').innerHTML = T.extras.map((t, i) => `<button class="chip ${st.extras.includes(i) ? 'on' : ''}" data-i="${i}">${t}</button>`).join('');
+  $('extras').querySelectorAll('.chip').forEach(b => b.onclick = () => { const i = +b.dataset.i, k = st.extras.indexOf(i); k >= 0 ? st.extras.splice(k, 1) : st.extras.push(i); save(); form(); });
+  $('make').textContent = st.list.length ? T.remake : T.make;
+}
+$('dest').oninput = () => { st.dest = $('dest').value; save(); };
+$('days').oninput = () => { st.days = +$('days').value; $('daysV').textContent = T.d(st.days); save(); };
+$('make').onclick = () => { st.list = build(); save(); form(); render(); try { window.Acornix && Acornix.vibrate(15); } catch (e) {} };
+function render() {
+  if (!st.list.length) { $('list').innerHTML = ''; return; }
+  const done = st.list.filter(i => i.done).length, pct = Math.round(done / st.list.length * 100);
+  let h = `<div class="prog"><div class="bar"><i style="width:${pct}%"></i></div><b>${done}/${st.list.length}</b></div>${pct === 100 ? `<div class="done-all">${T.done}</div>` : ''}`;
+  Object.keys(T.sec).forEach(sec => { const its = st.list.map((it, i) => ({ it, i })).filter(x => x.it.sec === sec); if (!its.length && sec !== 'extra') return;
+    h += `<div class="sec"><h3>${T.sec[sec]}<small>${its.filter(x => x.it.done).length}/${its.length}</small></h3>${its.map(({ it, i }) => `<div class="it ${it.done ? 'done' : ''}" data-i="${i}"><span class="ck">${it.done ? '✓' : ''}</span><span>${esc(it.text)}</span>${it.q ? `<em>×${it.q}</em>` : ''}<button class="x" data-x="${i}">✕</button></div>`).join('')}${sec === 'extra' ? `<form class="addrow" id="addF"><input id="addI" maxlength="40" placeholder="${T.add}"><button class="chip">＋</button></form>` : ''}</div>`; });
+  $('list').innerHTML = h;
+  $('list').querySelectorAll('.it').forEach(d => d.onclick = e => { if (e.target.dataset.x) { st.list.splice(+e.target.dataset.x, 1); } else { const it = st.list[+d.dataset.i]; it.done = !it.done; if (it.done) try { window.Acornix && Acornix.vibrate(8); } catch (er) {} } save(); render(); });
+  $('addF').onsubmit = e => { e.preventDefault(); const v = $('addI').value.trim(); if (v) { st.list.push({ sec: 'extra', text: v, q: 0, done: false }); save(); render(); } };
+}
+(async () => { st = { ...st, ...(await store.get('pack', {})) }; form(); render(); })();
+</script>
+</body>
+</html>
