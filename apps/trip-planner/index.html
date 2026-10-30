@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trip Planner</title>
+<style>
+  :root { --bg:#f0f7ff; --card:#fff; --ink:#0f2440; --muted:#6c819c; --a:#1971c2; --line:#dbe8f6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 4px; font-size:26px; } .sub { color:var(--muted); font-weight:600; margin-bottom:14px; }
+  .dest { width:100%; padding:15px; border-radius:16px; border:2px solid var(--line); font:inherit; font-size:18px; font-weight:800; outline:none; background:#fff; color:var(--ink); } .dest:focus { border-color:var(--a); }
+  .lbl { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:14px 2px 8px; }
+  .row { display:flex; gap:7px; flex-wrap:wrap; } .chip { padding:8px 12px; border-radius:20px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:13px; } .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .days { display:flex; align-items:center; gap:12px; font-weight:900; } .days input { flex:1; accent-color:var(--a); }
+  .go { width:100%; margin-top:16px; padding:16px; border-radius:18px; background:linear-gradient(135deg,#1971c2,#3bc9db); color:#fff; font-weight:900; font-size:17px; box-shadow:0 8px 22px #1971c244; } .go:disabled { opacity:.5; }
+  .err { color:#c92a2a; font-weight:700; margin:10px 2px; font-size:14px; }
+  .loading { text-align:center; padding:30px; color:var(--muted); font-weight:800; } .loading span { font-size:42px; display:inline-block; animation:fl 2s ease-in-out infinite; } @keyframes fl { 50% { transform:translate(14px,-8px) rotate(8deg); } }
+  .plan h2 { margin:20px 2px 4px; font-size:22px; } .plan .intro { color:#3d5470; line-height:1.5; margin:0 2px 10px; }
+  .day { background:var(--card); border-radius:20px; padding:14px 16px; margin-bottom:10px; box-shadow:0 2px 0 var(--line); }
+  .day h3 { margin:0 0 8px; font-size:16px; color:var(--a); }
+  .slot { display:flex; gap:10px; padding:6px 0; } .slot .w { font-size:18px; width:24px; flex:none; } .slot p { margin:0; line-height:1.45; font-size:14px; } .slot b { display:block; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+  .day .food { margin-top:6px; padding:8px 10px; border-radius:12px; background:#fff4e6; font-size:13px; font-weight:700; }
+  .tips { background:#e7f5ff; border-radius:18px; padding:12px 16px; } .tips ul { margin:6px 0 0; padding-left:18px; line-height:1.5; font-size:14px; }
+  .acts { display:flex; gap:8px; margin:12px 0; } .acts button { flex:1; padding:12px; border-radius:14px; background:#fff; font-weight:800; box-shadow:0 2px 0 var(--line); }
+  .saved { display:grid; gap:8px; } .saved button { text-align:left; background:var(--card); border-radius:14px; padding:12px 14px; font-weight:800; box-shadow:0 2px 0 var(--line); display:flex; justify-content:space-between; } .saved small { color:var(--muted); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧭 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <input class="dest" id="dest" maxlength="60">
+  <div class="lbl" id="lDays"></div><div class="days"><input type="range" id="days" min="1" max="14" value="3"><span id="daysV"></span></div>
+  <div class="lbl" id="lWho"></div><div class="row" id="who"></div>
+  <div class="lbl" id="lStyle"></div><div class="row" id="style"></div>
+  <div class="lbl" id="lBudget"></div><div class="row" id="budget"></div>
+  <button class="go" id="go"></button>
+  <div class="err" id="err"></div>
+  <div class="plan" id="plan"></div>
+  <div class="lbl" id="lSaved" hidden></div><div class="saved" id="saved"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Planificador de viajes', sub:'Dime a dónde vas y tu IA te prepara el viaje día a día', dest:'¿A dónde? Ej: Lisboa, Kioto, la Costa Brava…', days:'Días', d:n => n === 1 ? '1 día' : `${n} días`, who:'Viajo', whos:['🧍 Solo', '💑 En pareja', '👨‍👩‍👧 En familia', '🧑‍🤝‍🧑 Con amigos'], style:'Me gusta', styles:['🏛️ Cultura', '🍷 Comer bien', '🌿 Naturaleza', '🛍️ Compras', '🌙 Vida nocturna', '🧘 Relax', '📸 Fotos', '💎 Sitios secretos'], budget:'Presupuesto', budgets:['💸 Low cost', '💳 Medio', '💎 Capricho'], go:'✨ Planificar mi viaje', making:'Preparando tu viaje…', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No he podido: ', parts:['Mañana', 'Tarde', 'Noche'], tips:'Consejos', eat:'Para comer', share:'📤 Compartir', save:'⭐ Guardar', saved:'Viajes guardados', day:n => `Día ${n}`, lang:'Spanish (Spain)' }
+ : { title:'Trip Planner', sub:'Tell me where you\'re going and your AI plans it day by day', dest:'Where to? E.g. Lisbon, Kyoto, the Amalfi Coast…', days:'Days', d:n => n === 1 ? '1 day' : `${n} days`, who:'Travelling', whos:['🧍 Solo', '💑 As a couple', '👨‍👩‍👧 With family', '🧑‍🤝‍🧑 With friends'], style:'I like', styles:['🏛️ Culture', '🍷 Food', '🌿 Nature', '🛍️ Shopping', '🌙 Nightlife', '🧘 Relaxing', '📸 Photos', '💎 Hidden gems'], budget:'Budget', budgets:['💸 Shoestring', '💳 Mid-range', '💎 Treat'], go:'✨ Plan my trip', making:'Planning your trip…', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'Couldn\'t do it: ', parts:['Morning', 'Afternoon', 'Evening'], tips:'Tips', eat:'Eat', share:'📤 Share', save:'⭐ Save', saved:'Saved trips', day:n => `Day ${n}`, lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'sub', 'lDays', 'lWho', 'lStyle', 'lBudget', 'go', 'lSaved'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.days, T.who, T.style, T.budget, T.go, T.saved][i]); $('dest').placeholder = T.dest;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let who = 1, styles = new Set([0, 1]), budget = 1, plan = null, saved = [];
+function chips(id, list, isOn, tap) { $(id).innerHTML = list.map((x, i) => `<button class="chip ${isOn(i) ? 'on' : ''}" data-i="${i}">${x}</button>`).join(''); $(id).querySelectorAll('.chip').forEach(b => b.onclick = () => { tap(+b.dataset.i); form(); }); }
+function form() {
+  $('daysV').textContent = T.d(+$('days').value);
+  chips('who', T.whos, i => i === who, i => who = i); chips('budget', T.budgets, i => i === budget, i => budget = i);
+  chips('style', T.styles, i => styles.has(i), i => styles.has(i) ? styles.delete(i) : styles.add(i));
+}
+$('days').oninput = form;
+const W = ['🌅', '☀️', '🌙'];
+function show(p) {
+  if (!p) { $('plan').innerHTML = ''; return; }
+  $('plan').innerHTML = `<h2>${esc(p.title || p.dest)}</h2><p class="intro">${esc(p.intro || '')}</p>` + (p.days || []).map((d, i) => `<div class="day"><h3>${T.day(i + 1)} · ${esc(d.theme || '')}</h3>${['morning', 'afternoon', 'evening'].map((k, j) => d[k] ? `<div class="slot"><span class="w">${W[j]}</span><p><b>${T.parts[j]}</b>${esc(d[k])}</p></div>` : '').join('')}${d.food ? `<div class="food">🍴 ${T.eat}: ${esc(d.food)}</div>` : ''}</div>`).join('') + ((p.tips || []).length ? `<div class="tips"><b>💡 ${T.tips}</b><ul>${p.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : '') + `<div class="acts"><button id="sh">${T.share}</button><button id="sv">${T.save}</button></div>`;
+  $('sh').onclick = async () => { const txt = `🧭 ${p.title || p.dest}\n\n` + (p.days || []).map((d, i) => `${T.day(i + 1)}: ${d.theme || ''}\n🌅 ${d.morning || ''}\n☀️ ${d.afternoon || ''}\n🌙 ${d.evening || ''}${d.food ? '\n🍴 ' + d.food : ''}`).join('\n\n'); try { if (window.Acornix) await Acornix.share(txt); else if (navigator.share) await navigator.share({ text: txt }); } catch (e) {} };
+  $('sv').onclick = () => { if (!saved.some(s => s.t === p.t)) { saved.unshift(p); saved = saved.slice(0, 20); store.set('saved', saved); savedUI(); } try { window.Acornix && Acornix.vibrate(12); } catch (e) {} };
+}
+function savedUI() { $('lSaved').hidden = !saved.length; $('saved').innerHTML = saved.map((s, i) => `<button data-i="${i}"><span>🧭 ${esc(s.title || s.dest)}</span><small>${T.d((s.days || []).length)}</small></button>`).join(''); $('saved').querySelectorAll('button').forEach(b => b.onclick = () => { plan = saved[+b.dataset.i]; show(plan); scrollTo({ top: $('plan').offsetTop - 10, behavior: 'smooth' }); }); }
+$('go').onclick = async () => {
+  const dest = $('dest').value.trim(); $('err').textContent = ''; if (!dest) { $('dest').focus(); return; }
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  const n = +$('days').value; $('go').disabled = true; $('plan').innerHTML = `<div class="loading"><span>✈️</span><div>${T.making}</div></div>`;
+  try {
+    const r = await Acornix.askAI(`Plan ${n} days in ${dest}. Travelling ${T.whos[who]}. Interests: ${[...styles].map(i => T.styles[i]).join(', ') || 'a bit of everything'}. Budget: ${T.budgets[budget]}.`, { json: true, system: `You are an expert local travel planner. Make a realistic, walkable day-by-day plan grouped by neighbourhood, with specific real places, local food to try and timing tips, avoiding tourist traps when possible. Each slot is one or two short sentences. Write in ${T.lang}. Reply only with JSON: {"title":"catchy trip title","intro":"one sentence","days":[{"theme":"","morning":"","afternoon":"","evening":"","food":"a local dish or place"}],"tips":["4 practical tips: transport, money, etiquette, booking"]}` });
+    if (!r || !Array.isArray(r.days) || !r.days.length) throw new Error('?');
+    plan = { ...r, dest, t: Date.now() }; show(plan); try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { show(plan); $('err').textContent = T.failed + (e.message || ''); }
+  $('go').disabled = false;
+};
+(async () => { saved = await store.get('saved', []); form(); savedUI(); })();
+</script>
+</body>
+</html>

@@ -54,6 +54,31 @@
       "trending": 0
     },
     {
+      "id": "trip-planner",
+      "name": "Trip Planner",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "Tell your AI where you are going, for how long and what you like, and get a day by day plan with food and tips.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10807,
+      "sha256": "62cb39daefdef0bc10627c9b53a6a9220442b6ccd5663dfb5e6d83ca9dc7eb8b",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "trip-budget",
       "name": "Trip Budget",
       "emoji": "🌰",
