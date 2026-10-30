@@ -1,0 +1,15 @@
+{
+  "id": "itinerary",
+  "name": "Itinerary",
+  "emoji": "🌰",
+  "category": "travel",
+  "description": "Flights, hotels, visits and bookings in a day by day timeline, with what is next, map links and sharing.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 56
+}

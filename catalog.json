@@ -518,6 +518,29 @@
       "trending": 0
     },
     {
+      "id": "itinerary",
+      "name": "Itinerary",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "Flights, hotels, visits and bookings in a day by day timeline, with what is next, map links and sharing.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11236,
+      "sha256": "eba748eade0848dca42e6f59ac95396feb9cb926f3e808608ab3ed09626ea6ae",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "gratitude-jar",
       "name": "Gratitude Jar",
       "emoji": "🫙",

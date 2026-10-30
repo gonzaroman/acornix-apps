@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Itinerary</title>
+<style>
+  :root { --bg:#f5f3ff; --card:#fff; --ink:#1f1a3d; --muted:#857fa6; --a:#5f3dc4; --line:#e6e1fa; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 90px); }
+  .top { display:flex; align-items:center; gap:8px; margin-bottom:6px; } .top h1 { margin:0; font-size:24px; flex:1; }
+  .trip { width:100%; font-size:20px; font-weight:900; border:0; background:none; outline:none; color:var(--a); padding:4px 0 8px; }
+  .now { background:linear-gradient(135deg,#5f3dc4,#9775fa); color:#fff; border-radius:20px; padding:14px 16px; margin-bottom:12px; } .now small { opacity:.85; font-weight:800; font-size:12px; text-transform:uppercase; } .now b { display:block; font-size:18px; margin-top:2px; } .now span { opacity:.9; font-weight:600; font-size:14px; }
+  .day { margin-bottom:14px; } .day h3 { margin:0 0 6px 4px; font-size:14px; color:var(--muted); text-transform:capitalize; display:flex; justify-content:space-between; }
+  .ev { display:flex; gap:12px; position:relative; padding-left:4px; }
+  .ev .tl { width:16px; display:flex; flex-direction:column; align-items:center; } .ev .tl i { width:14px; height:14px; border-radius:50%; background:var(--a); margin-top:16px; border:3px solid #e6e1fa; flex:none; } .ev .tl em { flex:1; width:2px; background:var(--line); }
+  .ev.past .tl i { background:#c5bfe0; }
+  .ev .c { flex:1; background:var(--card); border-radius:16px; padding:11px 13px; margin-bottom:6px; box-shadow:0 2px 0 var(--line); cursor:pointer; }
+  .ev .c .h { display:flex; gap:8px; align-items:baseline; } .ev .c .tm { font-weight:900; color:var(--a); font-variant-numeric:tabular-nums; font-size:14px; } .ev .c b { font-size:15px; flex:1; }
+  .ev .c small { display:block; color:var(--muted); font-weight:600; margin-top:3px; font-size:13px; line-height:1.4; }
+  .ev .c .map { display:inline-block; margin-top:6px; font-size:12px; font-weight:800; color:var(--a); text-decoration:none; }
+  .fab { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(env(safe-area-inset-bottom) + 18px); padding:15px 26px; border-radius:30px; background:var(--a); color:#fff; font-weight:900; font-size:16px; box-shadow:0 8px 24px #5f3dc455; }
+  .empty { text-align:center; padding:40px 20px; color:var(--muted); font-weight:600; line-height:1.6; } .empty .big { font-size:56px; }
+  .sheet { position:fixed; inset:0; background:#1f1a3d66; display:flex; align-items:flex-end; z-index:5; }
+  .sheet .in { width:100%; max-height:90vh; overflow:auto; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .f { margin-bottom:10px; } .f label { display:block; font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:0 0 6px 2px; }
+  .f input, .f textarea { width:100%; padding:12px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; color:var(--ink); } .f textarea { min-height:60px; }
+  .two { display:grid; grid-template-columns:1.3fr 1fr; gap:8px; }
+  .types { display:flex; gap:6px; flex-wrap:wrap; } .types button { padding:8px 11px; border-radius:20px; background:#fff; border:2px solid var(--line); font-size:18px; } .types button.on { border-color:var(--a); background:#efeaff; }
+  .row { display:flex; gap:8px; margin-top:6px; } .row button { flex:1; padding:13px; border-radius:14px; font-weight:900; background:#fff; } .row .ok { background:var(--a); color:#fff; } .row .del { flex:0 0 auto; color:#e03131; padding:13px 18px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🗺️ <span id="ttl"></span></h1><button id="share" style="padding:9px 13px;border-radius:14px;background:#fff;font-weight:800">📤</button></div>
+  <input class="trip" id="trip" maxlength="40">
+  <div id="now"></div>
+  <div id="days"></div>
+</div>
+<button class="fab" id="add"></button>
+<div class="sheet" id="sheet" hidden><div class="in">
+  <div class="f"><label id="lWhat"></label><input id="what" maxlength="60"></div>
+  <div class="two"><div class="f"><label id="lDate"></label><input id="date" type="date"></div><div class="f"><label id="lTime"></label><input id="time" type="time"></div></div>
+  <div class="f"><label id="lType"></label><div class="types" id="types"></div></div>
+  <div class="f"><label id="lPlace"></label><input id="place" maxlength="80"></div>
+  <div class="f"><label id="lNotes"></label><textarea id="notes" maxlength="300"></textarea></div>
+  <div class="row"><button class="del" id="del">🗑️</button><button id="cancel"></button><button class="ok" id="ok"></button></div>
+</div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Itinerario', trip:'Mi viaje', add:'＋ Añadir plan', what:'¿Qué es?', date:'Día', time:'Hora', type:'Tipo', place:'Lugar o dirección', notes:'Notas: nº de reserva, localizador…', cancel:'Cancelar', ok:'Guardar', next:'Lo próximo', inT:m => m < 60 ? `en ${m} min` : m < 1440 ? `en ${Math.round(m / 60)} h` : `en ${Math.round(m / 1440)} días`, map:'📍 Ver en el mapa', empty:'Apunta vuelos, hoteles, visitas y reservas. Lo verás todo en orden, día a día.', locale:'es' }
+ : { title:'Itinerary', trip:'My trip', add:'＋ Add plan', what:'What is it?', date:'Day', time:'Time', type:'Type', place:'Place or address', notes:'Notes: booking number, reference…', cancel:'Cancel', ok:'Save', next:'Up next', inT:m => m < 60 ? `in ${m} min` : m < 1440 ? `in ${Math.round(m / 60)} h` : `in ${Math.round(m / 1440)} days`, map:'📍 Open in maps', empty:'Add flights, hotels, visits and bookings. You\'ll see it all in order, day by day.', locale:'en' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const TYPES = ['✈️', '🚆', '🚗', '🏨', '🍽️', '🏛️', '🎟️', '🏖️', '🛍️', '📌'];
+const $ = id => document.getElementById(id);
+['ttl', 'add', 'lWhat', 'lDate', 'lTime', 'lType', 'lPlace', 'cancel', 'ok'].forEach((id, i) => $(id).textContent = [T.title, T.add, T.what, T.date, T.time, T.type, T.place, T.cancel, T.ok][i]); $('lNotes').textContent = '📝'; $('notes').placeholder = T.notes; $('trip').placeholder = T.trip;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let st = { trip: '', ev: [] }, editing = null, type = 0;
+const save = () => store.set('itin', st);
+const when = e => new Date(`${e.date}T${e.time || '23:59'}`).getTime();
+function render() {
+  $('trip').value = st.trip;
+  const L = st.ev.map((e, i) => ({ e, i, t: when(e) })).sort((a, b) => a.t - b.t), now = Date.now(), next = L.find(x => x.t >= now);
+  $('now').innerHTML = next ? `<div class="now"><small>${T.next} · ${T.inT(Math.max(1, Math.round((next.t - now) / 6e4)))}</small><b>${TYPES[next.e.type]} ${esc(next.e.what)}</b><span>${next.e.time || ''}${next.e.place ? ' · ' + esc(next.e.place) : ''}</span></div>` : '';
+  if (!L.length) { $('days').innerHTML = `<div class="empty"><div class="big">🧭</div>${T.empty}</div>`; return; }
+  const groups = []; L.forEach(x => { const g = groups[groups.length - 1]; if (g && g.date === x.e.date) g.items.push(x); else groups.push({ date: x.e.date, items: [x] }); });
+  $('days').innerHTML = groups.map(g => `<div class="day"><h3><span>${new Date(g.date + 'T12:00:00').toLocaleDateString(T.locale, { weekday: 'long', day: 'numeric', month: 'long' })}</span></h3>${g.items.map(({ e, i, t }, k) => `<div class="ev ${t < now ? 'past' : ''}"><div class="tl"><i></i>${k < g.items.length - 1 ? '<em></em>' : ''}</div><div class="c" data-i="${i}"><div class="h"><span>${TYPES[e.type]}</span><b>${esc(e.what)}</b><span class="tm">${e.time || ''}</span></div>${e.place || e.notes ? `<small>${[e.place, e.notes].filter(Boolean).map(esc).join(' · ')}</small>` : ''}${e.place ? `<a class="map" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.place)}" target="_blank">${T.map}</a>` : ''}</div></div>`).join('')}</div>`).join('');
+  $('days').querySelectorAll('.c').forEach(c => c.onclick = e => { const a = e.target.closest('a'); if (a) { if (window.Acornix) { e.preventDefault(); Acornix.openUrl(a.href); } return; } open(+c.dataset.i); });
+}
+function types() { $('types').innerHTML = TYPES.map((t, i) => `<button class="${i === type ? 'on' : ''}" data-i="${i}">${t}</button>`).join(''); $('types').querySelectorAll('button').forEach(b => b.onclick = () => { type = +b.dataset.i; types(); }); }
+function open(i) {
+  editing = i; const last = st.ev.map(when).sort((a, b) => b - a)[0], e = i == null ? { what: '', date: new Date(last || Date.now()).toISOString().slice(0, 10), time: '', type: 5, place: '', notes: '' } : st.ev[i];
+  $('what').value = e.what; $('date').value = e.date; $('time').value = e.time; $('place').value = e.place || ''; $('notes').value = e.notes || ''; type = e.type; types(); $('del').hidden = i == null; $('sheet').hidden = false;
+  if (i == null) setTimeout(() => $('what').focus(), 80);
+}
+$('add').onclick = () => open(null);
+$('cancel').onclick = () => $('sheet').hidden = true;
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').hidden = true; };
+$('ok').onclick = () => { const what = $('what').value.trim(); if (!what || !$('date').value) return; const e = { what, date: $('date').value, time: $('time').value, type, place: $('place').value.trim(), notes: $('notes').value.trim() }; if (editing == null) st.ev.push(e); else st.ev[editing] = e; save(); render(); $('sheet').hidden = true; };
+$('del').onclick = () => { st.ev.splice(editing, 1); save(); render(); $('sheet').hidden = true; };
+$('trip').oninput = () => { st.trip = $('trip').value; save(); };
+$('share').onclick = async () => {
+  const L = st.ev.slice().sort((a, b) => when(a) - when(b)); let txt = `🗺️ ${st.trip || T.title}\n`, d = '';
+  L.forEach(e => { if (e.date !== d) { d = e.date; txt += `\n${new Date(d + 'T12:00:00').toLocaleDateString(T.locale, { weekday: 'long', day: 'numeric', month: 'long' })}\n`; } txt += `${e.time || '··:··'} ${TYPES[e.type]} ${e.what}${e.place ? ' — ' + e.place : ''}\n`; });
+  try { if (window.Acornix) await Acornix.share(txt); else if (navigator.share) await navigator.share({ text: txt }); } catch (e) {}
+};
+(async () => { st = { ...st, ...(await store.get('itin', {})) }; render(); })();
+</script>
+</body>
+</html>
