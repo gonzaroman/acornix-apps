@@ -1,0 +1,15 @@
+{
+  "id": "kitchen-converter",
+  "name": "Kitchen Converter",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "Cups to grams for flour, sugar, butter and more, spoons, millilitres and ounces, and an oven chart in Celsius, Fahrenheit and gas mark.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 45
+}
