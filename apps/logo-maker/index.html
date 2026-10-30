@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Logo Maker</title>
+<style>
+  :root { --bg:#f4f4f6; --card:#fff; --ink:#18181b; --muted:#71717a; --a:#4f46e5; --line:#e4e4e7; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 4px; font-size:26px; }
+  .sub { color:var(--muted); font-weight:600; margin-bottom:16px; }
+  input { width:100%; padding:13px 14px; border-radius:14px; border:2px solid var(--line); background:var(--card); font:inherit; font-weight:600; outline:none; margin-bottom:10px; color:var(--ink); }
+  input:focus { border-color:var(--a); }
+  .lbl { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:6px 2px 8px; }
+  .row { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+  .row::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:9px 13px; border-radius:20px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:14px; }
+  .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .go { width:100%; margin-top:16px; padding:16px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; font-size:17px; box-shadow:0 8px 22px #4f46e544; }
+  .go:disabled { opacity:.5; }
+  .err { color:#dc2626; font-weight:700; margin:12px 2px; font-size:14px; }
+  h3 { margin:22px 2px 10px; font-size:16px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .logo { background:var(--card); border-radius:18px; padding:10px; border:2px solid var(--line); position:relative; }
+  .logo img { width:100%; aspect-ratio:1; display:block; border-radius:12px; }
+  .logo .nm { font-size:12px; font-weight:700; color:var(--muted); margin:6px 2px 0; min-height:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .logo .acts { position:absolute; top:14px; right:14px; display:flex; gap:4px; }
+  .logo .acts button { width:32px; height:32px; border-radius:50%; background:#ffffffe6; box-shadow:0 1px 4px #0002; font-size:14px; }
+  .loading { grid-column:1/-1; text-align:center; padding:30px; color:var(--muted); font-weight:800; }
+  .loading span { font-size:34px; display:inline-block; animation:sp 1.2s linear infinite; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔠 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <input id="name" maxlength="30">
+  <input id="what" maxlength="80">
+  <div class="lbl" id="lStyle"></div>
+  <div class="row" id="styles"></div>
+  <button class="go" id="go"></button>
+  <div class="err" id="err"></div>
+  <h3 id="lAi" hidden></h3>
+  <div class="grid" id="ai"></div>
+  <h3 id="lMono"></h3>
+  <div class="grid" id="mono"></div>
+  <h3 id="lFav" hidden></h3>
+  <div class="grid" id="fav"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Logos', sub:'Escribe el nombre y tu IA te propone logos. Los monogramas salen al momento.', name:'Nombre: Café Luna', what:'¿A qué se dedica? (opcional)', style:'Estilo', go:'✨ Diseñar logos con IA', more:'✨ Otros 4', ai:'Ideas de tu IA', mono:'Monogramas', fav:'Favoritos', noAi:'Para que la IA diseñe logos abre esta app en Acornix con tu IA conectada. Mientras, tienes los monogramas.', failed:'No he podido: ', drawing:'Dibujando logos', saved:'Logo guardado en esta app', styles:['Minimal', 'Divertido', 'Lujo', 'Tecnológico', 'Vintage', 'Natural'], lang:'Spanish' }
+ : { title:'Logo Maker', sub:'Type a name and your AI sketches logos for it. Monograms appear instantly.', name:'Name: Luna Café', what:'What does it do? (optional)', style:'Style', go:'✨ Design logos with AI', more:'✨ 4 more', ai:'Ideas from your AI', mono:'Monograms', fav:'Favourites', noAi:'For AI logos, open this app in Acornix with your AI connected. Meanwhile, enjoy the monograms.', failed:'Couldn\'t do it: ', drawing:'Drawing logos', saved:'Logo saved in this app', styles:['Minimal', 'Playful', 'Luxury', 'Tech', 'Vintage', 'Organic'], lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'sub', 'lStyle', 'go', 'lAi', 'lMono', 'lFav'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.style, T.go, T.ai, T.mono, T.fav][i]);
+$('name').placeholder = T.name; $('what').placeholder = T.what;
+let style = 0, aiLogos = [], favs = [];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+// AI SVG is cleaned and then shown only as an <img>, where scripts and external loads never run.
+function clean(svg) {
+  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml'), root = doc.documentElement;
+  if (root.nodeName !== 'svg' || doc.querySelector('parsererror')) return null;
+  root.querySelectorAll('script,foreignObject,iframe,image,use[href^="http"]').forEach(n => n.remove());
+  root.querySelectorAll('*').forEach(n => [...n.attributes].forEach(a => { if (/^on/i.test(a.name) || (/href$/i.test(a.name) && !a.value.startsWith('#'))) n.removeAttribute(a.name); }));
+  if (!root.getAttribute('viewBox')) root.setAttribute('viewBox', '0 0 400 400');
+  root.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); root.setAttribute('width', '400'); root.setAttribute('height', '400');
+  return new XMLSerializer().serializeToString(root);
+}
+const src = svg => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+function initials(n) { const w = n.trim().split(/\s+/).filter(Boolean); return (w.length > 1 ? w[0][0] + w[1][0] : (w[0] || 'Ac').slice(0, 2)).toUpperCase(); }
+// Six local monogram templates.
+function monograms() {
+  const n = $('name').value.trim() || (ES ? 'Café Luna' : 'Luna Café'), i = esc(initials(n)), nm = esc(n.slice(0, 18));
+  const C = [['#18181b', '#fafafa'], ['#4f46e5', '#eef2ff'], ['#b45309', '#fffbeb'], ['#065f46', '#ecfdf5'], ['#be123c', '#fff1f2'], ['#0f172a', '#e2e8f0']];
+  const t = [
+    ([f, b]) => `<rect width="400" height="400" fill="${b}"/><circle cx="200" cy="170" r="110" fill="${f}"/><text x="200" y="208" font-family="Georgia,serif" font-size="110" fill="${b}" text-anchor="middle">${i}</text><text x="200" y="340" font-family="Helvetica,Arial,sans-serif" font-weight="700" font-size="30" letter-spacing="6" fill="${f}" text-anchor="middle">${nm.toUpperCase()}</text>`,
+    ([f, b]) => `<rect width="400" height="400" fill="${f}"/><rect x="70" y="60" width="260" height="210" rx="40" fill="none" stroke="${b}" stroke-width="10"/><text x="200" y="205" font-family="Helvetica,Arial,sans-serif" font-weight="900" font-size="120" fill="${b}" text-anchor="middle">${i}</text><text x="200" y="335" font-family="Helvetica,Arial,sans-serif" font-size="32" font-weight="600" fill="${b}" text-anchor="middle">${nm}</text>`,
+    ([f, b]) => `<rect width="400" height="400" fill="${b}"/><path d="M200 50 L320 120 L320 250 L200 320 L80 250 L80 120 Z" fill="none" stroke="${f}" stroke-width="12"/><text x="200" y="220" font-family="Georgia,serif" font-style="italic" font-size="100" fill="${f}" text-anchor="middle">${i}</text><text x="200" y="370" font-family="Georgia,serif" font-size="28" letter-spacing="3" fill="${f}" text-anchor="middle">${nm}</text>`,
+    ([f, b]) => `<rect width="400" height="400" fill="${b}"/><circle cx="200" cy="170" r="115" fill="none" stroke="${f}" stroke-width="4"/><circle cx="200" cy="170" r="100" fill="none" stroke="${f}" stroke-width="2" stroke-dasharray="4 8"/><text x="200" y="205" font-family="Georgia,serif" font-size="96" fill="${f}" text-anchor="middle">${i}</text><text x="200" y="345" font-family="Georgia,serif" font-size="30" fill="${f}" text-anchor="middle">${nm}</text>`,
+    ([f, b]) => `<rect width="400" height="400" fill="${b}"/><text x="70" y="250" font-family="Helvetica,Arial,sans-serif" font-weight="900" font-size="160" fill="${f}">${i}</text><rect x="70" y="275" width="70" height="12" fill="${f}"/><text x="70" y="335" font-family="Helvetica,Arial,sans-serif" font-weight="700" font-size="30" fill="${f}">${nm}</text>`,
+    ([f, b]) => `<rect width="400" height="400" fill="${f}"/><circle cx="200" cy="200" r="150" fill="${b}"/><text x="200" y="215" font-family="Helvetica,Arial,sans-serif" font-weight="800" font-size="90" fill="${f}" text-anchor="middle">${i}</text><text x="200" y="260" font-family="Helvetica,Arial,sans-serif" font-size="22" letter-spacing="4" fill="${f}" text-anchor="middle">${nm.toUpperCase()}</text>`,
+  ];
+  return t.map((f, k) => ({ svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">${f(C[k])}</svg>`, name: '' }));
+}
+function card(l, where, i) { const isFav = favs.some(f => f.svg === l.svg); return `<div class="logo"><img src="${src(l.svg)}" alt=""><div class="acts"><button data-f="${where}:${i}">${isFav ? '★' : '☆'}</button><button data-s="${where}:${i}">💾</button></div><div class="nm">${esc(l.name || '')}</div></div>`; }
+const lists = () => ({ ai: aiLogos, mono: monograms(), fav: favs });
+function render() {
+  const L = lists();
+  ['ai', 'mono', 'fav'].forEach(k => { if (k !== 'ai' || !$('ai').querySelector('.loading')) $(k).innerHTML = L[k].map((l, i) => card(l, k, i)).join(''); });
+  $('lAi').hidden = !aiLogos.length && !$('ai').querySelector('.loading'); $('lFav').hidden = !favs.length;
+  document.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { const [k, i] = b.dataset.f.split(':'), l = lists()[k][+i], j = favs.findIndex(f => f.svg === l.svg); if (j >= 0) favs.splice(j, 1); else favs.unshift(l); store.set('favs', favs.slice(0, 40)); render(); });
+  document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { const [k, i] = b.dataset.s.split(':'); savePng(lists()[k][+i].svg); });
+}
+function savePng(svg) {
+  const im = new Image(); im.onload = async () => { const c = document.createElement('canvas'); c.width = c.height = 1200; c.getContext('2d').drawImage(im, 0, 0, 1200, 1200); const url = c.toDataURL('image/png'), name = `logo-${Date.now()}.png`;
+    try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {} };
+  im.src = src(svg);
+}
+function styles() { $('styles').innerHTML = T.styles.map((s, i) => `<button class="chip ${i === style ? 'on' : ''}" data-i="${i}">${s}</button>`).join(''); $('styles').querySelectorAll('.chip').forEach(b => b.onclick = () => { style = +b.dataset.i; styles(); }); }
+$('name').oninput = () => render();
+$('go').onclick = async () => {
+  $('err').textContent = ''; const name = $('name').value.trim();
+  if (!name) { $('name').focus(); return; }
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('go').disabled = true; $('lAi').hidden = false; $('ai').innerHTML = `<div class="loading"><span>✏️</span><div>${T.drawing}…</div></div>`;
+  try {
+    const r = await Acornix.askAI(`Design 4 different logos for "${name}".${$('what').value.trim() ? ' It is: ' + $('what').value.trim() + '.' : ''} Style: ${T.styles[style]}.`, {
+      json: true,
+      system: `You are a senior brand designer who draws logos directly in SVG. Each logo: a single self-contained SVG with viewBox="0 0 400 400", a solid background rect, a simple memorable symbol made of basic shapes or paths (not clip art), and the brand name set in a fitting font-family from system fonts (Georgia, Helvetica, Arial, Courier, serif, sans-serif) with text-anchor="middle". Use 2 or 3 colours that fit the style. Make the 4 logos clearly different in concept. No scripts, no images, no external links, no filters. Reply only with JSON: {"logos":[{"name":"concept name in ${T.lang}, 2-4 words","svg":"<svg ...>...</svg>"}]}`
+    });
+    const got = (r && r.logos || []).map(l => ({ name: String(l.name || '').slice(0, 40), svg: clean(String(l.svg || '')) })).filter(l => l.svg);
+    if (!got.length) throw new Error('?');
+    $('ai').innerHTML = ''; aiLogos = got.slice(0, 4); $('go').textContent = T.more; render();
+    try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { $('ai').innerHTML = ''; render(); $('err').textContent = T.failed + (e.message || ''); }
+  $('go').disabled = false;
+};
+(async () => { favs = await store.get('favs', []); styles(); render(); })();
+</script>
+</body>
+</html>

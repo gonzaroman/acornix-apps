@@ -96,6 +96,31 @@
       "trending": 0
     },
     {
+      "id": "logo-maker",
+      "name": "Logo Maker",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Type a name and your AI designs four logo ideas in the style you pick. Monograms with your initials appear instantly.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 13137,
+      "sha256": "18c7639096350f4a33fb8a00dec6488908122c639a3b86d10dba496d81181cda",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "gradient-maker",
       "name": "Gradient Maker",
       "emoji": "🌰",

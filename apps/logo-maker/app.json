@@ -1,0 +1,15 @@
+{
+  "id": "logo-maker",
+  "name": "Logo Maker",
+  "emoji": "🌰",
+  "category": "graphics-design",
+  "description": "Type a name and your AI designs four logo ideas in the style you pick. Monograms with your initials appear instantly.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 27
+}
