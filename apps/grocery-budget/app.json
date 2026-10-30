@@ -1,0 +1,15 @@
+{
+  "id": "grocery-budget",
+  "name": "Grocery Budget",
+  "emoji": "🌰",
+  "category": "shopping",
+  "description": "Set a monthly grocery budget, log every shop and see what is left week by week.",
+  "prompt": "A monthly grocery budget: set the budget, add each shopping trip with shop and amount, see what is left, spending per week as bars and per shop, and a warning when you go over.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 80
+}
