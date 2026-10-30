@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>AR Space</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:#000; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  video, #gl { position:fixed; inset:0; width:100%; height:100%; }
+  video { object-fit:cover; }
+  #gl { touch-action:none; }
+  .top { position:fixed; left:10px; right:10px; top:calc(env(safe-area-inset-top) + 10px); display:flex; gap:8px; align-items:center; }
+  .pill { padding:9px 13px; border-radius:14px; background:#06091fb3; backdrop-filter:blur(10px); font-weight:800; font-size:14px; border:1px solid #ffffff22; }
+  .title { flex:1; }
+  .bot { position:fixed; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 18px); display:flex; justify-content:center; align-items:center; gap:22px; }
+  .round { width:54px; height:54px; border-radius:50%; background:#06091fb3; backdrop-filter:blur(10px); font-size:22px; border:1px solid #ffffff22; }
+  .shoot { width:74px; height:74px; border-radius:50%; background:#fff; border:5px solid #ffffff66; background-clip:padding-box; font-size:28px; }
+  .card { position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 112px); padding:14px 16px; border-radius:20px; background:#06091fe6; backdrop-filter:blur(14px); border:1px solid #ffffff26; }
+  .card h3 { margin:0 0 6px; font-size:20px; } .card p { margin:0; font-size:14px; line-height:1.45; color:#dfe4ff; } .card .k { color:#9fb0ff; font-size:13px; font-weight:800; margin-bottom:6px; }
+  .msg { position:fixed; left:20px; right:20px; top:44%; text-align:center; font-weight:800; font-size:17px; text-shadow:0 2px 12px #000; pointer-events:none; transition:opacity .8s; line-height:1.5; }
+  .flash { position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; transition:opacity .4s; }
+  .flash.on { opacity:.9; transition:none; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<video id="v" playsinline muted autoplay></video>
+<canvas id="gl"></canvas>
+<div class="top"><span class="pill title">🪐 <span id="ttl"></span></span><button class="pill" id="cam">📷</button></div>
+<div class="msg" id="msg"></div>
+<div class="card" id="card" hidden></div>
+<div class="flash" id="flash"></div>
+<div class="bot"><button class="round" id="center">🎯</button><button class="shoot" id="shot">📸</button><button class="round" id="ufo">🛸</button></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Espacio AR', look:'Mueve el móvil a tu alrededor: el espacio está aquí 🌍', drag:'Arrastra para mirar alrededor', tap:'Toca un planeta para saber más', noThree:'Necesito internet la primera vez para cargar el 3D.', saved:'Foto guardada', beam:'¡Te ha visto! 👽' }
+ : { title:'AR Space', look:'Move your phone around you: space is right here 🌍', drag:'Drag to look around', tap:'Tap a planet to learn more', noThree:'I need the internet the first time to load the 3D.', saved:'Photo saved', beam:'It has seen you! 👽' };
+const INFO = ES ? {
+  earth: ['🌍 La Tierra', 'Nuestro planeta', 'El único lugar conocido con vida. El 71% de su superficie es agua y gira a 1.670 km/h en el ecuador.'],
+  moon: ['🌙 La Luna', 'Satélite de la Tierra', 'Se aleja de nosotros 3,8 cm cada año. Doce personas han caminado sobre ella.'],
+  jupiter: ['🟠 Júpiter', 'Gigante gaseoso', 'Su Gran Mancha Roja es una tormenta más grande que la Tierra que dura más de 350 años.'],
+  saturn: ['🪐 Saturno', 'El señor de los anillos', 'Es tan ligero que flotaría en una bañera gigante. Sus anillos tienen solo unos 10 m de grosor.'],
+  mars: ['🔴 Marte', 'El planeta rojo', 'Tiene el volcán más alto del sistema solar, el Monte Olimpo: casi tres veces el Everest.'],
+  station: ['🛰️ Estación espacial', 'Laboratorio en órbita', 'La ISS da una vuelta a la Tierra cada 90 minutos: sus astronautas ven 16 amaneceres al día.'],
+  ufo: ['🛸 OVNI', 'Objeto no identificado', 'Nadie sabe de dónde viene… pero parece que le caes bien.'],
+  sun: ['☀️ El Sol', 'Nuestra estrella', 'Cabrían 1,3 millones de Tierras dentro. Su luz tarda 8 minutos y 20 segundos en llegar.'],
+  rock: ['☄️ Asteroide', 'Cinturón de asteroides', 'Entre Marte y Júpiter orbitan millones de rocas. La más grande, Ceres, mide 940 km.'] }
+ : {
+  earth: ['🌍 Earth', 'Our planet', 'The only place known to have life. 71% of it is water and it spins at 1,670 km/h at the equator.'],
+  moon: ['🌙 The Moon', 'Earth\'s satellite', 'It drifts 3.8 cm away from us every year. Twelve people have walked on it.'],
+  jupiter: ['🟠 Jupiter', 'Gas giant', 'Its Great Red Spot is a storm bigger than Earth that has lasted over 350 years.'],
+  saturn: ['🪐 Saturn', 'Lord of the rings', 'It is so light it would float in a giant bathtub. Its rings are only about 10 m thick.'],
+  mars: ['🔴 Mars', 'The red planet', 'It has the tallest volcano in the solar system, Olympus Mons: almost three times Everest.'],
+  station: ['🛰️ Space station', 'A lab in orbit', 'The ISS circles Earth every 90 minutes: its astronauts see 16 sunrises a day.'],
+  ufo: ['🛸 UFO', 'Unidentified object', 'Nobody knows where it comes from… but it seems to like you.'],
+  sun: ['☀️ The Sun', 'Our star', '1.3 million Earths would fit inside. Its light takes 8 minutes 20 seconds to reach us.'],
+  rock: ['☄️ Asteroid', 'Asteroid belt', 'Millions of rocks orbit between Mars and Jupiter. The biggest, Ceres, is 940 km wide.'] };
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title;
+function msg(t, ms = 3500) { $('msg').textContent = t; $('msg').style.opacity = 1; clearTimeout(msg.h); msg.h = setTimeout(() => $('msg').style.opacity = 0, ms); }
+if (!window.THREE) msg(T.noThree, 1e9);
+// ----- Camera feed -----
+let useCam = true;
+async function camera(on) {
+  const v = $('v'); if (v.srcObject) { v.srcObject.getTracks().forEach(t => t.stop()); v.srcObject = null; }
+  v.hidden = !on; document.body.style.background = on ? '#000' : 'radial-gradient(circle at 50% 30%,#1b1f5a,#02030a 70%)';
+  if (!on) return;
+  try { v.srcObject = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } }, audio: false }); } catch (e) { useCam = false; v.hidden = true; $('cam').textContent = '🌌'; if (stars) stars.visible = true; document.body.style.background = 'radial-gradient(circle at 50% 30%,#1b1f5a,#02030a 70%)'; }
+}
+$('cam').onclick = () => { useCam = !useCam; $('cam').textContent = useCam ? '📷' : '🌌'; camera(useCam); stars.visible = !useCam; };
+// ----- Procedural textures -----
+function tex(w, h, paint) { const c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+let seed = 3; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const blobs = (g, w, h, n, col, rmin, rmax) => { g.fillStyle = col; for (let i = 0; i < n; i++) { const x = rnd() * w, y = h * (.15 + rnd() * .7), r = rmin + rnd() * (rmax - rmin); for (let k = 0; k < 6; k++) { g.beginPath(); g.ellipse(x + (rnd() - .5) * r * 1.6, y + (rnd() - .5) * r * .8, r * (.5 + rnd() * .6), r * (.3 + rnd() * .4), rnd() * 3, 0, 7); g.fill(); } } };
+const earthTex = () => tex(1024, 512, (g, w, h) => { g.fillStyle = '#1d5fa8'; g.fillRect(0, 0, w, h); blobs(g, w, h, 9, '#3f8f3a', 30, 70); blobs(g, w, h, 6, '#c8a96a', 14, 30); g.fillStyle = '#f4f8ff'; g.fillRect(0, 0, w, h * .07); g.fillRect(0, h * .93, w, h * .07); });
+const cloudTex = () => tex(1024, 512, (g, w, h) => { g.clearRect(0, 0, w, h); g.filter = 'blur(6px)'; blobs(g, w, h, 22, 'rgba(255,255,255,.55)', 10, 34); });
+const bandTex = (cols, spot) => tex(512, 256, (g, w, h) => { for (let y = 0; y < h; y++) { const t = y / h, c = cols[Math.floor((Math.sin(t * 22 + Math.sin(t * 7) * 2) * .5 + .5) * (cols.length - 1e-6))]; g.fillStyle = c; g.fillRect(0, y, w, 1); } if (spot) { g.fillStyle = '#c4553a'; g.beginPath(); g.ellipse(w * .62, h * .62, 30, 14, 0, 0, 7); g.fill(); } });
+const marsTex = () => tex(512, 256, (g, w, h) => { g.fillStyle = '#c1440e'; g.fillRect(0, 0, w, h); blobs(g, w, h, 12, '#8e2f08', 8, 22); blobs(g, w, h, 6, '#e07a3f', 8, 18); g.fillStyle = '#fff'; g.fillRect(0, 0, w, 10); });
+const moonTex = () => tex(512, 256, (g, w, h) => { g.fillStyle = '#b9bcc2'; g.fillRect(0, 0, w, h); for (let i = 0; i < 70; i++) { const x = rnd() * w, y = rnd() * h, r = 2 + rnd() * 12; g.fillStyle = `rgba(80,82,90,${.2 + rnd() * .4})`; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); } });
+// ----- Scene -----
+let renderer, scene, cam3, world, objs = {}, pickables = [], stars, clock;
+function build() {
+  renderer = new THREE.WebGLRenderer({ canvas: $('gl'), alpha: true, antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1)); renderer.setClearColor(0x000000, 0);
+  scene = new THREE.Scene(); cam3 = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, .05, 200); clock = new THREE.Clock();
+  world = new THREE.Group(); scene.add(world);
+  scene.add(new THREE.AmbientLight(0xffffff, .55));
+  const sunLight = new THREE.DirectionalLight(0xfff2dd, 3.2); sunLight.position.set(-6, 5, 3); scene.add(sunLight);
+  const sphere = (r, map, x, y, z, name, extra = {}) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), new THREE.MeshStandardMaterial({ map, roughness: .9, metalness: 0, ...extra })); m.position.set(x, y, z); m.userData.name = name; world.add(m); pickables.push(m); objs[name] = m; return m; };
+  const earth = sphere(.42, earthTex(), 0, 0, -3.4, 'earth');
+  const clouds = new THREE.Mesh(new THREE.SphereGeometry(.432, 48, 32), new THREE.MeshStandardMaterial({ map: cloudTex(), transparent: true, depthWrite: false })); earth.add(clouds); objs.clouds = clouds;
+  const atmo = new THREE.Mesh(new THREE.SphereGeometry(.47, 48, 32), new THREE.MeshBasicMaterial({ color: 0x66aaff, transparent: true, opacity: .14, side: THREE.BackSide })); earth.add(atmo);
+  const moonPivot = new THREE.Group(); moonPivot.position.copy(earth.position); world.add(moonPivot); objs.moonPivot = moonPivot;
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(.11, 32, 24), new THREE.MeshStandardMaterial({ map: moonTex(), roughness: 1 })); moon.position.set(.85, .12, 0); moon.userData.name = 'moon'; moonPivot.add(moon); pickables.push(moon);
+  sphere(.6, bandTex(['#d8c3a5', '#c9a27e', '#e9dcc9', '#b07b55', '#efe3d0'], true), -3.6, .8, -3, 'jupiter');
+  const saturn = sphere(.38, bandTex(['#e8d4a2', '#d6b97c', '#f0e2bd', '#c9a96a']), 3.4, .7, -3, 'saturn');
+  const ringTex = tex(512, 8, (g, w) => { for (let x = 0; x < w; x++) { const t = x / w; g.fillStyle = `rgba(${220 - t * 40},${200 - t * 50},${160 - t * 60},${t < .08 || (t > .55 && t < .6) ? 0 : .35 + Math.sin(t * 60) * .25})`; g.fillRect(x, 0, 1, 8); } });
+  const ringGeo = new THREE.RingGeometry(.65, 1.15, 96); const pos = ringGeo.attributes.position, uv = ringGeo.attributes.uv, v3 = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) { v3.fromBufferAttribute(pos, i); uv.setXY(i, (v3.length() - .65) / .5, .5); }
+  const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ map: ringTex, transparent: true, side: THREE.DoubleSide, depthWrite: false })); ring.rotation.x = -Math.PI / 2.4; saturn.add(ring); saturn.rotation.z = .35;
+  sphere(.3, marsTex(), 1.2, 1.6, 3.2, 'mars');
+  // The Sun: a glowing sprite high up behind you.
+  const glow = tex(256, 256, (g, w) => { const r = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); r.addColorStop(0, '#fffbe6'); r.addColorStop(.25, '#ffd43b'); r.addColorStop(.6, 'rgba(255,140,0,.35)'); r.addColorStop(1, 'rgba(255,100,0,0)'); g.fillStyle = r; g.fillRect(0, 0, w, w); });
+  const sun = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, depthWrite: false })); sun.scale.set(3, 3, 1); sun.position.set(-6, 5, 3); sun.userData.name = 'sun'; world.add(sun); pickables.push(sun);
+  // Space station: a truss, modules and solar panels.
+  const st = new THREE.Group(), metal = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: .6, roughness: .4 }), panel = new THREE.MeshStandardMaterial({ color: 0x1f3fbf, metalness: .3, roughness: .3, emissive: 0x0a1440 });
+  st.add(new THREE.Mesh(new THREE.BoxGeometry(1.2, .05, .05), metal)); st.add(new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, .5, 16).rotateZ(Math.PI / 2).rotateY(Math.PI / 2), metal));
+  [-.55, -.35, .35, .55].forEach(x => [-1, 1].forEach(s => { const p = new THREE.Mesh(new THREE.BoxGeometry(.16, .01, .42), panel); p.position.set(x, 0, s * .26); st.add(p); }));
+  st.position.set(-1.6, 1.9, 1.2); st.userData.name = 'station'; st.traverse(o => o.userData.name = 'station'); world.add(st); objs.station = st; pickables.push(st);
+  // UFO circling around you.
+  const ufo = new THREE.Group(), hull = new THREE.MeshStandardMaterial({ color: 0xb8c4d6, metalness: .9, roughness: .25 });
+  ufo.add(new THREE.Mesh(new THREE.SphereGeometry(.3, 32, 12).scale(1, .25, 1), hull));
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(.13, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x7cf29c, transparent: true, opacity: .8, emissive: 0x2a8f4a })); dome.position.y = .05; ufo.add(dome);
+  for (let i = 0; i < 8; i++) { const l = new THREE.Mesh(new THREE.SphereGeometry(.025, 8, 8), new THREE.MeshBasicMaterial({ color: [0xff6b6b, 0xffd43b, 0x4dabf7][i % 3] })); l.position.set(Math.cos(i / 8 * 6.283) * .27, -.01, Math.sin(i / 8 * 6.283) * .27); ufo.add(l); }
+  const beam = new THREE.Mesh(new THREE.ConeGeometry(.35, 1.6, 24, 1, true), new THREE.MeshBasicMaterial({ color: 0x9cffb8, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })); beam.position.y = -.82; ufo.add(beam); objs.beam = beam;
+  ufo.traverse(o => o.userData.name = 'ufo'); world.add(ufo); objs.ufo = ufo; pickables.push(ufo);
+  // Asteroid belt above you.
+  const rocks = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.035, 0), new THREE.MeshStandardMaterial({ color: 0x8a7f72, roughness: 1, flatShading: true }), 160), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+  for (let i = 0; i < 160; i++) { const a = rnd() * 6.283, r = 5.2 + rnd() * 1.2; q.setFromEuler(new THREE.Euler(rnd() * 3, rnd() * 3, rnd() * 3)); const k = .5 + rnd() * 1.5; s.set(k, k * (.6 + rnd() * .6), k); m4.compose(new THREE.Vector3(Math.cos(a) * r, 3.4 + (rnd() - .5) * .6, Math.sin(a) * r), q, s); rocks.setMatrixAt(i, m4); }
+  rocks.userData.name = 'rock'; world.add(rocks); objs.rocks = rocks; pickables.push(rocks);
+  // Background stars (only without the camera).
+  const sg = new THREE.BufferGeometry(), sp = []; for (let i = 0; i < 1500; i++) { const v = new THREE.Vector3(rnd() - .5, rnd() - .5, rnd() - .5).normalize().multiplyScalar(60 + rnd() * 40); sp.push(v.x, v.y, v.z); }
+  sg.setAttribute('position', new THREE.Float32BufferAttribute(sp, 3)); stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: .35, sizeAttenuation: true })); stars.visible = false; scene.add(stars);
+  resize();
+}
+function resize() { if (!renderer) return; renderer.setSize(innerWidth, innerHeight, false); cam3.aspect = innerWidth / innerHeight; cam3.updateProjectionMatrix(); }
+addEventListener('resize', resize);
+// ----- Orientation: the phone is the camera -----
+let sensor = false, yaw0 = null, drag = { yaw: 0, pitch: 0 }; const target = new THREE.Quaternion();
+const zee = new THREE.Vector3(0, 0, 1), q1 = new THREE.Quaternion(-Math.sqrt(.5), 0, 0, Math.sqrt(.5)), qz = new THREE.Quaternion(), eul = new THREE.Euler();
+addEventListener('deviceorientation', e => {
+  if (e.alpha == null || !window.THREE) return;
+  const a = THREE.MathUtils.degToRad(e.alpha), b = THREE.MathUtils.degToRad(e.beta), g = THREE.MathUtils.degToRad(e.gamma), orient = THREE.MathUtils.degToRad((screen.orientation && screen.orientation.angle) || window.orientation || 0);
+  eul.set(b, a, -g, 'YXZ'); target.setFromEuler(eul); target.multiply(q1); target.multiply(qz.setFromAxisAngle(zee, -orient));
+  if (!sensor) { sensor = true; recenter(); }
+});
+// Puts the scene in front of wherever the phone points now.
+function recenter() { if (!window.THREE) return; if (sensor) { const f = new THREE.Vector3(0, 0, -1).applyQuaternion(target); yaw0 = Math.atan2(-f.x, -f.z); world.rotation.y = yaw0; } else { drag.yaw = 0; drag.pitch = 0; } }
+$('center').onclick = () => { recenter(); try { window.Acornix && Acornix.vibrate(10); } catch (e) {} };
+// ----- Interaction -----
+const ray = window.THREE ? new THREE.Raycaster() : null, ndc = window.THREE ? new THREE.Vector2() : null;
+let down = null, moved = 0, beamT = 0;
+$('gl').addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; moved = 0; $('gl').setPointerCapture(e.pointerId); });
+$('gl').addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - down[0], dy = e.clientY - down[1]; moved += Math.abs(dx) + Math.abs(dy); down = [e.clientX, e.clientY]; if (!sensor) { drag.yaw += dx * .005; drag.pitch = Math.max(-1.3, Math.min(1.3, drag.pitch + dy * .005)); } });
+$('gl').addEventListener('pointerup', e => {
+  const wasDown = down; down = null; if (!ray || moved > 12 || !wasDown) return;
+  ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, cam3);
+  const hit = ray.intersectObjects(pickables, true)[0]; if (!hit) { $('card').hidden = true; return; }
+  // Clouds and atmosphere are children of the planet: walk up to the named object.
+  let o = hit.object; while (o && !INFO[o.userData.name]) o = o.parent;
+  if (o) show(o.userData.name);
+});
+function show(name) {
+  const [t, k, p] = INFO[name]; $('card').innerHTML = `<h3>${t}</h3><div class="k">${k}</div><p>${p}</p>`; $('card').hidden = false;
+  const o = objs[name]; if (o && o.scale) { o.userData.pop = 1; }
+  if (name === 'ufo') { beamT = 2.5; msg(T.beam, 2000); }
+  try { window.Acornix && Acornix.vibrate(name === 'ufo' ? [30, 40, 30] : 15); } catch (e) {}
+}
+$('ufo').onclick = () => { beamT = 2.5; show('ufo'); };
+// ----- AR photo: camera frame + 3D, to the gallery -----
+$('shot').onclick = async () => {
+  if (!renderer) return; renderer.render(scene, cam3);
+  const W = renderer.domElement.width, H = renderer.domElement.height, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'), v = $('v');
+  if (useCam && v.videoWidth) { const s = Math.max(W / v.videoWidth, H / v.videoHeight), vw = v.videoWidth * s, vh = v.videoHeight * s; g.drawImage(v, (W - vw) / 2, (H - vh) / 2, vw, vh); }
+  else { const r = g.createRadialGradient(W / 2, H * .3, 0, W / 2, H * .3, H * .7); r.addColorStop(0, '#1b1f5a'); r.addColorStop(1, '#02030a'); g.fillStyle = r; g.fillRect(0, 0, W, H); }
+  g.drawImage(renderer.domElement, 0, 0);
+  $('flash').classList.add('on'); setTimeout(() => $('flash').classList.remove('on'), 80);
+  const url = c.toDataURL('image/jpeg', .92), name = `ar-space-${Date.now()}.jpg`;
+  try { if (window.Acornix) await Acornix.files.export(name, url); else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+// ----- Animation -----
+function tick() {
+  requestAnimationFrame(tick); if (!renderer) return; const dt = Math.min(.05, clock.getDelta()), t = clock.elapsedTime;
+  if (sensor) cam3.quaternion.slerp(target, .35); else cam3.quaternion.setFromEuler(new THREE.Euler(drag.pitch, drag.yaw, 0, 'YXZ'));
+  objs.earth.rotation.y += dt * .25; objs.clouds.rotation.y += dt * .06; objs.moonPivot.rotation.y += dt * .35;
+  objs.jupiter.rotation.y += dt * .5; objs.saturn.rotation.y += dt * .35; objs.mars.rotation.y += dt * .3; objs.rocks.rotation.y += dt * .03;
+  objs.station.rotation.y += dt * .4; objs.station.position.y = 1.9 + Math.sin(t * .7) * .08;
+  const ua = t * .35; objs.ufo.position.set(Math.cos(ua) * 2.4, .9 + Math.sin(t * 1.3) * .25, Math.sin(ua) * 2.4); objs.ufo.rotation.y += dt * 3; objs.ufo.rotation.z = Math.sin(t * 2) * .12;
+  beamT = Math.max(0, beamT - dt); objs.beam.material.opacity = beamT > 0 ? .25 + Math.sin(t * 20) * .1 : 0;
+  pickables.forEach(o => { if (o.userData.pop) { o.userData.pop = Math.max(0, o.userData.pop - dt * 1.5); const k = 1 + Math.sin(o.userData.pop * Math.PI) * .25; o.scale.setScalar(k); } });
+  renderer.render(scene, cam3);
+}
+if (window.THREE) { build(); tick(); }
+camera(true);
+msg(T.look, 4000); setTimeout(() => { if (!sensor) msg(T.drag + ' · ' + T.tap, 4000); else msg(T.tap, 3000); }, 4300);
+</script>
+</body>
+</html>

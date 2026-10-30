@@ -262,6 +262,32 @@
       "trending": 0
     },
     {
+      "id": "ar-space",
+      "name": "AR Space",
+      "emoji": "🪐",
+      "category": "entertainment",
+      "description": "Planets in 3D floating around you on the camera: Earth with clouds and its Moon, Jupiter, Saturn with rings, a space station and a UFO. Tap to learn, snap AR photos.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "camera",
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 21038,
+      "sha256": "4891097900b0776e5d9678f867d036ceada067409b68ce79b41144cc6eb6b7b6",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "what-is-this-ai",
       "name": "What Is This?",
       "emoji": "🔎",
