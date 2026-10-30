@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Phrasebook</title>
+<style>
+  :root { --bg:#fdf8f3; --card:#fff; --ink:#2a2118; --muted:#968676; --a:#e8590c; --line:#f1e6da; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .langs { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-bottom:10px; } .langs::-webkit-scrollbar { display:none; }
+  .lang { flex:none; padding:8px 12px; border-radius:20px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:14px; } .lang.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .cats { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-bottom:12px; } .cats::-webkit-scrollbar { display:none; }
+  .cat { flex:none; padding:7px 11px; border-radius:20px; background:#f6ece2; font-weight:800; font-size:13px; color:var(--muted); } .cat.on { background:var(--a); color:#fff; }
+  .ask { display:flex; gap:8px; margin-bottom:12px; } .ask input { flex:1; min-width:0; padding:12px 14px; border-radius:14px; border:2px solid var(--line); font:inherit; outline:none; background:#fff; color:var(--ink); } .ask input:focus { border-color:var(--a); } .ask button { padding:0 16px; border-radius:14px; background:var(--a); color:#fff; font-weight:900; }
+  .p { background:var(--card); border-radius:18px; padding:14px; margin-bottom:8px; box-shadow:0 2px 0 var(--line); display:flex; gap:12px; align-items:center; }
+  .p .t { flex:1; min-width:0; } .p .src { color:var(--muted); font-size:13px; font-weight:700; } .p .dst { font-size:19px; font-weight:800; margin-top:3px; line-height:1.3; } .p .rom { color:var(--a); font-size:13px; font-weight:700; margin-top:2px; }
+  .p button { width:44px; height:44px; border-radius:50%; background:#fff1e6; font-size:18px; flex:none; } .p .fav { background:none; width:30px; font-size:16px; }
+  .big { position:fixed; inset:0; background:var(--ink); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:30px; z-index:5; }
+  .big .dst { font-size:clamp(32px, 10vw, 54px); font-weight:900; line-height:1.2; } .big .rom { color:#ffc078; font-size:20px; margin-top:12px; font-weight:700; } .big .src { color:#b8a898; margin-top:20px; font-weight:700; } .big small { position:absolute; bottom:calc(env(safe-area-inset-bottom) + 20px); color:#8a7b6c; font-weight:700; }
+  .err { color:#c92a2a; font-weight:700; font-size:14px; margin-bottom:8px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🗣️ <span id="ttl"></span></h1>
+  <div class="langs" id="langs"></div>
+  <form class="ask" id="ask"><input id="q" maxlength="120"><button>✨</button></form>
+  <div class="err" id="err"></div>
+  <div class="cats" id="cats"></div>
+  <div id="list"></div>
+</div>
+<div class="big" id="big" hidden></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Frases de viaje', ask:'Traduce cualquier frase con IA…', cats:['⭐ Básicas', '🍽️ Restaurante', '🧭 Direcciones', '🏨 Hotel', '🛍️ Compras', '🆘 Emergencias', '❤️ Guardadas'], tap:'Toca para cerrar · enséñaselo a quien te atienda', noAi:'Para traducir frases nuevas abre la app en Acornix con tu IA conectada.', failed:'No he podido: ', none:'Toca 🤍 en una frase para guardarla aquí.', lang:'Spanish' }
+ : { title:'Phrasebook', ask:'Translate any phrase with AI…', cats:['⭐ Basics', '🍽️ Restaurant', '🧭 Directions', '🏨 Hotel', '🛍️ Shopping', '🆘 Emergency', '❤️ Saved'], tap:'Tap to close · show it to the person helping you', noAi:'To translate new phrases, open the app in Acornix with your AI connected.', failed:'Couldn\'t do it: ', none:'Tap 🤍 on a phrase to keep it here.', lang:'English' };
+const LANGS = [['en', '🇬🇧', 'English', 'en-GB'], ['es', '🇪🇸', 'Español', 'es-ES'], ['fr', '🇫🇷', 'Français', 'fr-FR'], ['it', '🇮🇹', 'Italiano', 'it-IT'], ['de', '🇩🇪', 'Deutsch', 'de-DE'], ['pt', '🇵🇹', 'Português', 'pt-PT'], ['ja', '🇯🇵', '日本語', 'ja-JP']];
+// [category, en, es, fr, it, de, pt, ja, ja romaji]
+const P = [
+  [0, 'Hello', 'Hola', 'Bonjour', 'Ciao', 'Hallo', 'Olá', 'こんにちは', 'Konnichiwa'],
+  [0, 'Thank you very much', 'Muchas gracias', 'Merci beaucoup', 'Grazie mille', 'Vielen Dank', 'Muito obrigado', 'どうもありがとうございます', 'Dōmo arigatō gozaimasu'],
+  [0, 'Please', 'Por favor', 'S\'il vous plaît', 'Per favore', 'Bitte', 'Por favor', 'お願いします', 'Onegaishimasu'],
+  [0, 'Excuse me', 'Perdone', 'Excusez-moi', 'Mi scusi', 'Entschuldigung', 'Com licença', 'すみません', 'Sumimasen'],
+  [0, 'Do you speak English?', '¿Habla inglés?', 'Parlez-vous anglais ?', 'Parla inglese?', 'Sprechen Sie Englisch?', 'Fala inglês?', '英語を話せますか？', 'Eigo o hanasemasu ka?'],
+  [0, 'I don\'t understand', 'No entiendo', 'Je ne comprends pas', 'Non capisco', 'Ich verstehe nicht', 'Não entendo', 'わかりません', 'Wakarimasen'],
+  [1, 'A table for two, please', 'Una mesa para dos, por favor', 'Une table pour deux, s\'il vous plaît', 'Un tavolo per due, per favore', 'Einen Tisch für zwei, bitte', 'Uma mesa para dois, por favor', '二人です', 'Futari desu'],
+  [1, 'The menu, please', 'La carta, por favor', 'La carte, s\'il vous plaît', 'Il menù, per favore', 'Die Speisekarte, bitte', 'O menu, por favor', 'メニューをください', 'Menyū o kudasai'],
+  [1, 'I\'m allergic to nuts', 'Soy alérgico a los frutos secos', 'Je suis allergique aux noix', 'Sono allergico alla frutta secca', 'Ich bin allergisch gegen Nüsse', 'Sou alérgico a frutos secos', 'ナッツアレルギーがあります', 'Nattsu arerugī ga arimasu'],
+  [1, 'The bill, please', 'La cuenta, por favor', 'L\'addition, s\'il vous plaît', 'Il conto, per favore', 'Die Rechnung, bitte', 'A conta, por favor', 'お会計お願いします', 'Okaikei onegaishimasu'],
+  [2, 'Where is the toilet?', '¿Dónde está el baño?', 'Où sont les toilettes ?', 'Dov\'è il bagno?', 'Wo ist die Toilette?', 'Onde é a casa de banho?', 'トイレはどこですか？', 'Toire wa doko desu ka?'],
+  [2, 'How do I get to the station?', '¿Cómo llego a la estación?', 'Comment aller à la gare ?', 'Come arrivo alla stazione?', 'Wie komme ich zum Bahnhof?', 'Como chego à estação?', '駅はどう行けばいいですか？', 'Eki wa dō ikeba ii desu ka?'],
+  [2, 'Is it far?', '¿Está lejos?', 'C\'est loin ?', 'È lontano?', 'Ist es weit?', 'É longe?', '遠いですか？', 'Tōi desu ka?'],
+  [2, 'One ticket to the centre, please', 'Un billete al centro, por favor', 'Un billet pour le centre, s\'il vous plaît', 'Un biglietto per il centro, per favore', 'Eine Fahrkarte ins Zentrum, bitte', 'Um bilhete para o centro, por favor', '中心部までの切符を一枚ください', 'Chūshinbu made no kippu o ichimai kudasai'],
+  [3, 'I have a reservation', 'Tengo una reserva', 'J\'ai une réservation', 'Ho una prenotazione', 'Ich habe eine Reservierung', 'Tenho uma reserva', '予約しています', 'Yoyaku shiteimasu'],
+  [3, 'What time is breakfast?', '¿A qué hora es el desayuno?', 'À quelle heure est le petit-déjeuner ?', 'A che ora è la colazione?', 'Wann gibt es Frühstück?', 'A que horas é o pequeno-almoço?', '朝食は何時ですか？', 'Chōshoku wa nanji desu ka?'],
+  [3, 'What is the Wi-Fi password?', '¿Cuál es la contraseña del wifi?', 'Quel est le mot de passe du wifi ?', 'Qual è la password del wifi?', 'Wie ist das WLAN-Passwort?', 'Qual é a palavra-passe do wifi?', 'Wi-Fiのパスワードは何ですか？', 'Waifai no pasuwādo wa nan desu ka?'],
+  [4, 'How much is it?', '¿Cuánto cuesta?', 'Combien ça coûte ?', 'Quanto costa?', 'Wie viel kostet das?', 'Quanto custa?', 'いくらですか？', 'Ikura desu ka?'],
+  [4, 'Can I pay by card?', '¿Puedo pagar con tarjeta?', 'Je peux payer par carte ?', 'Posso pagare con la carta?', 'Kann ich mit Karte zahlen?', 'Posso pagar com cartão?', 'カードで払えますか？', 'Kādo de haraemasu ka?'],
+  [4, 'I\'m just looking, thanks', 'Solo estoy mirando, gracias', 'Je regarde seulement, merci', 'Sto solo guardando, grazie', 'Ich schaue nur, danke', 'Estou só a ver, obrigado', '見ているだけです', 'Mite iru dake desu'],
+  [5, 'Help!', '¡Socorro!', 'Au secours !', 'Aiuto!', 'Hilfe!', 'Socorro!', '助けて！', 'Tasukete!'],
+  [5, 'Call an ambulance', 'Llame a una ambulancia', 'Appelez une ambulance', 'Chiami un\'ambulanza', 'Rufen Sie einen Krankenwagen', 'Chame uma ambulância', '救急車を呼んでください', 'Kyūkyūsha o yonde kudasai'],
+  [5, 'I need a doctor', 'Necesito un médico', 'J\'ai besoin d\'un médecin', 'Ho bisogno di un medico', 'Ich brauche einen Arzt', 'Preciso de um médico', '医者が必要です', 'Isha ga hitsuyō desu'],
+  [5, 'I\'ve lost my passport', 'He perdido el pasaporte', 'J\'ai perdu mon passeport', 'Ho perso il passaporto', 'Ich habe meinen Pass verloren', 'Perdi o passaporte', 'パスポートをなくしました', 'Pasupōto o nakushimashita'],
+];
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('q').placeholder = T.ask;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const mine = ES ? 2 : 1;
+let to = ES ? 2 : 1, cat = 0, favs = [], extra = [];
+// One phrase: source text in my language, target text, romaji for Japanese.
+const row = p => ({ id: p.id || p[1], src: p.src || p[mine], dst: p.dst || p[1 + to], rom: p.rom != null ? p.rom : to === 6 ? p[8] : '' });
+function speak(text) { const l = LANGS[to][3]; try { if (window.Acornix) Acornix.speak(text, l); else { const u = new SpeechSynthesisUtterance(text); u.lang = l; u.rate = .85; speechSynthesis.cancel(); speechSynthesis.speak(u); } } catch (e) {} }
+function render() {
+  $('langs').innerHTML = LANGS.map(([c, f, n], i) => (ES && i === 1) || (!ES && i === 0) ? '' : `<button class="lang ${i === to ? 'on' : ''}" data-i="${i}">${f} ${n}</button>`).join('');
+  $('langs').querySelectorAll('.lang').forEach(b => b.onclick = () => { to = +b.dataset.i; extra = []; store.set('to', to); render(); });
+  $('cats').innerHTML = T.cats.map((c, i) => `<button class="cat ${i === cat ? 'on' : ''}" data-i="${i}">${c}</button>`).join('');
+  $('cats').querySelectorAll('.cat').forEach(b => b.onclick = () => { cat = +b.dataset.i; render(); });
+  const rows = [...extra, ...(cat === 6 ? P.filter(p => favs.includes(p[1])) : P.filter(p => p[0] === cat)).map(row)];
+  $('list').innerHTML = rows.length ? rows.map((r, i) => `<div class="p" data-i="${i}"><button class="fav" data-f="${i}">${favs.includes(r.id) ? '❤️' : '🤍'}</button><div class="t"><div class="src">${esc(r.src)}</div><div class="dst">${esc(r.dst)}</div>${r.rom ? `<div class="rom">${esc(r.rom)}</div>` : ''}</div><button data-s="${i}">🔊</button></div>`).join('') : `<p style="color:var(--muted)">${T.none}</p>`;
+  $('list').querySelectorAll('[data-s]').forEach(b => b.onclick = e => { e.stopPropagation(); speak(rows[+b.dataset.s].dst); });
+  $('list').querySelectorAll('[data-f]').forEach(b => b.onclick = e => { e.stopPropagation(); const id = rows[+b.dataset.f].id, k = favs.indexOf(id); k >= 0 ? favs.splice(k, 1) : favs.push(id); store.set('favs', favs); render(); });
+  $('list').querySelectorAll('.p').forEach(d => d.onclick = () => { const r = rows[+d.dataset.i]; $('big').innerHTML = `<div class="dst">${esc(r.dst)}</div>${r.rom ? `<div class="rom">${esc(r.rom)}</div>` : ''}<div class="src">${esc(r.src)}</div><small>${T.tap}</small>`; $('big').hidden = false; speak(r.dst); });
+}
+$('big').onclick = () => $('big').hidden = true;
+$('ask').onsubmit = async e => {
+  e.preventDefault(); const q = $('q').value.trim(); $('err').textContent = ''; if (!q) return;
+  if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  try {
+    const r = await Acornix.askAI(q, { json: true, quick: true, system: `Translate the user's phrase into natural, polite ${LANGS[to][2]} as a traveller would say it. ${to === 6 ? 'Also give the Hepburn romaji.' : ''} Reply only with JSON: {"translation":"","romaji":""}` });
+    if (!r || !r.translation) throw new Error('?');
+    extra.unshift({ id: q, src: q, dst: r.translation, rom: to === 6 ? r.romaji || '' : '' }); $('q').value = ''; render(); speak(r.translation);
+  } catch (er) { $('err').textContent = T.failed + (er.message || ''); }
+};
+(async () => { to = await store.get('to', to); if (to === mine - 1) to = ES ? 2 : 1; favs = await store.get('favs', []); render(); })();
+</script>
+</body>
+</html>
