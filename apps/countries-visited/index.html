@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Countries Visited</title>
+<style>
+  :root { --bg:#0b1d2e; --card:#13293f; --ink:#eef5fb; --muted:#8aa2b8; --a:#4dabf7; --w:#ffd43b; --line:#1f3b57; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  .top { display:flex; align-items:center; gap:8px; } .top h1 { margin:0; font-size:24px; flex:1; } .top button { padding:9px 13px; border-radius:14px; background:var(--card); font-weight:800; }
+  .hero { display:flex; align-items:center; gap:16px; margin:14px 0; }
+  .globe { width:110px; height:110px; position:relative; flex:none; } .globe svg { width:100%; height:100%; transform:rotate(-90deg); } .globe div { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; } .globe b { font-size:28px; } .globe small { color:var(--muted); font-weight:800; font-size:11px; }
+  .conts { flex:1; display:grid; gap:6px; } .cont { display:grid; grid-template-columns:80px 1fr 40px; gap:8px; align-items:center; font-size:12px; font-weight:800; color:var(--muted); } .cont .t { height:8px; border-radius:4px; background:var(--line); overflow:hidden; } .cont .t i { display:block; height:100%; background:var(--a); border-radius:4px; } .cont span:last-child { text-align:right; color:var(--ink); }
+  .search { width:100%; padding:12px 14px; border-radius:14px; border:2px solid var(--line); background:var(--card); color:var(--ink); font:inherit; outline:none; margin-bottom:10px; }
+  .tabs { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-bottom:10px; } .tabs::-webkit-scrollbar { display:none; } .chip { flex:none; padding:7px 12px; border-radius:20px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); } .chip.on { background:var(--ink); color:var(--bg); }
+  .hint { color:var(--muted); font-size:12px; font-weight:700; margin:0 2px 10px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:8px; }
+  .c { background:var(--card); border-radius:14px; padding:10px 6px 8px; text-align:center; border:2px solid transparent; position:relative; }
+  .c .f { font-size:34px; line-height:1; filter:grayscale(.85) opacity(.55); transition:filter .2s; } .c small { display:block; font-size:11px; font-weight:700; margin-top:5px; color:var(--muted); line-height:1.2; }
+  .c.v { border-color:var(--a); } .c.v .f { filter:none; } .c.v small { color:var(--ink); }
+  .c.w { border-color:var(--w); border-style:dashed; } .c.w .f { filter:grayscale(.3); }
+  .c .b { position:absolute; top:4px; right:6px; font-size:11px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🌍 <span id="ttl"></span></h1><button id="card">🖼️</button></div>
+  <div class="hero"><div class="globe"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#1f3b57" stroke-width="4"/><circle id="arc" cx="18" cy="18" r="15.5" fill="none" stroke="#4dabf7" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 100"/></svg><div><b id="n"></b><small id="pct"></small></div></div><div class="conts" id="conts"></div></div>
+  <input class="search" id="q">
+  <div class="tabs" id="tabs"></div>
+  <div class="hint" id="hint"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Mis países', q:'Busca un país', of:'de 195', world:'del mundo', tabs:['Todos', '✅ Visitados', '⭐ Quiero ir'], hint:'Toca una vez: visitado · dos veces: quiero ir · tres: quitar', cont:{ eu:'Europa', as:'Asia', af:'África', na:'Norteamérica', sa:'Sudamérica', oc:'Oceanía' }, cardT:n => `He visitado ${n} países`, saved:'' }
+ : { title:'Countries Visited', q:'Search a country', of:'of 195', world:'of the world', tabs:['All', '✅ Visited', '⭐ Wish list'], hint:'Tap once: visited · twice: want to go · three times: clear', cont:{ eu:'Europe', as:'Asia', af:'Africa', na:'N. America', sa:'S. America', oc:'Oceania' }, cardT:n => `I've visited ${n} countries` };
+// ISO code|English|Spanish|continent (195: UN members plus Vatican City and Palestine)
+const RAW = `ES|Spain|España|eu PT|Portugal|Portugal|eu FR|France|Francia|eu DE|Germany|Alemania|eu IT|Italy|Italia|eu GB|United Kingdom|Reino Unido|eu IE|Ireland|Irlanda|eu NL|Netherlands|Países Bajos|eu BE|Belgium|Bélgica|eu LU|Luxembourg|Luxemburgo|eu CH|Switzerland|Suiza|eu AT|Austria|Austria|eu LI|Liechtenstein|Liechtenstein|eu MC|Monaco|Mónaco|eu AD|Andorra|Andorra|eu SM|San Marino|San Marino|eu VA|Vatican City|Ciudad del Vaticano|eu MT|Malta|Malta|eu DK|Denmark|Dinamarca|eu NO|Norway|Noruega|eu SE|Sweden|Suecia|eu FI|Finland|Finlandia|eu IS|Iceland|Islandia|eu EE|Estonia|Estonia|eu LV|Latvia|Letonia|eu LT|Lithuania|Lituania|eu PL|Poland|Polonia|eu CZ|Czechia|Chequia|eu SK|Slovakia|Eslovaquia|eu HU|Hungary|Hungría|eu SI|Slovenia|Eslovenia|eu HR|Croatia|Croacia|eu BA|Bosnia and Herzegovina|Bosnia y Herzegovina|eu RS|Serbia|Serbia|eu ME|Montenegro|Montenegro|eu MK|North Macedonia|Macedonia del Norte|eu AL|Albania|Albania|eu GR|Greece|Grecia|eu BG|Bulgaria|Bulgaria|eu RO|Romania|Rumanía|eu MD|Moldova|Moldavia|eu UA|Ukraine|Ucrania|eu BY|Belarus|Bielorrusia|eu RU|Russia|Rusia|eu CY|Cyprus|Chipre|eu
+TR|Türkiye|Turquía|as GE|Georgia|Georgia|as AM|Armenia|Armenia|as AZ|Azerbaijan|Azerbaiyán|as KZ|Kazakhstan|Kazajistán|as UZ|Uzbekistan|Uzbekistán|as TM|Turkmenistan|Turkmenistán|as KG|Kyrgyzstan|Kirguistán|as TJ|Tajikistan|Tayikistán|as AF|Afghanistan|Afganistán|as PK|Pakistan|Pakistán|as IN|India|India|as NP|Nepal|Nepal|as BT|Bhutan|Bután|as BD|Bangladesh|Bangladés|as LK|Sri Lanka|Sri Lanka|as MV|Maldives|Maldivas|as CN|China|China|as MN|Mongolia|Mongolia|as KP|North Korea|Corea del Norte|as KR|South Korea|Corea del Sur|as JP|Japan|Japón|as MM|Myanmar|Myanmar|as TH|Thailand|Tailandia|as LA|Laos|Laos|as KH|Cambodia|Camboya|as VN|Vietnam|Vietnam|as MY|Malaysia|Malasia|as SG|Singapore|Singapur|as BN|Brunei|Brunéi|as ID|Indonesia|Indonesia|as PH|Philippines|Filipinas|as TL|Timor-Leste|Timor Oriental|as IR|Iran|Irán|as IQ|Iraq|Irak|as SY|Syria|Siria|as LB|Lebanon|Líbano|as IL|Israel|Israel|as PS|Palestine|Palestina|as JO|Jordan|Jordania|as SA|Saudi Arabia|Arabia Saudí|as YE|Yemen|Yemen|as OM|Oman|Omán|as AE|United Arab Emirates|Emiratos Árabes Unidos|as QA|Qatar|Catar|as BH|Bahrain|Baréin|as KW|Kuwait|Kuwait|as
+MA|Morocco|Marruecos|af DZ|Algeria|Argelia|af TN|Tunisia|Túnez|af LY|Libya|Libia|af EG|Egypt|Egipto|af SD|Sudan|Sudán|af SS|South Sudan|Sudán del Sur|af ER|Eritrea|Eritrea|af ET|Ethiopia|Etiopía|af DJ|Djibouti|Yibuti|af SO|Somalia|Somalia|af KE|Kenya|Kenia|af UG|Uganda|Uganda|af RW|Rwanda|Ruanda|af BI|Burundi|Burundi|af TZ|Tanzania|Tanzania|af MZ|Mozambique|Mozambique|af MW|Malawi|Malaui|af ZM|Zambia|Zambia|af ZW|Zimbabwe|Zimbabue|af BW|Botswana|Botsuana|af NA|Namibia|Namibia|af ZA|South Africa|Sudáfrica|af LS|Lesotho|Lesoto|af SZ|Eswatini|Esuatini|af MG|Madagascar|Madagascar|af MU|Mauritius|Mauricio|af SC|Seychelles|Seychelles|af KM|Comoros|Comoras|af AO|Angola|Angola|af CD|DR Congo|R. D. del Congo|af CG|Congo|Congo|af GA|Gabon|Gabón|af GQ|Equatorial Guinea|Guinea Ecuatorial|af CM|Cameroon|Camerún|af CF|Central African Republic|República Centroafricana|af TD|Chad|Chad|af NE|Niger|Níger|af NG|Nigeria|Nigeria|af BJ|Benin|Benín|af TG|Togo|Togo|af GH|Ghana|Ghana|af CI|Ivory Coast|Costa de Marfil|af BF|Burkina Faso|Burkina Faso|af ML|Mali|Malí|af SN|Senegal|Senegal|af GM|Gambia|Gambia|af GW|Guinea-Bissau|Guinea-Bisáu|af GN|Guinea|Guinea|af SL|Sierra Leone|Sierra Leona|af LR|Liberia|Liberia|af MR|Mauritania|Mauritania|af CV|Cape Verde|Cabo Verde|af ST|São Tomé and Príncipe|Santo Tomé y Príncipe|af
+US|United States|Estados Unidos|na CA|Canada|Canadá|na MX|Mexico|México|na GT|Guatemala|Guatemala|na BZ|Belize|Belice|na SV|El Salvador|El Salvador|na HN|Honduras|Honduras|na NI|Nicaragua|Nicaragua|na CR|Costa Rica|Costa Rica|na PA|Panama|Panamá|na CU|Cuba|Cuba|na JM|Jamaica|Jamaica|na HT|Haiti|Haití|na DO|Dominican Republic|República Dominicana|na BS|Bahamas|Bahamas|na BB|Barbados|Barbados|na TT|Trinidad and Tobago|Trinidad y Tobago|na GD|Grenada|Granada|na LC|Saint Lucia|Santa Lucía|na VC|Saint Vincent and the Grenadines|San Vicente y las Granadinas|na AG|Antigua and Barbuda|Antigua y Barbuda|na DM|Dominica|Dominica|na KN|Saint Kitts and Nevis|San Cristóbal y Nieves|na
+CO|Colombia|Colombia|sa VE|Venezuela|Venezuela|sa EC|Ecuador|Ecuador|sa PE|Peru|Perú|sa BO|Bolivia|Bolivia|sa BR|Brazil|Brasil|sa PY|Paraguay|Paraguay|sa UY|Uruguay|Uruguay|sa AR|Argentina|Argentina|sa CL|Chile|Chile|sa GY|Guyana|Guyana|sa SR|Suriname|Surinam|sa
+AU|Australia|Australia|oc NZ|New Zealand|Nueva Zelanda|oc PG|Papua New Guinea|Papúa Nueva Guinea|oc FJ|Fiji|Fiyi|oc SB|Solomon Islands|Islas Salomón|oc VU|Vanuatu|Vanuatu|oc WS|Samoa|Samoa|oc TO|Tonga|Tonga|oc KI|Kiribati|Kiribati|oc TV|Tuvalu|Tuvalu|oc NR|Nauru|Nauru|oc FM|Micronesia|Micronesia|oc MH|Marshall Islands|Islas Marshall|oc PW|Palau|Palaos|oc`;
+const C = RAW.split(/\s(?=[A-Z]{2}\|)/).map(s => { const [code, en, es, ct] = s.trim().split('|'); return { code, name: ES ? es : en, ct, flag: String.fromCodePoint(...[...code].map(ch => 127397 + ch.charCodeAt(0))) }; }).sort((a, b) => a.name.localeCompare(b.name, ES ? 'es' : 'en'));
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('q').placeholder = T.q; $('hint').textContent = T.hint;
+let marks = {}, tab = 0;
+const save = () => store.set('marks', marks);
+function stats() {
+  const v = C.filter(c => marks[c.code] === 'v'), p = Math.round(v.length / C.length * 100);
+  $('n').textContent = v.length; $('pct').textContent = T.of; $('arc').setAttribute('stroke-dasharray', `${v.length / C.length * 97.4} 97.4`);
+  $('conts').innerHTML = Object.keys(T.cont).map(k => { const all = C.filter(c => c.ct === k).length, n = v.filter(c => c.ct === k).length; return `<div class="cont"><span>${T.cont[k]}</span><div class="t"><i style="width:${n / all * 100}%"></i></div><span>${n}/${all}</span></div>`; }).join('');
+}
+function render() {
+  stats();
+  $('tabs').innerHTML = T.tabs.map((t, i) => `<button class="chip ${i === tab ? 'on' : ''}" data-i="${i}">${t}</button>`).join('');
+  $('tabs').querySelectorAll('.chip').forEach(b => b.onclick = () => { tab = +b.dataset.i; render(); });
+  const q = $('q').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const L = C.filter(c => (!tab || marks[c.code] === (tab === 1 ? 'v' : 'w')) && (!q || c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q)));
+  $('grid').innerHTML = L.map(c => `<button class="c ${marks[c.code] || ''}" data-c="${c.code}"><span class="b">${marks[c.code] === 'v' ? '✅' : marks[c.code] === 'w' ? '⭐' : ''}</span><div class="f">${c.flag}</div><small>${c.name}</small></button>`).join('');
+  $('grid').querySelectorAll('.c').forEach(b => b.onclick = () => { const k = b.dataset.c, m = marks[k]; if (!m) marks[k] = 'v'; else if (m === 'v') marks[k] = 'w'; else delete marks[k]; save(); try { window.Acornix && Acornix.vibrate(marks[k] === 'v' ? 20 : 8); } catch (e) {} render(); });
+}
+$('q').oninput = render;
+// A shareable picture with the count and every visited flag.
+$('card').onclick = async () => {
+  const v = C.filter(c => marks[c.code] === 'v'), W = 1080, cols = 8, rows = Math.ceil(v.length / cols), H = 520 + Math.max(1, rows) * 128, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#13293f'); bg.addColorStop(1, '#0b1d2e'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#fff'; g.textAlign = 'center'; g.font = '900 200px system-ui'; g.fillText(v.length, W / 2, 260); g.font = '800 54px system-ui'; g.fillText(T.cardT(v.length), W / 2, 350);
+  g.fillStyle = '#8aa2b8'; g.font = '700 38px system-ui'; g.fillText(`${Math.round(v.length / C.length * 100)}% ${T.world} 🌍`, W / 2, 420);
+  g.font = '96px system-ui'; v.forEach((c, i) => g.fillText(c.flag, 80 + (i % cols) * 131, 560 + Math.floor(i / cols) * 128));
+  const url = cv.toDataURL('image/png'), name = `countries-${v.length}.png`;
+  try { if (window.Acornix) await Acornix.files.share(name, url); else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+(async () => { marks = await store.get('marks', {}); render(); })();
+</script>
+</body>
+</html>

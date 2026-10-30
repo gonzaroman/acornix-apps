@@ -684,6 +684,29 @@
       "trending": 0
     },
     {
+      "id": "countries-visited",
+      "name": "Countries Visited",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "Mark the 195 countries you have visited or want to visit, see your progress by continent and share a flag card.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 13328,
+      "sha256": "e97bb51a6dc184ba37e53949c5846b70b42a03a353d1a8e5ddd967c62293714d",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "contrast-checker",
       "name": "Contrast Checker",
       "emoji": "🌓",
