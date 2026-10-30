@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Pattern Maker</title>
+<style>
+  :root { --ink:#1e1b2e; --muted:#7a7590; --card:#ffffffee; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:#fff; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  #bg { position:fixed; inset:0; width:100%; height:100%; }
+  .top { position:fixed; left:12px; right:12px; top:calc(env(safe-area-inset-top) + 10px); display:flex; gap:8px; align-items:center; }
+  .top h1 { margin:0; font-size:18px; flex:1; padding:9px 14px; border-radius:14px; background:var(--card); backdrop-filter:blur(10px); width:max-content; flex:0 1 auto; }
+  .top .sp { flex:1; }
+  .b { padding:10px 13px; border-radius:14px; background:var(--card); font-weight:800; font-size:14px; backdrop-filter:blur(10px); box-shadow:0 2px 10px #0002; }
+  .b.main { background:var(--ink); color:#fff; }
+  .panel { position:fixed; left:10px; right:10px; bottom:calc(env(safe-area-inset-bottom) + 10px); background:var(--card); backdrop-filter:blur(14px); border-radius:22px; padding:12px; box-shadow:0 10px 40px #0003; display:flex; flex-direction:column; gap:10px; }
+  .row { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; align-items:center; }
+  .row::-webkit-scrollbar { display:none; }
+  .m { flex:none; width:46px; height:46px; border-radius:12px; background:#f1eff7; font-size:20px; display:grid; place-items:center; }
+  .m.on { background:var(--ink); color:#fff; }
+  .m svg { width:26px; height:26px; }
+  .pal { flex:none; display:flex; width:58px; height:30px; border-radius:9px; overflow:hidden; border:2px solid transparent; padding:0; }
+  .pal.on { border-color:var(--ink); }
+  .pal i { flex:1; }
+  .sl { display:grid; grid-template-columns:auto 1fr auto 1fr; gap:8px 10px; align-items:center; font-size:12px; font-weight:800; color:var(--muted); }
+  .sl input { width:100%; accent-color:var(--ink); }
+  .hide { position:fixed; right:14px; bottom:calc(env(safe-area-inset-bottom) + 14px); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="top"><h1>🔷 <span id="ttl"></span></h1><span class="sp"></span><button class="b" id="rnd">🎲</button><button class="b" id="eye">👁️</button><button class="b main" id="save"></button></div>
+<div class="panel" id="panel">
+  <div class="row" id="motifs"></div>
+  <div class="row" id="pals"></div>
+  <div class="sl"><span id="lSize"></span><input type="range" id="size" min="24" max="220" value="90"><span id="lRot"></span><input type="range" id="rot" min="0" max="90" value="0"><span id="lGap"></span><input type="range" id="gap" min="0" max="100" value="40"><span id="lMix"></span><input type="range" id="mix" min="0" max="100" value="0"></div>
+</div>
+<button class="b hide" id="show" hidden>🎛️</button>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Patrones', save:'Fondo', size:'Tamaño', rot:'Giro', gap:'Espacio', mix:'Caos' } : { title:'Patterns', save:'Wallpaper', size:'Size', rot:'Turn', gap:'Spacing', mix:'Chaos' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const PALS = [['#fff4e6', '#ff922b', '#e8590c'], ['#e7f5ff', '#4dabf7', '#1864ab'], ['#1e1b2e', '#f783ac', '#ffd43b'], ['#ebfbee', '#51cf66', '#2b8a3e'], ['#f8f0fc', '#cc5de8', '#5f3dc4'], ['#212529', '#f8f9fa', '#868e96'], ['#fff9db', '#fa5252', '#228be6'], ['#0b7285', '#99e9f2', '#ffe066'], ['#ffe3e3', '#ff8787', '#c92a2a']];
+// Each motif draws one tile item centred at 0,0 with radius r in colours a and b.
+const MOTIFS = {
+  dot: (g, r, a) => { g.fillStyle = a; g.beginPath(); g.arc(0, 0, r * .45, 0, 7); g.fill(); },
+  ring: (g, r, a, b) => { g.strokeStyle = a; g.lineWidth = r * .16; g.beginPath(); g.arc(0, 0, r * .4, 0, 7); g.stroke(); g.fillStyle = b; g.beginPath(); g.arc(0, 0, r * .14, 0, 7); g.fill(); },
+  tri: (g, r, a) => { g.fillStyle = a; g.beginPath(); g.moveTo(0, -r * .5); g.lineTo(r * .45, r * .35); g.lineTo(-r * .45, r * .35); g.fill(); },
+  square: (g, r, a, b) => { g.fillStyle = a; g.fillRect(-r * .38, -r * .38, r * .76, r * .76); g.fillStyle = b; g.fillRect(-r * .14, -r * .14, r * .28, r * .28); },
+  plus: (g, r, a) => { g.fillStyle = a; g.fillRect(-r * .45, -r * .12, r * .9, r * .24); g.fillRect(-r * .12, -r * .45, r * .24, r * .9); },
+  wave: (g, r, a) => { g.strokeStyle = a; g.lineWidth = r * .14; g.lineCap = 'round'; g.beginPath(); for (let x = -r * .5; x <= r * .5; x += 2) g.lineTo(x, Math.sin(x / r * 6.283) * r * .18); g.stroke(); },
+  star: (g, r, a) => { g.fillStyle = a; g.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? r * .2 : r * .48, t = i * Math.PI / 5 - Math.PI / 2; g.lineTo(Math.cos(t) * rr, Math.sin(t) * rr); } g.fill(); },
+  heart: (g, r, a) => { g.fillStyle = a; g.beginPath(); const s = r * .5; g.moveTo(0, s * .7); g.bezierCurveTo(-s * 1.2, -s * .1, -s * .5, -s * .95, 0, -s * .35); g.bezierCurveTo(s * .5, -s * .95, s * 1.2, -s * .1, 0, s * .7); g.fill(); },
+  leaf: (g, r, a, b) => { g.fillStyle = a; g.beginPath(); g.ellipse(0, 0, r * .48, r * .2, -.6, 0, 7); g.fill(); g.strokeStyle = b; g.lineWidth = r * .04; g.beginPath(); g.moveTo(-r * .38, r * .27); g.lineTo(r * .38, -r * .27); g.stroke(); },
+  emoji: (g, r, a, b, e) => { g.font = `${r * .8}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(e, 0, r * .05); },
+};
+const EMOJI = ['🌸', '🍓', '⭐', '🌵', '🐟', '🍋', '☁️', '🍄', '🦋', '🌈', '🍩', '🐾'];
+const ICON = { dot: '●', ring: '◎', tri: '▲', square: '▣', plus: '✚', wave: '〰️', star: '★', heart: '♥', leaf: '🍃', emoji: '😀' };
+const $ = id => document.getElementById(id), cv = $('bg'), cx = cv.getContext('2d');
+['ttl', 'save', 'lSize', 'lRot', 'lGap', 'lMix'].forEach((id, i) => $(id).textContent = [T.title, T.save, T.size, T.rot, T.gap, T.mix][i]);
+let st = { motifs: ['dot'], pal: 0, size: 90, rot: 0, gap: 40, mix: 0, emoji: '🌸' };
+// A seeded random so the same settings always give the same pattern.
+const rng = s => () => (s = (s * 16807) % 2147483647) / 2147483647;
+function paint(g, W, H, k) {
+  const [bg, a, b] = PALS[st.pal], cell = st.size * k * (1 + st.gap / 100), r = st.size * k / 2, R = rng(42);
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  const cols = Math.ceil(W / cell) + 2, rows = Math.ceil(H / cell) + 2, ms = st.motifs.length ? st.motifs : ['dot'];
+  for (let y = -1; y < rows; y++) for (let x = -1; x < cols; x++) {
+    const m = ms[(x + y * 3 + 99) % ms.length], ch = st.mix / 100, cx0 = x * cell + (y % 2 ? cell / 2 : 0) + (R() - .5) * cell * ch, cy0 = y * cell * .87 + (R() - .5) * cell * ch;
+    g.save(); g.translate(cx0, cy0); g.rotate((st.rot + (R() - .5) * 180 * ch) * Math.PI / 180); const sc = 1 + (R() - .5) * ch; g.scale(sc, sc);
+    MOTIFS[m](g, r, (x + y) % 2 ? a : b, (x + y) % 2 ? b : a, st.emoji); g.restore();
+  }
+}
+function draw() { const d = Math.min(2, devicePixelRatio || 1); cv.width = innerWidth * d; cv.height = innerHeight * d; paint(cx, cv.width, cv.height, d); }
+function ui() {
+  $('motifs').innerHTML = Object.keys(MOTIFS).map(m => `<button class="m ${st.motifs.includes(m) ? 'on' : ''}" data-m="${m}">${m === 'emoji' ? st.emoji : ICON[m]}</button>`).join('') + (st.motifs.includes('emoji') ? EMOJI.map(e => `<button class="m ${e === st.emoji ? 'on' : ''}" data-e="${e}">${e}</button>`).join('') : '');
+  $('motifs').querySelectorAll('[data-m]').forEach(b => b.onclick = () => { const m = b.dataset.m, i = st.motifs.indexOf(m); if (i >= 0) { if (st.motifs.length > 1) st.motifs.splice(i, 1); } else st.motifs.push(m); ui(); draw(); save(); });
+  $('motifs').querySelectorAll('[data-e]').forEach(b => b.onclick = () => { st.emoji = b.dataset.e; ui(); draw(); save(); });
+  $('pals').innerHTML = PALS.map((p, i) => `<button class="pal ${i === st.pal ? 'on' : ''}" data-i="${i}">${p.map(c => `<i style="background:${c}"></i>`).join('')}</button>`).join('');
+  $('pals').querySelectorAll('.pal').forEach(b => b.onclick = () => { st.pal = +b.dataset.i; ui(); draw(); save(); });
+  ['size', 'rot', 'gap', 'mix'].forEach(k => $(k).value = st[k]);
+}
+const save = () => store.set('st', st);
+['size', 'rot', 'gap', 'mix'].forEach(k => $(k).oninput = () => { st[k] = +$(k).value; draw(); save(); });
+$('rnd').onclick = () => { const ks = Object.keys(MOTIFS); st.motifs = [...new Set([ks[Math.floor(Math.random() * ks.length)], ks[Math.floor(Math.random() * ks.length)]])]; st.pal = Math.floor(Math.random() * PALS.length); st.size = 40 + Math.floor(Math.random() * 140); st.rot = Math.floor(Math.random() * 4) * 15; st.gap = Math.floor(Math.random() * 80); st.mix = Math.random() < .4 ? Math.floor(Math.random() * 60) : 0; st.emoji = EMOJI[Math.floor(Math.random() * EMOJI.length)]; ui(); draw(); save(); };
+$('eye').onclick = () => { $('panel').hidden = true; document.querySelector('.top').hidden = true; $('show').hidden = false; };
+$('show').onclick = () => { $('panel').hidden = false; document.querySelector('.top').hidden = false; $('show').hidden = true; };
+$('save').onclick = async () => {
+  const c = document.createElement('canvas'); c.width = 1080; c.height = 2400; paint(c.getContext('2d'), 1080, 2400, 1080 / innerWidth);
+  const url = c.toDataURL('image/png'), name = `pattern-${Date.now()}.png`;
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+addEventListener('resize', draw);
+(async () => { st = { ...st, ...(await store.get('st', {})) }; ui(); draw(); })();
+</script>
+</body>
+</html>

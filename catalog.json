@@ -71,6 +71,29 @@
       "trending": 0
     },
     {
+      "id": "pattern-maker",
+      "name": "Pattern Maker",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Make seamless patterns from dots, stars, hearts, waves, leaves or emoji, with palettes, size, rotation and a bit of chaos, as wallpapers.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 10184,
+      "sha256": "5e50121477e25f103b0b7e655692ccf151a0c7d1e39abdcbec737d75b1e24f49",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "palette-generator",
       "name": "Palette Generator",
       "emoji": "🌰",
