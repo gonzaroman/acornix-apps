@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#fff8ee">
+<title>Formas y colores</title>
+<style>
+:root{font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;color:#40365e;background:#fff8ee;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;overscroll-behavior:none}
+button{font:inherit;cursor:pointer;touch-action:manipulation;border:0}
+button:focus-visible{outline:4px solid #7560da;outline-offset:4px}
+.app{height:100vh;height:100dvh;max-width:540px;margin:auto;padding:calc(env(safe-area-inset-top) + 18px) 20px calc(env(safe-area-inset-bottom) + 12px);display:flex;flex-direction:column;gap:16px;position:relative}
+header{display:flex;align-items:center;gap:10px}
+.logo{width:46px;height:46px;border-radius:17px;background:#ffe7a0;display:grid;place-items:center;font-size:28px;transform:rotate(-7deg);flex-shrink:0}
+h1{font-size:22px;line-height:1.15;margin:0;font-weight:850;letter-spacing:-.7px}
+.subtitle{font-size:13px;color:#91849f;margin:5px 0 0;font-weight:650}
+.sound{margin-left:auto;background:white;box-shadow:0 4px 0 #eee5dc;border:2px solid #f1e9df;border-radius:17px;min-width:48px;height:48px;font-size:23px;flex-shrink:0}
+.status{display:flex;justify-content:space-between;align-items:center;padding:0 3px;font-size:13px;color:#91849f;font-weight:750}
+.score{display:flex;align-items:center;gap:7px;background:#fff0c1;color:#9b6d20;border-radius:30px;padding:7px 12px}
+.score span:first-child{font-size:18px}
+.prompt{width:100%;position:relative;background:#eee7ff;border:2px solid #e4d9ff;border-radius:25px;padding:17px 18px;display:flex;align-items:center;gap:13px;text-align:left;color:#49366f;box-shadow:0 5px 0 #e4daf4;min-height:100px}
+.speaker{background:white;border-radius:50%;width:49px;height:49px;display:grid;place-items:center;font-size:24px;flex-shrink:0}
+.prompt small{font-size:12px;font-weight:800;letter-spacing:1px;color:#8b71b3;display:block;margin-bottom:4px}
+.prompt strong{font-size:25px;line-height:1.16;display:block;font-weight:850;letter-spacing:-.5px}
+.board{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:14px;padding:3px 2px 6px}
+.tile{position:relative;background:#fff;border:2px solid #f0e9df;box-shadow:0 6px 0 #eadfd2;border-radius:27px;display:grid;place-items:center;min-height:0;transition:transform .15s,background .2s,border-color .2s;padding:10px;overflow:hidden}
+.tile:active{transform:translateY(4px);box-shadow:0 2px 0 #eadfd2}
+.tile svg{height:90%;width:85%;max-width:126px;max-height:130px;overflow:visible;filter:drop-shadow(0 5px 0 rgba(0,0,0,.09));pointer-events:none}
+.tile.correct{background:#e4faec;border-color:#80d4a3;animation:pop .45s ease}
+.tile.hint{animation:hint 1s ease 2;border-color:#b399ef}
+.tile.wrong{animation:wiggle .4s ease}
+.check{position:absolute;right:9px;top:8px;background:#49ba79;color:white;border-radius:50%;width:28px;height:28px;font-size:20px;display:grid;place-items:center}
+.footer{min-height:29px;display:flex;justify-content:center;align-items:center;gap:7px;font-size:13px;color:#94859e;font-weight:650;text-align:center}
+.footer.win{color:#329362;font-size:17px}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}
+.cover{position:fixed;inset:0;background:rgba(255,248,238,.9);backdrop-filter:blur(9px);z-index:10;display:flex;align-items:center;justify-content:center;padding:25px}
+.cover[hidden]{display:none}
+.welcome{width:100%;max-width:370px;text-align:center;background:#fff;border:2px solid #f1e8de;border-radius:36px;padding:32px 24px;box-shadow:0 18px 60px #6e52651a}
+.welcome-art{height:100px;position:relative;width:230px;margin:0 auto 18px}
+.welcome-art .circle{position:absolute;width:77px;height:77px;border-radius:50%;background:#ff6578;left:0;bottom:0;box-shadow:0 6px 0 #e94d61}
+.welcome-art .square{position:absolute;width:69px;height:69px;background:#60b6f7;border-radius:15px;right:4px;bottom:0;transform:rotate(12deg);box-shadow:0 6px 0 #429cde}
+.welcome-art .star{position:absolute;font-size:91px;line-height:1;left:69px;top:-9px;color:#ffc841;filter:drop-shadow(0 5px 0 #e5ad24)}
+.welcome h2{font-size:29px;letter-spacing:-1px;margin:10px 0}
+.welcome p{color:#8c7e99;line-height:1.6;font-size:16px;margin:10px 0 24px}
+.start{width:100%;background:#8865db;color:white;border-radius:20px;padding:18px;font-weight:850;font-size:21px;box-shadow:0 6px 0 #6646b1}
+.note{font-size:12px!important;margin:19px 0 0!important}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;background:#49365f;color:white;border-radius:16px;padding:12px 18px;width:max-content;max-width:90%;font-size:13px;text-align:center}
+@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes hint{50%{transform:scale(.95);background:#f1eaff}}
+@keyframes wiggle{25%,75%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@media(max-height:690px){.app{gap:11px;padding-top:calc(env(safe-area-inset-top) + 12px)}.prompt{min-height:85px;padding:12px}.prompt strong{font-size:23px}.board{gap:11px}.tile{border-radius:22px}h1{font-size:20px}.subtitle{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div class="logo" aria-hidden="true">✿</div>
+<div><h1>Formas y colores</h1><p class="subtitle">Pequeños descubrimientos</p></div>
+<button class="sound" id="sound" aria-label="Desactivar sonido">🔊</button>
+</header>
+<div class="status"><span>¡Aprende jugando!</span><div class="score" aria-label="Estrellas ganadas"><span aria-hidden="true">★</span><span id="score">0</span></div></div>
+<button class="prompt" id="repeat" aria-label="Escuchar la figura que debes buscar">
+<span class="speaker" aria-hidden="true">🔊</span>
+<span><small id="eyebrow">ENCUENTRA...</small><strong id="question">¡Una forma bonita!</strong></span>
+</button>
+<section class="board" id="board" aria-label="Figuras para elegir"></section>
+<div class="footer" id="feedback" role="status" aria-live="polite">Toca el altavoz para volver a escuchar</div>
+</main>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="cover" id="cover">
+<div class="welcome">
+<div class="welcome-art" aria-hidden="true"><span class="circle"></span><span class="star">★</span><span class="square"></span></div>
+<h2>¡Hola, peque!</h2>
+<p>Escucha, mira y toca.<br>¡Vamos a descubrir formas y colores!</p>
+<button class="start" id="start">¡Vamos a jugar! <span aria-hidden="true">→</span></button>
+<p class="note">Sin prisas, sin fallos. Solo diversión. 💛</p>
+</div>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const shapes=[
+{name:'círculo',female:false,draw:'<circle cx="60" cy="60" r="43"/>'},
+{name:'cuadrado',female:false,draw:'<rect x="20" y="20" width="80" height="80" rx="12"/>'},
+{name:'triángulo',female:false,draw:'<path d="M54 17Q60 7 66 17L108 94Q114 105 101 105H19Q6 105 12 94Z"/>'},
+{name:'estrella',female:true,draw:'<path d="M60 9L75 40L109 45L84 69L90 104L60 88L30 104L36 69L11 45L45 40Z" stroke-linejoin="round" stroke-width="5"/>'},
+{name:'corazón',female:false,draw:'<path d="M60 105C48 94 10 67 10 39C10 12 44 6 60 31C76 6 110 12 110 39C110 67 72 94 60 105Z"/>'},
+{name:'rombo',female:false,draw:'<path d="M55 10Q60 3 65 10L104 54Q109 60 104 66L65 110Q60 117 55 110L16 66Q11 60 16 54Z"/>'}
+];
+const colors=[
+{m:'rojo',f:'roja',hex:'#f35d70'},
+{m:'azul',f:'azul',hex:'#48a7ed'},
+{m:'amarillo',f:'amarilla',hex:'#ffc532'},
+{m:'verde',f:'verde',hex:'#46bf8e'},
+{m:'morado',f:'morada',hex:'#9a72e7'},
+{m:'naranja',f:'naranja',hex:'#ff964c'}
+];
+let state,started=false,locked=false,errors=0,timer,ctxAudio,saveChain=Promise.resolve(),toastTimer;
+const key='formas_colores_v1';
+async function read(){
+if(window.Acornix?.db)return await Acornix.db.get(key);
+try{return JSON.parse(localStorage.getItem(key));}catch{return null;}
+}
+function persist(){
+const data=JSON.parse(JSON.stringify(state));
+saveChain=saveChain.catch(()=>{}).then(async()=>{
+try{if(window.Acornix?.db)await Acornix.db.set(key,data);else localStorage.setItem(key,JSON.stringify(data));}
+catch{toast('No se ha podido guardar el progreso.');}
+});
+}
+function shuffled(a){return [...a].sort(()=>Math.random()-.5);}
+function newBoard(){
+const cs=shuffled([0,1,2,3,4,5]);
+return shuffled([0,1,2,3,4,5]).map((s,i)=>({s,c:cs[i]}));
+}
+function valid(v){return v&&Array.isArray(v.board)&&v.board.length===6&&v.board.every(t=>Number.isInteger(t.s)&&t.s>=0&&t.s<6&&Number.isInteger(t.c)&&t.c>=0&&t.c<6)&&Number.isInteger(v.target)&&v.target>=0&&v.target<6;}
+function label(t){let s=shapes[t.s],c=colors[t.c];return s.name+' '+(s.female?c.f:c.m);}
+function phrase(){return 'Encuentra '+(shapes[state.board[state.target].s].female?'la ':'el ')+label(state.board[state.target]);}
+function draw(){
+$('score').textContent=state.stars;
+$('sound').textContent=state.sound?'🔊':'🔇';
+$('sound').setAttribute('aria-label',state.sound?'Desactivar sonido':'Activar sonido');
+$('question').textContent=label(state.board[state.target]);
+$('eyebrow').textContent='ENCUENTRA...';
+$('board').innerHTML='';
+state.board.forEach((t,i)=>{
+const b=document.createElement('button');b.className='tile';
+b.setAttribute('aria-label',label(t));
+b.innerHTML='<svg viewBox="0 0 120 120" aria-hidden="true"><g fill="'+colors[t.c].hex+'" stroke="'+colors[t.c].hex+'">'+shapes[t.s].draw+'</g></svg>';
+b.addEventListener('click',()=>tap(i,b));$('board').appendChild(b);
+});
+feedback('Toca el altavoz para volver a escuchar',false);
+}
+function feedback(s,win){$('feedback').textContent=s;$('feedback').classList.toggle('win',!!win);}
+function speak(text){
+if(!started||!state.sound||!('speechSynthesis'in window))return;
+try{
+speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=.83;u.pitch=1.15;
+const voice=speechSynthesis.getVoices().find(v=>v.lang.startsWith('es'));if(voice)u.voice=voice;
+speechSynthesis.speak(u);
+}catch{}
+}
+function unlockAudio(){
+if(!state.sound)return;
+try{if(!ctxAudio)ctxAudio=new(window.AudioContext||window.webkitAudioContext)();if(ctxAudio.state==='suspended')ctxAudio.resume().catch(()=>{});}catch{}
+}
+function tune(win){
+if(!state.sound)return;
+unlockAudio();if(!ctxAudio)return;
+const notes=win?[523.25,659.25,783.99,1046.5]:[440,523.25];
+notes.forEach((freq,i)=>{
+const o=ctxAudio.createOscillator(),g=ctxAudio.createGain(),t=ctxAudio.currentTime+i*.115;
+o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(g);g.connect(ctxAudio.destination);o.start(t);o.stop(t+.24);
+});
+}
+function tap(i,b){
+if(!started||locked)return;unlockAudio();
+if(i!==state.target){
+errors++;b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');
+feedback('Vamos despacito. ¡Tú puedes!',false);
+speak('¡Tú puedes! Busca '+(shapes[state.board[state.target].s].female?'la ':'el ')+label(state.board[state.target]));
+if(errors>=2){const target=$('board').children[state.target];target.classList.remove('hint');void target.offsetWidth;target.classList.add('hint');}
+return;
+}
+locked=true;b.classList.add('correct');
+const check=document.createElement('span');check.className='check';check.textContent='✓';check.setAttribute('aria-hidden','true');b.appendChild(check);
+state.stars++;$('score').textContent=state.stars;
+feedback(['¡Muy bien! ¡Una estrella para ti!','¡Lo encontraste! ¡Genial!','¡Bravo! ¡Qué bien lo haces!'][Math.floor(Math.random()*3)],true);
+$('eyebrow').textContent='¡LO CONSEGUISTE!';
+tune(true);confetti();
+const oldShape=state.board[state.target].s;
+state.board=newBoard();
+const candidates=state.board.map((x,i)=>x.s!==oldShape?i:-1).filter(i=>i>=0);
+state.target=candidates[Math.floor(Math.random()*candidates.length)];
+persist();
+timer=setTimeout(()=>{locked=false;errors=0;draw();speak(phrase());},1800);
+}
+$('repeat').onclick=()=>{if(!locked){unlockAudio();speak(phrase());if(!state.sound)toast('Activa el sonido con el botón de arriba.');else if(!('speechSynthesis'in window))toast('La voz no está disponible en este dispositivo. Lee la pista de arriba.');}};
+$('sound').onclick=()=>{
+state.sound=!state.sound;
+if(!state.sound&&'speechSynthesis'in window)speechSynthesis.cancel();
+$('sound').textContent=state.sound?'🔊':'🔇';$('sound').setAttribute('aria-label',state.sound?'Desactivar sonido':'Activar sonido');
+persist();if(state.sound){unlockAudio();if(!locked)speak(phrase());}
+};
+$('start').onclick=()=>{if(!state)return;started=true;$('cover').hidden=true;unlockAudio();speak(phrase());};
+function toast(text){
+let el=$('toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';el.setAttribute('role','status');document.body.appendChild(el);}
+el.textContent=text;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.remove(),3500);
+}
+const canvas=$('confetti'),ctx=canvas.getContext('2d');let raf;
+function confetti(){
+if(!ctx||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+cancelAnimationFrame(raf);
+const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
+canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+const bits=Array.from({length:70},()=>({x:w*.5,y:h*.43,vx:(Math.random()-.5)*11,vy:-Math.random()*10-3,r:Math.random()*6+4,a:Math.random()*6,color:colors[Math.floor(Math.random()*6)].hex}));
+const start=performance.now();let prev=start;
+function frame(now){
+const dt=Math.min((now-prev)/16.67,2);prev=now;ctx.clearRect(0,0,w,h);
+bits.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=.17*dt;p.a+=.09*dt;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.globalAlpha=Math.max(0,1-(now-start)/1900);ctx.fillStyle=p.color;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);ctx.restore();});
+if(now-start<1900)raf=requestAnimationFrame(frame);else ctx.clearRect(0,0,w,h);
+}
+raf=requestAnimationFrame(frame);
+}
+async function reload(){
+try{
+const saved=await read();
+if(valid(saved))state={...saved,stars:Math.max(0,Number(saved.stars)||0),sound:saved.sound!==false};
+else state={stars:0,sound:true,board:newBoard(),target:Math.floor(Math.random()*6)};
+clearTimeout(timer);locked=false;errors=0;draw();
+}catch{
+if(!state)state={stars:0,sound:true,board:newBoard(),target:0};
+draw();toast('No se pudo recuperar el progreso. Puedes seguir jugando.');
+}
+}
+window.addEventListener('acornixdata',reload);
+document.addEventListener('visibilitychange',()=>{
+if(document.hidden&&'speechSynthesis'in window)speechSynthesis.cancel();
+});
+reload();
+})();
+</script>
+</body>
+</html>
