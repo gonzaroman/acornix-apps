@@ -1014,6 +1014,29 @@
       "trending": 0
     },
     {
+      "id": "bubble-pop",
+      "name": "Bubble Pop",
+      "emoji": "🎹",
+      "category": "kids",
+      "description": "Pop floating bubbles full of stars and animals. A calm game with no losing.",
+      "prompt": "A relaxing bubble popping game for kids: shiny bubbles float up from the bottom, tap to pop them with a pop sound and particles, some bubbles hold stars or animals, a counter, and calm music, with no losing.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 21920,
+      "sha256": "aa8e6a1dfaf1dffd4314ff6d62a45c9eda51e3327b8aafe305c95c2a23e842d2",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "birthdays",
       "name": "Birthdays",
       "emoji": "🎂",
