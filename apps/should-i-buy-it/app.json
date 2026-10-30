@@ -1,0 +1,15 @@
+{
+  "id": "should-i-buy-it",
+  "name": "Should I Buy It",
+  "emoji": "📝",
+  "category": "shopping",
+  "description": "Thinking of buying something? Your AI helps you decide with honest questions, pros and cons.",
+  "prompt": "Help decide whether to buy something: describe the item, price and why you want it, and Acornix.askAI asks a couple of honest questions and gives a balanced verdict with pros, cons and a wait 48 hours suggestion, with a list of past decisions.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 83
+}
