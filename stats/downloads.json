@@ -8,7 +8,7 @@
     "affirmations": {
       "asset": 690544127,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "air-quality": {
       "asset": 689382020,
@@ -18,17 +18,17 @@
     "ambient-sounds": {
       "asset": 689917783,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "ar-space": {
       "asset": 690496690,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "avatar-maker": {
       "asset": 690472594,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "baby-piano": {
       "asset": 691575995,
@@ -38,7 +38,7 @@
     "battery-info": {
       "asset": 689141947,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "bedtime-stories": {
       "asset": 691576247,
@@ -58,22 +58,22 @@
     "block-drop": {
       "asset": 689038867,
       "base": 1,
-      "count": 0
+      "count": 3
     },
     "bmi": {
       "asset": 688546680,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "bowling": {
       "asset": 688546710,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "break-even": {
       "asset": 689236127,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "breathing": {
       "asset": 689415393,
@@ -83,12 +83,12 @@
     "brick-breaker": {
       "asset": 688998917,
       "base": 0,
-      "count": 0
+      "count": 4
     },
     "bubble-level": {
       "asset": 689141729,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "bubble-pop": {
       "asset": 691576072,
@@ -103,12 +103,12 @@
     "business-card": {
       "asset": 690386334,
       "base": 1,
-      "count": 0
+      "count": 1
     },
     "calculator": {
       "asset": 688546755,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "capitals-quiz": {
       "asset": 689343919,
@@ -123,22 +123,22 @@
     "castle-defense": {
       "asset": 688546775,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "castle-siege-3d": {
       "asset": 689103921,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "charades": {
       "asset": 689038539,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "chore-wheel": {
       "asset": 690544262,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "coffee-ratio": {
       "asset": 690594328,
@@ -163,7 +163,7 @@
     "compound-interest": {
       "asset": 689202169,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "contrast-checker": {
       "asset": 690472636,
@@ -188,12 +188,12 @@
     "currency-converter": {
       "asset": 689202358,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "daily-journal": {
       "asset": 689166836,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "darts-501": {
       "asset": 689455034,
@@ -208,12 +208,12 @@
     "debt-payoff": {
       "asset": 689202462,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "decision-wheel": {
       "asset": 689038579,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "desk-stretches": {
       "asset": 689415663,
@@ -228,7 +228,7 @@
     "dragon-quest-ai": {
       "asset": 689038801,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "drawing-stories": {
       "asset": 691575896,
@@ -243,7 +243,7 @@
     "drummer": {
       "asset": 688546820,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "ear-trainer": {
       "asset": 689917591,
@@ -253,27 +253,27 @@
     "eisenhower": {
       "asset": 689166926,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "email-writer-ai": {
       "asset": 689166793,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "emoji-movies": {
       "asset": 689038711,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "event-countdown": {
       "asset": 689141812,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "expenses": {
       "asset": 689201995,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "feels-like": {
       "asset": 689421849,
@@ -283,7 +283,7 @@
     "first-aid": {
       "asset": 689378979,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "flag-quiz": {
       "asset": 689343875,
@@ -298,17 +298,17 @@
     "focus-timer": {
       "asset": 689166657,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "fortune-cookie": {
       "asset": 689038621,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "freelance-rate": {
       "asset": 689236362,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "fridge-chef": {
       "asset": 690594569,
@@ -323,7 +323,7 @@
     "generative-art": {
       "asset": 690472696,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "gift-ideas": {
       "asset": 690544318,
@@ -333,7 +333,7 @@
     "goals": {
       "asset": 689166882,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "golf-scorecard": {
       "asset": 689454945,
@@ -343,12 +343,12 @@
     "gradient-maker": {
       "asset": 690472245,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "gratitude-jar": {
       "asset": 690544052,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "grocery-budget": {
       "asset": 691576662,
@@ -363,12 +363,12 @@
     "habit-streaks": {
       "asset": 689166708,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "hiit-timer": {
       "asset": 689415440,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "homework-helper-ai": {
       "asset": 689344060,
@@ -378,12 +378,12 @@
     "hoop-shot-3d": {
       "asset": 689103893,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "invoice-maker": {
       "asset": 689236040,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "itinerary": {
       "asset": 691332083,
@@ -398,12 +398,12 @@
     "kanban": {
       "asset": 689166735,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "kids-paint": {
       "asset": 691576281,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "kitchen-converter": {
       "asset": 690594135,
@@ -428,12 +428,12 @@
     "listing-writer-ai": {
       "asset": 689236222,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "loan-calculator": {
       "asset": 689202106,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "logo-maker": {
       "asset": 690472452,
@@ -448,17 +448,17 @@
     "magic-8-ball": {
       "asset": 689038773,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "magnifier": {
       "asset": 689141915,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "margin-markup": {
       "asset": 689236182,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "math-sprint": {
       "asset": 689343954,
@@ -483,7 +483,7 @@
     "memory-match": {
       "asset": 688998975,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "menu-translator": {
       "asset": 691332317,
@@ -493,7 +493,7 @@
     "merge-2048": {
       "asset": 688998694,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "metronome": {
       "asset": 689917436,
@@ -503,7 +503,7 @@
     "minesweeper": {
       "asset": 688998748,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "mood-journal": {
       "asset": 690544008,
@@ -518,37 +518,37 @@
     "neon-drift-3d": {
       "asset": 689103848,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "neon-drone-race": {
       "asset": 688546887,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "neon-kaleidoscope": {
       "asset": 688546915,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "neon-snake": {
       "asset": 688998655,
       "base": 0,
-      "count": 0
+      "count": 5
     },
     "net-worth": {
       "asset": 689202407,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "noise-meter": {
       "asset": 689141839,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "notes": {
       "asset": 688546959,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "number-bases": {
       "asset": 689379143,
@@ -593,7 +593,7 @@
     "periodic-table": {
       "asset": 689343842,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "photo-booth": {
       "asset": 690386565,
@@ -623,7 +623,7 @@
     "piano": {
       "asset": 688546992,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "pill-tracker": {
       "asset": 689415752,
@@ -633,7 +633,7 @@
     "pitch-writer-ai": {
       "asset": 689236454,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "pixel-art": {
       "asset": 690472058,
@@ -643,7 +643,7 @@
     "pixel-city": {
       "asset": 688547017,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "pixel-photo": {
       "asset": 690386656,
@@ -668,7 +668,7 @@
     "pocket-coach": {
       "asset": 688547043,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "pocket-dictionary-ai": {
       "asset": 689379273,
@@ -698,12 +698,12 @@
     "random-picker": {
       "asset": 689141786,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "receipt-scanner-ai": {
       "asset": 690386837,
       "base": 2,
-      "count": 0
+      "count": 1
     },
     "recipe-box": {
       "asset": 690593998,
@@ -713,7 +713,7 @@
     "reef-aquarium": {
       "asset": 688547079,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "returns-tracker": {
       "asset": 691576783,
@@ -733,17 +733,17 @@
     "routine-runner": {
       "asset": 689166958,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "sales-pipeline": {
       "asset": 689236260,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "savings-goals": {
       "asset": 689202258,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "scales": {
       "asset": 689917705,
@@ -783,7 +783,7 @@
     "sky-hopper": {
       "asset": 688998851,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "sleep-log": {
       "asset": 689415482,
@@ -798,22 +798,22 @@
     "snap-ideas-ai": {
       "asset": 688998611,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "snap-translate-ai": {
       "asset": 689141875,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "solar-system": {
       "asset": 689343994,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "solitaire": {
       "asset": 688999041,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "spelling-bee": {
       "asset": 689344039,
@@ -828,27 +828,27 @@
     "split-bill": {
       "asset": 689202208,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "stack-tower-3d": {
       "asset": 689103786,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "star-defender": {
       "asset": 688999087,
       "base": 0,
-      "count": 0
+      "count": 3
     },
     "star-finder-ar": {
       "asset": 690496600,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "stock-counter": {
       "asset": 689236298,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "stop-motion": {
       "asset": 690386725,
@@ -858,12 +858,12 @@
     "subscriptions": {
       "asset": 689202312,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "sudoku": {
       "asset": 688998804,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "sun-and-moon": {
       "asset": 689363174,
@@ -888,12 +888,12 @@
     "task-breaker-ai": {
       "asset": 689167010,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "tasks": {
       "asset": 689166620,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "team-picker": {
       "asset": 689454857,
@@ -913,12 +913,12 @@
     "time-tracker": {
       "asset": 689236084,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "timer-stopwatch": {
       "asset": 689141702,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "times-tables": {
       "asset": 689343795,
@@ -938,7 +938,7 @@
     "torch-sos": {
       "asset": 689141648,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "tournament": {
       "asset": 689454807,
@@ -963,12 +963,12 @@
     "trivia-night": {
       "asset": 689038412,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "truth-or-dare": {
       "asset": 689038496,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "tuner": {
       "asset": 689917472,
@@ -978,12 +978,12 @@
     "twenty-questions-ai": {
       "asset": 689038667,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "unit-converter": {
       "asset": 689141618,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "unit-price": {
       "asset": 691576373,
@@ -1003,7 +1003,7 @@
     "weather-now": {
       "asset": 689299939,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "weight-tracker": {
       "asset": 689415530,
@@ -1043,7 +1043,7 @@
     "would-you-rather": {
       "asset": 689038460,
       "base": 0,
-      "count": 0
+      "count": 1
     }
   },
   "history": {
@@ -1060,6 +1060,217 @@
       "pixel-city": 0,
       "pocket-coach": 0,
       "reef-aquarium": 0
+    },
+    "2026-10-30": {
+      "abc-animals": 1,
+      "affirmations": 1,
+      "air-quality": 0,
+      "ambient-sounds": 1,
+      "ar-space": 1,
+      "avatar-maker": 1,
+      "baby-piano": 0,
+      "battery-info": 1,
+      "bedtime-stories": 0,
+      "before-and-after": 0,
+      "birthdays": 0,
+      "block-drop": 4,
+      "bmi": 3,
+      "bowling": 3,
+      "break-even": 1,
+      "breathing": 0,
+      "brick-breaker": 4,
+      "bubble-level": 3,
+      "bubble-pop": 0,
+      "bucket-list": 0,
+      "business-card": 2,
+      "calculator": 2,
+      "capitals-quiz": 0,
+      "caption-writer": 0,
+      "castle-defense": 1,
+      "castle-siege-3d": 2,
+      "charades": 2,
+      "chore-wheel": 1,
+      "coffee-ratio": 0,
+      "collage": 0,
+      "coloring-book": 0,
+      "compare-cities": 0,
+      "compound-interest": 1,
+      "contrast-checker": 0,
+      "count-and-tap": 0,
+      "countries-visited": 0,
+      "country-facts": 0,
+      "currency-converter": 1,
+      "daily-journal": 1,
+      "darts-501": 0,
+      "date-calculator": 0,
+      "debt-payoff": 1,
+      "decision-wheel": 1,
+      "desk-stretches": 0,
+      "discount-calculator": 0,
+      "dragon-quest-ai": 1,
+      "drawing-stories": 0,
+      "drinks": 0,
+      "drummer": 1,
+      "ear-trainer": 0,
+      "eisenhower": 1,
+      "email-writer-ai": 1,
+      "emoji-movies": 1,
+      "event-countdown": 1,
+      "expenses": 1,
+      "feels-like": 0,
+      "first-aid": 1,
+      "flag-quiz": 0,
+      "flashcards": 0,
+      "focus-timer": 1,
+      "fortune-cookie": 1,
+      "freelance-rate": 1,
+      "fridge-chef": 0,
+      "fuel-cost": 0,
+      "generative-art": 1,
+      "gift-ideas": 0,
+      "goals": 2,
+      "golf-scorecard": 0,
+      "gradient-maker": 1,
+      "gratitude-jar": 1,
+      "grocery-budget": 0,
+      "guitar-chords": 0,
+      "habit-streaks": 2,
+      "hiit-timer": 1,
+      "homework-helper-ai": 0,
+      "hoop-shot-3d": 3,
+      "invoice-maker": 1,
+      "itinerary": 0,
+      "kalimba": 0,
+      "kanban": 1,
+      "kids-paint": 1,
+      "kitchen-converter": 0,
+      "kitchen-timers": 0,
+      "label-reader": 0,
+      "lap-timer": 0,
+      "listing-writer-ai": 2,
+      "loan-calculator": 1,
+      "logo-maker": 0,
+      "lyrics-writer-ai": 0,
+      "magic-8-ball": 1,
+      "magnifier": 1,
+      "margin-markup": 1,
+      "math-sprint": 0,
+      "meal-planner": 0,
+      "meditation": 0,
+      "meme-maker": 0,
+      "memory-match": 3,
+      "menu-translator": 0,
+      "merge-2048": 1,
+      "metronome": 0,
+      "minesweeper": 1,
+      "mood-journal": 0,
+      "morse-code": 0,
+      "neon-drift-3d": 2,
+      "neon-drone-race": 2,
+      "neon-kaleidoscope": 3,
+      "neon-snake": 5,
+      "net-worth": 1,
+      "noise-meter": 3,
+      "notes": 3,
+      "number-bases": 0,
+      "outfit-advisor": 0,
+      "pace-calculator": 0,
+      "packing-list": 0,
+      "palette-generator": 0,
+      "pantry": 0,
+      "pattern-maker": 0,
+      "perfect-egg": 0,
+      "periodic-table": 1,
+      "photo-booth": 0,
+      "photo-coach": 0,
+      "photo-filters": 0,
+      "photo-palette": 0,
+      "phrasebook": 0,
+      "piano": 2,
+      "pill-tracker": 0,
+      "pitch-writer-ai": 1,
+      "pixel-art": 0,
+      "pixel-city": 1,
+      "pixel-photo": 0,
+      "pizza-dough": 0,
+      "plant-care": 0,
+      "plate-check-ai": 0,
+      "pocket-coach": 1,
+      "pocket-dictionary-ai": 0,
+      "pollen": 0,
+      "price-tracker": 0,
+      "pushup-counter": 0,
+      "quiz-me-ai": 0,
+      "random-picker": 1,
+      "receipt-scanner-ai": 3,
+      "recipe-box": 0,
+      "reef-aquarium": 1,
+      "returns-tracker": 0,
+      "road-trip-games": 0,
+      "roman-numerals": 0,
+      "routine-runner": 1,
+      "sales-pipeline": 2,
+      "savings-goals": 2,
+      "scales": 0,
+      "scoreboard": 0,
+      "shapes-and-colors": 0,
+      "shopping-list": 0,
+      "should-i-buy-it": 0,
+      "size-converter": 0,
+      "sketchbook": 0,
+      "sky-hopper": 2,
+      "sleep-log": 0,
+      "slide-puzzle": 0,
+      "snap-ideas-ai": 3,
+      "snap-translate-ai": 1,
+      "solar-system": 2,
+      "solitaire": 1,
+      "spelling-bee": 0,
+      "spirograph": 0,
+      "split-bill": 1,
+      "stack-tower-3d": 2,
+      "star-defender": 3,
+      "star-finder-ar": 1,
+      "stock-counter": 1,
+      "stop-motion": 0,
+      "subscriptions": 1,
+      "sudoku": 2,
+      "sun-and-moon": 0,
+      "symbols": 0,
+      "synth-pad": 0,
+      "tactics-board": 0,
+      "task-breaker-ai": 2,
+      "tasks": 1,
+      "team-picker": 0,
+      "tell-the-time": 0,
+      "tennis-scorer": 0,
+      "time-tracker": 1,
+      "timer-stopwatch": 1,
+      "times-tables": 0,
+      "tipping-guide": 0,
+      "tone-matrix": 0,
+      "torch-sos": 2,
+      "tournament": 0,
+      "training-plan-ai": 0,
+      "trip-budget": 0,
+      "trip-planner": 0,
+      "trivia-night": 1,
+      "truth-or-dare": 1,
+      "tuner": 0,
+      "twenty-questions-ai": 1,
+      "unit-converter": 1,
+      "unit-price": 0,
+      "uv-index": 0,
+      "water-tracker": 0,
+      "weather-now": 1,
+      "weight-tracker": 0,
+      "what-is-this-ai": 0,
+      "what-to-wear": 0,
+      "will-it-rain": 0,
+      "wind-and-waves": 0,
+      "wish-list": 0,
+      "world-clock": 0,
+      "would-you-rather": 1
     }
   }
 }
