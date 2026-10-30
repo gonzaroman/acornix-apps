@@ -1,0 +1,15 @@
+{
+  "id": "bedtime-stories",
+  "name": "Bedtime Stories",
+  "emoji": "🌰",
+  "category": "kids",
+  "description": "Choose a hero, a place and a theme and your AI writes a gentle story, read aloud at bedtime.",
+  "prompt": "Bedtime stories for children: pick a hero, a place and a theme and Acornix.askAI writes a gentle short story with the onText option so it appears as it is written, read aloud slowly with Acornix.speak, a dark calm screen, and saved favourite stories. Include three built in stories that work without AI.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 72
+}

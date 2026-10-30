@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#101326">
+<title>Luna de cuentos</title>
+<style>
+:root{color-scheme:dark;--bg:#101326;--panel:#1a1e37;--text:#f3efFF;--muted:#a4a5bf;--purple:#bba5f5;--line:#ffffff12;--gold:#edcf92}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;touch-action:manipulation}
+button:disabled{opacity:.55;cursor:default}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.hidden{display:none!important}
+.app{max-width:620px;margin:auto;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 22px) 23px calc(env(safe-area-inset-bottom) + 28px);position:relative}
+.backdrop{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 80% 9%,#4e3c772e,transparent 42%),radial-gradient(ellipse at 0 65%,#223c4d1c,transparent 40%);z-index:-1}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:25px}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:650;letter-spacing:-.5px}
+.brandmark{color:var(--gold);background:#e6cd9510;border:1px solid #e6cd9519;width:39px;height:39px;display:grid;place-items:center;border-radius:14px}
+.night-label{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:var(--muted)}
+.tabs{background:#090d1e77;border:1px solid var(--line);padding:5px;display:flex;gap:5px;border-radius:17px}
+.tab{flex:1;border-radius:12px;min-height:44px;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:600}
+.tab svg{width:17px;height:17px}
+.tab.active{background:#2b2a45;color:#e8ddff;box-shadow:0 3px 14px #0002}
+.hero{position:relative;padding:32px 0 28px;min-height:185px}
+.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:650;margin:0 0 12px}
+h1{font-size:35px;line-height:1.17;letter-spacing:-1.3px;font-weight:600;margin:0 0 12px;position:relative;z-index:1}
+h1 em{font-family:Georgia,serif;font-weight:400;color:#c9b7ee}
+.intro{font-size:13px;line-height:1.6;color:var(--muted);margin:0;max-width:245px}
+.moon-scene{position:absolute;right:-5px;top:25px;width:130px;height:140px;pointer-events:none}
+.moon{width:69px;height:69px;position:absolute;right:15px;top:25px;border-radius:50%;background:#efdcb2;box-shadow:0 0 45px #ead9ac17;transform:rotate(-20deg)}
+.moon:after{content:"";position:absolute;left:24px;top:-8px;background:#17182d;width:61px;height:61px;border-radius:50%}
+.star{position:absolute;color:#d2bded;font-size:14px;animation:glow 5s ease-in-out infinite alternate}
+.star.a{top:7px;left:25px;font-size:10px}.star.b{top:105px;right:14px;font-size:10px;animation-delay:-2s}.star.c{top:86px;left:5px;animation-delay:-3s}.star.d{right:5px;top:0;font-size:7px}
+@keyframes glow{from{opacity:.35}to{opacity:.95}}
+.builder{background:linear-gradient(145deg,#20223d,#191d33);border:1px solid #ffffff0d;border-radius:23px;padding:21px 17px;box-shadow:0 12px 32px #00000014}
+.field+.field{margin-top:24px}
+.field-title{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;margin:0 0 12px}
+.step{border:1px solid #c5b4ed26;color:#baadd8;width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:500}
+.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.choice{min-height:81px;border:1px solid #ffffff0b;background:#ffffff03;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:11px;color:#b2b0c9;transition:background .2s,border-color .2s,transform .2s}
+.choice.selected{border-color:#bda7f09c;background:#b49ae818;color:#ede4ff}
+.choice:active{transform:scale(.96)}
+.emoji{font-size:28px;line-height:1.2;filter:saturate(.72)}
+.options.themes .choice{min-height:47px;gap:5px;flex-direction:row;font-size:11px}
+.options.themes svg{width:14px;height:14px}
+.primary{background:linear-gradient(110deg,#b5a0ee,#d0b9f7);color:#27203e;border-radius:14px;min-height:55px;width:100%;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 5px 20px #9980d51c;transition:transform .15s}
+.primary:active{transform:scale(.985)}
+.builder .primary{margin-top:25px}
+.fineprint{text-align:center;color:#8e8ba7;font-size:10px;margin:11px 0 0;display:flex;align-items:center;justify-content:center;gap:5px}
+.fineprint svg{width:12px;height:12px}
+.section-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:28px 0 13px}
+h2{font-size:17px;letter-spacing:-.4px;font-weight:600;margin:0}
+.tag{font-size:9px;letter-spacing:.6px;color:#b3cbbb;background:#a2cbb111;border-radius:7px;padding:5px 7px;white-space:nowrap}
+.book{display:flex;align-items:center;gap:14px;padding:13px;background:#ffffff03;border:1px solid var(--line);border-radius:17px;text-align:left;width:100%;margin-bottom:10px;min-height:88px}
+.cover{width:57px;height:63px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at 60% 10%,#77679b,#36345a)}
+.cover:before{content:"✧";position:absolute;right:8px;top:5px;font-size:12px;color:#e5d8ae99}
+.cover span{font-size:29px;filter:saturate(.65)}
+.cover.forest{background:linear-gradient(145deg,#32544c,#213339)}.cover.sea{background:linear-gradient(145deg,#375978,#253247)}
+.book-info{flex:1;min-width:0}
+.book-title{display:block;font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4}
+.book-meta{font-size:11px;color:var(--muted);line-height:1.5}
+.book-arrow{width:17px;color:#a49bb9}
+.foot{text-align:center;font-family:Georgia,serif;font-style:italic;font-size:12px;color:#73778f;margin:26px 0 0}
+.library-intro{color:var(--muted);font-size:13px;line-height:1.7;margin:10px 0 24px}
+.library-title{margin-top:30px;font-size:28px;font-family:Georgia,serif;font-weight:400}
+.empty{padding:27px 20px;text-align:center;border:1px dashed #bba5f52b;border-radius:18px;color:var(--muted);font-size:13px;line-height:1.8}
+.empty svg{display:block;margin:0 auto 12px;width:29px;height:29px;color:var(--purple)}
+.resume{margin-top:17px;background:#bba5f50a}
+.reader{position:fixed;inset:0;background:#111528;z-index:20;overflow-y:auto;overscroll-behavior:contain;animation:appear .3s ease;scroll-behavior:smooth}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.reader-wrap{max-width:660px;margin:auto;padding:0 25px calc(env(safe-area-inset-bottom) + 35px)}
+.reader-bar{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 12px) 0 12px;background:#111528f5;z-index:2;border-bottom:1px solid var(--line)}
+.icon-btn{width:45px;height:45px;border-radius:50%;background:#ffffff06;display:grid;place-items:center}
+.icon-btn.saved{color:#dfb4ca;background:#e8adc515}
+.icon-btn.saved svg{fill:#dfb4ca;stroke:#dfb4ca}
+.reader-brand{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#b8a8cf}
+.reader-art{font-size:51px;text-align:center;margin:29px 0 15px;filter:saturate(.65)}
+.reader h2{font:400 30px/1.25 Georgia,serif;text-align:center;letter-spacing:-.5px;overflow-wrap:anywhere}
+.reader-sub{text-align:center;color:var(--muted);font-size:11px;margin:13px 0 24px}
+.audio-panel{display:flex;align-items:center;gap:12px;background:#b6a3e80b;border:1px solid #c6b1ee17;border-radius:16px;padding:12px 14px;margin-bottom:27px}
+.audio-panel svg{color:var(--purple)}
+.audio-info{flex:1}.audio-title{font-size:12px;font-weight:600}.audio-hint{font-size:10px;color:var(--muted);margin-top:4px}
+.listen{background:#bba5f5;color:#25203c;border-radius:11px;min-height:43px;padding:0 16px;font-size:12px;font-weight:650}
+.story-text{font:400 20px/1.95 Georgia,"Times New Roman",serif;color:#dcd7e5;white-space:pre-wrap;overflow-wrap:anywhere;letter-spacing:.05px}
+.story-text.large{font-size:24px}
+.reader-tools{display:flex;gap:9px;justify-content:center;margin:0 0 24px}
+.small-btn{background:#ffffff05;border:1px solid var(--line);border-radius:10px;min-height:40px;padding:0 15px;font-size:12px;color:#c5bfd6}
+.small-btn.active{border-color:#bba5f580;color:var(--purple)}
+.thinking{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--purple);font-size:12px;padding:18px 0}
+.dot{width:5px;height:5px;background:var(--purple);border-radius:50%;animation:glow 1s ease-in-out infinite alternate}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+.error-box{border:1px solid #e8b3b72b;background:#e8b3b709;border-radius:15px;padding:17px;font-size:13px;line-height:1.65;color:#e5c9cf;margin:15px 0}
+.error-box button{margin-top:12px}
+.ending{text-align:center;padding:30px 0;color:#b4a0d3;font-family:Georgia,serif;font-style:italic;font-size:15px}
+.save-wide{background:#ffffff06;border:1px solid #bba5f533;border-radius:14px;min-height:51px;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;color:#cfbee9;font-size:13px}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 22px);left:50%;transform:translateX(-50%);background:#37334c;color:#f4efff;box-shadow:0 8px 30px #0004;border:1px solid #ffffff12;border-radius:14px;padding:13px 19px;max-width:calc(100% - 32px);width:max-content;text-align:center;font-size:12px;z-index:100;line-height:1.5}
+@media(min-width:540px){.app{padding-left:30px;padding-right:30px}.hero{padding-top:38px;min-height:207px}h1{font-size:41px}.moon-scene{right:30px;transform:scale(1.2);top:36px}.builder{padding:24px}.choice{min-height:86px}}
+@media(max-width:350px){.app{padding-left:16px;padding-right:16px}.hero h1{font-size:30px}.moon-scene{transform:scale(.8);transform-origin:right center}.options{gap:5px}.builder{padding:17px 12px}.options.themes .choice{font-size:10px;gap:3px}.intro{max-width:210px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+<symbol id="moon" viewBox="0 0 24 24"><path d="M20.8 13A9 9 0 0 1 11 3.2 9 9 0 1 0 20.8 13Z"/></symbol>
+<symbol id="spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/><path d="m20 2 .5 1.5L22 4l-1.5.5L20 6l-.5-1.5L18 4l1.5-.5Z"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M12 5v15M3 4c3-1 6-1 9 1 3-2 6-2 9-1v15c-3-1-6-1-9 1-3-2-6-2-9-1Z"/></symbol>
+<symbol id="heart" viewBox="0 0 24 24"><path d="M20.3 4.7a5.4 5.4 0 0 0-7.6 0l-.7.7-.7-.7a5.4 5.4 0 0 0-7.6 7.6L12 21l8.3-8.7a5.4 5.4 0 0 0 0-7.6Z"/></symbol>
+<symbol id="leaf" viewBox="0 0 24 24"><path d="M20 3C8 2 2 7 5 15c8 6 16-1 15-12ZM4 21 15 9"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="back" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7M7 12h14"/></symbol>
+<symbol id="sound" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5ZM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+</svg>
+<div class="backdrop"></div>
+<main class="app" id="main">
+<header>
+<div class="brand"><span class="brandmark"><svg><use href="#moon"/></svg></span>Luna de cuentos</div>
+<span class="night-label">A soñar</span>
+</header>
+<nav class="tabs" aria-label="Secciones">
+<button class="tab active" id="createTab" aria-selected="true"><svg><use href="#spark"/></svg>Crear un cuento</button>
+<button class="tab" id="libraryTab" aria-selected="false"><svg><use href="#book"/></svg>Mi biblioteca</button>
+</nav>
+<section id="createView">
+<div class="hero">
+<p class="eyebrow">PEQUEÑAS HISTORIAS, DULCES SUEÑOS</p>
+<h1>Un cuento,<br>y <em>a soñar.</em></h1>
+<p class="intro">Elige una pequeña aventura.<br>La noche pone la magia.</p>
+<div class="moon-scene" aria-hidden="true"><div class="moon"></div><span class="star a">✦</span><span class="star b">✦</span><span class="star c">✧</span><span class="star d">✦</span></div>
+</div>
+<div class="builder">
+<div class="field">
+<p class="field-title"><span class="step">1</span> ¿Quién será protagonista?</p>
+<div class="options" id="heroes" role="group" aria-label="Protagonista">
+<button class="choice selected" data-value="un conejito" aria-pressed="true"><span class="emoji">🐰</span>Conejito</button>
+<button class="choice" data-value="un zorrito" aria-pressed="false"><span class="emoji">🦊</span>Zorrito</button>
+<button class="choice" data-value="una pequeña búho" aria-pressed="false"><span class="emoji">🦉</span>Pequeña búho</button>
+</div>
+</div>
+<div class="field">
+<p class="field-title"><span class="step">2</span> ¿Dónde comienza la magia?</p>
+<div class="options" id="places" role="group" aria-label="Lugar">
+<button class="choice selected" data-value="un bosque tranquilo" aria-pressed="true"><span class="emoji">🌲</span>El bosque</button>
+<button class="choice" data-value="la luna, entre nubes suaves" aria-pressed="false"><span class="emoji">🌙</span>La luna</button>
+<button class="choice" data-value="una playa junto al mar en calma" aria-pressed="false"><span class="emoji">🐚</span>El mar</button>
+</div>
+</div>
+<div class="field">
+<p class="field-title"><span class="step">3</span> Un poquito de…</p>
+<div class="options themes" id="themes" role="group" aria-label="Tema">
+<button class="choice selected" data-value="amistad" aria-pressed="true"><svg><use href="#heart"/></svg>Amistad</button>
+<button class="choice" data-value="valentía serena" aria-pressed="false"><svg><use href="#star"/></svg>Valentía</button>
+<button class="choice" data-value="calma y descanso" aria-pressed="false"><svg><use href="#leaf"/></svg>Calma</button>
+</div>
+</div>
+<button class="primary" id="generate"><svg><use href="#spark"/></svg><span>Crear mi cuento</span></button>
+<p class="fineprint"><svg><use href="#moon"/></svg>Un cuento suave de unos 3 minutos · Con IA</p>
+</div>
+<div id="resumeArea"></div>
+<div class="section-heading"><h2>Cuentos bajo la luna</h2><span class="tag">SIN NECESITAR IA</span></div>
+<div id="builtInHome"></div>
+<p class="foot">El día se acaba. La imaginación, no.</p>
+</section>
+<section id="libraryView" class="hidden">
+<h1 class="library-title">Tu rincón de cuentos</h1>
+<p class="library-intro">Las historias que quieres volver a escuchar,<br>una noche y otra más.</p>
+<div class="section-heading"><h2>Mis favoritos</h2><span class="tag" id="favoriteCount">0 CUENTOS</span></div>
+<div id="favorites"></div>
+<div class="section-heading"><h2>El último cuento</h2></div>
+<div id="latest"></div>
+<div class="section-heading"><h2>Siempre contigo</h2><span class="tag">SIN NECESITAR IA</span></div>
+<div id="builtInLibrary"></div>
+</section>
+</main>
+<section class="reader hidden" id="reader" aria-label="Lectura del cuento" role="dialog" aria-modal="true">
+<div class="reader-wrap">
+<div class="reader-bar">
+<button class="icon-btn" id="closeReader" aria-label="Volver"><svg><use href="#back"/></svg></button>
+<span class="reader-brand">Un ratito para soñar</span>
+<button class="icon-btn" id="favoriteButton" aria-label="Guardar en favoritos" aria-pressed="false"><svg><use href="#heart"/></svg></button>
+</div>
+<div class="reader-art" id="readerArt" aria-hidden="true">🌙</div>
+<h2 id="readerTitle"></h2>
+<p class="reader-sub" id="readerMeta"></p>
+<div class="audio-panel">
+<svg><use href="#sound"/></svg>
+<div class="audio-info"><div class="audio-title">Cierra los ojitos</div><div class="audio-hint" id="audioHint">Voz suave · Lectura lenta</div></div>
+<button class="listen" id="listen">Escuchar</button>
+</div>
+<div class="reader-tools" aria-label="Tamaño del texto">
+<button class="small-btn active" id="normalText">Letra normal</button>
+<button class="small-btn" id="largeText">Letra grande</button>
+</div>
+<div class="thinking hidden" id="thinking" role="status"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>Tejiendo tu cuento…</span></div>
+<div class="story-text" id="storyText"></div>
+<div id="storyError" class="error-box hidden"><span id="errorMessage"></span><button class="primary" id="retry">Volver a intentar</button></div>
+<div class="ending hidden" id="ending">✧ &nbsp; Y ahora… a descansar. &nbsp; ✧</div>
+<button class="save-wide hidden" id="saveWide"><svg><use href="#heart"/></svg><span>Guardar en favoritos</span></button>
+</div>
+</section>
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const A=window.Acornix;
+let storageQueue=Promise.resolve();
+const store={
+ async get(k){try{return A?.db?await A.db.get(k):JSON.parse(localStorage.getItem('luna-'+k)||'null')}catch(e){notify('No se han podido cargar tus cuentos.');return null}},
+ set(k,v){const copy=JSON.parse(JSON.stringify(v));storageQueue=storageQueue.catch(()=>{}).then(async()=>{try{if(A?.db)await A.db.set(k,copy);else localStorage.setItem('luna-'+k,JSON.stringify(copy))}catch(e){notify('No se pudo guardar. Comprueba el espacio disponible.')}});return storageQueue}
+};
+const builtins=[
+{id:'luna-conejo',title:'El conejito que arropaba estrellas',emoji:'🐰',cover:'',source:'builtin',text:`Cada noche, Milo, el conejito, se sentaba junto a su ventana para dar las buenas noches al cielo.
+
+Una tarde encontró una manta diminuta sobre la hierba. Era azul, tan azul como el instante en que el día empieza a dormirse.
+
+—¿De quién será? —susurró.
+
+Una estrella parpadeó sobre el tejado.
+
+—Es de mi nube —respondió con una voz pequeñita—. Se le ha caído mientras bostezaba.
+
+Milo llevó la manta hasta la colina. Desde allí, estiró sus patitas todo lo que pudo. No alcanzaba el cielo, pero no pasaba nada: la luna estaba mirando.
+
+Con un rayito plateado, la luna levantó suavemente la manta y la dejó sobre la nube.
+
+—Gracias, Milo —dijo la nube, acomodándose—. Ahora mis sueños estarán calentitos.
+
+El conejito sonrió. Antes de volver a casa, vio cómo la nube extendía una esquina de su manta sobre una estrella vecina. Y la estrella compartía su luz con otra.
+
+Así, poquito a poco, todo el cielo se fue arropando.
+
+Milo regresó a su cama. Su almohada olía a sábanas limpias y a hogar. Se tapó hasta la barbilla y dejó descansar sus orejas.
+
+Al otro lado de la ventana, la luna se quedó acompañándolo.
+
+No había nada más que hacer. Solo cerrar los ojos y dejar que llegara un sueño suave.`},
+{id:'bosque-zorro',title:'El bosque de los pequeños abrazos',emoji:'🦊',cover:'forest',source:'builtin',text:`En un bosque donde las hojas sonaban como papel de seda vivía una zorrita llamada Nara.
+
+Aquella tarde, Nara quiso llevar un regalo a su amigo el erizo. Buscó una piña bonita, una piedra redonda y una hoja de color miel. Todo era precioso, pero nada le parecía suficiente.
+
+Se sentó junto al arroyo y escuchó el agua.
+
+—No sé qué regalarle —le contó a una tortuga que descansaba cerca.
+
+La tortuga sonrió despacio.
+
+—A veces, el mejor regalo es un ratito de compañía.
+
+Nara encontró al erizo sentado a la puerta de su casita. No llevaba la piña, ni la piedra, ni la hoja. Llevaba tiempo para estar con él.
+
+Se sentaron uno junto al otro. Miraron una mariposa que buscaba dónde dormir. Escucharon cómo el viento mecía las ramas. Compartieron una pera dulce, cortada en trocitos.
+
+—Me gusta cuando vienes —dijo el erizo.
+
+—A mí me gusta estar aquí —respondió Nara.
+
+Cuando apareció la primera estrella, se despidieron con un abrazo cuidadoso, de esos que respetan todas las púas.
+
+Nara volvió a casa por el sendero de siempre. El bosque estaba tranquilo. Cada árbol parecía saludarla con sus hojas.
+
+Se hizo un ovillo en su cama y apoyó la nariz sobre su cola.
+
+Su regalo había sido pequeño y, al mismo tiempo, enorme.
+
+Con aquel pensamiento calentito, Nara se quedó dormida.`},
+{id:'mar-ballena',title:'La canción del mar dormido',emoji:'🐋',cover:'sea',source:'builtin',text:`Lúa era una ballena pequeña que conocía muchos sonidos: las burbujas que subían hacia el sol, las conchas que rodaban por la arena y el suave chapoteo de sus propias aletas.
+
+Pero su sonido favorito era la canción de la noche.
+
+Cuando el cielo se teñía de azul oscuro, su abuela comenzaba a cantar. No era una canción con palabras. Era un murmullo largo y dulce que se extendía por el agua.
+
+Una noche, Lúa quiso aprenderla.
+
+—¿Por dónde empiezo? —preguntó.
+
+—Por escuchar —respondió su abuela.
+
+Lúa escuchó. Una ola llegaba a la orilla y después se alejaba. Llegaba y se alejaba. Sin prisa.
+
+La ballenita dejó escapar una nota suave. Luego otra. Su abuela la acompañó, y las dos voces se mecieron como algas en el agua tranquila.
+
+Un caballito de mar se acomodó entre las hojas. Un pez pequeño cerró su día bajo una roca. Arriba, la luna dibujaba un camino plateado.
+
+—Tu canción no tiene que ser igual que la mía —dijo la abuela—. Solo tiene que sentirse como un lugar donde descansar.
+
+Lúa dejó reposar sus aletas. El mar la sostenía con suavidad, como una cuna inmensa.
+
+La canción se hizo más bajita. Después, más bajita todavía.
+
+Y mientras las estrellas cuidaban la superficie, Lúa descansó junto a su abuela, envuelta en el lento vaivén del mar.`}
+];
+let prefs={hero:'un conejito',place:'un bosque tranquilo',theme:'amistad',large:false};
+let favorites=[],last=null,current=null,busy=false,speaking=false,speechToken=0,toastTimer,streamTimer,previousFocus;
+let generationConfig=null;
+function notify(text){$('toast').textContent=text;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),4200)}
+function icon(name){const s=document.createElementNS('http://www.w3.org/2000/svg','svg'),u=document.createElementNS('http://www.w3.org/2000/svg','use');u.setAttribute('href','#'+name);s.append(u);return s}
+function bookCard(story,label){
+ const b=document.createElement('button');b.className='book';b.setAttribute('aria-label','Leer '+story.title);
+ const cover=document.createElement('div');cover.className='cover '+(story.cover||'');const em=document.createElement('span');em.textContent=story.emoji||'🌙';cover.append(em);
+ const info=document.createElement('div');info.className='book-info';const title=document.createElement('span');title.className='book-title';title.textContent=story.title;
+ const meta=document.createElement('span');meta.className='book-meta';meta.textContent=label||`${Math.max(1,Math.round((story.text||'').split(/\s+/).length/105))} min · ${story.source==='builtin'?'Un cuento para todos':'Creado para ti'}`;
+ info.append(title,meta);const arrow=icon('arrow');arrow.classList.add('book-arrow');b.append(cover,info,arrow);b.onclick=()=>openStory(story);return b;
+}
+function renderLibrary(){
+ ['builtInHome','builtInLibrary'].forEach(id=>{const el=$(id);el.replaceChildren();builtins.forEach(s=>el.append(bookCard(s)))});
+ $('favorites').replaceChildren();
+ if(!favorites.length){const e=document.createElement('div');e.className='empty';e.append(icon('heart'));const t=document.createElement('div');t.textContent='Un corazón, un cuento para siempre. Toca el corazón al leer para guardarlo aquí.';e.append(t);$('favorites').append(e)}
+ else favorites.slice().reverse().forEach(s=>$('favorites').append(bookCard(s)));
+ $('favoriteCount').textContent=favorites.length+' '+(favorites.length===1?'CUENTO':'CUENTOS');
+ $('latest').replaceChildren();$('resumeArea').replaceChildren();
+ if(last){$('latest').append(bookCard(last,last.partial?'Fragmento guardado · Toca para leer':'Tu última pequeña aventura'));const card=bookCard(last,last.partial?'Tu cuento en proceso · Volver a leer':'Tu último cuento · Volver a soñar');card.classList.add('resume');$('resumeArea').append(card)}
+ else{const p=document.createElement('p');p.className='library-intro';p.textContent='Tu próxima aventura aparecerá aquí al crearla.';$('latest').append(p)}
+ updateFavorite();
+}
+function setTab(library){$('libraryView').classList.toggle('hidden',!library);$('createView').classList.toggle('hidden',library);$('createTab').classList.toggle('active',!library);$('libraryTab').classList.toggle('active',library);$('createTab').setAttribute('aria-selected',String(!library));$('libraryTab').setAttribute('aria-selected',String(library))}
+$('createTab').onclick=()=>setTab(false);$('libraryTab').onclick=()=>setTab(true);
+[['heroes','hero'],['places','place'],['themes','theme']].forEach(([id,key])=>{
+ $(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;prefs[key]=b.dataset.value;applyPrefs();store.set('preferences',prefs)});
+});
+function applyPrefs(){
+ [['heroes','hero'],['places','place'],['themes','theme']].forEach(([id,k])=>$(id).querySelectorAll('button').forEach(b=>{const chosen=b.dataset.value===prefs[k];b.classList.toggle('selected',chosen);b.setAttribute('aria-pressed',String(chosen))}));
+ $('storyText').classList.toggle('large',!!prefs.large);$('normalText').classList.toggle('active',!prefs.large);$('largeText').classList.toggle('active',!!prefs.large);
+}
+$('normalText').onclick=()=>{prefs.large=false;applyPrefs();store.set('preferences',prefs)};
+$('largeText').onclick=()=>{prefs.large=true;applyPrefs();store.set('preferences',prefs)};
+function updateFavorite(){
+ const yes=!!current&&favorites.some(s=>s.id===current.id);
+ $('favoriteButton').classList.toggle('saved',yes);$('favoriteButton').setAttribute('aria-pressed',String(yes));$('favoriteButton').setAttribute('aria-label',yes?'Quitar de favoritos':'Guardar en favoritos');
+ $('saveWide').querySelector('span').textContent=yes?'Guardado en tus favoritos':'Guardar en favoritos';
+ $('favoriteButton').disabled=busy||!current?.text;$('saveWide').disabled=busy||!current?.text;
+}
+async function toggleFavorite(){
+ if(!current?.text||busy)return;
+ const i=favorites.findIndex(s=>s.id===current.id);
+ if(i>=0)favorites.splice(i,1);else favorites.push({...current});
+ renderLibrary();await store.set('favorites',favorites);notify(i>=0?'Cuento retirado de favoritos.':'Un cuento más para tus noches.');
+}
+$('favoriteButton').onclick=toggleFavorite;$('saveWide').onclick=toggleFavorite;
+function showReader(){
+ previousFocus=document.activeElement;$('reader').classList.remove('hidden');$('main').inert=true;document.body.style.overflow='hidden';$('reader').scrollTop=0;$('closeReader').focus();
+}
+function openStory(story){
+ if(busy&&current?.id!==story.id){notify('Tu nuevo cuento todavía se está escribiendo.');return}
+ stopAudio();current={...story};
+ $('readerTitle').textContent=current.title;$('readerArt').textContent=current.emoji||'🌙';$('storyText').textContent=current.text||'';
+ $('readerMeta').textContent=current.source==='builtin'?'Un cuento de nuestra colección · Sin IA':current.partial?'Fragmento guardado · Creado para ti':'Una historia única, creada para ti';
+ $('storyError').classList.add('hidden');$('thinking').classList.toggle('hidden',!busy);
+ $('ending').classList.toggle('hidden',busy||!!current.partial);$('saveWide').classList.toggle('hidden',busy||!current.text);
+ $('listen').disabled=busy||!current.text;
+ updateFavorite();showReader();
+}
+$('closeReader').onclick=()=>{
+ stopAudio();$('reader').classList.add('hidden');$('main').inert=false;document.body.style.overflow='';previousFocus?.focus();
+};
+document.addEventListener('keydown',e=>{
+ if($('reader').classList.contains('hidden'))return;
+ if(e.key==='Escape')$('closeReader').click();
+ if(e.key==='Tab'){const buttons=[...$('reader').querySelectorAll('button:not(:disabled)')].filter(x=>x.getClientRects().length);const first=buttons[0],end=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();end.focus()}else if(!e.shiftKey&&document.activeElement===end){e.preventDefault();first.focus()}}
+});
+function emojiFor(hero){return hero.includes('cone')?'🐰':hero.includes('zor')?'🦊':'🦉'}
+function setBusy(v){busy=v;$('generate').disabled=v;$('generate').querySelector('span').textContent=v?'El cuento está naciendo…':'Crear mi cuento';$('thinking').classList.toggle('hidden',!v);$('listen').disabled=v||!current?.text;updateFavorite()}
+function snapshotDraft(){if(current?.source==='ai'){last={...current};store.set('last',last)}}
+async function generate(config){
+ if(busy)return;
+ generationConfig=config||{...prefs};const c=generationConfig;
+ current={id:'cuento-'+Date.now(),title:'Una historia está naciendo…',text:'',emoji:emojiFor(c.hero),cover:c.place.includes('bosque')?'forest':c.place.includes('mar')?'sea':'',source:'ai',partial:true};
+ openStory(current);setBusy(true);$('saveWide').classList.add('hidden');$('ending').classList.add('hidden');$('storyError').classList.add('hidden');
+ try{
+  if(!A?.askAI)throw new Error('outside');
+  const prompt=`Escribe un cuento de buenas noches en español para niños de 3 a 7 años. Protagonista: ${c.hero}. Lugar: ${c.place}. Tema: ${c.theme}. Extensión: entre 230 y 310 palabras. Tono cariñoso, muy tranquilo y acogedor. Una aventura pequeña, sin peligro, miedo, villanos, violencia ni suspense. Termina con el protagonista seguro y descansando. Usa párrafos breves y lenguaje sencillo. No pidas al niño que haga nada. Devuelve solamente un título corto en la primera línea, después una línea en blanco y el cuento. Sin markdown, sin notas ni encabezados adicionales.`;
+  const result=await A.askAI(prompt,{
+   system:'Eres una narradora de cuentos infantiles para la hora de dormir. Escribes siempre en español, con delicadeza y sin contenido inquietante.',
+   onText:t=>{
+    if(typeof t!=='string')return;
+    current.text=t;$('storyText').textContent=t;
+    clearTimeout(streamTimer);streamTimer=setTimeout(snapshotDraft,650);
+   }
+  });
+  clearTimeout(streamTimer);
+  const text=(typeof result==='string'?result:current.text).trim();
+  if(!text)throw new Error('empty');
+  const lines=text.split('\n');let title=lines.shift().replace(/^[#*\s]+|[*\s]+$/g,'').replace(/^Título:\s*/i,'');
+  if(title.length>110||!lines.join('').trim()){title='Un sueño bajo la luna';current.text=text}else current.text=lines.join('\n').trim();
+  current.title=title;current.partial=false;
+  $('readerTitle').textContent=current.title;$('storyText').textContent=current.text;$('readerMeta').textContent='Una historia única, creada para ti';
+  $('ending').classList.remove('hidden');$('saveWide').classList.remove('hidden');
+ }catch(e){
+  clearTimeout(streamTimer);
+  $('readerTitle').textContent='Un pequeño descanso';
+  $('errorMessage').textContent=e.message==='outside'?'La creación con IA funciona dentro de Acornix. Mientras tanto, tienes tres cuentos completos en la colección, sin necesitar IA.':'La luna se ha quedado pensando. No hemos podido terminar el cuento. Revisa tu conexión o la configuración de IA en Acornix y vuelve a intentarlo.';
+  $('storyError').classList.remove('hidden');
+  current.title=current.text?'Un cuento por terminar':'Un pequeño descanso';
+  if(current.text){$('saveWide').classList.remove('hidden');$('readerMeta').textContent='Fragmento guardado · Puedes volver a intentarlo'}
+ }finally{
+  if(current.text)snapshotDraft();
+  setBusy(false);renderLibrary();
+ }
+}
+$('generate').onclick=()=>generate();$('retry').onclick=()=>generate(generationConfig);
+function resetAudioUI(){speaking=false;$('listen').textContent='Escuchar';$('listen').disabled=busy||!current?.text;$('audioHint').textContent='Voz suave · Lectura lenta'}
+function stopAudio(){
+ speechToken++;
+ if(window.speechSynthesis)window.speechSynthesis.cancel();
+ resetAudioUI();
+}
+$('listen').onclick=async()=>{
+ if(speaking){stopAudio();return}
+ if(!current?.text||busy)return;
+ const text=current.title+'.\n\n'+current.text;const token=++speechToken;
+ try{
+  if(typeof A?.speak==='function'){
+   $('listen').disabled=true;$('audioHint').textContent='Preparando la lectura suave…';
+   const r=A.speak(text,{rate:0.75,lang:'es-ES'});
+   if(r&&typeof r.then==='function'){await r;if(token!==speechToken)return}
+   $('audioHint').textContent='Lectura enviada a la voz de Acornix';
+   $('listen').textContent='Volver a leer';$('listen').disabled=false;
+  }else if('speechSynthesis' in window){
+   speaking=true;$('listen').textContent='Detener';$('audioHint').textContent='Leyendo despacito…';
+   const chunks=text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[text];let n=0;
+   function next(){
+    if(token!==speechToken)return;
+    if(n>=chunks.length){resetAudioUI();return}
+    const utter=new SpeechSynthesisUtterance(chunks[n++].trim());
+    utter.lang='es-ES';utter.rate=.75;utter.pitch=1;
+    const voice=speechSynthesis.getVoices().find(v=>v.lang.startsWith('es'));if(voice)utter.voice=voice;
+    utter.onend=()=>{if(token===speechToken)setTimeout(next,450)};
+    utter.onerror=e=>{if(token!==speechToken)return;resetAudioUI();if(e.error!=='interrupted'&&e.error!=='canceled')notify('No se ha podido reproducir la voz. Puedes seguir leyendo el cuento.')};
+    speechSynthesis.speak(utter);
+   }
+   next();
+  }else{notify('Abre la aplicación en Acornix para escuchar el cuento en voz alta.');resetAudioUI()}
+ }catch(e){if(token!==speechToken)return;resetAudioUI();notify('No se pudo iniciar la voz. Toca Escuchar para volver a intentarlo.')}
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(speaking)stopAudio();if(busy&&current?.text)snapshotDraft()}});
+async function reload(){
+ const [p,f,l]=await Promise.all([store.get('preferences'),store.get('favorites'),store.get('last')]);
+ if(p&&typeof p==='object')prefs={...prefs,...p};
+ favorites=Array.isArray(f)?f.filter(s=>s&&s.id&&typeof s.text==='string'):[];
+ if(!busy)last=l&&typeof l.text==='string'?l:null;
+ applyPrefs();renderLibrary();
+}
+window.addEventListener('acornixdata',reload);
+renderLibrary();reload();
+})();
+</script>
+</body>
+</html>
