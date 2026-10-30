@@ -1,0 +1,15 @@
+{
+  "id": "label-reader",
+  "name": "Label Reader",
+  "emoji": "📷",
+  "category": "shopping",
+  "description": "Snap a food label and your AI explains the ingredients, allergens, additives and sugar.",
+  "prompt": "Take a photo of a food ingredients label with the camera and Acornix.askAI with the image explains the ingredients in plain words, highlights allergens, additives and sugar, and gives a simple health score, with a history.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 81
+}
