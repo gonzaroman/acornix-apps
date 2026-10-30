@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Sketchbook</title>
+<style>
+  :root { --bg:#e9e4da; --card:#fffdf8; --ink:#2b2622; --muted:#8c8378; --a:#e8590c; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overscroll-behavior:none; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 8px) 10px calc(env(safe-area-inset-bottom) + 10px); gap:8px; }
+  .top { display:flex; align-items:center; gap:6px; }
+  .top h1 { margin:0; font-size:19px; flex:1; }
+  .b { padding:8px 11px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; box-shadow:0 1px 0 #0001; }
+  .b:disabled { opacity:.35; }
+  .b.main { background:var(--ink); color:#fff; }
+  .paper { flex:1; min-height:0; position:relative; border-radius:6px; overflow:hidden; box-shadow:0 6px 24px #2b262222; }
+  canvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
+  .tools { display:flex; gap:6px; }
+  .tool { flex:1; padding:7px 0 5px; border-radius:12px; background:var(--card); font-size:20px; line-height:1; }
+  .tool small { display:block; font-size:10px; font-weight:800; color:var(--muted); margin-top:3px; }
+  .tool.on { background:var(--ink); } .tool.on small { color:#fff; }
+  .cols { display:flex; gap:6px; align-items:center; overflow-x:auto; scrollbar-width:none; padding:2px; }
+  .cols::-webkit-scrollbar { display:none; }
+  .cols button { flex:none; width:30px; height:30px; border-radius:50%; border:2px solid #0002; }
+  .cols button.on { outline:3px solid var(--ink); outline-offset:2px; }
+  .cols input { flex:none; width:34px; height:34px; border:0; padding:0; background:none; }
+  .sl { display:flex; gap:10px; align-items:center; font-size:12px; font-weight:800; color:var(--muted); }
+  .sl input { flex:1; accent-color:var(--ink); }
+  .dot { width:34px; height:34px; display:grid; place-items:center; flex:none; }
+  .dot i { display:block; border-radius:50%; background:var(--ink); }
+  .pages { position:fixed; inset:0; background:#0007; display:flex; align-items:flex-end; }
+  .pages .in { background:var(--bg); width:100%; border-radius:22px 22px 0 0; padding:16px 14px calc(env(safe-area-inset-bottom) + 16px); max-height:70vh; overflow:auto; }
+  .pages .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .pages .grid button { aspect-ratio:3/4; border-radius:10px; background:#fff center/cover; box-shadow:0 2px 8px #0002; position:relative; }
+  .pages .grid button.new { display:grid; place-items:center; font-size:30px; background:var(--card); }
+  .pages .grid .x { position:absolute; top:4px; right:4px; width:26px; height:26px; border-radius:50%; background:#000a; color:#fff; font-size:12px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>✏️ <span id="ttl"></span></h1><button class="b" id="undo">↩️</button><button class="b" id="redo">↪️</button><button class="b" id="pagesB">📒</button><button class="b main" id="save">💾</button></div>
+  <div class="paper" id="paper"><canvas id="c"></canvas></div>
+  <div class="tools" id="tools"></div>
+  <div class="cols" id="cols"></div>
+  <div class="sl"><div class="dot"><i id="dot"></i></div><input type="range" id="size" min="1" max="60" value="6"><span id="lOp"></span><input type="range" id="op" min="10" max="100" value="100"></div>
+</div>
+<div class="pages" id="pages" hidden><div class="in"><div class="grid" id="grid"></div></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Cuaderno', op:'Opacidad', saved:'Dibujo guardado en esta app', tools:['Bolígrafo', 'Lápiz', 'Rotulador', 'Spray', 'Goma'] }
+ : { title:'Sketchbook', op:'Opacity', saved:'Drawing saved in this app', tools:['Pen', 'Pencil', 'Marker', 'Spray', 'Eraser'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const COLS = ['#2b2622', '#868e96', '#e03131', '#f76707', '#fab005', '#2f9e44', '#1971c2', '#7048e8', '#d6336c', '#8d6e63', '#ffffff'];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+$('ttl').textContent = T.title; $('lOp').textContent = T.op;
+let tool = 0, color = COLS[0], undo = [], redo = [], pages = [], page = 0, W = 0, H = 0;
+const DPR = Math.min(2, devicePixelRatio || 1);
+function setup(keep) {
+  const r = $('paper').getBoundingClientRect(), snap = keep && W ? cv.toDataURL() : null;
+  W = r.width; H = r.height; cv.width = W * DPR; cv.height = H * DPR; cx.setTransform(DPR, 0, 0, DPR, 0, 0); clear();
+  if (snap) paint(snap);
+}
+function clear() { cx.save(); cx.setTransform(1, 0, 0, 1, 0, 0); cx.fillStyle = '#fffdf8'; cx.fillRect(0, 0, cv.width, cv.height); cx.restore(); }
+function paint(url) { const im = new Image(); im.onload = () => { cx.save(); cx.setTransform(1, 0, 0, 1, 0, 0); cx.drawImage(im, 0, 0, cv.width, cv.height); cx.restore(); }; im.src = url; }
+function ui() {
+  $('tools').innerHTML = ['🖊️', '✏️', '🖍️', '💨', '🧽'].map((e, i) => `<button class="tool ${i === tool ? 'on' : ''}" data-i="${i}">${e}<small>${T.tools[i]}</small></button>`).join('');
+  $('tools').querySelectorAll('.tool').forEach(b => b.onclick = () => { tool = +b.dataset.i; ui(); });
+  $('cols').innerHTML = COLS.map(c => `<button class="${c === color ? 'on' : ''}" data-c="${c}" style="background:${c}"></button>`).join('') + `<input type="color" id="custom" value="${color}">`;
+  $('cols').querySelectorAll('button').forEach(b => b.onclick = () => { color = b.dataset.c; ui(); });
+  $('custom').oninput = e => { color = e.target.value; dotUI(); };
+  $('undo').disabled = !undo.length; $('redo').disabled = !redo.length; dotUI();
+}
+function dotUI() { const s = Math.max(3, Math.min(34, +$('size').value)); $('dot').style.width = $('dot').style.height = s + 'px'; $('dot').style.background = tool === 4 ? '#ccc' : color; $('dot').style.opacity = +$('op').value / 100; }
+$('size').oninput = dotUI; $('op').oninput = dotUI;
+// One stroke is drawn on a temporary layer so opacity stays even where the line overlaps itself.
+const layer = document.createElement('canvas'), lx = layer.getContext('2d');
+let pts = [], drawing = false, base = null;
+function pos(e) { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, p: e.pressure && e.pointerType === 'pen' ? e.pressure : .5 }; }
+cv.addEventListener('pointerdown', e => {
+  cv.setPointerCapture(e.pointerId); drawing = true; pts = [pos(e)];
+  undo.push(cv.toDataURL('image/png')); if (undo.length > 25) undo.shift(); redo = [];
+  base = cx.getImageData(0, 0, cv.width, cv.height); layer.width = cv.width; layer.height = cv.height; lx.setTransform(DPR, 0, 0, DPR, 0, 0); stroke(); ui();
+});
+cv.addEventListener('pointermove', e => { if (!drawing) return; (e.getCoalescedEvents ? e.getCoalescedEvents() : [e]).forEach(ev => pts.push(pos(ev))); stroke(); });
+const end = () => { if (!drawing) return; drawing = false; persist(); };
+cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+function stroke() {
+  const s = +$('size').value, op = +$('op').value / 100;
+  if (tool === 3) { // Spray adds dots as you go.
+    const p = pts[pts.length - 1]; lx.fillStyle = color;
+    for (let i = 0; i < s * 2; i++) { const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * s * 1.6; lx.fillRect(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r, 1.2, 1.2); }
+  } else {
+    lx.clearRect(0, 0, W, H); lx.lineCap = lx.lineJoin = 'round'; lx.strokeStyle = tool === 4 ? '#fffdf8' : color;
+    lx.lineWidth = tool === 2 ? s * 2.2 : tool === 1 ? Math.max(1, s * .5) : s; lx.beginPath(); lx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length - 1; i++) { const m = { x: (pts[i].x + pts[i + 1].x) / 2, y: (pts[i].y + pts[i + 1].y) / 2 }; lx.quadraticCurveTo(pts[i].x, pts[i].y, m.x, m.y); }
+    const l = pts[pts.length - 1]; lx.lineTo(l.x + .01, l.y); lx.stroke();
+    if (tool === 1) { lx.globalCompositeOperation = 'destination-out'; for (let i = 0; i < 400; i++) lx.fillRect(Math.random() * W, Math.random() * H, 1, 1); lx.globalCompositeOperation = 'source-over'; }
+  }
+  cx.putImageData(base, 0, 0); cx.save(); cx.setTransform(1, 0, 0, 1, 0, 0);
+  cx.globalAlpha = tool === 4 ? 1 : tool === 2 ? op * .55 : tool === 1 ? op * .8 : op; if (tool === 2) cx.globalCompositeOperation = 'multiply';
+  cx.drawImage(layer, 0, 0); cx.restore();
+}
+$('undo').onclick = () => { if (!undo.length) return; redo.push(cv.toDataURL('image/png')); const u = undo.pop(); clear(); paint(u); ui(); setTimeout(persist, 50); };
+$('redo').onclick = () => { if (!redo.length) return; undo.push(cv.toDataURL('image/png')); const r = redo.pop(); clear(); paint(r); ui(); setTimeout(persist, 50); };
+let saveT = null;
+function persist() { clearTimeout(saveT); saveT = setTimeout(() => { pages[page] = cv.toDataURL('image/jpeg', .85); store.set('pages', pages); }, 400); }
+function grid() {
+  $('grid').innerHTML = `<button class="new" id="newP">＋</button>` + pages.map((p, i) => `<button data-i="${i}" style="background-image:url(${p})">${pages.length > 1 ? `<span class="x" data-x="${i}">✕</span>` : ''}</button>`).join('');
+  $('newP').onclick = () => { pages.unshift(null); page = 0; undo = []; redo = []; clear(); store.set('pages', pages); $('pages').hidden = true; ui(); };
+  $('grid').querySelectorAll('[data-i]').forEach(b => b.onclick = e => {
+    if (e.target.dataset.x) { pages.splice(+e.target.dataset.x, 1); if (page >= pages.length) page = 0; clear(); pages[page] && paint(pages[page]); store.set('pages', pages); grid(); return; }
+    page = +b.dataset.i; undo = []; redo = []; clear(); pages[page] && paint(pages[page]); $('pages').hidden = true; ui();
+  });
+}
+$('pagesB').onclick = () => { pages[page] = cv.toDataURL('image/jpeg', .85); grid(); $('pages').hidden = false; };
+$('pages').onclick = e => { if (e.target === $('pages')) $('pages').hidden = true; };
+$('save').onclick = async () => {
+  const url = cv.toDataURL('image/jpeg', .92), name = `sketch-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+let rT = null; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => setup(true), 150); });
+(async () => { pages = await store.get('pages', [null]); if (!pages.length) pages = [null]; setup(); if (pages[0]) paint(pages[0]); ui(); })();
+</script>
+</body>
+</html>
