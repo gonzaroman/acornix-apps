@@ -1,0 +1,15 @@
+{
+  "id": "tell-the-time",
+  "name": "Tell the Time",
+  "emoji": "⏱️",
+  "category": "kids",
+  "description": "Learn to read the clock: drag the hands, answer what time it is and earn stars.",
+  "prompt": "A game to learn to tell the time: a big analogue clock, questions like what time is it or set the clock to half past three with draggable hands, levels for o clock, half past, quarter and five minutes, and stars.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 71
+}

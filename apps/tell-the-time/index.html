@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f7f6f0">
+<title>La hora de jugar</title>
+<style>
+:root{--ink:#243851;--muted:#768395;--paper:#f7f6f0;--teal:#147e7a;--mint:#e0f3eb;--coral:#ef8066;--gold:#f4bb43;--line:#e6e9e6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overscroll-behavior:none}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+button:disabled{cursor:default}
+.app{max-width:520px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));min-height:100dvh}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:42px;height:42px;display:grid;place-items:center;background:var(--teal);color:white;border-radius:15px;font-size:25px;box-shadow:0 4px 0 #d2e6df}
+h1{font-size:19px;margin:0;letter-spacing:-.6px}
+.subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+.star-total{background:#fff0c9;border:1px solid #f0deb0;border-radius:20px;padding:9px 12px;font-size:14px;font-weight:800;color:#876115;white-space:nowrap}
+.section-label{font-size:10px;letter-spacing:1.8px;font-weight:800;color:var(--muted);margin:0 0 9px}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.level{border:1px solid var(--line);background:#fff;border-radius:15px;min-height:80px;padding:9px 2px 7px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+.level.active{background:var(--teal);border-color:var(--teal);color:white;box-shadow:0 5px 12px #147e7a20}
+.level-number{font-size:11px;font-weight:800;opacity:.75}
+.level-name{font-size:11px;font-weight:750;white-space:nowrap}
+.mini-stars{font-size:12px;letter-spacing:1px;color:#d8dfdf}
+.mini-stars .earned{color:var(--gold)}
+.mode{display:flex;background:#e9ede8;border-radius:14px;padding:4px;margin:18px 0 20px;gap:4px}
+.mode button{border:0;background:transparent;color:#6d7b83;flex:1;border-radius:11px;min-height:42px;font-size:13px;font-weight:750}
+.mode button.active{background:white;color:var(--teal);box-shadow:0 2px 5px #2038400b}
+.exercise-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.exercise-label{font-size:11px;font-weight:800;color:var(--teal);letter-spacing:1px;text-transform:uppercase}
+.dots{display:flex;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#dce4df}
+.dot.done{background:var(--teal)}
+.dot.current{background:var(--gold);box-shadow:0 0 0 3px #f4bb4322}
+.question{text-align:center;font-size:23px;letter-spacing:-.6px;line-height:1.25;margin:12px 0 6px;font-weight:800;min-height:29px}
+.instruction{text-align:center;font-size:12px;color:var(--muted);margin:0 0 3px;min-height:18px}
+.clock-wrap{position:relative;width:min(100%,302px);margin:7px auto 10px}
+svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;overflow:visible}
+.clock-shadow{filter:drop-shadow(0 8px 8px #263b4c0b)}
+.hand{transition:stroke .15s}
+.hand-hit{stroke:transparent;stroke-width:24;fill:none;pointer-events:stroke;cursor:grab}
+.clock-number{fill:var(--ink);font-size:20px;font-weight:750;text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;justify-content:center;gap:18px;font-size:11px;color:var(--muted);margin:-2px 0 16px}
+.legend span{display:flex;align-items:center;gap:6px}
+.key{width:14px;height:4px;border-radius:4px;background:var(--coral)}
+.key.minute{background:var(--teal)}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.option{min-height:57px;border:1.5px solid var(--line);background:white;border-radius:15px;color:var(--ink);font-size:14px;font-weight:700;padding:10px 6px;box-shadow:0 3px 0 #e9ece6}
+.option.correct{background:var(--mint);border-color:#7abd9f;color:#176751;box-shadow:none}
+.option.wrong{background:#fff0e9;border-color:var(--coral);color:#ad5039}
+.adjust{display:flex;gap:9px;margin-bottom:11px}
+.hand-select{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;border:1px solid var(--line);border-radius:12px;background:white;color:var(--muted);min-height:43px;font-size:12px;font-weight:750}
+.hand-select.active{border-color:var(--teal);color:var(--teal);background:#edf7f2}
+.fine-controls{display:flex;align-items:center;justify-content:space-between;background:white;border:1px solid var(--line);border-radius:13px;padding:5px 7px;margin-bottom:12px}
+.fine-controls button{border:0;border-radius:10px;background:#f0f4f0;color:var(--teal);width:44px;height:37px;font-size:22px;font-weight:700}
+.fine-controls span{font-size:12px;color:var(--muted)}
+.primary{display:block;width:100%;min-height:51px;border:0;border-radius:15px;background:var(--teal);color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 0 #0b625f;transition:transform .15s}
+.primary:active{transform:translateY(2px);box-shadow:0 2px 0 #0b625f}
+.feedback{border-radius:14px;background:var(--mint);padding:12px 14px;margin-top:13px;color:#206754;font-size:13px;line-height:1.45;animation:appear .22s ease}
+.feedback.error{background:#fff0e5;color:#995232}
+.feedback strong{display:block;font-size:14px}
+.feedback .primary{margin-top:11px;min-height:44px}
+.footer{text-align:center;font-size:11px;color:#8b969d;margin:19px 0 0}
+.help{display:block;margin:13px auto 0;background:none;border:0;min-height:34px;color:var(--teal);font-size:12px;font-weight:700}
+.tip{font-size:12px;line-height:1.6;color:#68798a;background:#fff;border:1px dashed #cddad2;border-radius:13px;padding:13px;margin-top:9px}
+.finish{text-align:center;background:white;border:1px solid var(--line);border-radius:24px;padding:30px 22px;margin-top:22px;animation:appear .35s}
+.finish-stars{font-size:43px;letter-spacing:5px;color:#dbe1dd;margin:3px 0 14px}
+.finish-stars .earned{color:var(--gold);display:inline-block;animation:pop .5s both}
+.finish h2{font-size:25px;letter-spacing:-.7px;margin:10px 0}
+.finish p{font-size:14px;line-height:1.6;color:var(--muted);margin:10px 0 23px}
+.finish .secondary{min-height:44px;width:100%;border:0;background:transparent;color:var(--teal);font-weight:750;margin-top:10px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:12px 18px;border-radius:15px;font-size:12px;max-width:90%;z-index:10;text-align:center}
+[hidden]{display:none!important}
+@keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.5)}65%{transform:scale(1.2)}100%{transform:scale(1)}}
+@media(max-height:760px){header{margin-bottom:15px}.mode{margin:13px 0}.clock-wrap{width:min(100%,254px);margin:3px auto 7px}.question{font-size:21px;margin-top:9px}.legend{margin-bottom:12px}.level{min-height:72px}.footer{margin-top:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+ <div class="brand"><div class="logo" aria-hidden="true">◷</div><div><h1>La hora de jugar</h1><div class="subtitle">Un ratito para aprender</div></div></div>
+ <div class="star-total" aria-label="Estrellas conseguidas"><span style="color:#d69a20">★</span> <span id="total">0</span><span style="opacity:.55"> / 12</span></div>
+</header>
+<p class="section-label">ELIGE TU NIVEL</p>
+<nav class="levels" id="levels" aria-label="Niveles"></nav>
+<div class="mode" aria-label="Tipo de ejercicio">
+ <button id="readMode" type="button">◉ &nbsp; ¿Qué hora es?</button>
+ <button id="setMode" type="button">✥ &nbsp; Pon la hora</button>
+</div>
+<section id="play" hidden>
+ <div class="exercise-top"><span class="exercise-label" id="exerciseLabel"></span><div class="dots" id="dots" aria-label="Progreso"></div></div>
+ <h2 class="question" id="question"></h2>
+ <p class="instruction" id="instruction"></p>
+ <div class="clock-wrap">
+  <svg id="clock" viewBox="0 0 300 300" role="img" aria-label="Reloj analógico">
+   <g class="clock-shadow"><circle cx="150" cy="150" r="144" fill="#fff" stroke="#e8ece6" stroke-width="2"/></g>
+   <circle cx="150" cy="150" r="132" fill="#fff" stroke="#f1f3ed" stroke-width="1"/>
+   <g id="ticks"></g><g id="numbers"></g>
+   <g id="hourHand"><line x1="150" y1="161" x2="150" y2="83" stroke="#ef8066" stroke-width="11" stroke-linecap="round" class="hand"/><line data-hand="hour" class="hand-hit" x1="150" y1="161" x2="150" y2="78"/></g>
+   <g id="minuteHand"><line x1="150" y1="163" x2="150" y2="49" stroke="#147e7a" stroke-width="7" stroke-linecap="round" class="hand"/><line data-hand="minute" class="hand-hit" x1="150" y1="163" x2="150" y2="45"/></g>
+   <circle cx="150" cy="150" r="11" fill="#243851" pointer-events="none"/><circle cx="150" cy="150" r="4" fill="#fff" pointer-events="none"/>
+  </svg>
+ </div>
+ <div class="legend"><span><i class="key"></i>Horas</span><span><i class="key minute"></i>Minutos</span></div>
+ <div id="readControls"><div id="options" class="options"></div></div>
+ <div id="setControls" hidden>
+  <div class="adjust">
+   <button class="hand-select" id="selectHour"><i class="key"></i> Mover horas</button>
+   <button class="hand-select active" id="selectMinute"><i class="key minute"></i> Mover minutos</button>
+  </div>
+  <div class="fine-controls"><button id="minus" aria-label="Retroceder aguja seleccionada">−</button><span id="adjustLabel">Ajusta de 5 en 5 minutos</span><button id="plus" aria-label="Avanzar aguja seleccionada">+</button></div>
+  <button id="check" class="primary">Comprobar la hora</button>
+ </div>
+ <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+ <button id="help" class="help">¿Cómo funcionan las agujas?</button>
+ <div id="tip" class="tip" hidden>La aguja <b style="color:var(--coral)">corta</b> marca las horas y la <b style="color:var(--teal)">larga</b> los minutos. Cada número equivale a 5 minutos: en el 3 son «y cuarto»; en el 6, «y media»; en el 9, «menos cuarto». La corta avanza poco a poco hacia la siguiente hora.</div>
+</section>
+<section id="finish" class="finish" hidden></section>
+<p class="footer" id="footer">Cinco retos, un montón de descubrimientos ✦</p>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const names=['En punto','Y media','Cuartos','5 minutos'];
+const words=['doce','una','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once'];
+const key='reloj-aprendiz-v1';
+let state,ready=false,drag=null,selected='minute',saveChain=Promise.resolve(),toastTimer;
+const storage={
+ async get(){if(window.Acornix?.db)return await Acornix.db.get(key);try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}},
+ async set(value){if(window.Acornix?.db)return await Acornix.db.set(key,value);localStorage.setItem(key,JSON.stringify(value))}
+};
+function notify(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,3500)}
+function save(){
+ const copy=JSON.parse(JSON.stringify(state));
+ saveChain=saveChain.catch(()=>{}).then(()=>storage.set(copy)).catch(()=>notify('No se pudo guardar el progreso. Vuelve a intentarlo.'));
+}
+function allowed(level){return [[0],[0,30],[0,15,30,45],Array.from({length:12},(_,i)=>i*5)][level]}
+function phrase(h,m){
+ h=(h+12)%12;
+ const base= h===1?'la una':'las '+words[h];
+ if(m===0)return base+' en punto';
+ if(m===15)return base+' y cuarto';
+ if(m===30)return base+' y media';
+ if(m>30){const next=(h+1)%12;return (next===1?'la una':'las '+words[next])+(m===45?' menos cuarto':' menos '+wordsMinutes(60-m))}
+ return base+' y '+wordsMinutes(m);
+}
+function wordsMinutes(m){return ({5:'cinco',10:'diez',20:'veinte',25:'veinticinco'})[m]||String(m)}
+function makeQuestion(level,previous){
+ const mins=allowed(level);
+ let h,m;
+ do{h=Math.floor(Math.random()*12);m=mins[Math.floor(Math.random()*mins.length)]}while(previous&&h===previous.h&&m===previous.m);
+ const target=h*60+m;
+ let options=[target];
+ const near=[((h+1)%12)*60+m,((h+11)%12)*60+m,h*60+mins[(mins.indexOf(m)+1)%mins.length]];
+ for(const n of near)if(!options.includes(n)&&options.length<4)options.push(n);
+ while(options.length<4){const n=Math.floor(Math.random()*12)*60+mins[Math.floor(Math.random()*mins.length)];if(!options.includes(n))options.push(n)}
+ for(let i=options.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[options[i],options[j]]=[options[j],options[i]]}
+ return {h,m,options,clockH:0,clockM:0,solved:false,wrong:[],error:false};
+}
+function session(){
+ const id=state.level+':'+state.mode;
+ if(!state.sessions[id])state.sessions[id]={index:0,errors:0,finished:false,q:makeQuestion(state.level)};
+ return state.sessions[id];
+}
+function newRound(){state.sessions[state.level+':'+state.mode]={index:0,errors:0,finished:false,q:makeQuestion(state.level)};save();render()}
+function stars(errors){return errors===0?3:errors<=2?2:1}
+function render(){
+ if(!ready)return;
+ const s=session(),q=s.q;
+ $('total').textContent=state.best.reduce((a,b)=>a+b,0);
+ $('levels').innerHTML=names.map((n,i)=>`<button type="button" class="level ${state.level===i?'active':''}" data-level="${i}" aria-pressed="${state.level===i}"><span class="level-number">NIVEL ${i+1}</span><span class="level-name">${n}</span><span class="mini-stars" aria-label="${state.best[i]} estrellas">${[1,2,3].map(v=>`<span class="${v<=state.best[i]?'earned':''}">★</span>`).join('')}</span></button>`).join('');
+ $('readMode').classList.toggle('active',state.mode==='read');$('setMode').classList.toggle('active',state.mode==='set');
+ $('readMode').setAttribute('aria-pressed',state.mode==='read');$('setMode').setAttribute('aria-pressed',state.mode==='set');
+ $('play').hidden=s.finished;$('finish').hidden=!s.finished;
+ if(s.finished){
+ const count=stars(s.errors);
+ $('finish').innerHTML=`<div class="exercise-label">NIVEL ${state.level+1} COMPLETADO</div><div class="finish-stars" aria-label="${count} estrellas">${[1,2,3].map(i=>`<span class="${i<=count?'earned':''}" style="animation-delay:${i*.12}s">★</span>`).join('')}</div><h2>${count===3?'¡A la hora perfecta!':'¡Lo estás consiguiendo!'}</h2><p>Has resuelto los 5 retos.<br>${count===3?'¡Sin fallos! Tus agujas vuelan.':s.errors<=2?'¡Muy bien! Sigue practicando para lograr tres estrellas.':'Cada intento te ayuda a aprender. ¡Vamos a por más!'}</p><button class="primary" id="finishPrimary">${state.level<3?'Probar el siguiente nivel':'Volver a jugar'}</button><button class="secondary" id="finishAgain">Practicar este nivel</button>`;
+ $('finishPrimary').onclick=()=>{if(state.level<3){state.level++;session();save();render()}else newRound()};
+ $('finishAgain').onclick=newRound;return;
+ }
+ $('exerciseLabel').textContent='Reto '+(s.index+1)+' de 5';
+ $('dots').innerHTML=Array.from({length:5},(_,i)=>`<span class="dot ${i<s.index?'done':i===s.index?'current':''}"></span>`).join('');
+ $('dots').setAttribute('aria-label',`${s.index} de 5 retos completados`);
+ const reading=state.mode==='read';
+ $('question').textContent=reading?'¿Qué hora marca el reloj?':'Pon '+phrase(q.h,q.m);
+ $('instruction').textContent=reading?'Mira las agujas y elige la respuesta.':'Arrastra las agujas hasta la hora indicada.';
+ $('readControls').hidden=!reading;$('setControls').hidden=reading;
+ if(reading){
+ $('options').innerHTML=q.options.map(v=>`<button class="option ${q.solved&&v===q.h*60+q.m?'correct':q.wrong.includes(v)?'wrong':''}" data-answer="${v}" ${q.solved||q.wrong.includes(v)?'disabled':''}>${phrase(Math.floor(v/60),v%60).replace(/^./,c=>c.toUpperCase())}</button>`).join('');
+ }
+ $('check').disabled=q.solved;
+ $('plus').disabled=q.solved;$('minus').disabled=q.solved;
+ renderHands();renderSelection();
+ const fb=$('feedback');fb.hidden=!q.solved&&!q.error;fb.className='feedback'+(!q.solved?' error':'');
+ if(q.solved){
+ fb.innerHTML='<strong>¡Exacto! Muy bien ✨</strong>Son '+phrase(q.h,q.m)+'.<button class="primary" id="next">'+(s.index===4?'Ver mis estrellas':'Siguiente reto →')+'</button>';
+ $('next').onclick=next;
+ }else if(q.error){fb.innerHTML='<strong>¡Casi! Prueba otra vez.</strong>'+(reading?'Fíjate en la aguja corta y después en la larga.':'La aguja corta marca la hora; la larga, los minutos.')}
+}
+function renderHands(){
+ const q=session().q;const h=state.mode==='read'?q.h:q.clockH,m=state.mode==='read'?q.m:q.clockM;
+ $('hourHand').setAttribute('transform',`rotate(${h*30+m*.5} 150 150)`);
+ $('minuteHand').setAttribute('transform',`rotate(${m*6} 150 150)`);
+ $('clock').setAttribute('aria-label',state.mode==='read'?'Reloj analógico: elige la hora que indican las agujas.':'Reloj ajustado a '+phrase(h,m));
+}
+function renderSelection(){
+ $('selectHour').classList.toggle('active',selected==='hour');$('selectMinute').classList.toggle('active',selected==='minute');
+ $('selectHour').setAttribute('aria-pressed',selected==='hour');$('selectMinute').setAttribute('aria-pressed',selected==='minute');
+ $('adjustLabel').textContent=selected==='hour'?'Ajusta de hora en hora':'Ajusta de 5 en 5 minutos';
+}
+function answer(value){
+ const s=session(),q=s.q;if(q.solved||q.wrong.includes(value))return;
+ if(value===q.h*60+q.m){q.solved=true;q.error=false}else{q.error=true;s.errors++;q.wrong.push(value)}
+ save();render();
+}
+function check(){
+ const s=session(),q=s.q;if(q.solved)return;
+ if(q.clockH===q.h&&q.clockM===q.m){q.solved=true;q.error=false}else{q.error=true;s.errors++}
+ save();render();
+}
+function next(){
+ const s=session();if(!s.q.solved)return;
+ if(s.index===4){s.finished=true;state.best[state.level]=Math.max(state.best[state.level],stars(s.errors))}
+ else{s.index++;s.q=makeQuestion(state.level,s.q)}
+ save();render();
+}
+function adjust(delta){
+ const q=session().q;if(q.solved)return;
+ if(selected==='hour')q.clockH=(q.clockH+delta+12)%12;
+ else{const total=(q.clockH*60+q.clockM+delta*5+720)%720;q.clockH=Math.floor(total/60);q.clockM=total%60}
+ q.error=false;save();render();
+}
+$('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(!ready||!b)return;state.level=Number(b.dataset.level);session();save();render()};
+function changeMode(mode){if(!ready)return;state.mode=mode;session();save();render()}
+$('readMode').onclick=()=>changeMode('read');$('setMode').onclick=()=>changeMode('set');
+$('options').onclick=e=>{const b=e.target.closest('[data-answer]');if(b&&!b.disabled)answer(Number(b.dataset.answer))};
+$('check').onclick=check;
+$('selectHour').onclick=()=>{selected='hour';renderSelection()};$('selectMinute').onclick=()=>{selected='minute';renderSelection()};
+$('minus').onclick=()=>adjust(-1);$('plus').onclick=()=>adjust(1);
+$('help').onclick=()=>{$('tip').hidden=!$('tip').hidden;$('help').textContent=$('tip').hidden?'¿Cómo funcionan las agujas?':'Ocultar la ayuda'};
+const svg=$('clock');
+function pointerAngle(e){
+ const r=svg.getBoundingClientRect();
+ const x=(e.clientX-r.left)/r.width*300-150,y=(e.clientY-r.top)/r.height*300-150;
+ if(Math.hypot(x,y)<20)return null;
+ return (Math.atan2(x,-y)*180/Math.PI+360)%360;
+}
+function move(e){
+ if(!drag)return;const a=pointerAngle(e);if(a===null)return;
+ const q=session().q;
+ if(drag==='hour')q.clockH=((Math.round(a/30-q.clockM/60)%12)+12)%12;
+ else{
+ const newM=(Math.round(a/30)%12)*5,old=q.clockM;
+ if(old>=45&&newM<=10)q.clockH=(q.clockH+1)%12;
+ else if(old<=10&&newM>=45)q.clockH=(q.clockH+11)%12;
+ q.clockM=newM;
+ }
+ q.error=false;renderHands();
+}
+svg.addEventListener('pointerdown',e=>{
+ if(!ready||state.mode!=='set'||session().finished||session().q.solved)return;
+ e.preventDefault();drag=e.target.dataset.hand||selected;selected=drag;renderSelection();
+ svg.setPointerCapture(e.pointerId);move(e);
+});
+svg.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e)}});
+function endDrag(){if(!drag)return;drag=null;save();render()}
+svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);svg.addEventListener('lostpointercapture',endDrag);
+function buildClock(){
+ const ns='http://www.w3.org/2000/svg';
+ for(let i=0;i<60;i++){
+ const a=i*Math.PI/30,major=i%5===0;
+ const line=document.createElementNS(ns,'line');
+ const r=major?119:124;
+ line.setAttribute('x1',150+Math.sin(a)*r);line.setAttribute('y1',150-Math.cos(a)*r);
+ line.setAttribute('x2',150+Math.sin(a)*128);line.setAttribute('y2',150-Math.cos(a)*128);
+ line.setAttribute('stroke',major?'#9aa9a5':'#dbe1dc');line.setAttribute('stroke-width',major?2.5:1.5);line.setAttribute('stroke-linecap','round');
+ $('ticks').append(line);
+ }
+ for(let i=1;i<=12;i++){
+ const t=document.createElementNS(ns,'text'),a=i*Math.PI/6;
+ t.setAttribute('x',150+Math.sin(a)*103);t.setAttribute('y',150-Math.cos(a)*103);t.setAttribute('class','clock-number');t.textContent=i;$('numbers').append(t);
+ }
+}
+async function reload(){
+ try{
+ await saveChain;
+ const data=await storage.get();
+ state=data&&Array.isArray(data.best)&&data.sessions?data:{level:0,mode:'read',best:[0,0,0,0],sessions:{}};
+ if(!Number.isInteger(state.level)||state.level<0||state.level>3)state.level=0;
+ if(!['read','set'].includes(state.mode))state.mode='read';
+ ready=true;session();render();
+ }catch{
+ if(!ready){state={level:0,mode:'read',best:[0,0,0,0],sessions:{}};ready=true;session();render()}
+ notify('Le stockage est indisponible.'.replace('Le stockage est indisponible.','No se pudo cargar el progreso guardado.'));
+ }
+}
+buildClock();reload();window.addEventListener('acornixdata',()=>{drag=null;reload()});
+})();
+</script>
+</body>
+</html>
