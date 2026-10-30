@@ -1,0 +1,15 @@
+{
+  "id": "bucket-list",
+  "name": "Bucket List",
+  "emoji": "📝",
+  "category": "lifestyle",
+  "description": "Your life goals in one place, sorted by travel, adventure or learning. Tick them off with a photo and a memory, and celebrate.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 41
+}
