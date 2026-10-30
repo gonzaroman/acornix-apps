@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 63
+  "issue": 63,
+  "description_i18n": {
+    "es": "Aprende el abecedario con un animal para cada letra, dicho en voz alta, y un pequeño juego de preguntas."
+  }
 }

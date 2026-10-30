@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 29
+  "issue": 29,
+  "description_i18n": {
+    "es": "Crea tu avatar de dibujos: piel, pelo y color, ojos, boca, gafas, gorros y fondo, o tira el dado. Guárdalo como imagen."
+  }
 }

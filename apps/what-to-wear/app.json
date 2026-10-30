@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 8
+  "issue": 8,
+  "description_i18n": {
+    "es": "Mira la previsión de mañana, tarde y noche y te dice qué ponerte, según lo friolero que seas."
+  }
 }

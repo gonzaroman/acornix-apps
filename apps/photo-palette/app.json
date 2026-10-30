@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 20
+  "issue": 20,
+  "description_i18n": {
+    "es": "Saca los colores principales de cualquier foto, mira dónde está cada uno, copia sus códigos y guarda las paletas que te gusten."
+  }
 }

@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Añade tu medicación y sus horas, y marca cada toma. Mira lo que te toca hoy por la mañana, mediodía, tarde y noche."
+  }
 }

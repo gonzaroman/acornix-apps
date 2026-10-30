@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 2
+  "issue": 2,
+  "description_i18n": {
+    "es": "Descubre de un vistazo si hoy necesitas paraguas, con la probabilidad de lluvia hora a hora y los próximos 7 días."
+  }
 }

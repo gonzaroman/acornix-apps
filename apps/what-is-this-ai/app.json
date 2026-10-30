@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Apunta la cámara a una planta, un animal, un objeto, un plato o un monumento y tu IA te dice qué es, con curiosidades y un consejo útil."
+  }
 }

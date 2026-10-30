@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 5
+  "issue": 5,
+  "description_i18n": {
+    "es": "Viento, rachas, olas, mar de fondo y temperatura del agua en cualquier playa, con un gráfico de 3 días que puntúa cada hora para surf y vela."
+  }
 }

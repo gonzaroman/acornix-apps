@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 15
+  "issue": 15,
+  "description_i18n": {
+    "es": "Convierte cualquier foto en pixel art con paletas retro como Game Boy, PICO-8, NES y CGA, tamaño de píxel ajustable y tramado."
+  }
 }

@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 12
+  "issue": 12,
+  "description_i18n": {
+    "es": "Doce filtros como Vintage, Noir y Dream, más ajustes de brillo, calidez, viñeta y grano. Mantén pulsada la foto para comparar con la original."
+  }
 }

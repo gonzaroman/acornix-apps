@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Adivina el país por su bandera, por continente o de todo el mundo. Rondas de 10 con rachas y una lista de las que repasar."
+  }
 }

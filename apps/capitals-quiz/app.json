@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "¿Cuál es la capital de…? Rondas de 10 por continente con respuestas falsas creíbles, mejores puntuaciones y una lista para repasar."
+  }
 }

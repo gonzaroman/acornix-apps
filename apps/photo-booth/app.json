@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 17
+  "issue": 17,
+  "description_i18n": {
+    "es": "Un fotomatón de fiesta en tu móvil: cuenta atrás, cuatro fotos seguidas y una tira o cuadrícula como impresa, en color, blanco y negro, retro o pop."
+  }
 }

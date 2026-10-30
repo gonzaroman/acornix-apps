@@ -65,6 +65,7 @@ def main():
         "emoji": sub["emoji"],
         "category": sub["category"],
         "description": sub["description"],
+        **({"description_i18n": sub["description_i18n"]} if sub.get("description_i18n") else {}),
         "prompt": sub["prompt"],
         "author": author,
         "language": sub["language"],

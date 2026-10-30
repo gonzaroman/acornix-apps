@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Diez preguntas rápidas de geografía, ciencia, historia, cine, deportes o animales, con rachas y un 50:50."
+  }
 }

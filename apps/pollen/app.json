@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 11
+  "issue": 11,
+  "description_i18n": {
+    "es": "Previsión de polen de aliso, abedul, gramíneas, olivo, artemisa y ambrosía, con primero los que te dan alergia y las mejores horas para salir."
+  }
 }

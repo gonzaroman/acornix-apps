@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 18
+  "issue": 18,
+  "description_i18n": {
+    "es": "Haz películas de stop motion con la cámara: papel cebolla para alinear cada fotograma, tira de película, velocidad de reproducción y guardar el vídeo."
+  }
 }

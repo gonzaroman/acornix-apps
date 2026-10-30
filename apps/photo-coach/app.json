@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 16
+  "issue": 16,
+  "description_i18n": {
+    "es": "Tu IA puntúa cada foto en composición, luz, color, nitidez e historia, y te da consejos prácticos para hacerla mejor."
+  }
 }

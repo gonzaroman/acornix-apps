@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-28",
   "updated": "2026-10-28",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Construye una ciudad isométrica en píxeles con coches, gente, ciclo de día y noche y fuegos artificiales."
+  }
 }

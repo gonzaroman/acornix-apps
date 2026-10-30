@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 65
+  "issue": 65,
+  "description_i18n": {
+    "es": "Toca para rellenar dibujos de color: casa, gato, pez, cohete y más. Guarda tu obra en la galería."
+  }
 }

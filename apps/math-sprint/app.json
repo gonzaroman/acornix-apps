@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "60 segundos de cálculo mental. Responde rápido para encadenar combos y multiplicar tus puntos, en tres niveles de sumas a paréntesis."
+  }
 }

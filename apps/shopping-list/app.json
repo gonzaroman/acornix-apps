@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 74
+  "issue": 74,
+  "description_i18n": {
+    "es": "Una lista de la compra ordenada por pasillos, con cantidades, volver a añadir rápido y para compartir."
+  }
 }

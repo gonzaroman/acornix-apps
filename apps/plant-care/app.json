@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 36
+  "issue": 36,
+  "description_i18n": {
+    "es": "Tus plantas y cuándo regar cada una, con avisos de cuál tiene sed. Haz una foto a una planta y tu IA la identifica y te dice cómo cuidarla."
+  }
 }

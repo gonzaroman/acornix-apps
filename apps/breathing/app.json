@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Sigue una bola de luz para inspirar, aguantar y espirar: 4-7-8 para calmarte, respiración cuadrada para concentrarte y más."
+  }
 }

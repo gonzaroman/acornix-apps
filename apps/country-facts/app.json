@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "73 países con su bandera y capital, un resumen de cada uno de Wikipedia y tu propia lista de lugares visitados y por visitar."
+  }
 }

@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Apila bloques que se deslizan lo más alto que puedas: lo que sobresale se corta y cae, y los encajes perfectos hacen crecer tu torre."
+  }
 }

@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 21
+  "issue": 21,
+  "description_i18n": {
+    "es": "Tu IA mira tu foto y escribe cuatro pies de foto en el tono que elijas, divertido, poético, atrevido o tierno, con hashtags para cada red."
+  }
 }

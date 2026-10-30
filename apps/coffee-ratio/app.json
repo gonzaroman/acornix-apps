@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 48
+  "issue": 48,
+  "description_i18n": {
+    "es": "La cantidad justa de café y agua para V60, prensa francesa, AeroPress, moka, espresso o cold brew, con un temporizador guiado."
+  }
 }

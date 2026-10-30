@@ -99,6 +99,8 @@ def build():
             "emoji": meta["emoji"],
             "category": meta["category"],
             "description": meta["description"].strip(),
+            # Optional translations, {"es": "..."}; Acornix shows the one for its language.
+            "description_i18n": {k: v.strip() for k, v in (meta.get("description_i18n") or {}).items() if isinstance(v, str) and v.strip()},
             "prompt": meta.get("prompt", "").strip(),
             "author": meta["author"],
             "language": meta.get("language", "en"),

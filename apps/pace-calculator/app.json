@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Pon dos de distancia, tiempo y ritmo y te da el tercero, con parciales, velocidad y tiempos previstos de 5K a maratón."
+  }
 }

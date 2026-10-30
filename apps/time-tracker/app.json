@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Apunta las horas que dedicas a cada proyecto y cliente, con tarifas por hora y un informe para compartir."
+  }
 }

@@ -80,6 +80,18 @@ def close(issue, reason="completed"):
     github("PATCH", f"/repos/{repo()}/issues/{issue}", {"state": "closed", "state_reason": reason})
 
 
+def description_i18n(raw):
+    """Optional translations of the description, {"es": "..."}: two-letter keys, plain short text."""
+    if not isinstance(raw, dict):
+        return {}
+    out = {}
+    for lang, text in raw.items():
+        text = str(text).strip()
+        if re.fullmatch(r"[a-z]{2}", str(lang)) and text and len(text) <= LIMITS["description"]:
+            out[lang] = text
+    return out
+
+
 def parse_submission(body):
     """The app's details from the issue body, checked and trimmed."""
     if MARKER not in (body or ""):
@@ -105,6 +117,7 @@ def parse_submission(body):
         raise Rejected(f"The category must be one of: {', '.join(sorted(build_catalog.CATEGORIES))}.")
     if not re.fullmatch(r"[0-9a-f]{20,40}", sub["gist"]):
         raise Rejected("The gist id is not valid.")
+    sub["description_i18n"] = description_i18n(data.get("description_i18n"))
     sub["emoji"] = sub["emoji"] or "🌰"
     sub["language"] = sub["language"][:8] or "en"
     return sub

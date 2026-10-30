@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Desliza hacia arriba para encestar en una pista 3D: rebotes reales en el aro, canastas limpias, rachas y una canasta que se mueve."
+  }
 }

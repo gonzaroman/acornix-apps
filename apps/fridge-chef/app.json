@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 52
+  "issue": 52,
+  "description_i18n": {
+    "es": "Haz una foto a tu nevera o escribe lo que tienes y tu IA te propone tres recetas que puedes cocinar ya, con lo que te falta."
+  }
 }

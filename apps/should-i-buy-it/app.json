@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 83
+  "issue": 83,
+  "description_i18n": {
+    "es": "¿Piensas comprarte algo? Tu IA te ayuda a decidir con preguntas sinceras, pros y contras."
+  }
 }

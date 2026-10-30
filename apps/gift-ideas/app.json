@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 40
+  "issue": 40,
+  "description_i18n": {
+    "es": "Dile para quién es, su edad, lo que le gusta y tu presupuesto, y tu IA te sugiere regalos concretos y originales. Guarda los que te gusten."
+  }
 }

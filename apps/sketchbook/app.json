@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 25
+  "issue": 25,
+  "description_i18n": {
+    "es": "Un cuaderno de dibujo con bolígrafo, lápiz, rotulador, spray y goma, colores, tamaño y opacidad, deshacer y rehacer, y varias páginas."
+  }
 }

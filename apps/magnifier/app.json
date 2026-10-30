@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Amplía la letra pequeña con la cámara, congela la imagen, enciende la luz y sube el contraste."
+  }
 }

@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 72
+  "issue": 72,
+  "description_i18n": {
+    "es": "Elige un protagonista, un lugar y un tema y tu IA escribe un cuento tranquilo, leído en voz alta para dormir."
+  }
 }

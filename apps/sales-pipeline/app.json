@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Sigue tus ventas desde el primer contacto hasta cerrarlas, con embudo, previsión y próximos pasos."
+  }
 }

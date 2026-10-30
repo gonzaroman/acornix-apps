@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Toca casillas en una cuadrícula de 16×16 y suena una melodía en bucle que siempre queda bien, con ondas de luz. Compártela con un enlace."
+  }
 }

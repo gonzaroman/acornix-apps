@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Qué hacer en una emergencia, paso a paso y sin conexión: RCP con guía de ritmo, atragantamiento, hemorragias, quemaduras, ictus y más."
+  }
 }

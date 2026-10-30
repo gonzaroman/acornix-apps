@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 80
+  "issue": 80,
+  "description_i18n": {
+    "es": "Fija un presupuesto mensual para la compra, apunta cada compra y mira lo que te queda semana a semana."
+  }
 }

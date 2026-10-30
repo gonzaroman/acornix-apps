@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Un marcador enorme a dos colores para fútbol, baloncesto, voleibol, tenis de mesa, hockey o cualquier juego, con reloj, periodos y faltas."
+  }
 }

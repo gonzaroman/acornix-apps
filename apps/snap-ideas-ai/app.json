@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Apunta la cámara a cualquier cosa y tu IA te propone qué hacer, cocinar, arreglar o a qué jugar con ella."
+  }
 }

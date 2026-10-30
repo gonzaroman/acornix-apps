@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 61
+  "issue": 61,
+  "description_i18n": {
+    "es": "Bingo de carretera con 25 cosas que ver, el juego del abecedario con carteles y veo veo con puntos por equipos, para viajes largos."
+  }
 }

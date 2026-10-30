@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 43
+  "issue": 43,
+  "description_i18n": {
+    "es": "Guarda tus recetas con fotos, etiquetas, raciones que recalculan las cantidades y un modo cocina que mantiene la pantalla encendida. Haz una foto a un libro y tu IA la copia."
+  }
 }

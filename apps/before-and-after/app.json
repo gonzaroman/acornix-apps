@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 19
+  "issue": 19,
+  "description_i18n": {
+    "es": "Compara dos fotos con un deslizador, lado a lado o una encima de otra, con tus propias etiquetas. Ideal para cambios de look, entrenamientos y reformas."
+  }
 }

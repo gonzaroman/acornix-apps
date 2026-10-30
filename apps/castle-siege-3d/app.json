@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Defiende la muralla de tu castillo: los enemigos suben por el valle hacia ti y tú los derribas con tu ballesta."
+  }
 }

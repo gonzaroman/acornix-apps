@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 51
+  "issue": 51,
+  "description_i18n": {
+    "es": "Calculadora de masa para pizza napolitana, New York, romana o de sartén: harina, agua, sal y levadura, más un plan con horarios para la cena."
+  }
 }

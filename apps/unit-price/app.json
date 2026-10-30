@@ -3,7 +3,7 @@
   "name": "Unit Price",
   "emoji": "⚖️",
   "category": "shopping",
-  "description": "Which pack is cheaper? Compare price per kil",
+  "description": "Which pack is cheaper? Compare the price per kilo or litre and find the best deal.",
   "prompt": "Compare the real price of products: enter price and size for two or more items in grams, kilos, millilitres, litres or units, and see the price per kilo or litre and which one is the best deal, highlighted.",
   "author": "gonzaroman",
   "language": "es",
@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 75
+  "issue": 75,
+  "description_i18n": {
+    "es": "¿Qué envase sale más barato? Compara el precio por kilo o litro y encuentra la mejor oferta."
+  }
 }

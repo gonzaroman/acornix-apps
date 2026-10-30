@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 27
+  "issue": 27,
+  "description_i18n": {
+    "es": "Escribe un nombre y tu IA diseña cuatro ideas de logo en el estilo que elijas. Los monogramas con tus iniciales salen al instante."
+  }
 }

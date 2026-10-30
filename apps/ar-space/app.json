@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": true,
-  "issue": 33
+  "issue": 33,
+  "description_i18n": {
+    "es": "Planetas en 3D flotando a tu alrededor sobre la cámara: la Tierra con nubes y su Luna, Júpiter, Saturno con anillos, una estación espacial y un ovni. Tócalos para aprender y haz fotos AR."
+  }
 }

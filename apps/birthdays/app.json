@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 38
+  "issue": 38,
+  "description_i18n": {
+    "es": "No olvides ningún cumpleaños: cuenta atrás, edades, ideas de regalo y una felicitación cariñosa escrita por tu IA lista para enviar."
+  }
 }

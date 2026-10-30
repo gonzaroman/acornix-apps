@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Tira dados, lanza una moneda, saca un número o elige de tu propia lista. Agita para tirar."
+  }
 }

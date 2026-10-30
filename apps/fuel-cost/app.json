@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 59
+  "issue": 59,
+  "description_i18n": {
+    "es": "Lo que cuesta un viaje en coche en combustible, peajes y por persona, en km y litros o millas y galones, comparado con un coche eléctrico."
+  }
 }

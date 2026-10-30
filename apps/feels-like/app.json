@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 10
+  "issue": 10,
+  "description_i18n": {
+    "es": "Sensación térmica por calor o por viento a partir de temperatura, humedad y viento, sin conexión, con termómetro de colores, el riesgo para la salud y consejos."
+  }
 }

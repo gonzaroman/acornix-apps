@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 13
+  "issue": 13,
+  "description_i18n": {
+    "es": "Junta hasta seis fotos con ocho diseños, cuatro formatos para publicaciones y stories, colores de fondo, márgenes y esquinas redondeadas."
+  }
 }

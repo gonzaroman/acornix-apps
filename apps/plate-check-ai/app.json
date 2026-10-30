@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Haz una foto a tu plato y tu IA calcula las calorías, proteínas, hidratos y grasas. Ajusta las raciones y sigue tu día."
+  }
 }

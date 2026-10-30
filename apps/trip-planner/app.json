@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 62
+  "issue": 62,
+  "description_i18n": {
+    "es": "Dile a tu IA a dónde vas, cuánto tiempo y qué te gusta, y tendrás un plan día a día con comida y consejos."
+  }
 }

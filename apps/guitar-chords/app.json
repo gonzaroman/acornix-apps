@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Cualquier acorde en cualquier tonalidad con un diagrama claro y sonido real de cuerda, más un reproductor de progresiones para practicar los cambios."
+  }
 }

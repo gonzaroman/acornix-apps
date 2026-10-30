@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": true
+  "featured": true,
+  "description_i18n": {
+    "es": "Corre por una autopista synthwave al atardecer: arrastra para esquivar barreras de neón y coger esferas brillantes."
+  }
 }

@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 22
+  "issue": 22,
+  "description_i18n": {
+    "es": "Dibuja pixel art en una cuadrícula de 16, 24 o 32 con una paleta retro, relleno, cuentagotas, modo espejo y deshacer. Cada dibujo se guarda y se exporta como PNG nítido."
+  }
 }

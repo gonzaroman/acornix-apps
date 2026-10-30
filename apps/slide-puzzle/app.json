@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 70
+  "issue": 70,
+  "description_i18n": {
+    "es": "Desliza las piezas para recomponer un arcoíris, un león o un cohete. 3x3 o 4x4."
+  }
 }

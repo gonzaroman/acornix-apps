@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 50
+  "issue": 50,
+  "description_i18n": {
+    "es": "Cuece el huevo perfecto, de líquido a duro, ajustado al tamaño, si sale de la nevera o del ambiente y a la altitud, con alarma."
+  }
 }

@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Apunta tu peso cada día y mira la tendencia de 7 días en vez de los altibajos diarios, con tu objetivo y tu IMC."
+  }
 }

@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 35
+  "issue": 35,
+  "description_i18n": {
+    "es": "Escribe una cosa buena al día y échala al bote. Toca el bote para sacar un recuerdo bonito al azar."
+  }
 }

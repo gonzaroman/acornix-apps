@@ -3,7 +3,7 @@
   "name": "Menu Translator",
   "emoji": "🍜",
   "category": "travel",
-  "description": "Snap a menu in any language and your AI translates every dish, explains it, warns about allergies and",
+  "description": "Snap a menu in any language and your AI translates every dish, explains it, warns about allergies and recommends one.",
   "prompt": "A menu translator: photograph a menu in any language and the AI lists every dish with its original name, translation, explanation, price, tags and allergy warnings for your diet, plus a recommendation.",
   "author": "gonzaroman",
   "language": "en",
@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 60
+  "issue": 60,
+  "description_i18n": {
+    "es": "Haz una foto a una carta en cualquier idioma y tu IA traduce cada plato, te lo explica, avisa de alergias y te recomienda uno."
+  }
 }

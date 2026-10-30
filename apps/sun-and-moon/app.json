@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 6
+  "issue": 6,
+  "description_i18n": {
+    "es": "Salida y puesta del sol, hora dorada y hora azul con el sol moviéndose por el arco de hoy, más la fase lunar y la próxima luna llena."
+  }
 }

@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Dile a tu IA tu deporte, nivel, objetivo y días, y tendrás una semana de sesiones con calentamiento, series y consejos. Márcalas al hacerlas."
+  }
 }

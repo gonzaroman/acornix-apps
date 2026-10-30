@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 3
+  "issue": 3,
+  "description_i18n": {
+    "es": "El tiempo ahora, las próximas 24 horas y 7 días en tu ciudad, con un cielo animado que sigue al tiempo."
+  }
 }

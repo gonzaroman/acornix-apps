@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 28
+  "issue": 28,
+  "description_i18n": {
+    "es": "Crea patrones sin cortes con puntos, estrellas, corazones, ondas, hojas o emojis, con paletas, tamaño, giro y un poco de caos, como fondos de pantalla."
+  }
 }

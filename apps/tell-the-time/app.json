@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 71
+  "issue": 71,
+  "description_i18n": {
+    "es": "Aprende a leer el reloj: arrastra las agujas, responde qué hora es y gana estrellas."
+  }
 }

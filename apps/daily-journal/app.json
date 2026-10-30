@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Un diario acogedor con el ánimo de cada día, una pregunta para animarte a escribir y un resumen de 4 semanas."
+  }
 }

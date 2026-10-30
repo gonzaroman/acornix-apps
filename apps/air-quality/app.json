@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 7
+  "issue": 7,
+  "description_i18n": {
+    "es": "El aire que respiras ahora: un anillo de color con el índice de calidad, PM2.5, PM10, ozono y NO2, un gráfico de 2 días y las mejores horas para correr o ventilar la casa."
+  }
 }

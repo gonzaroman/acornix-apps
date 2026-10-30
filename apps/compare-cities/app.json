@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 9
+  "issue": 9,
+  "description_i18n": {
+    "es": "Compara hasta cuatro ciudades: el tiempo de hoy, un gráfico de temperaturas de 7 días con una línea por ciudad y cuál es la más cálida y seca."
+  }
 }

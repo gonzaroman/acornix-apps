@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 39
+  "issue": 39,
+  "description_i18n": {
+    "es": "Reparte las tareas de casa de forma justa: gira la ruleta o reparte todo al azar, márcalas y mira quién suma más puntos."
+  }
 }

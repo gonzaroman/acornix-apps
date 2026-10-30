@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 23
+  "issue": 23,
+  "description_i18n": {
+    "es": "Paletas de colores bonitas con un toque: bloquea los colores que te gustan, elige una armonía o describe un ambiente y tu IA inventa una con nombres."
+  }
 }

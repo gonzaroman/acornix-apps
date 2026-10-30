@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 69
+  "issue": 69,
+  "description_i18n": {
+    "es": "Explota burbujas llenas de estrellas y animales. Un juego tranquilo en el que no se pierde."
+  }
 }

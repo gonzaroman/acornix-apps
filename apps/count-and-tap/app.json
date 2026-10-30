@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 64
+  "issue": 64,
+  "description_i18n": {
+    "es": "Cuenta frutas y animales tocándolos y elige el número correcto. Del 1 al 20, con estrellas."
+  }
 }

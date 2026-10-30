@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Piensa en cualquier cosa y tu IA intenta adivinarla con preguntas de sí o no."
+  }
 }

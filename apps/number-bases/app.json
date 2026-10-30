@@ -10,5 +10,8 @@
   "version": 1,
   "added": "2026-10-29",
   "updated": "2026-10-29",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Convierte entre decimal, binario, hexadecimal y octal mientras escribes, y cambia bits con un toque para ver qué pasa."
+  }
 }

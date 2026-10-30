@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 56
+  "issue": 56,
+  "description_i18n": {
+    "es": "Vuelos, hoteles, visitas y reservas en una línea del tiempo día a día, con lo siguiente que toca, enlaces al mapa y para compartir."
+  }
 }

@@ -7,6 +7,9 @@
       "emoji": "🔭",
       "category": "education",
       "description": "Point your phone at the sky and see the real stars, constellations, planets and the Moon labelled on the camera. Find any planet with an arrow and travel in time.",
+      "description_i18n": {
+        "es": "Apunta el móvil al cielo y verás las estrellas, constelaciones, planetas y la Luna reales señalados sobre la cámara. Encuentra cualquier planeta con una flecha y viaja en el tiempo."
+      },
       "prompt": "An augmented reality star finder: point the phone at the sky and the camera shows the real stars, constellation lines, planets, the Sun and the Moon with its phase, using the compass and gyroscope, with an arrow to find any planet, a time slider and a city search for your location.",
       "author": "gonzaroman",
       "language": "en",
@@ -33,6 +36,9 @@
       "emoji": "🪐",
       "category": "entertainment",
       "description": "Planets in 3D floating around you on the camera: Earth with clouds and its Moon, Jupiter, Saturn with rings, a space station and a UFO. Tap to learn, snap AR photos.",
+      "description_i18n": {
+        "es": "Planetas en 3D flotando a tu alrededor sobre la cámara: la Tierra con nubes y su Luna, Júpiter, Saturno con anillos, una estación espacial y un ovni. Tócalos para aprender y haz fotos AR."
+      },
       "prompt": "An augmented reality space scene: on top of the camera, 3D planets float around you and stay in place as you move the phone, Earth with clouds and its Moon, Jupiter, Saturn with rings, Mars, a space station, an asteroid belt and a UFO, with facts when you tap them and AR photos saved to the gallery.",
       "author": "gonzaroman",
       "language": "en",
@@ -59,6 +65,9 @@
       "emoji": "💝",
       "category": "shopping",
       "description": "Things you want, with photos, prices, priorities and how much you have saved for each.",
+      "description_i18n": {
+        "es": "Lo que te gustaría tener, con fotos, precios, prioridades y cuánto llevas ahorrado para cada cosa."
+      },
       "prompt": "A wishlist of things you want to buy with a name, price, link, photo from the gall",
       "author": "gonzaroman",
       "language": "es",
@@ -81,7 +90,10 @@
       "name": "Unit Price",
       "emoji": "⚖️",
       "category": "shopping",
-      "description": "Which pack is cheaper? Compare price per kil",
+      "description": "Which pack is cheaper? Compare the price per kilo or litre and find the best deal.",
+      "description_i18n": {
+        "es": "¿Qué envase sale más barato? Compara el precio por kilo o litro y encuentra la mejor oferta."
+      },
       "prompt": "Compare the real price of products: enter price and size for two or more items in grams, kilos, millilitres, litres or units, and see the price per kilo or litre and which one is the best deal, highlighted.",
       "author": "gonzaroman",
       "language": "es",
@@ -105,6 +117,9 @@
       "emoji": "🧭",
       "category": "travel",
       "description": "Tell your AI where you are going, for how long and what you like, and get a day by day plan with food and tips.",
+      "description_i18n": {
+        "es": "Dile a tu IA a dónde vas, cuánto tiempo y qué te gusta, y tendrás un plan día a día con comida y consejos."
+      },
       "prompt": "An AI trip planner: enter destination, days, who you travel with, interests and budget, and get a day by day plan with morning, afternoon and evening, food to try and practical tips, to share or save.",
       "author": "gonzaroman",
       "language": "en",
@@ -130,6 +145,9 @@
       "emoji": "✈️",
       "category": "travel",
       "description": "Track travel spending in any currency, converted to yours, with what is left, a daily allowance and spending by category.",
+      "description_i18n": {
+        "es": "Apunta los gastos del viaje en cualquier moneda, convertidos a la tuya, con lo que te queda, lo que puedes gastar al día y por categoría."
+      },
       "prompt": "A travel budget tracker: set budget, home currency and dates, add expenses in any currency converted with the Frankfurter API, see what is left, a daily allowance, spending by category and by day.",
       "author": "gonzaroman",
       "language": "en",
@@ -155,6 +173,9 @@
       "emoji": "💵",
       "category": "travel",
       "description": "How much to tip in restaurants, taxis and hotels in over 30 countries, with a tip calculator and bill splitter.",
+      "description_i18n": {
+        "es": "Cuánta propina dejar en restaurantes, taxis y hoteles en más de 30 países, con calculadora de propina y para dividir la cuenta."
+      },
       "prompt": "A tipping guide for over 30 countries with what to tip in restaurants, bars, taxis and hotels, plus a tip calculator with suggested percentage, rounding and bill splitting.",
       "author": "gonzaroman",
       "language": "en",
@@ -178,6 +199,9 @@
       "emoji": "🕐",
       "category": "kids",
       "description": "Learn to read the clock: drag the hands, answer what time it is and earn stars.",
+      "description_i18n": {
+        "es": "Aprende a leer el reloj: arrastra las agujas, responde qué hora es y gana estrellas."
+      },
       "prompt": "A game to learn to tell the time: a big analogue clock, questions like what time is it or set the clock to half past three with draggable hands, levels for o clock, half past, quarter and five minutes, and stars.",
       "author": "gonzaroman",
       "language": "es",
@@ -201,6 +225,9 @@
       "emoji": "🌀",
       "category": "graphics-design",
       "description": "Draw glowing spirograph patterns: change the ring, wheel and pen, watch them draw themselves and save them.",
+      "description_i18n": {
+        "es": "Dibuja patrones de espirógrafo brillantes: cambia el aro, la rueda y el lápiz, mira cómo se dibujan solos y guárdalos."
+      },
       "prompt": "A glowing spirograph: sliders for the ring, wheel, pen distance and line width, inside or outside wheels, gradient inks, an animation that draws the curve, random designs and saving the image.",
       "author": "gonzaroman",
       "language": "en",
@@ -224,6 +251,9 @@
       "emoji": "🧩",
       "category": "kids",
       "description": "Slide the tiles to rebuild a rainbow, a lion or a rocket. 3x3 or 4x4.",
+      "description_i18n": {
+        "es": "Desliza las piezas para recomponer un arcoíris, un león o un cohete. 3x3 o 4x4."
+      },
       "prompt": "A sliding tile puzzle for kids with 3x3 and 4x4 boards, pictures drawn in code like a rainbow, a lion or a rocket instead of numbers, a move counter, a timer and a celebration when solved.",
       "author": "gonzaroman",
       "language": "es",
@@ -247,6 +277,9 @@
       "emoji": "✏️",
       "category": "graphics-design",
       "description": "A sketchbook with pen, pencil, marker, spray and eraser, colours, size and opacity, undo and redo, and several pages.",
+      "description_i18n": {
+        "es": "Un cuaderno de dibujo con bolígrafo, lápiz, rotulador, spray y goma, colores, tamaño y opacidad, deshacer y rehacer, y varias páginas."
+      },
       "prompt": "A sketchbook with pen, pencil, marker, spray and eraser, a colour palette with a custom colour, size and opacity sliders, undo and redo, several pages, and saving drawings as images.",
       "author": "gonzaroman",
       "language": "en",
@@ -270,6 +303,9 @@
       "emoji": "👟",
       "category": "shopping",
       "description": "Convert shoe, clothing and ring sizes between EU, UK, US and Japan, and save your own.",
+      "description_i18n": {
+        "es": "Convierte tallas de calzado, ropa y anillos entre EU, UK, US y Japón, y guarda las tuyas."
+      },
       "prompt": "A clothes and shoe size converter between EU, UK, US and Japan for men, women and kids, plus ring sizes, with your own sizes saved for quick lookup.",
       "author": "gonzaroman",
       "language": "es",
@@ -293,6 +329,9 @@
       "emoji": "🤔",
       "category": "shopping",
       "description": "Thinking of buying something? Your AI helps you decide with honest questions, pros and cons.",
+      "description_i18n": {
+        "es": "¿Piensas comprarte algo? Tu IA te ayuda a decidir con preguntas sinceras, pros y contras."
+      },
       "prompt": "Help decide whether to buy something: describe the item, price and why you want it, and Acornix.askAI asks a couple of honest questions and gives a balanced verdict with pros, cons and a wait 48 hours suggestion, with a list of past decisions.",
       "author": "gonzaroman",
       "language": "es",
@@ -318,6 +357,9 @@
       "emoji": "🛒",
       "category": "shopping",
       "description": "A shopping list sorted by aisle, with quantities, quick re-add and sharing.",
+      "description_i18n": {
+        "es": "Una lista de la compra ordenada por pasillos, con cantidades, volver a añadir rápido y para compartir."
+      },
       "prompt": "A shopping list grouped by aisle, like fruit, dairy, bakery and cleaning, with quantities, tap to tick, recent items to re-add quickly, several lists, and share the list as text.",
       "author": "gonzaroman",
       "language": "es",
@@ -341,6 +383,9 @@
       "emoji": "🔺",
       "category": "kids",
       "description": "Find the red circle or the blue star: a happy game to learn shapes and colours.",
+      "description_i18n": {
+        "es": "Encuentra el círculo rojo o la estrella azul: un juego alegre para aprender formas y colores."
+      },
       "prompt": "A toddler game to learn shapes and colours: big shapes like circle, square, triangle, star and heart in bright colours, a voice says find the red circle, the child taps it, happy sounds and confetti when right, and a gentle hint when wrong.",
       "author": "gonzaroman",
       "language": "es",
@@ -364,6 +409,9 @@
       "emoji": "🚙",
       "category": "travel",
       "description": "Car bingo with 25 things to spot, the alphabet game on signs and I spy with team scores, for long drives.",
+      "description_i18n": {
+        "es": "Bingo de carretera con 25 cosas que ver, el juego del abecedario con carteles y veo veo con puntos por equipos, para viajes largos."
+      },
       "prompt": "Road trip games for the car: a 5 by 5 bingo of things to spot with line detection, the alphabet game on signs, and I spy cards with two team scores.",
       "author": "gonzaroman",
       "language": "en",
@@ -387,6 +435,9 @@
       "emoji": "📦",
       "category": "shopping",
       "description": "Never miss a return deadline: orders, countdowns and refund status in one place.",
+      "description_i18n": {
+        "es": "No te pases nunca del plazo de devolución: pedidos, cuentas atrás y estado del reembolso en un solo sitio."
+      },
       "prompt": "Track online orders and returns: shop, item, price, order date, return deadline with a countdown, status from ordered to refunded, and reminders of returns about to expire.",
       "author": "gonzaroman",
       "language": "es",
@@ -410,6 +461,9 @@
       "emoji": "📒",
       "category": "food-drink",
       "description": "Keep your recipes with photos, tags, servings that rescale the quantities and a cook mode that keeps the screen on. Snap a cookbook page and your AI copies it.",
+      "description_i18n": {
+        "es": "Guarda tus recetas con fotos, etiquetas, raciones que recalculan las cantidades y un modo cocina que mantiene la pantalla encendida. Haz una foto a un libro y tu IA la copia."
+      },
       "prompt": "A recipe box with photos, tags and search, servings that rescale quantities, ingredients you can tick off, a cook mode with big steps that keeps the screen on, and an AI that copies a recipe from a photo.",
       "author": "gonzaroman",
       "language": "en",
@@ -436,6 +490,9 @@
       "emoji": "📈",
       "category": "shopping",
       "description": "Log prices of the things you buy, see their history on a chart and where they are cheapest.",
+      "description_i18n": {
+        "es": "Apunta los precios de lo que compras, mira su historial en un gráfico y dónde está más barato."
+      },
       "prompt": "Track prices of products you buy often: add a product and log its price at different shops and dates, see the history as a line chart, the lowest price and where, and an alert when a new price is lower.",
       "author": "gonzaroman",
       "language": "es",
@@ -459,6 +516,9 @@
       "emoji": "🪴",
       "category": "lifestyle",
       "description": "Your plants and when to water each one, with reminders of who is thirsty. Snap a plant and your AI identifies it and tells you how to care for it.",
+      "description_i18n": {
+        "es": "Tus plantas y cuándo regar cada una, con avisos de cuál tiene sed. Haz una foto a una planta y tu IA la identifica y te dice cómo cuidarla."
+      },
       "prompt": "A plant care app with a list of plants, how often to water each, who is thirsty today, a water button and progress bars, and a camera button where the AI identifies the plant and suggests care and watering.",
       "author": "gonzaroman",
       "language": "en",
@@ -485,6 +545,9 @@
       "emoji": "🍕",
       "category": "food-drink",
       "description": "Pizza dough calculator for Neapolitan, New York, Roman or pan pizza: flour, water, salt and yeast, plus a timed plan for dinner.",
+      "description_i18n": {
+        "es": "Calculadora de masa para pizza napolitana, New York, romana o de sartén: harina, agua, sal y levadura, más un plan con horarios para la cena."
+      },
       "prompt": "A pizza dough calculator for Neapolitan, New York, Roman and pan pizza with flour, water, salt, yeast and oil from pizzas, ball weight, hydration and rise time, plus a timed plan to eat on time.",
       "author": "gonzaroman",
       "language": "en",
@@ -508,6 +571,9 @@
       "emoji": "🟥",
       "category": "graphics-design",
       "description": "Draw pixel art on a 16, 24 or 32 grid with a retro palette, fill, picker, mirror mode and undo. Every drawing is kept and saved as a crisp PNG.",
+      "description_i18n": {
+        "es": "Dibuja pixel art en una cuadrícula de 16, 24 o 32 con una paleta retro, relleno, cuentagotas, modo espejo y deshacer. Cada dibujo se guarda y se exporta como PNG nítido."
+      },
       "prompt": "A pixel art editor with a 16, 24 or 32 grid, a retro 24-colour palette, pencil, eraser, fill bucket, colour picker, mirror mode, undo and a grid toggle, keeping every drawing and saving it as a crisp PNG.",
       "author": "gonzaroman",
       "language": "en",
@@ -531,6 +597,9 @@
       "emoji": "🗣️",
       "category": "travel",
       "description": "Useful travel phrases in seven languages with audio and big text to show, and your AI translates anything else.",
+      "description_i18n": {
+        "es": "Frases útiles para viajar en siete idiomas, con audio y texto grande para enseñar, y tu IA traduce cualquier otra cosa."
+      },
       "prompt": "A travel phrasebook with 24 useful phrases by category in seven languages including Japanese with romaji, audio playback, a big text mode to show people, favourites and AI translation of any phrase.",
       "author": "gonzaroman",
       "language": "en",
@@ -557,6 +626,9 @@
       "emoji": "🥚",
       "category": "food-drink",
       "description": "Boil the perfect egg, from runny to hard, adjusted for size, fridge or room temperature and altitude, with an alarm.",
+      "description_i18n": {
+        "es": "Cuece el huevo perfecto, de líquido a duro, ajustado al tamaño, si sale de la nevera o del ambiente y a la altitud, con alarma."
+      },
       "prompt": "A boiled egg timer from soft to hard with an illustrated yolk, adjusted for egg size, fridge or room temperature and altitude, with an alarm and notification.",
       "author": "gonzaroman",
       "language": "en",
@@ -582,6 +654,9 @@
       "emoji": "🔷",
       "category": "graphics-design",
       "description": "Make seamless patterns from dots, stars, hearts, waves, leaves or emoji, with palettes, size, rotation and a bit of chaos, as wallpapers.",
+      "description_i18n": {
+        "es": "Crea patrones sin cortes con puntos, estrellas, corazones, ondas, hojas o emojis, con paletas, tamaño, giro y un poco de caos, como fondos de pantalla."
+      },
       "prompt": "A seamless pattern maker filling the screen with dots, rings, triangles, squares, crosses, waves, stars, hearts, leaves or emoji, with colour palettes, size, rotation, spacing and chaos sliders, and saving it as a wallpaper.",
       "author": "gonzaroman",
       "language": "en",
@@ -605,6 +680,9 @@
       "emoji": "🥫",
       "category": "food-drink",
       "description": "What you have in the fridge, freezer and cupboard, with expiry warnings. Snap your groceries and your AI adds them with dates.",
+      "description_i18n": {
+        "es": "Lo que tienes en la nevera, el congelador y la despensa, con avisos de caducidad. Haz una foto a la compra y tu IA la añade con fechas."
+      },
       "prompt": "A pantry tracker for fridge, freezer and cupboard with quantities and expiry dates, warnings for food to use soon, and an AI that adds groceries with estimated dates from a photo.",
       "author": "gonzaroman",
       "language": "en",
@@ -631,6 +709,9 @@
       "emoji": "🎨",
       "category": "graphics-design",
       "description": "Beautiful colour palettes with one tap: lock the colours you like, pick a harmony, or describe a mood and your AI invents one with names.",
+      "description_i18n": {
+        "es": "Paletas de colores bonitas con un toque: bloquea los colores que te gustan, elige una armonía o describe un ambiente y tu IA inventa una con nombres."
+      },
       "prompt": "A colour palette generator: tap to generate five colours, lock the ones you like, choose random, analogous, complementary, triad, monochrome or pastel, copy hex codes, keep favourites, and describe a mood so the AI invents a named palette.",
       "author": "gonzaroman",
       "language": "en",
@@ -656,6 +737,9 @@
       "emoji": "🧳",
       "category": "travel",
       "description": "A smart packing list built from your days, kind of trip and plans, with quantities, sections and progress until your bag is ready.",
+      "description_i18n": {
+        "es": "Una lista de maleta inteligente según tus días, el tipo de viaje y tus planes, con cantidades, secciones y progreso hasta que esté lista."
+      },
       "prompt": "A packing list generator: choose days, kind of trip and plans like flying, a baby or a dog, and get a checklist by section with quantities, progress, extra items and remaking the list.",
       "author": "gonzaroman",
       "language": "en",
@@ -679,6 +763,9 @@
       "emoji": "👗",
       "category": "lifestyle",
       "description": "Snap your outfit, pick the occasion and your AI gives honest, kind feedback, tweaks to try and colours that go with it.",
+      "description_i18n": {
+        "es": "Hazte una foto con tu ropa, elige la ocasión y tu IA te da una opinión sincera y amable, cambios para probar y colores que combinan."
+      },
       "prompt": "An outfit advisor: pick the occasion, take a mirror photo, and the AI scores the outfit, says what works, suggests three practical tweaks and colours that pair well, with a history of your looks.",
       "author": "gonzaroman",
       "language": "en",
@@ -705,6 +792,9 @@
       "emoji": "🙂",
       "category": "lifestyle",
       "description": "One tap a day to log how you feel, with tags like sleep, work or friends, a colour calendar, streaks and what lifts your mood most.",
+      "description_i18n": {
+        "es": "Un toque al día para apuntar cómo te sientes, con etiquetas como sueño, trabajo o amigos, un calendario de colores, rachas y lo que más te anima."
+      },
       "prompt": "A mood journal: pick how you feel from five faces, add tags like sleep, work, exercise or friends and an optional note, and see a month calendar coloured by mood, your streak and which tags lift your mood most.",
       "author": "gonzaroman",
       "language": "en",
@@ -727,7 +817,10 @@
       "name": "Menu Translator",
       "emoji": "🍜",
       "category": "travel",
-      "description": "Snap a menu in any language and your AI translates every dish, explains it, warns about allergies and",
+      "description": "Snap a menu in any language and your AI translates every dish, explains it, warns about allergies and recommends one.",
+      "description_i18n": {
+        "es": "Haz una foto a una carta en cualquier idioma y tu IA traduce cada plato, te lo explica, avisa de alergias y te recomienda uno."
+      },
       "prompt": "A menu translator: photograph a menu in any language and the AI lists every dish with its original name, translation, explanation, price, tags and allergy warnings for your diet, plus a recommendation.",
       "author": "gonzaroman",
       "language": "en",
@@ -754,6 +847,9 @@
       "emoji": "🍱",
       "category": "food-drink",
       "description": "Plan breakfast, lunch and dinner for the week, or ask your AI for a varied menu for your family with its shopping list.",
+      "description_i18n": {
+        "es": "Planifica desayuno, comida y cena de la semana, o pídele a tu IA un menú variado para tu familia con su lista de la compra."
+      },
       "prompt": "A weekly meal planner with breakfast, lunch and dinner per day, quick suggestions, and an AI that plans a varied week for your family and style with a shopping list to tick and share.",
       "author": "gonzaroman",
       "language": "en",
@@ -779,6 +875,9 @@
       "emoji": "🔠",
       "category": "graphics-design",
       "description": "Type a name and your AI designs four logo ideas in the style you pick. Monograms with your initials appear instantly.",
+      "description_i18n": {
+        "es": "Escribe un nombre y tu IA diseña cuatro ideas de logo en el estilo que elijas. Los monogramas con tus iniciales salen al instante."
+      },
       "prompt": "A logo maker: type a brand name, what it does and a style, and the AI designs four different SVG logo concepts, plus instant monograms with the initials, favourites and saving logos as PNG.",
       "author": "gonzaroman",
       "language": "en",
@@ -804,6 +903,9 @@
       "emoji": "🔍",
       "category": "shopping",
       "description": "Snap a food label and your AI explains the ingredients, allergens, additives and sugar.",
+      "description_i18n": {
+        "es": "Haz una foto a una etiqueta de comida y tu IA te explica los ingredientes, alérgenos, aditivos y azúcar."
+      },
       "prompt": "Take a photo of a food ingredients label with the camera and Acornix.askAI with the image explains the ingredients in plain words, highlights allergens, additives and sugar, and gives a simple health score, with a history.",
       "author": "gonzaroman",
       "language": "es",
@@ -830,6 +932,9 @@
       "emoji": "⏲️",
       "category": "food-drink",
       "description": "Several kitchen timers at once with presets for pasta, eggs, rice or pizza, a bell, vibration and a notification when each one is done.",
+      "description_i18n": {
+        "es": "Varios temporizadores de cocina a la vez con ajustes para pasta, huevos, arroz o pizza, campana, vibración y aviso cuando termina cada uno."
+      },
       "prompt": "Several named kitchen timers running at once with presets for pasta, eggs, rice and pizza, progress rings, pause and plus one minute, and a bell, vibration and notification when each finishes.",
       "author": "gonzaroman",
       "language": "en",
@@ -855,6 +960,9 @@
       "emoji": "🥄",
       "category": "food-drink",
       "description": "Cups to grams for flour, sugar, butter and more, spoons, millilitres and ounces, and an oven chart in Celsius, Fahrenheit and gas mark.",
+      "description_i18n": {
+        "es": "Tazas a gramos de harina, azúcar, mantequilla y más, cucharas, mililitros y onzas, y una tabla de horno en Celsius, Fahrenheit y gas."
+      },
       "prompt": "A kitchen converter: cups to grams per ingredient (flour, sugar, butter, rice, oats, cocoa, milk, honey…), spoons, millilitres and ounces, and an oven temperature chart in Celsius, Fahrenheit and gas mark.",
       "author": "gonzaroman",
       "language": "en",
@@ -878,6 +986,9 @@
       "emoji": "🖌️",
       "category": "kids",
       "description": "Paint with big brushes, a rainbow brush, stickers and bright colours, then save your drawing to the gallery.",
+      "description_i18n": {
+        "es": "Pinta con pinceles gordos, un pincel arcoíris, pegatinas y colores vivos, y guarda tu dibujo en la galería."
+      },
       "prompt": "A simple paint app for young children: a big canvas that fills the screen, thick brushes in three sizes, a big palette of bright colours, a rainbow brush, stamps of stars, hearts and animals, an eraser, undo, clear with a fun animation, and save the drawing to the phone gallery with Acornix.files.export. Huge buttons and no text needed.",
       "author": "gonzaroman",
       "language": "es",
@@ -901,6 +1012,9 @@
       "emoji": "🗺️",
       "category": "travel",
       "description": "Flights, hotels, visits and bookings in a day by day timeline, with what is next, map links and sharing.",
+      "description_i18n": {
+        "es": "Vuelos, hoteles, visitas y reservas en una línea del tiempo día a día, con lo siguiente que toca, enlaces al mapa y para compartir."
+      },
       "prompt": "A trip itinerary: add flights, trains, hotels, meals and visits with date, time, place and notes, see them as a day by day timeline with what is next, map links and share it as text.",
       "author": "gonzaroman",
       "language": "en",
@@ -924,6 +1038,9 @@
       "emoji": "🧺",
       "category": "shopping",
       "description": "Set a monthly grocery budget, log every shop and see what is left week by week.",
+      "description_i18n": {
+        "es": "Fija un presupuesto mensual para la compra, apunta cada compra y mira lo que te queda semana a semana."
+      },
       "prompt": "A monthly grocery budget: set the budget, add each shopping trip with shop and amount, see what is left, spending per week as bars and per shop, and a warning when you go over.",
       "author": "gonzaroman",
       "language": "es",
@@ -947,6 +1064,9 @@
       "emoji": "🫙",
       "category": "lifestyle",
       "description": "Write one good thing a day and drop it in the jar. Tap the jar to pull out a happy memory at random.",
+      "description_i18n": {
+        "es": "Escribe una cosa buena al día y échala al bote. Toca el bote para sacar un recuerdo bonito al azar."
+      },
       "prompt": "A gratitude jar: write one good thing each day and watch a folded paper note drop into a glass jar, then tap the jar to pull out a random happy memory with its date.",
       "author": "gonzaroman",
       "language": "en",
@@ -970,6 +1090,9 @@
       "emoji": "🌈",
       "category": "graphics-design",
       "description": "Design linear, radial and conic gradients with draggable colour stops, copy the CSS and save them as phone wallpapers.",
+      "description_i18n": {
+        "es": "Diseña degradados lineales, radiales y cónicos con paradas de color que arrastras, copia el CSS y guárdalos como fondo de pantalla."
+      },
       "prompt": "A gradient designer with linear, radial and conic types, draggable colour stops on a bar, an angle slider, presets and random gradients, copying the CSS and saving the gradient as a phone wallpaper.",
       "author": "gonzaroman",
       "language": "en",
@@ -993,6 +1116,9 @@
       "emoji": "🎁",
       "category": "lifestyle",
       "description": "Tell it who, their age, what they love and your budget, and your AI suggests specific, creative gifts. Keep the ones you like.",
+      "description_i18n": {
+        "es": "Dile para quién es, su edad, lo que le gusta y tu presupuesto, y tu IA te sugiere regalos concretos y originales. Guarda los que te gusten."
+      },
       "prompt": "A gift idea finder: choose who it is for, their age, interests and a budget, and the AI suggests six specific creative gifts with prices and why they fit, with saved favourites and ideas without AI too.",
       "author": "gonzaroman",
       "language": "en",
@@ -1018,6 +1144,9 @@
       "emoji": "🌌",
       "category": "graphics-design",
       "description": "Endless art made by code: flowing lines, orbits, mosaics, waves and growing roots. Tap for a new piece, drag to stir it, save your favourites.",
+      "description_i18n": {
+        "es": "Arte infinito hecho con código: líneas que fluyen, órbitas, mosaicos, ondas y raíces que crecen. Toca para una obra nueva, arrastra para removerla y guarda tus favoritas."
+      },
       "prompt": "Generative art made by code: flowing lines, orbits, mosaics, waves and growing roots in several palettes, a new piece on each tap, dragging to stir it, and saving the art as an image.",
       "author": "gonzaroman",
       "language": "en",
@@ -1041,6 +1170,9 @@
       "emoji": "⛽",
       "category": "travel",
       "description": "What a car trip costs in fuel, tolls and per person, in km and litres or miles and gallons, compared with an electric car.",
+      "description_i18n": {
+        "es": "Lo que cuesta un viaje en coche en combustible, peajes y por persona, en km y litros o millas y galones, comparado con un coche eléctrico."
+      },
       "prompt": "A trip fuel cost calculator in km and litres or miles and gallons, with consumption, fuel price, tolls, round trip and people, showing total, per person and the cost in an electric car.",
       "author": "gonzaroman",
       "language": "en",
@@ -1064,6 +1196,9 @@
       "emoji": "👨‍🍳",
       "category": "food-drink",
       "description": "Snap your fridge or type what you have and your AI suggests three recipes you can cook now, with what is missing.",
+      "description_i18n": {
+        "es": "Haz una foto a tu nevera o escribe lo que tienes y tu IA te propone tres recetas que puedes cocinar ya, con lo que te falta."
+      },
       "prompt": "A fridge chef: snap your fridge or type ingredients, choose time and mood, and the AI suggests three recipes using what you have, with missing items and steps, and saved recipes.",
       "author": "gonzaroman",
       "language": "en",
@@ -1090,6 +1225,9 @@
       "emoji": "🍹",
       "category": "food-drink",
       "description": "Alcohol-free drinks and mocktails with colourful recipes for any number of glasses. Shake the phone for a surprise drink.",
+      "description_i18n": {
+        "es": "Bebidas sin alcohol y mocktails con recetas de colores para los vasos que quieras. Agita el móvil para una bebida sorpresa."
+      },
       "prompt": "Alcohol-free drinks and mocktails with colourful cards, flavour filters, recipes that scale by glasses, favourites, and a surprise drink when you shake the phone.",
       "author": "gonzaroman",
       "language": "en",
@@ -1113,6 +1251,9 @@
       "emoji": "🎨",
       "category": "kids",
       "description": "Snap a child's drawing and your AI turns it into a magical story, read out loud.",
+      "description_i18n": {
+        "es": "Haz una foto al dibujo de un niño y tu IA lo convierte en un cuento mágico, leído en voz alta."
+      },
       "prompt": "Take a photo of a child's drawing with the camera and Acornix.askAI with the image writes a short magical bedtime story about what is in the drawing, read it aloud with Acornix.speak, and keep a gallery of drawings with their stories.",
       "author": "gonzaroman",
       "language": "es",
@@ -1138,7 +1279,10 @@
       "name": "Discount Calculator",
       "emoji": "🏷️",
       "category": "shopping",
-      "description": "Final price after discounts, stacked offers, 3 for 2 deals and tax",
+      "description": "Final price after discounts, stacked offers, 3 for 2 deals and tax, all in one place.",
+      "description_i18n": {
+        "es": "Precio final tras descuentos, ofertas acumuladas, 3x2 e impuestos, todo en un sitio."
+      },
       "prompt": "A discount calculator: original price, percentage off and extra discounts stacked, shows final price and savings, a quick 2 fo",
       "author": "gonzaroman",
       "language": "es",
@@ -1162,6 +1306,9 @@
       "emoji": "🌍",
       "category": "travel",
       "description": "Mark the 195 countries you have visited or want to visit, see your progress by continent and share a flag card.",
+      "description_i18n": {
+        "es": "Marca los 195 países que has visitado o quieres visitar, mira tu progreso por continente y comparte una tarjeta con tus banderas."
+      },
       "prompt": "A countries visited tracker with all 195 countries and flags, tap to mark visited or wish list, progress by continent, search, and a shareable card with your flags.",
       "author": "gonzaroman",
       "language": "en",
@@ -1185,6 +1332,9 @@
       "emoji": "🔢",
       "category": "kids",
       "description": "Count fruits and animals by tapping them, then pick the right number. From 1 to 20 with stars.",
+      "description_i18n": {
+        "es": "Cuenta frutas y animales tocándolos y elige el número correcto. Del 1 al 20, con estrellas."
+      },
       "prompt": "A counting game for preschoolers: a number of fruits or animals appears, the child taps each one to count them out loud with sound and animation, then picks the right number from three big buttons. Levels from 1 to 20 and stars as rewards.",
       "author": "gonzaroman",
       "language": "es",
@@ -1208,6 +1358,9 @@
       "emoji": "🌓",
       "category": "graphics-design",
       "description": "Check if two colours are readable: WCAG ratio, AA and AAA for normal and large text, a live preview and a button that fixes the colour.",
+      "description_i18n": {
+        "es": "Comprueba si dos colores se leen bien: ratio WCAG, AA y AAA para texto normal y grande, vista previa y un botón que arregla el color."
+      },
       "prompt": "A colour contrast checker with a live preview of text on a background, the WCAG contrast ratio, AA and AAA results for normal and large text, swapping colours, a button that fixes the text colour and example pairs that pass.",
       "author": "gonzaroman",
       "language": "en",
@@ -1231,6 +1384,9 @@
       "emoji": "🖍️",
       "category": "kids",
       "description": "Tap to fill drawings with colour: house, cat, fish, rocket and more. Save your art to the gallery.",
+      "description_i18n": {
+        "es": "Toca para rellenar dibujos de color: casa, gato, pez, cohete y más. Guarda tu obra en la galería."
+      },
       "prompt": "A coloring book for kids with at least 8 simple line drawings drawn in code, like a house, a cat, a fish, a car, a flower, a rocket, tap an area to fill it with the chosen colour from a big palette, undo, and save the picture with Acornix.files.export.",
       "author": "gonzaroman",
       "language": "es",
@@ -1254,6 +1410,9 @@
       "emoji": "☕",
       "category": "food-drink",
       "description": "The right coffee and water for V60, French press, AeroPress, moka, espresso or cold brew, with a guided brew timer.",
+      "description_i18n": {
+        "es": "La cantidad justa de café y agua para V60, prensa francesa, AeroPress, moka, espresso o cold brew, con un temporizador guiado."
+      },
       "prompt": "A coffee brewing calculator for V60, French press, AeroPress, moka pot, espresso and cold brew, with grams of coffee and water by ratio, grind and temperature, and a guided brew timer.",
       "author": "gonzaroman",
       "language": "en",
@@ -1277,6 +1436,9 @@
       "emoji": "🧹",
       "category": "lifestyle",
       "description": "Share the housework fairly: spin the wheel or deal all chores at random, tick them off and see who earns more points.",
+      "description_i18n": {
+        "es": "Reparte las tareas de casa de forma justa: gira la ruleta o reparte todo al azar, márcalas y mira quién suma más puntos."
+      },
       "prompt": "A chore wheel for the household: people and chores, spin the wheel to assign a chore, or deal all chores fairly at random, tick them off this week and keep points per person.",
       "author": "gonzaroman",
       "language": "en",
@@ -1300,6 +1462,9 @@
       "emoji": "🪣",
       "category": "lifestyle",
       "description": "Your life goals in one place, sorted by travel, adventure or learning. Tick them off with a photo and a memory, and celebrate.",
+      "description_i18n": {
+        "es": "Tus metas en la vida en un solo sitio, por viajes, aventura o aprender. Táchalas con una foto y un recuerdo, y celébralo."
+      },
       "prompt": "A bucket list with categories like travel, adventure and learning, suggested ideas, a progress ring, and ticking goals off with a photo, a note and a celebration.",
       "author": "gonzaroman",
       "language": "en",
@@ -1323,6 +1488,9 @@
       "emoji": "🫧",
       "category": "kids",
       "description": "Pop floating bubbles full of stars and animals. A calm game with no losing.",
+      "description_i18n": {
+        "es": "Explota burbujas llenas de estrellas y animales. Un juego tranquilo en el que no se pierde."
+      },
       "prompt": "A relaxing bubble popping game for kids: shiny bubbles float up from the bottom, tap to pop them with a pop sound and particles, some bubbles hold stars or animals, a counter, and calm music, with no losing.",
       "author": "gonzaroman",
       "language": "es",
@@ -1346,6 +1514,9 @@
       "emoji": "🎂",
       "category": "lifestyle",
       "description": "Never forget a birthday: countdowns, ages, gift notes, and a warm message written by your AI ready to send.",
+      "description_i18n": {
+        "es": "No olvides ningún cumpleaños: cuenta atrás, edades, ideas de regalo y una felicitación cariñosa escrita por tu IA lista para enviar."
+      },
       "prompt": "A birthday tracker with countdowns, ages, relationships and gift notes, a hero card with confetti on the day, grouped by month, and an AI that writes a warm personal birthday message to copy or share.",
       "author": "gonzaroman",
       "language": "en",
@@ -1371,6 +1542,9 @@
       "emoji": "🌙",
       "category": "kids",
       "description": "Choose a hero, a place and a theme and your AI writes a gentle story, read aloud at bedtime.",
+      "description_i18n": {
+        "es": "Elige un protagonista, un lugar y un tema y tu IA escribe un cuento tranquilo, leído en voz alta para dormir."
+      },
       "prompt": "Bedtime stories for children: pick a hero, a place and a theme and Acornix.askAI writes a gentle short story with the onText option so it appears as it is written, read aloud slowly with Acornix.speak, a dark calm screen, and saved favourite stories. Include three built in stories that work without AI.",
       "author": "gonzaroman",
       "language": "es",
@@ -1396,6 +1570,9 @@
       "emoji": "🎹",
       "category": "kids",
       "description": "A colourful piano for little hands with animals, drums and nursery songs to follow.",
+      "description_i18n": {
+        "es": "Un piano de colores para manos pequeñas, con animales, batería y canciones infantiles para seguir."
+      },
       "prompt": "A baby piano with big colourful keys that play notes with the Web Audio API, each key also shows a bouncing animal that makes a sound, a mode that plays simple nursery songs with lights on the keys to follow, and a drum mode.",
       "author": "gonzaroman",
       "language": "es",
@@ -1419,6 +1596,9 @@
       "emoji": "🧑‍🎨",
       "category": "graphics-design",
       "description": "Build your cartoon avatar: skin, hair and colour, eyes, mouth, glasses, hats and background, or roll the dice. Save it as a picture.",
+      "description_i18n": {
+        "es": "Crea tu avatar de dibujos: piel, pelo y color, ojos, boca, gafas, gorros y fondo, o tira el dado. Guárdalo como imagen."
+      },
       "prompt": "A cartoon avatar maker with skin tones, hairstyles and hair colours, eyes, mouths, glasses, hats, earrings and backgrounds, a random button, saved avatars and export as a PNG.",
       "author": "gonzaroman",
       "language": "en",
@@ -1442,6 +1622,9 @@
       "emoji": "🌞",
       "category": "lifestyle",
       "description": "Positive affirmations for calm, confidence, self-love, energy and sleep on soothing colours. Read them aloud, keep favourites, write your own.",
+      "description_i18n": {
+        "es": "Afirmaciones positivas para la calma, la confianza, quererte, la energía y el sueño sobre colores relajantes. Léelas en voz alta, guarda tus favoritas y escribe las tuyas."
+      },
       "prompt": "Positive affirmations by category, calm, confidence, self-love, energy and sleep, on soothing gradients with a breathing circle, swipe for another, read aloud, favourites and your own affirmations.",
       "author": "gonzaroman",
       "language": "en",
@@ -1467,6 +1650,9 @@
       "emoji": "🔤",
       "category": "kids",
       "description": "Learn the alphabet with a cute animal for every letter, spoken out loud, and a little quiz.",
+      "description_i18n": {
+        "es": "Aprende el abecedario con un animal para cada letra, dicho en voz alta, y un pequeño juego de preguntas."
+      },
       "prompt": "An alphabet app for small children: a big letter and a cute animal for each letter, tap to hear the letter and the animal name spoken, swipe for the next, and a small quiz mode where you tap the animal that starts with a letter. Big colourful buttons, no reading needed.",
       "author": "gonzaroman",
       "language": "es",
@@ -1490,6 +1676,9 @@
       "emoji": "🔎",
       "category": "reference",
       "description": "Point your camera at a plant, animal, object, dish or landmark and your AI tells you what it is, with fun facts and a useful tip.",
+      "description_i18n": {
+        "es": "Apunta la cámara a una planta, un animal, un objeto, un plato o un monumento y tu IA te dice qué es, con curiosidades y un consejo útil."
+      },
       "prompt": "A camera app that identifies whatever you point it at using the AI: name, kind, confidence, a short description, surprising facts, a practical tip and a warning when something is toxic or dangerous. It can read the answer aloud, tell you more, and keeps a gallery of your discoveries.",
       "author": "gonzaroman",
       "language": "en",
@@ -1517,6 +1706,9 @@
       "emoji": "📸",
       "category": "lifestyle",
       "description": "Point your camera at anything and your AI suggests things to make, cook, fix or play with it.",
+      "description_i18n": {
+        "es": "Apunta la cámara a cualquier cosa y tu IA te propone qué hacer, cocinar, arreglar o a qué jugar con ella."
+      },
       "prompt": "A camera app: I point it at anything, take a photo and my AI suggests five ideas of what to do with it, with steps, and I can choose a focus like cooking, crafts, fixing or games for kids.",
       "author": "gonzaroman",
       "language": "en",
@@ -1543,6 +1735,9 @@
       "emoji": "🏗️",
       "category": "games",
       "description": "Stack sliding blocks as high as you can: overhangs are cut off and tumble down, perfect drops grow your tower.",
+      "description_i18n": {
+        "es": "Apila bloques que se deslizan lo más alto que puedas: lo que sobresale se corta y cae, y los encajes perfectos hacen crecer tu torre."
+      },
       "prompt": "A 3D stacking game with three.js: blocks slide in from alternating sides, I tap to drop them, the part that overhangs is cut and falls, perfect drops give combos and grow the block back, rainbow colours and a camera that rises with the tower.",
       "author": "gonzaroman",
       "language": "en",
@@ -1568,6 +1763,9 @@
       "emoji": "🪐",
       "category": "education",
       "description": "Watch the planets orbit the Sun, pinch to zoom and tap any planet for its size, year, day, moons, temperature and a fun fact.",
+      "description_i18n": {
+        "es": "Mira los planetas girar alrededor del Sol, pellizca para acercar y toca cualquiera para ver su tamaño, año, día, lunas, temperatura y una curiosidad."
+      },
       "prompt": "An animated solar system: the eight planets orbiting the Sun with a speed control, pinch and drag to explore, and a sheet for each planet and the Sun with distance, year length, day length, moons, diameter, temperature and a fun fact.",
       "author": "gonzaroman",
       "language": "en",
@@ -1591,6 +1789,9 @@
       "emoji": "🍽️",
       "category": "health-fitness",
       "description": "Snap a photo of your meal and your AI estimates the calories, protein, carbs and fat. Adjust portions and track your day.",
+      "description_i18n": {
+        "es": "Haz una foto a tu plato y tu IA calcula las calorías, proteínas, hidratos y grasas. Ajusta las raciones y sigue tu día."
+      },
       "prompt": "A food log powered by the AI: take a photo of a meal or type it, get each food with its portion, calories and macros, adjust portions with plus and minus, and see a daily ring with calories and protein, carbs and fat against a goal.",
       "author": "gonzaroman",
       "language": "en",
@@ -1617,6 +1818,9 @@
       "emoji": "⚗️",
       "category": "education",
       "description": "All 118 elements in a colourful table. Tap one to see its symbol, mass, group and what it's used for, or filter by family.",
+      "description_i18n": {
+        "es": "Los 118 elementos en una tabla de colores. Toca uno para ver su símbolo, masa, grupo y para qué se usa, o filtra por familia."
+      },
       "prompt": "An interactive periodic table with all 118 elements coloured by family, a legend that filters by family, search by name or symbol, and a detail sheet with atomic number, mass, group, period and a short note on each element.",
       "author": "gonzaroman",
       "language": "en",
@@ -1640,6 +1844,9 @@
       "emoji": "🏎️",
       "category": "games",
       "description": "Race down a synthwave highway at sunset: drag to dodge neon barriers and grab glowing orbs.",
+      "description_i18n": {
+        "es": "Corre por una autopista synthwave al atardecer: arrastra para esquivar barreras de neón y coger esferas brillantes."
+      },
       "prompt": "A 3D endless racer with three.js in a synthwave style: a neon grid highway, a striped sunset sun, wireframe mountains, a glowing car I steer by dragging, neon barriers to dodge, orbs to collect and speed that keeps rising.",
       "author": "gonzaroman",
       "language": "en",
@@ -1665,6 +1872,9 @@
       "emoji": "🎼",
       "category": "music",
       "description": "Any chord in any key with a clear diagram and a real plucked sound, plus a progression player to practise changes.",
+      "description_i18n": {
+        "es": "Cualquier acorde en cualquier tonalidad con un diagrama claro y sonido real de cuerda, más un reproductor de progresiones para practicar los cambios."
+      },
       "prompt": "A guitar chord finder: pick a root and type (major, minor, 7, m7, maj7, sus, dim, add9, 6) to see the diagram with open or barre shapes and hear it strummed or as an arpeggio with Karplus-Strong synthesis, and build a looping progression at your tempo.",
       "author": "gonzaroman",
       "language": "en",
@@ -1688,6 +1898,9 @@
       "emoji": "🩹",
       "category": "reference",
       "description": "What to do in an emergency, step by step and offline: CPR with a rhythm guide, choking, bleeding, burns, stroke and more.",
+      "description_i18n": {
+        "es": "Qué hacer en una emergencia, paso a paso y sin conexión: RCP con guía de ritmo, atragantamiento, hemorragias, quemaduras, ictus y más."
+      },
       "prompt": "An offline first aid guide with a big emergency call button and the number for your region, step-by-step cards for CPR with a 110 bpm metronome, choking, heavy bleeding, stroke, severe allergy, seizures, burns, fainting, heatstroke, nosebleeds, sprains and poisoning, each with what not to do.",
       "author": "gonzaroman",
       "language": "en",
@@ -1711,6 +1924,9 @@
       "emoji": "🏰",
       "category": "games",
       "description": "Defend your castle wall: enemies march up the valley towards you and you shoot them down with your crossbow.",
+      "description_i18n": {
+        "es": "Defiende la muralla de tu castillo: los enemigos suben por el valle hacia ti y tú los derribas con tu ballesta."
+      },
       "prompt": "A 3D castle defence game with three.js where I stand on the castle wall looking down a valley, soldiers, goblins, knights, ogres and bosses march towards me along the road, I tap to shoot crossbow bolts, and between waves I buy upgrades like more damage, faster reload, multiple bolts, fire bolts and wall repairs.",
       "author": "gonzaroman",
       "language": "en",
@@ -1736,6 +1952,9 @@
       "emoji": "🌬️",
       "category": "health-fitness",
       "description": "Follow a glowing ball to breathe in, hold and breathe out: 4-7-8 to calm down, box breathing to focus, and more.",
+      "description_i18n": {
+        "es": "Sigue una bola de luz para inspirar, aguantar y espirar: 4-7-8 para calmarte, respiración cuadrada para concentrarte y más."
+      },
       "prompt": "A guided breathing app with a ball that grows and shrinks, four patterns (4-7-8 calm, box 4-4-4-4, coherent 5.5-5.5 and energising 4-2-4), sessions of 1 to 10 minutes, soft tones and vibration on each phase, and a session counter.",
       "author": "gonzaroman",
       "language": "en",
@@ -1759,6 +1978,9 @@
       "emoji": "🤔",
       "category": "entertainment",
       "description": "Party, silly and deep dilemmas: everyone taps their choice and you reveal how the group split.",
+      "description_i18n": {
+        "es": "Dilemas de fiesta, absurdos y profundos: cada uno elige y se revela cómo se ha dividido el grupo."
+      },
       "prompt": "A Would You Rather party game with three decks of questions, two big colourful halves to tap, a vote counter so the whole group can vote and a reveal with percentages.",
       "author": "gonzaroman",
       "language": "en",
@@ -1782,6 +2004,9 @@
       "emoji": "🏳️",
       "category": "education",
       "description": "Guess the country from its flag, by continent or the whole world. Rounds of 10 with streaks and a list of the ones to review.",
+      "description_i18n": {
+        "es": "Adivina el país por su bandera, por continente o de todo el mundo. Rondas de 10 con rachas y una lista de las que repasar."
+      },
       "prompt": "A flags quiz: pick a continent or the whole world, see a big flag and choose the country among four options from the same region, with streaks, best scores per region and a list of the flags you missed.",
       "author": "gonzaroman",
       "language": "en",
@@ -1805,6 +2030,9 @@
       "emoji": "🕰️",
       "category": "reference",
       "description": "Your cities at a glance with day and night icons, a slider to shift the time, and a planner that finds hours that work for everyone.",
+      "description_i18n": {
+        "es": "Tus ciudades de un vistazo con iconos de día y noche, un deslizador para mover la hora y un planificador que encuentra horas que van bien a todos."
+      },
       "prompt": "A world clock: add cities from a list, see their time, day and difference from mine with a sun or moon icon, a slider to move the time forward or back, and a meeting planner grid that highlights the hours that are working hours everywhere.",
       "author": "gonzaroman",
       "language": "en",
@@ -1828,6 +2056,9 @@
       "emoji": "🌊",
       "category": "weather",
       "description": "Wind, gusts, waves, swell and water temperature for any beach, with a 3-day chart that rates each hour for surfing and sailing.",
+      "description_i18n": {
+        "es": "Viento, rachas, olas, mar de fondo y temperatura del agua en cualquier playa, con un gráfico de 3 días que puntúa cada hora para surf y vela."
+      },
       "prompt": "A wind and waves app for surfers and sailors using the free Open-Meteo forecast and marine APIs with no key. Search a beach or use my location. Show wind speed, gusts and direction with an animated compass arrow, wave height, wave period and swell direction, water temperature, and a 3 day hourly chart. Rate each hour as good, fair or poor for surfing and for sailing with colours.",
       "author": "gonzaroman",
       "language": "es",
@@ -1853,6 +2084,9 @@
       "emoji": "🌦️",
       "category": "weather",
       "description": "Find out at a glance whether you need an umbrella today, with the chance of rain hour by hour and the next 7 days.",
+      "description_i18n": {
+        "es": "Descubre de un vistazo si hoy necesitas paraguas, con la probabilidad de lluvia hora a hora y los próximos 7 días."
+      },
       "prompt": "A weather app that answers one question: will it rain today and in the next hours. Use the free Open-Meteo API with no key, ask for the location or let me search a city, show a big friendly answer with an umbrella or sun, the chance of rain hour by hour as a chart for the next 24 hours, and the next 7 days. Texts in Spanish if the phone is in Spanish, otherwise in English. Save my last city.",
       "author": "gonzaroman",
       "language": "es",
@@ -1878,6 +2112,9 @@
       "emoji": "🧥",
       "category": "weather",
       "description": "Looks at the forecast for the morning, afternoon and evening and tells you what to wear, adjusted to whether you feel the cold.",
+      "description_i18n": {
+        "es": "Mira la previsión de mañana, tarde y noche y te dice qué ponerte, según lo friolero que seas."
+      },
       "prompt": "A what to wear app using the free Open-Meteo forecast API with no key, with my location or a searched city. Look at today's temperature, feels like, rain chance, wind and UV for the morning, afternoon and evening and suggest an outfit with big emoji cards like coat, sweater, t-shirt, umbrella, sunglasses and scarf. Let me say if I feel the cold more or less than most people and adjust the advice. Also suggest what to wear tomorrow.",
       "author": "gonzaroman",
       "language": "es",
@@ -1903,6 +2140,9 @@
       "emoji": "📉",
       "category": "health-fitness",
       "description": "Log your weight each day and watch the 7-day trend instead of the daily ups and downs, with your goal and BMI.",
+      "description_i18n": {
+        "es": "Apunta tu peso cada día y mira la tendencia de 7 días en vez de los altibajos diarios, con tu objetivo y tu IMC."
+      },
       "prompt": "A weight tracker in kg or lb: log once a day, see the change since you started and this week, progress to a goal, a chart with daily points and the 7-day moving average, BMI from your height and a history you can edit.",
       "author": "gonzaroman",
       "language": "en",
@@ -1926,6 +2166,9 @@
       "emoji": "🌦️",
       "category": "weather",
       "description": "Current weather, the next 24 hours and 7 days for your city, with an animated sky that follows the weather.",
+      "description_i18n": {
+        "es": "El tiempo ahora, las próximas 24 horas y 7 días en tu ciudad, con un cielo animado que sigue al tiempo."
+      },
       "prompt": "A beautiful weather app using the free Open-Meteo API with no key. Use my location or let me search a city and save it. Show the current temperature big, feels like, wind, humidity and an animated background that changes with the weather and day or night, a swipeable hourly forecast for 24 hours and the next 7 days with highs and lows. Texts in Spanish if the phone is in Spanish, otherwise in English.",
       "author": "gonzaroman",
       "language": "es",
@@ -1951,6 +2194,9 @@
       "emoji": "💧",
       "category": "health-fitness",
       "description": "Tap a glass, a bottle or a litre and watch the water rise. Daily goal, a week chart, streaks and gentle reminders.",
+      "description_i18n": {
+        "es": "Toca un vaso, una botella o un litro y mira cómo sube el agua. Objetivo diario, gráfico semanal, rachas y recordatorios suaves."
+      },
       "prompt": "A water intake tracker with a glass that fills with an animated wave, buttons for a small glass, glass, bottle and litre, today's log with undo, a 7-day chart, a streak, an adjustable daily goal, confetti when you reach it and optional reminders.",
       "author": "gonzaroman",
       "language": "en",
@@ -1976,6 +2222,9 @@
       "emoji": "📏",
       "category": "utilities",
       "description": "Convert length, weight, temperature, volume, speed, area, data, time and fuel consumption instantly.",
+      "description_i18n": {
+        "es": "Convierte longitud, peso, temperatura, volumen, velocidad, superficie, datos, tiempo y consumo al instante."
+      },
       "prompt": "A clean unit converter with categories for length, weight, temperature, volume, speed, area, data, time and fuel consumption, a swap button and every other unit listed below.",
       "author": "gonzaroman",
       "language": "en",
@@ -1999,6 +2248,9 @@
       "emoji": "☀️",
       "category": "weather",
       "description": "Today's UV index as a colourful gauge, the hourly curve, the peak hour and how long until you burn for your skin type.",
+      "description_i18n": {
+        "es": "El índice UV de hoy en un indicador de colores, la curva por horas, la hora pico y cuánto tardarías en quemarte según tu piel."
+      },
       "prompt": "A UV index app with the free Open-Meteo API and no key. Use my location or a searched city. Show today's UV index as a big colourful gauge, the hourly UV curve for today, the peak hour, when it is safe to be in the sun, and advice for sunscreen, hat and sunglasses for each level. Add a skin type picker to estimate minutes until sunburn. Tomorrow's max UV too.",
       "author": "gonzaroman",
       "language": "es",
@@ -2024,6 +2276,9 @@
       "emoji": "🎸",
       "category": "music",
       "description": "Tune your guitar, bass, ukulele or violin with the microphone: a needle shows how far you are, and it turns green when it's right.",
+      "description_i18n": {
+        "es": "Afina tu guitarra, bajo, ukelele o violín con el micrófono: una aguja te dice cuánto te falta y se pone verde cuando está bien."
+      },
       "prompt": "A chromatic and instrument tuner using the microphone with pitch detection, a needle in cents, the nearest string for guitar, bass, ukulele and violin, tune up or down hints, reference A from 415 to 466 Hz and tappable strings that play the target note.",
       "author": "gonzaroman",
       "language": "en",
@@ -2049,6 +2304,9 @@
       "emoji": "🎲",
       "category": "entertainment",
       "description": "Add the players, pick a level from kids to bold, and let the phone choose truths and dares.",
+      "description_i18n": {
+        "es": "Añade a los jugadores, elige un nivel de niños a atrevido y deja que el móvil elija verdades y retos."
+      },
       "prompt": "A Truth or Dare game for groups: add players, choose kids, friends or bold level, it picks whose turn it is and shows a truth or a dare card, all fun and friendly.",
       "author": "gonzaroman",
       "language": "en",
@@ -2072,6 +2330,9 @@
       "emoji": "❓",
       "category": "entertainment",
       "description": "Ten quick questions on geography, science, history, movies, sports or animals, with streaks and a 50:50.",
+      "description_i18n": {
+        "es": "Diez preguntas rápidas de geografía, ciencia, historia, cine, deportes o animales, con rachas y un 50:50."
+      },
       "prompt": "A trivia quiz with built-in questions in English and Spanish about geography, science, history, movies and music, sports and animals, ten questions per round with a 15 second timer, streak bonus, 50:50 and best score per topic.",
       "author": "gonzaroman",
       "language": "en",
@@ -2095,6 +2356,9 @@
       "emoji": "📋",
       "category": "sports",
       "description": "Tell your AI your sport, level, goal and days, and get a week of sessions with warm-ups, sets and tips. Tick them off as you go.",
+      "description_i18n": {
+        "es": "Dile a tu IA tu deporte, nivel, objetivo y días, y tendrás una semana de sesiones con calentamiento, series y consejos. Márcalas al hacerlas."
+      },
       "prompt": "A training planner with the AI: choose a sport, level, training days and goal, and get a seven-day plan with session names, intensity, minutes and detailed steps, rest days, tips, ticks for completed sessions, next week's plan that progresses from the last one, and sharing.",
       "author": "gonzaroman",
       "language": "en",
@@ -2120,6 +2384,9 @@
       "emoji": "🏅",
       "category": "sports",
       "description": "Make a knockout bracket or a league for your friends, enter results and see who goes through or tops the table.",
+      "description_i18n": {
+        "es": "Haz un cuadro de eliminatorias o una liga para tus amigos, apunta resultados y mira quién pasa o quién va primero."
+      },
       "prompt": "A tournament organiser: type the players or teams, shuffle the draw, choose knockout with automatic byes or a round-robin league with matchdays, enter scores, see the bracket advance or the table with points and goal difference, and share the results.",
       "author": "gonzaroman",
       "language": "en",
@@ -2143,6 +2410,9 @@
       "emoji": "🔦",
       "category": "utilities",
       "description": "Turn on your phone's flashlight, send SOS in Morse code, use a strobe or light up the screen.",
+      "description_i18n": {
+        "es": "Enciende la linterna del móvil, manda SOS en Morse, usa un estroboscopio o ilumina la pantalla."
+      },
       "prompt": "A flashlight app that uses my phone's real torch through Acornix, with a big power button, SOS in Morse code, an adjustable strobe and a coloured screen light.",
       "author": "gonzaroman",
       "language": "en",
@@ -2168,6 +2438,9 @@
       "emoji": "🎵",
       "category": "music",
       "description": "Tap squares on a 16×16 grid and it plays a looping melody that always sounds good, with ripples of light. Share it as a link.",
+      "description_i18n": {
+        "es": "Toca casillas en una cuadrícula de 16×16 y suena una melodía en bucle que siempre queda bien, con ondas de luz. Compártela con un enlace."
+      },
       "prompt": "A 16 by 16 step sequencer on a pentatonic scale: tap or drag to fill squares, it loops with glowing ripples, three sounds, tempo, random and clear buttons, and the pattern can be shared as a link.",
       "author": "gonzaroman",
       "language": "en",
@@ -2191,6 +2464,9 @@
       "emoji": "✖️",
       "category": "education",
       "description": "Pick the tables you want and practise them at your pace or race against 60 seconds. Stars for every table you master.",
+      "description_i18n": {
+        "es": "Elige las tablas que quieras y practícalas a tu ritmo o contra 60 segundos. Estrellas por cada tabla que domines."
+      },
       "prompt": "A times tables trainer for kids: pick which tables to practise, a big number keypad, a relaxed practice mode of 20 questions and a 60-second race with a high score. Mistakes come back later, and each table earns up to three stars.",
       "author": "gonzaroman",
       "language": "en",
@@ -2214,6 +2490,9 @@
       "emoji": "⏱️",
       "category": "utilities",
       "description": "A precise stopwatch with laps and a countdown timer with presets, alarm and notification.",
+      "description_i18n": {
+        "es": "Un cronómetro preciso con vueltas y un temporizador con ajustes rápidos, alarma y aviso."
+      },
       "prompt": "A stopwatch with laps that marks the fastest and slowest, and a countdown timer with quick presets, a ring that empties, an alarm sound, vibration and a notification when time is up.",
       "author": "gonzaroman",
       "language": "en",
@@ -2239,6 +2518,9 @@
       "emoji": "⌛",
       "category": "business",
       "description": "Track the hours you spend on each project and client, with hourly rates and a report to share.",
+      "description_i18n": {
+        "es": "Apunta las horas que dedicas a cada proyecto y cliente, con tarifas por hora y un informe para compartir."
+      },
       "prompt": "A time tracker with a big start and stop button, projects with hourly rates, what I'm working on, totals for today, this week, this month or all time with the money earned, a log and a report to share.",
       "author": "gonzaroman",
       "language": "en",
@@ -2262,6 +2544,9 @@
       "emoji": "🎾",
       "category": "sports",
       "description": "Keep score point by point: 15-30-40, deuce and advantage, tie-breaks, sets, who serves, and set or break point alerts.",
+      "description_i18n": {
+        "es": "Lleva el marcador punto a punto: 15-30-40, iguales y ventaja, tie-breaks, sets, quién saca y avisos de punto de set o de break."
+      },
       "prompt": "A tennis and padel scorer: tap the player who wins each point and it handles 15, 30, 40, deuce, advantage or golden point, games, sets, tie-break at 6-6 with service changes, best of 1, 3 or 5 sets, break, set and match point alerts and undo.",
       "author": "gonzaroman",
       "language": "en",
@@ -2285,6 +2570,9 @@
       "emoji": "👥",
       "category": "sports",
       "description": "Add who's playing, mark who came today and split them into fair teams by skill with one tap.",
+      "description_i18n": {
+        "es": "Añade a quién juega, marca quién ha venido hoy y haz equipos igualados por nivel con un toque."
+      },
       "prompt": "A team maker: save your list of players, tick who is here today, give each one 1 to 3 stars, choose 2 to 6 teams and get balanced teams with an animated reveal, then share them.",
       "author": "gonzaroman",
       "language": "en",
@@ -2308,6 +2596,9 @@
       "emoji": "✅",
       "category": "productivity",
       "description": "A clear to-do list with lists, priorities, due dates and overdue tasks grouped at the top.",
+      "description_i18n": {
+        "es": "Una lista de tareas clara con listas, prioridades, fechas límite y las atrasadas agrupadas arriba."
+      },
       "prompt": "A to-do app with personal, work and shopping lists, three priority colours, due dates, tasks grouped by overdue, today, upcoming and no date, a progress bar and done tasks crossed out.",
       "author": "gonzaroman",
       "language": "en",
@@ -2331,6 +2622,9 @@
       "emoji": "🪄",
       "category": "productivity",
       "description": "Overwhelmed by a big task? Your AI breaks it into small steps with time estimates.",
+      "description_i18n": {
+        "es": "¿Te agobia una tarea grande? Tu IA la divide en pasos pequeños con tiempos estimados."
+      },
       "prompt": "An app for overwhelming tasks: I write a big task and my AI breaks it into small concrete steps with minutes for each, I tick them off with a progress bar, and any step can be split again into smaller steps.",
       "author": "gonzaroman",
       "language": "en",
@@ -2356,6 +2650,9 @@
       "emoji": "⚽",
       "category": "sports",
       "description": "Pick a formation, drag your players, add the opponent and draw passes and runs on a football pitch.",
+      "description_i18n": {
+        "es": "Elige una formación, arrastra a tus jugadores, añade al rival y dibuja pases y desmarques en un campo de fútbol."
+      },
       "prompt": "A football tactics board with formations like 4-4-2, 4-3-3, 3-5-2 and 7-a-side, draggable numbered players and ball, an optional opponent, arrows for passes and dashed lines for runs, undo, and saving the board as an image.",
       "author": "gonzaroman",
       "language": "en",
@@ -2379,6 +2676,9 @@
       "emoji": "🎛️",
       "category": "music",
       "description": "Slide your fingers to play: left and right change the note, up and down the brightness. Glowing, multi-touch and always in tune.",
+      "description_i18n": {
+        "es": "Desliza los dedos para tocar: izquierda y derecha cambian la nota, arriba y abajo el brillo. Luminoso, multitáctil y siempre afinado."
+      },
       "prompt": "A multi-touch synth pad: horizontal position picks the note snapped to a scale (pentatonic, major, minor, blues, Japanese or free), vertical position opens the filter, with saw, square, triangle and sine waves, echo, glide, octave and glowing visuals.",
       "author": "gonzaroman",
       "language": "en",
@@ -2402,6 +2702,9 @@
       "emoji": "✳️",
       "category": "reference",
       "description": "Arrows, maths, currencies, accents, Greek letters, ticks and more. Tap to build a string, long-press to copy one.",
+      "description_i18n": {
+        "es": "Flechas, matemáticas, monedas, acentos, letras griegas, ticks y más. Toca para formar un texto, mantén pulsado para copiar uno."
+      },
       "prompt": "A special characters picker with categories for arrows, maths, money, punctuation, accented letters, Greek, legal and tech, shapes, ticks, music and zodiac, box drawing and superscripts, search by name in English or Spanish, recent symbols and a tray to build and copy text.",
       "author": "gonzaroman",
       "language": "en",
@@ -2425,6 +2728,9 @@
       "emoji": "🌗",
       "category": "weather",
       "description": "Sunrise, sunset, golden and blue hour with the sun moving along today's arc, plus the moon phase and the next full moon.",
+      "description_i18n": {
+        "es": "Salida y puesta del sol, hora dorada y hora azul con el sol moviéndose por el arco de hoy, más la fase lunar y la próxima luna llena."
+      },
       "prompt": "A sun and moon app using the free Open-Meteo API with no key for sunrise and sunset, with my location or a searched city. Draw today's sun path as an arc with the sun moving along it in real time, show sunrise, sunset, day length, golden hour and blue hour for photographers, and how many minutes the day grows or shrinks. Calculate the moon phase locally and draw it, with the next full moon and new moon dates.",
       "author": "gonzaroman",
       "language": "es",
@@ -2450,6 +2756,9 @@
       "emoji": "🧩",
       "category": "games",
       "description": "Endless Sudoku puzzles with one solution, four levels, notes, hints and undo.",
+      "description_i18n": {
+        "es": "Sudokus infinitos con una sola solución, cuatro niveles, notas, pistas y deshacer."
+      },
       "prompt": "A Sudoku game that generates new puzzles with a single solution in four difficulty levels, with pencil notes, hints, undo, mistakes counter, timer and the game saved.",
       "author": "gonzaroman",
       "language": "en",
@@ -2473,6 +2782,9 @@
       "emoji": "🔁",
       "category": "finance",
       "description": "All your subscriptions in one place: what they cost per month and year, and when the next payment is.",
+      "description_i18n": {
+        "es": "Todas tus suscripciones en un solo sitio: lo que cuestan al mes y al año, y cuándo es el próximo pago."
+      },
       "prompt": "A subscriptions tracker with quick buttons for Netflix, Spotify and others, price and billing cycle, the total per month, year and day, upcoming payments with warnings for the next days and a tip on what you'd save.",
       "author": "gonzaroman",
       "language": "en",
@@ -2496,6 +2808,9 @@
       "emoji": "🐉",
       "category": "entertainment",
       "description": "Your AI narrates an adventure where you choose what happens: fantasy, space, pirates and more.",
+      "description_i18n": {
+        "es": "Tu IA narra una aventura en la que tú decides qué pasa: fantasía, espacio, piratas y más."
+      },
       "prompt": "An interactive story game where my AI is the narrator: I choose a world like fantasy, space or pirates, name my hero, and each turn it writes the story with three choices or I type my own action, with health and inventory, saved to continue later.",
       "author": "gonzaroman",
       "language": "en",
@@ -2521,6 +2836,9 @@
       "emoji": "🎞️",
       "category": "photo-video",
       "description": "Make stop motion films with the camera: onion skin to line up each frame, a film strip, playback speed and saving the video.",
+      "description_i18n": {
+        "es": "Haz películas de stop motion con la cámara: papel cebolla para alinear cada fotograma, tira de película, velocidad de reproducción y guardar el vídeo."
+      },
       "prompt": "A stop motion studio with the camera: snap frames with onion skin of the previous one, a film strip, undo and duplicate, play the animation at a chosen fps and save it as a video.",
       "author": "gonzaroman",
       "language": "en",
@@ -2546,6 +2864,9 @@
       "emoji": "📦",
       "category": "business",
       "description": "Count your stock with big plus and minus buttons and get warned when something is running low.",
+      "description_i18n": {
+        "es": "Cuenta tu stock con botones grandes de más y menos y recibe un aviso cuando algo se esté acabando."
+      },
       "prompt": "An inventory counter for a small shop with products, emoji, big plus and minus buttons that repeat when held, a minimum for each product, low stock warnings at the top and a restock list to share.",
       "author": "gonzaroman",
       "language": "en",
@@ -2569,6 +2890,9 @@
       "emoji": "🚀",
       "category": "games",
       "description": "A neon space shooter: drag your ship, blast waves of enemies, collect upgrades and beat the bosses.",
+      "description_i18n": {
+        "es": "Un shooter espacial de neón: arrastra tu nave, acaba con oleadas de enemigos, recoge mejoras y vence a los jefes."
+      },
       "prompt": "A vertical space shooter with a ship I drag, auto fire, enemy types that zigzag, shoot or take many hits, waves, a boss every five waves, shield and weapon upgrades and a best score.",
       "author": "gonzaroman",
       "language": "en",
@@ -2592,6 +2916,9 @@
       "emoji": "🍽️",
       "category": "finance",
       "description": "Split a bill evenly with tip and rounding, or work out who owes whom after a trip.",
+      "description_i18n": {
+        "es": "Divide una cuenta a partes iguales con propina y redondeo, o calcula quién debe a quién después de un viaje."
+      },
       "prompt": "A bill splitter with two modes: split evenly with people, tip and rounding up, or enter how much each person paid and it tells who pays whom to settle up, with a share button.",
       "author": "gonzaroman",
       "language": "en",
@@ -2615,6 +2942,9 @@
       "emoji": "🐝",
       "category": "education",
       "description": "Hear a word and spell it with the bee keyboard. Three levels in English or Spanish, clues, slow mode and three lives.",
+      "description_i18n": {
+        "es": "Escucha una palabra y deletréala con el teclado de la abeja. Tres niveles en inglés o español, pistas, modo lento y tres vidas."
+      },
       "prompt": "A spelling bee game: the phone says a word out loud and you spell it with a big on-screen keyboard, in English or Spanish, three levels of difficulty, a slow mode that spells it letter by letter, clues, three lives and stars per level.",
       "author": "gonzaroman",
       "language": "en",
@@ -2640,6 +2970,9 @@
       "emoji": "✍️",
       "category": "music",
       "description": "Tell your AI what the song is about and it writes original lyrics with guitar chords on top. Transpose, save and share.",
+      "description_i18n": {
+        "es": "Cuéntale a tu IA de qué va la canción y escribe una letra original con los acordes de guitarra encima. Transpón, guarda y comparte."
+      },
       "prompt": "A songwriting helper with the AI: describe the topic and pick a style, mood and language, and get an original song with verses, chorus and bridge, chords placed above the lyrics, transposition up and down, another take, saved songs and sharing.",
       "author": "gonzaroman",
       "language": "en",
@@ -2665,6 +2998,9 @@
       "emoji": "♠️",
       "category": "games",
       "description": "Classic Klondike solitaire made for touch: tap a card and it jumps where it fits.",
+      "description_i18n": {
+        "es": "El solitario Klondike de siempre hecho para el táctil: toca una carta y salta a donde encaja."
+      },
       "prompt": "Klondike solitaire for phones where tapping a card moves it to the best place, with draw one or draw three, undo, hints, auto-finish, a win animation and the game saved.",
       "author": "gonzaroman",
       "language": "en",
@@ -2688,6 +3024,9 @@
       "emoji": "🌐",
       "category": "utilities",
       "description": "Take a photo of a sign, menu or label and your AI translates it into your language, with notes.",
+      "description_i18n": {
+        "es": "Haz una foto a un cartel, una carta o una etiqueta y tu IA lo traduce a tu idioma, con notas."
+      },
       "prompt": "A camera translator: I frame any text like a sign, a menu or instructions, take a photo and my AI reads it and translates it into the language I choose, keeping the layout, with cultural notes, listen and copy buttons, and I can also type text.",
       "author": "gonzaroman",
       "language": "en",
@@ -2715,6 +3054,9 @@
       "emoji": "😴",
       "category": "health-fitness",
       "description": "Tap when you go to bed and when you wake up. See your hours, how you slept, your usual bedtime and a 14-night chart.",
+      "description_i18n": {
+        "es": "Toca al acostarte y al despertarte. Mira tus horas, cómo has dormido, a qué hora te sueles acostar y un gráfico de 14 noches."
+      },
       "prompt": "A sleep tracker with a going to sleep and I am awake button, manual entries with bed and wake times, a quality emoji and notes, a 14-night bar chart with the goal line, the 7-day average, usual bedtime, best night and a daily sleep tip.",
       "author": "gonzaroman",
       "language": "en",
@@ -2738,6 +3080,9 @@
       "emoji": "🐤",
       "category": "games",
       "description": "Tap to flap a little bird through the pipes, earn medals and beat your best score.",
+      "description_i18n": {
+        "es": "Toca para que un pajarito vuele entre las tuberías, gana medallas y supera tu récord."
+      },
       "prompt": "A Flappy Bird style game with a cute bird drawn in code, tap to flap, moving pipes later on, medals, sounds, parallax clouds and hills and a saved best score.",
       "author": "gonzaroman",
       "language": "en",
@@ -2761,6 +3106,9 @@
       "emoji": "🏷️",
       "category": "business",
       "description": "Snap what you want to sell and your AI writes the listing, picks keywords and suggests a fair price.",
+      "description_i18n": {
+        "es": "Haz una foto a lo que quieres vender y tu IA escribe el anuncio, elige palabras clave y te sugiere un precio justo."
+      },
       "prompt": "A second-hand selling helper: I take up to four photos of something I want to sell, add details, choose a style, and my AI writes the title and description, suggests a price range, the condition, the category and keywords, ready to copy.",
       "author": "gonzaroman",
       "language": "en",
@@ -2787,6 +3135,9 @@
       "emoji": "🏆",
       "category": "sports",
       "description": "A huge two-colour scoreboard for football, basketball, volleyball, table tennis, hockey or any game, with clock, periods and fouls.",
+      "description_i18n": {
+        "es": "Un marcador enorme a dos colores para fútbol, baloncesto, voleibol, tenis de mesa, hockey o cualquier juego, con reloj, periodos y faltas."
+      },
       "prompt": "A full-screen scoreboard: tap a team's half to score, +2 and +3 for basketball, fouls, a game clock with periods, sets that close themselves in volleyball and table tennis, team names and colours, undo, swap sides, landscape layout and saved results.",
       "author": "gonzaroman",
       "language": "en",
@@ -2810,6 +3161,9 @@
       "emoji": "🎹",
       "category": "music",
       "description": "See any scale on a piano and a guitar neck, with the notes, degrees and steps, and hear it going up and down.",
+      "description_i18n": {
+        "es": "Mira cualquier escala en un piano y en el mástil de una guitarra, con las notas, grados e intervalos, y escúchala subir y bajar."
+      },
       "prompt": "A music scales reference with every root and major, minor, pentatonic, blues, harmonic minor, modes and chromatic scales, showing the notes, degrees and whole and half steps, on a two-octave piano or a 15-fret guitar neck you can tap, and playing it up and down.",
       "author": "gonzaroman",
       "language": "en",
@@ -2833,6 +3187,9 @@
       "emoji": "🐷",
       "category": "finance",
       "description": "Fill piggy bank jars for each goal and see how much to save each month to get there in time.",
+      "description_i18n": {
+        "es": "Llena huchas para cada meta y mira cuánto ahorrar cada mes para llegar a tiempo."
+      },
       "prompt": "A savings goals app with a jar that fills up for each goal, target and deadline, quick buttons to add money, how much to save per month and per week to reach it, and confetti when a goal is reached.",
       "author": "gonzaroman",
       "language": "en",
@@ -2856,6 +3213,9 @@
       "emoji": "🤝",
       "category": "business",
       "description": "Follow your deals from first contact to won, with a funnel, a forecast and next steps.",
+      "description_i18n": {
+        "es": "Sigue tus ventas desde el primer contacto hasta cerrarlas, con embudo, previsión y próximos pasos."
+      },
       "prompt": "A simple sales CRM with deals, client, value, next step date, contact and notes, stages from lead to won or lost, a funnel chart, open value, a weighted forecast and overdue follow-ups in red.",
       "author": "gonzaroman",
       "language": "en",
@@ -2879,6 +3239,9 @@
       "emoji": "🌅",
       "category": "productivity",
       "description": "Run your morning and evening routines step by step with a timer and a voice that guides you.",
+      "description_i18n": {
+        "es": "Sigue tus rutinas de mañana y noche paso a paso con un temporizador y una voz que te guía."
+      },
       "prompt": "A routine runner with morning and evening routines made of timed steps I can edit, a full screen mode that counts down each step, says the next step out loud, vibrates and celebrates at the end.",
       "author": "gonzaroman",
       "language": "en",
@@ -2904,6 +3267,9 @@
       "emoji": "🏛️",
       "category": "reference",
       "description": "Convert numbers to Roman numerals and back, see how each one is built, and learn the three rules to read them.",
+      "description_i18n": {
+        "es": "Convierte números a romanos y al revés, mira cómo se forma cada uno y aprende las tres reglas para leerlos."
+      },
       "prompt": "A Roman numerals converter that works both ways for 1 to 3999, shows how the number breaks down symbol by symbol, warns about invalid numerals, and has the seven symbols, examples to try and the rules for reading them.",
       "author": "gonzaroman",
       "language": "en",
@@ -2927,6 +3293,9 @@
       "emoji": "🧾",
       "category": "finance",
       "description": "Snap a receipt and your AI notes the shop, the items, the total and the category.",
+      "description_i18n": {
+        "es": "Haz una foto a un tique y tu IA apunta la tienda, los productos, el total y la categoría."
+      },
       "prompt": "A receipt scanner: I take a photo of a shopping receipt and my AI reads the shop, date, every item with its price, the total and a category, saves it, adds up the month and exports everything to CSV.",
       "author": "gonzaroman",
       "language": "en",
@@ -2953,6 +3322,9 @@
       "emoji": "🎲",
       "category": "utilities",
       "description": "Roll dice, flip a coin, pick a number or choose from your own list. Shake to roll.",
+      "description_i18n": {
+        "es": "Tira dados, lanza una moneda, saca un número o elige de tu propia lista. Agita para tirar."
+      },
       "prompt": "A random picker with four modes: up to five dice with total, a flipping coin, a random number in a range without repeats, and picking from my own list, with shake to roll.",
       "author": "gonzaroman",
       "language": "en",
@@ -2976,6 +3348,9 @@
       "emoji": "🧠",
       "category": "education",
       "description": "Tell it what you're studying, or paste your notes, and your AI makes a multiple-choice quiz with an explanation for every answer.",
+      "description_i18n": {
+        "es": "Dile qué estás estudiando o pega tus apuntes y tu IA te hace un test con explicación en cada respuesta."
+      },
       "prompt": "A quiz generator: type a topic or paste your notes, choose the level and number of questions, and the AI creates a multiple-choice quiz. After each answer show whether it was right and why, and at the end a score ring and a list of past quizzes.",
       "author": "gonzaroman",
       "language": "en",
@@ -3001,6 +3376,9 @@
       "emoji": "💪",
       "category": "health-fitness",
       "description": "Put your phone on the floor and touch it with your nose on every push-up. Daily goal, a 30-day calendar and records.",
+      "description_i18n": {
+        "es": "Pon el móvil en el suelo y tócalo con la nariz en cada flexión. Objetivo diario, calendario de 30 días y récords."
+      },
       "prompt": "A push-up counter where you touch the screen with your nose on each rep, with beeps and vibration, counting out loud every ten, sets saved per day, an adjustable daily goal, a 30-day heat calendar, a streak and records for best set, best day and total.",
       "author": "gonzaroman",
       "language": "en",
@@ -3026,6 +3404,9 @@
       "emoji": "🧭",
       "category": "productivity",
       "description": "Sort your tasks by urgent and important: do, schedule, delegate or drop them.",
+      "description_i18n": {
+        "es": "Ordena tus tareas por urgentes e importantes: hacer, planificar, delegar o descartar."
+      },
       "prompt": "An Eisenhower priority matrix with four coloured quadrants, do it now, schedule it, delegate it and drop it, where I add tasks to a quadrant and tap a task to complete, move or delete it.",
       "author": "gonzaroman",
       "language": "en",
@@ -3049,6 +3430,9 @@
       "emoji": "🌼",
       "category": "weather",
       "description": "Pollen forecast for alder, birch, grass, olive, mugwort and ragweed, with the ones you're allergic to first and the best hours to go out.",
+      "description_i18n": {
+        "es": "Previsión de polen de aliso, abedul, gramíneas, olivo, artemisa y ambrosía, con primero los que te dan alergia y las mejores horas para salir."
+      },
       "prompt": "A pollen forecast app for allergy sufferers using the free Open-Meteo air quality API with no key, which has pollen for Europe: alder, birch, grass, mugwort, olive and ragweed. Use my location or a searched city. Let me pick which pollens I am allergic to. Show today's level for each as low, moderate, high or very high with colours and plant emoji, an hourly chart for the next 4 days, the best and worst hours to go outside, and tips. If there is no data for the place, say pollen data is only ava",
       "author": "gonzaroman",
       "language": "es",
@@ -3074,6 +3458,9 @@
       "emoji": "📖",
       "category": "reference",
       "description": "Look up any word in English or Spanish with your AI: meanings, examples, pronunciation, synonyms, a translation and where it comes from.",
+      "description_i18n": {
+        "es": "Busca cualquier palabra en inglés o español con tu IA: significados, ejemplos, pronunciación, sinónimos, traducción y de dónde viene."
+      },
       "prompt": "A dictionary powered by the AI: look up a word in English, Spanish or translate between them, with IPA pronunciation, parts of speech, definitions with examples, synonyms and opposites you can tap, translation and origin, a speak button, a word of the day and recent words.",
       "author": "gonzaroman",
       "language": "en",
@@ -3100,6 +3487,9 @@
       "emoji": "👾",
       "category": "photo-video",
       "description": "Turn any photo into pixel art with retro palettes like Game Boy, PICO-8, NES and CGA, adjustable pixel size and dithering.",
+      "description_i18n": {
+        "es": "Convierte cualquier foto en pixel art con paletas retro como Game Boy, PICO-8, NES y CGA, tamaño de píxel ajustable y tramado."
+      },
       "prompt": "Turn a photo into pixel art: choose the number of pixels, retro palettes like Game Boy, PICO-8, NES, CGA and 1-bit, ordered dithering, and save a crisp scaled up PNG.",
       "author": "gonzaroman",
       "language": "en",
@@ -3125,6 +3515,9 @@
       "emoji": "🎤",
       "category": "business",
       "description": "Your AI turns your idea into a memorable elevator pitch, with a teleprompter to rehearse it.",
+      "description_i18n": {
+        "es": "Tu IA convierte tu idea en un elevator pitch memorable, con un teleprompter para ensayarlo."
+      },
       "prompt": "An elevator pitch writer: I describe my idea, the audience, the length and the style, and my AI writes a pitch with a tagline and three key points, which I can listen to, copy, or rehearse with a scrolling teleprompter and timer.",
       "author": "gonzaroman",
       "language": "en",
@@ -3151,6 +3544,9 @@
       "emoji": "💊",
       "category": "health-fitness",
       "description": "Add your medication and times, then tick each dose. See what's due today by morning, midday, afternoon and night.",
+      "description_i18n": {
+        "es": "Añade tu medicación y sus horas, y marca cada toma. Mira lo que te toca hoy por la mañana, mediodía, tarde y noche."
+      },
       "prompt": "A medication tracker: add each medicine with dose, icon, times and days of the week, see today's doses grouped by part of the day, tick them as taken, see what is late, and get a notification at each time while the app is open.",
       "author": "gonzaroman",
       "language": "en",
@@ -3176,6 +3572,9 @@
       "emoji": "🎨",
       "category": "photo-video",
       "description": "Pull the main colours out of any photo, see where each one is, copy their codes and keep the palettes you like.",
+      "description_i18n": {
+        "es": "Saca los colores principales de cualquier foto, mira dónde está cada uno, copia sus códigos y guarda las paletas que te gusten."
+      },
       "prompt": "Extract the main colours of a photo with k-means, show where each colour is in the photo, copy hex codes, choose 3 to 8 colours, keep palettes and save a palette card image.",
       "author": "gonzaroman",
       "language": "en",
@@ -3201,6 +3600,9 @@
       "emoji": "📷",
       "category": "photo-video",
       "description": "Twelve filters like Vintage, Noir and Dream plus sliders for brightness, warmth, vignette and grain. Hold the photo to compare with the original.",
+      "description_i18n": {
+        "es": "Doce filtros como Vintage, Noir y Dream, más ajustes de brillo, calidez, viñeta y grano. Mantén pulsada la foto para comparar con la original."
+      },
       "prompt": "A photo filter app: open or take a photo, pick from twelve filters with live thumbnails, fine-tune brightness, contrast, saturation, warmth, vignette and grain, hold to compare and save the result.",
       "author": "gonzaroman",
       "language": "en",
@@ -3226,6 +3628,9 @@
       "emoji": "🧑‍🏫",
       "category": "photo-video",
       "description": "Your AI scores each photo for composition, light, colour, focus and story, and gives you practical tips to take a better one.",
+      "description_i18n": {
+        "es": "Tu IA puntúa cada foto en composición, luz, color, nitidez e historia, y te da consejos prácticos para hacerla mejor."
+      },
       "prompt": "A photography coach powered by the AI: take or choose a photo and get an overall score, scores for composition, light, colour, focus and story, what works and three practical tips, with a history of your photos.",
       "author": "gonzaroman",
       "language": "en",
@@ -3252,6 +3657,9 @@
       "emoji": "📸",
       "category": "photo-video",
       "description": "A party photo booth on your phone: a countdown, four shots in a row and a printed style strip or grid, in colour, black and white, retro or pop.",
+      "description_i18n": {
+        "es": "Un fotomatón de fiesta en tu móvil: cuenta atrás, cuatro fotos seguidas y una tira o cuadrícula como impresa, en color, blanco y negro, retro o pop."
+      },
       "prompt": "A photo booth with the front camera: a 3 2 1 countdown, four shots with a flash, colour, black and white, retro or pop looks, and a strip or grid with the date to save.",
       "author": "gonzaroman",
       "language": "en",
@@ -3277,6 +3685,9 @@
       "emoji": "🏃",
       "category": "sports",
       "description": "Enter any two of distance, time and pace and get the third, with splits, speed and predicted times for 5K to marathon.",
+      "description_i18n": {
+        "es": "Pon dos de distancia, tiempo y ritmo y te da el tercero, con parciales, velocidad y tiempos previstos de 5K a maratón."
+      },
       "prompt": "A running pace calculator in km or miles: fill in two of distance, time and pace and it solves the third, with race presets, speed, a splits table and race time predictions using Riegel's formula.",
       "author": "gonzaroman",
       "language": "en",
@@ -3300,6 +3711,9 @@
       "emoji": "🔢",
       "category": "reference",
       "description": "Convert between decimal, binary, hexadecimal and octal as you type, and flip bits with a tap to see what changes.",
+      "description_i18n": {
+        "es": "Convierte entre decimal, binario, hexadecimal y octal mientras escribes, y cambia bits con un toque para ver qué pasa."
+      },
       "prompt": "A number base converter: decimal, binary, hexadecimal and octal fields that update each other as you type, tappable bits, shift, NOT and +1 buttons, and the number shown as a character, a colour and a signed 16-bit value.",
       "author": "gonzaroman",
       "language": "en",
@@ -3323,6 +3737,9 @@
       "emoji": "🔊",
       "category": "utilities",
       "description": "Measure how loud it is around you with a gauge, min, average, max and a live chart.",
+      "description_i18n": {
+        "es": "Mide el ruido que hay a tu alrededor con un indicador, mínimo, media, máximo y un gráfico en directo."
+      },
       "prompt": "A sound level meter using the microphone that shows approximate decibels on a gauge with a needle, a label like library or traffic, min, average and max, and a live chart.",
       "author": "gonzaroman",
       "language": "en",
@@ -3348,6 +3765,9 @@
       "emoji": "💰",
       "category": "finance",
       "description": "Add up what you own and what you owe, and save a monthly snapshot to see your net worth grow.",
+      "description_i18n": {
+        "es": "Suma lo que tienes y lo que debes, y guarda una foto cada mes para ver crecer tu patrimonio."
+      },
       "prompt": "A net worth tracker with a list of assets and a list of debts I can edit, my net worth, and a monthly snapshot button that draws a line chart and keeps a history.",
       "author": "gonzaroman",
       "language": "en",
@@ -3371,6 +3791,9 @@
       "emoji": "🐍",
       "category": "games",
       "description": "The classic snake in glowing neon: swipe to turn, eat the lights and chase bonus orbs.",
+      "description_i18n": {
+        "es": "La serpiente de siempre en neón: desliza para girar, cómete las luces y persigue las esferas de bonus."
+      },
       "prompt": "A neon snake game with swipe controls and arrow buttons, glowing food, pink bonus orbs that disappear, walls or wrap-around mode, three speeds and a saved best score.",
       "author": "gonzaroman",
       "language": "en",
@@ -3394,6 +3817,9 @@
       "emoji": "📡",
       "category": "reference",
       "description": "Translate text to Morse and back, play it as sound, flashlight or vibration, and tap your own code on a straight key.",
+      "description_i18n": {
+        "es": "Traduce texto a Morse y al revés, reprodúcelo con sonido, linterna o vibración, y teclea tu propio código en un manipulador."
+      },
       "prompt": "A Morse code app: translate text to Morse and Morse to text, play it as a beep, with the flashlight or with vibration at an adjustable speed, a big straight key that decodes what you tap, and a chart of every letter and number.",
       "author": "gonzaroman",
       "language": "en",
@@ -3419,6 +3845,9 @@
       "emoji": "💣",
       "category": "games",
       "description": "Clear the field without hitting a mine: three sizes, long-press to flag and best times.",
+      "description_i18n": {
+        "es": "Despeja el campo sin pisar una mina: tres tamaños, mantén pulsado para poner bandera y mejores tiempos."
+      },
       "prompt": "A Minesweeper game made for touch: tap to dig, long-press or a flag mode to place flags, chording on numbers, three board sizes, a timer and best times per level.",
       "author": "gonzaroman",
       "language": "en",
@@ -3442,6 +3871,9 @@
       "emoji": "🥁",
       "category": "music",
       "description": "A precise metronome with tap tempo, time signatures, subdivisions, accents you can set per beat and a swinging pendulum.",
+      "description_i18n": {
+        "es": "Un metrónomo preciso con tap tempo, compases, subdivisiones, acentos por tiempo y un péndulo que se balancea."
+      },
       "prompt": "A metronome from 30 to 260 bpm with sample-accurate timing, tempo names, tap tempo, time signatures from 2/4 to 7/8, subdivisions, accent, normal or muted beats, three click sounds, a pendulum and vibration on accents.",
       "author": "gonzaroman",
       "language": "en",
@@ -3465,6 +3897,9 @@
       "emoji": "🃏",
       "category": "games",
       "description": "Flip the cards and find all the pairs: four board sizes, four themes and star ratings.",
+      "description_i18n": {
+        "es": "Da la vuelta a las cartas y encuentra todas las parejas: cuatro tamaños, cuatro temas y estrellas."
+      },
       "prompt": "A memory card game with 3D flipping cards, emoji themes like animals, food, sports and space, four board sizes, moves and time, star rating, confetti and best scores.",
       "author": "gonzaroman",
       "language": "en",
@@ -3488,6 +3923,9 @@
       "emoji": "😂",
       "category": "photo-video",
       "description": "Classic memes with bold outlined text on your own photo or a ready made background. Drag the text, change size and colour, save it.",
+      "description_i18n": {
+        "es": "Memes clásicos con texto grande con borde sobre tu foto o un fondo ya hecho. Arrastra el texto, cambia tamaño y color, y guárdalo."
+      },
       "prompt": "A meme maker with top and bottom text in bold outlined capitals over my photo or a ready made emoji background, draggable text, text size and colour, and a few classic templates.",
       "author": "gonzaroman",
       "language": "en",
@@ -3511,6 +3949,9 @@
       "emoji": "🧘",
       "category": "health-fitness",
       "description": "A calm timer with a sunset glow, rain, ocean, fire or wind sounds made on the fly, singing bowl bells and a daily streak.",
+      "description_i18n": {
+        "es": "Un temporizador tranquilo con luz de atardecer, sonidos de lluvia, mar, fuego o viento, campanas de cuenco tibetano y racha diaria."
+      },
       "prompt": "A meditation timer from 3 to 20 minutes with a glowing sun, a progress ring, ambient sounds generated in the browser (rain, ocean, fire, wind), bells at the start, end and optional intervals, gentle quotes, and stats for streak and total minutes.",
       "author": "gonzaroman",
       "language": "en",
@@ -3534,6 +3975,9 @@
       "emoji": "⚡",
       "category": "education",
       "description": "60 seconds of mental maths. Answer fast to chain combos and multiply your points, in three levels from sums to brackets.",
+      "description_i18n": {
+        "es": "60 segundos de cálculo mental. Responde rápido para encadenar combos y multiplicar tus puntos, en tres niveles de sumas a paréntesis."
+      },
       "prompt": "A fast mental maths game: 60 seconds, four answer buttons, three levels from addition and subtraction to all four operations and brackets, combo multipliers for answers in a row, time penalty for mistakes and a best score per level.",
       "author": "gonzaroman",
       "language": "en",
@@ -3557,6 +4001,9 @@
       "emoji": "🏷️",
       "category": "business",
       "description": "Work out the right selling price, your real margin or the most you can pay, including tax.",
+      "description_i18n": {
+        "es": "Calcula el precio de venta adecuado, tu margen real o lo máximo que puedes pagar, con impuestos incluidos."
+      },
       "prompt": "A pricing calculator with three modes: the selling price for a target margin, the margin from cost and price, and the maximum cost for a price and margin, with markup, profit, price with tax and a breakdown bar.",
       "author": "gonzaroman",
       "language": "en",
@@ -3580,6 +4027,9 @@
       "emoji": "🔍",
       "category": "utilities",
       "description": "Zoom in on small print with your camera, freeze the image, turn on the light and boost contrast.",
+      "description_i18n": {
+        "es": "Amplía la letra pequeña con la cámara, congela la imagen, enciende la luz y sube el contraste."
+      },
       "prompt": "A magnifying glass app using the camera with zoom up to 8x, pinch to zoom, freeze the picture to read it calmly, the camera light, and high contrast, inverted and yellow filters for reading.",
       "author": "gonzaroman",
       "language": "en",
@@ -3605,6 +4055,9 @@
       "emoji": "🎱",
       "category": "entertainment",
       "description": "Ask a yes or no question, shake or tap the ball and read your answer.",
+      "description_i18n": {
+        "es": "Haz una pregunta de sí o no, agita o toca la bola y lee tu respuesta."
+      },
       "prompt": "A realistic Magic 8 Ball: type a question, shake the phone or tap the ball, it shakes and the blue triangle floats up with one of the twenty classic answers.",
       "author": "gonzaroman",
       "language": "en",
@@ -3628,6 +4081,9 @@
       "emoji": "🏦",
       "category": "finance",
       "description": "Work out the monthly payment of a mortgage, car or personal loan, with the full amortisation table.",
+      "description_i18n": {
+        "es": "Calcula la cuota mensual de una hipoteca, un coche o un préstamo personal, con la tabla de amortización completa."
+      },
       "prompt": "A loan calculator for mortgages, car loans and personal loans with sliders for amount, interest and years, the monthly payment, total interest, a chart of principal and interest per year and the amortisation table.",
       "author": "gonzaroman",
       "language": "en",
@@ -3651,6 +4107,9 @@
       "emoji": "🏁",
       "category": "sports",
       "description": "A big stopwatch with lap times, best and worst laps in colour, a pace bar against your best lap and saved sessions.",
+      "description_i18n": {
+        "es": "Un cronómetro grande con vueltas, la mejor y la peor en color, una barra de ritmo frente a tu mejor vuelta y sesiones guardadas."
+      },
       "prompt": "A lap timer: start, lap, stop and resume with big buttons, lap list with differences, best lap in green and worst in red, a bar that shows the current lap against your best, stats, saved sessions and sharing. It keeps running if you close the app.",
       "author": "gonzaroman",
       "language": "en",
@@ -3674,6 +4133,9 @@
       "emoji": "📋",
       "category": "productivity",
       "description": "Organise anything in columns: drag cards from To do to Done, with colours and quick editing.",
+      "description_i18n": {
+        "es": "Organiza lo que sea en columnas: arrastra tarjetas de Por hacer a Hecho, con colores y edición rápida."
+      },
       "prompt": "A Kanban board with To do, Doing, Review and Done columns, colourful cards I can drag between columns and reorder, swipe between columns, and tap a card to edit, move or delete it.",
       "author": "gonzaroman",
       "language": "en",
@@ -3697,6 +4159,9 @@
       "emoji": "🎶",
       "category": "music",
       "description": "A 17-key kalimba with bell-like tines. Slide across them for a glissando, or learn songs as the next note lights up.",
+      "description_i18n": {
+        "es": "Una kalimba de 17 teclas con sonido de campanita. Desliza el dedo para un glissando o aprende canciones mientras se ilumina la siguiente nota."
+      },
       "prompt": "A kalimba with the standard 17-tine layout and a bell-like sound, glissando by sliding, a key selector, and songs like Twinkle Twinkle, Ode to Joy and Happy Birthday that you can learn note by note or listen to.",
       "author": "gonzaroman",
       "language": "en",
@@ -3720,6 +4185,9 @@
       "emoji": "🧾",
       "category": "business",
       "description": "Create clean, professional invoices with items, tax and discount, ready to send or print.",
+      "description_i18n": {
+        "es": "Crea facturas limpias y profesionales con conceptos, impuestos y descuento, listas para enviar o imprimir."
+      },
       "prompt": "An invoice maker where I fill in my details, the client, invoice number and dates, items with quantity and price, tax and discount, and see a clean professional invoice I can print as PDF or share.",
       "author": "gonzaroman",
       "language": "en",
@@ -3743,6 +4211,9 @@
       "emoji": "🏀",
       "category": "games",
       "description": "Swipe up to shoot hoops on a 3D court: real bounces off the rim, swishes, streaks and a moving hoop.",
+      "description_i18n": {
+        "es": "Desliza hacia arriba para encestar en una pista 3D: rebotes reales en el aro, canastas limpias, rachas y una canasta que se mueve."
+      },
       "prompt": "A 3D basketball shooting game with three.js: swipe up to throw, ball physics that bounce off the rim and backboard, a wooden court and crowd lights, 60 seconds, extra points for swishes and streaks, and the hoop starts moving after 10 points.",
       "author": "gonzaroman",
       "language": "en",
@@ -3768,6 +4239,9 @@
       "emoji": "📚",
       "category": "education",
       "description": "Type an exercise or take a photo and your AI explains it step by step, gives you just a hint, or explains it like you're 10.",
+      "description_i18n": {
+        "es": "Escribe un ejercicio o hazle una foto y tu IA te lo explica paso a paso, te da solo una pista o te lo explica como si tuvieras 10 años."
+      },
       "prompt": "A homework helper: type the exercise or take a photo of it, choose just a hint, step by step or explain like I am 10, and the AI answers with numbered steps revealed one at a time, the final answer and how to check it. Keep a list of recent questions.",
       "author": "gonzaroman",
       "language": "en",
@@ -3794,6 +4268,9 @@
       "emoji": "🔥",
       "category": "productivity",
       "description": "Tick off your habits every day, keep your streaks alive and see the last 12 weeks at a glance.",
+      "description_i18n": {
+        "es": "Marca tus hábitos cada día, mantén vivas tus rachas y mira las últimas 12 semanas de un vistazo."
+      },
       "prompt": "A habit tracker where each habit has an emoji and colour, a row of the last seven days to tick, the current and best streak, and a 12 week heatmap of how many habits I completed each day.",
       "author": "gonzaroman",
       "language": "en",
@@ -3817,6 +4294,9 @@
       "emoji": "🏋️",
       "category": "health-fitness",
       "description": "Interval timer with Tabata and other presets, big numbers you can read from the floor, countdown beeps and colours for work and rest.",
+      "description_i18n": {
+        "es": "Temporizador de intervalos con Tabata y otros ajustes, números grandes que se leen desde el suelo, pitidos de cuenta atrás y colores para trabajo y descanso."
+      },
       "prompt": "A HIIT interval timer: presets like Tabata 20/10, adjustable prepare, work, rest, rounds, sets and rest between sets, a full-screen countdown that turns red for work and green for rest, beeps in the last three seconds, vibration, pause, skip and a finish screen.",
       "author": "gonzaroman",
       "language": "en",
@@ -3840,6 +4320,9 @@
       "emoji": "⛳",
       "category": "sports",
       "description": "Score a 9 or 18-hole round for up to four players, set each hole's par, and see birdies and bogeys on the card.",
+      "description_i18n": {
+        "es": "Apunta una vuelta de 9 o 18 hoyos para hasta cuatro jugadores, fija el par de cada hoyo y mira birdies y bogeys en la tarjeta."
+      },
       "prompt": "A golf scorecard for up to four players: 9 or 18 holes, par 3, 4 or 5 for each hole, plus and minus buttons for strokes, totals and score to par, and a full card with Out, In and Total where birdies, eagles and bogeys are coloured.",
       "author": "gonzaroman",
       "language": "en",
@@ -3863,6 +4346,9 @@
       "emoji": "🎯",
       "category": "productivity",
       "description": "Break big goals into steps, tick them off and watch the progress ring fill up.",
+      "description_i18n": {
+        "es": "Divide tus grandes metas en pasos, márcalos y mira cómo se llena el anillo de progreso."
+      },
       "prompt": "A goals app where each goal has an emoji, an optional deadline with days left, a list of steps I add and tick off, a progress ring and a celebration when the goal is reached.",
       "author": "gonzaroman",
       "language": "en",
@@ -3886,6 +4372,9 @@
       "emoji": "🧮",
       "category": "business",
       "description": "Calculate the hourly rate you need as a freelancer after taxes, costs, holidays and unbillable time.",
+      "description_i18n": {
+        "es": "Calcula la tarifa por hora que necesitas como autónomo después de impuestos, gastos, vacaciones y horas no facturables."
+      },
       "prompt": "A freelance rate calculator: the net income I want, taxes, monthly costs, a buffer, working hours, the share of billable hours, holidays and sick days, giving the minimum hourly and daily rate and where the money goes.",
       "author": "gonzaroman",
       "language": "en",
@@ -3909,6 +4398,9 @@
       "emoji": "🥠",
       "category": "entertainment",
       "description": "Crack open a cookie for a fortune and your lucky numbers.",
+      "description_i18n": {
+        "es": "Abre una galleta de la suerte para leer tu fortuna y tus números de la suerte."
+      },
       "prompt": "A fortune cookie app: tap the cookie, it shakes and cracks in two halves, a paper with a funny or wise fortune and six lucky numbers appears, with crunch sound and share button.",
       "author": "gonzaroman",
       "language": "en",
@@ -3932,6 +4424,9 @@
       "emoji": "🍅",
       "category": "productivity",
       "description": "A Pomodoro timer with focus blocks, short and long breaks, weekly stats and a daily streak.",
+      "description_i18n": {
+        "es": "Un temporizador Pomodoro con bloques de concentración, descansos cortos y largos, estadísticas semanales y racha diaria."
+      },
       "prompt": "A Pomodoro focus timer with a big progress ring, focus, short and long break modes with custom minutes, what I'm focusing on, a notification and sound at the end, a weekly chart of focus minutes and a streak.",
       "author": "gonzaroman",
       "language": "en",
@@ -3957,6 +4452,9 @@
       "emoji": "🗂️",
       "category": "education",
       "description": "Make your own decks and study them with spaced repetition: the cards you find hard come back sooner.",
+      "description_i18n": {
+        "es": "Crea tus propios mazos y estúdialos con repetición espaciada: las tarjetas que te cuestan vuelven antes."
+      },
       "prompt": "A flashcards app: create decks by writing one card per line as question = answer, flip cards to study, rate each one as again, hard, good or easy, and schedule reviews with spaced repetition. Show how many cards are due in each deck.",
       "author": "gonzaroman",
       "language": "en",
@@ -3980,6 +4478,9 @@
       "emoji": "🌡️",
       "category": "weather",
       "description": "Heat index and wind chill from temperature, humidity and wind, offline, with a coloured thermometer, the health risk and advice.",
+      "description_i18n": {
+        "es": "Sensación térmica por calor o por viento a partir de temperatura, humedad y viento, sin conexión, con termómetro de colores, el riesgo para la salud y consejos."
+      },
       "prompt": "A feels like temperature calculator that works offline. Enter the air temperature, humidity and wind speed with big sliders, in Celsius or Fahrenheit and km/h or mph, and calculate the heat index when it is hot and the wind chill when it is cold. Show the result big on a coloured thermometer with a word from freezing to dangerous heat, the risk for frostbite or heat stroke, and practical advice. Add a button to fill the values from the current weather with the free Open-Meteo API and my location",
       "author": "gonzaroman",
       "language": "es",
@@ -4005,6 +4506,9 @@
       "emoji": "💸",
       "category": "finance",
       "description": "Track what you spend by category, with a monthly budget, a donut chart and the last six months.",
+      "description_i18n": {
+        "es": "Apunta lo que gastas por categoría, con presupuesto mensual, un gráfico de donut y los últimos seis meses."
+      },
       "prompt": "An expense tracker where I add expenses with a category and note, see the month total with a donut by category, a monthly budget bar, comparison with last month, a six month chart and expenses grouped by day.",
       "author": "gonzaroman",
       "language": "en",
@@ -4028,6 +4532,9 @@
       "emoji": "🎬",
       "category": "entertainment",
       "description": "Guess the film from a few emoji, with hints and ten movies per round.",
+      "description_i18n": {
+        "es": "Adivina la película a partir de unos emojis, con pistas y diez películas por ronda."
+      },
       "prompt": "A guess the movie from emoji quiz with forty famous films, four options, hints with the genre and year, ten movies per round and a best score.",
       "author": "gonzaroman",
       "language": "en",
@@ -4051,6 +4558,9 @@
       "emoji": "✉️",
       "category": "productivity",
       "description": "Write what you want to say in a few words and your AI turns it into a polished email.",
+      "description_i18n": {
+        "es": "Escribe en pocas palabras lo que quieres decir y tu IA lo convierte en un correo bien redactado."
+      },
       "prompt": "An email writing assistant: I type my idea in my own words, who it's for, the tone like professional, friendly or apologetic, and the length, and my AI writes the subject and the email, with copy, share and another version.",
       "author": "gonzaroman",
       "language": "en",
@@ -4076,6 +4586,9 @@
       "emoji": "👂",
       "category": "music",
       "description": "Train your ear with intervals, chords and notes, each with a song to remember it by, and see your accuracy for each one.",
+      "description_i18n": {
+        "es": "Entrena el oído con intervalos, acordes y notas, cada uno con una canción para recordarlo, y mira tu acierto en cada uno."
+      },
       "prompt": "An ear training game with three modes: intervals with a famous song for each, chord qualities, and notes of the scale after a C, in easy, medium and hard levels, with a streak, replay and accuracy per answer.",
       "author": "gonzaroman",
       "language": "en",
@@ -4099,6 +4612,9 @@
       "emoji": "🤸",
       "category": "health-fitness",
       "description": "Guided 1 to 4 minute stretch breaks for your neck, back, wrists and eyes, read aloud so you don't have to look.",
+      "description_i18n": {
+        "es": "Pausas guiadas de 1 a 4 minutos para estirar cuello, espalda, muñecas y ojos, leídas en voz alta para que no tengas que mirar."
+      },
       "prompt": "A desk stretching guide with three routines, each stretch with an emoji, instructions read aloud, left and right sides, a countdown ring, pause and skip, a count of breaks done and optional reminders every 30 minutes, hour or two hours.",
       "author": "gonzaroman",
       "language": "en",
@@ -4124,6 +4640,9 @@
       "emoji": "🎡",
       "category": "entertainment",
       "description": "Can't decide? Make your own wheels, add options and spin with ticking sounds.",
+      "description_i18n": {
+        "es": "¿No te decides? Crea tus propias ruletas, añade opciones y gira con sonido de clic."
+      },
       "prompt": "A spinning decision wheel with colourful slices, ticking sound, several saved wheels I can name, editable options and an option to remove the winner after each spin.",
       "author": "gonzaroman",
       "language": "en",
@@ -4147,6 +4666,9 @@
       "emoji": "❄️",
       "category": "finance",
       "description": "Plan how to get out of debt: compare the snowball and avalanche methods and see your debt-free date.",
+      "description_i18n": {
+        "es": "Planifica cómo salir de deudas: compara los métodos bola de nieve y avalancha y mira cuándo quedarás libre de deudas."
+      },
       "prompt": "A debt payoff planner where I list debts with balance, interest and minimum payment, add an extra monthly amount, and it compares the snowball and avalanche methods with the debt-free date, interest paid and payoff order.",
       "author": "gonzaroman",
       "language": "en",
@@ -4170,6 +4692,9 @@
       "emoji": "📅",
       "category": "reference",
       "description": "Days between two dates, adding days, weeks or working days to a date, and your exact age with your next birthday.",
+      "description_i18n": {
+        "es": "Días entre dos fechas, sumar días, semanas o días laborables a una fecha, y tu edad exacta con tu próximo cumpleaños."
+      },
       "prompt": "A date calculator with three tabs: the days, weeks, working days and weekends between two dates; adding or subtracting days, weeks, months, years or working days from a date; and your exact age with the day you were born and your next birthday.",
       "author": "gonzaroman",
       "language": "en",
@@ -4193,6 +4718,9 @@
       "emoji": "🎯",
       "category": "sports",
       "description": "Score 301, 501 or 701 dart by dart for up to four players, with double out, busts, averages and checkout hints.",
+      "description_i18n": {
+        "es": "Apunta 301, 501 o 701 dardo a dardo para hasta cuatro jugadores, con doble para cerrar, pasadas, medias y sugerencias de cierre."
+      },
       "prompt": "A darts scorer for 301, 501 or 701: tap each dart with single, double or treble, bull and 25, automatic bust rules, double out or any out, three-dart averages, checkout suggestions, undo and a winner screen.",
       "author": "gonzaroman",
       "language": "en",
@@ -4218,6 +4746,9 @@
       "emoji": "📓",
       "category": "productivity",
       "description": "A cosy diary with a mood for each day, a question to get you writing and a 4 week overview.",
+      "description_i18n": {
+        "es": "Un diario acogedor con el ánimo de cada día, una pregunta para animarte a escribir y un resumen de 4 semanas."
+      },
       "prompt": "A daily journal on lined paper with a mood picker, a different writing prompt each day, word count, autosave, and a calendar of the last four weeks showing the mood of each day.",
       "author": "gonzaroman",
       "language": "en",
@@ -4241,6 +4772,9 @@
       "emoji": "💱",
       "category": "finance",
       "description": "Convert between 30 currencies with today's European Central Bank rates, even offline.",
+      "description_i18n": {
+        "es": "Convierte entre 30 monedas con el cambio de hoy del Banco Central Europeo, incluso sin conexión."
+      },
       "prompt": "A currency converter using today's European Central Bank rates from Frankfurter, with flags, swap, the rate both ways, the amount in other common currencies and the last rates saved for when there's no internet.",
       "author": "gonzaroman",
       "language": "en",
@@ -4266,6 +4800,9 @@
       "emoji": "🌐",
       "category": "reference",
       "description": "73 countries with their flags and capitals, a summary of each from Wikipedia, and your own list of places visited and to visit.",
+      "description_i18n": {
+        "es": "73 países con su bandera y capital, un resumen de cada uno de Wikipedia y tu propia lista de lugares visitados y por visitar."
+      },
       "prompt": "A country explorer with flags and capitals by continent, search, a random country button, a detail page with a Wikipedia summary, and buttons to mark countries as visited or want to go with counters.",
       "author": "gonzaroman",
       "language": "en",
@@ -4291,6 +4828,9 @@
       "emoji": "⏳",
       "category": "utilities",
       "description": "Count down the days, hours and minutes to holidays, birthdays and everything you look forward to.",
+      "description_i18n": {
+        "es": "Cuenta atrás los días, horas y minutos hasta vacaciones, cumpleaños y todo lo que esperas con ilusión."
+      },
       "prompt": "A countdown app for my upcoming events with emoji, colourful cards, days, hours, minutes and seconds ticking, and past events shown as time since.",
       "author": "gonzaroman",
       "language": "en",
@@ -4314,6 +4854,9 @@
       "emoji": "📈",
       "category": "finance",
       "description": "See how your savings grow over the years with compound interest and monthly contributions.",
+      "description_i18n": {
+        "es": "Mira cómo crecen tus ahorros con los años gracias al interés compuesto y a las aportaciones mensuales."
+      },
       "prompt": "A compound interest calculator with an initial amount, monthly contributions, annual return, years and compounding frequency, showing the final amount, what I paid in and the interest, a stacked chart and milestones.",
       "author": "gonzaroman",
       "language": "en",
@@ -4337,6 +4880,9 @@
       "emoji": "🌍",
       "category": "weather",
       "description": "Put up to four cities side by side: today's weather, a 7-day temperature chart with one line each, and which one is warmest and driest.",
+      "description_i18n": {
+        "es": "Compara hasta cuatro ciudades: el tiempo de hoy, un gráfico de temperaturas de 7 días con una línea por ciudad y cuál es la más cálida y seca."
+      },
       "prompt": "A compare cities weather app using the free Open-Meteo API with no key. Let me search and add up to four cities and show them side by side: current temperature, feels like, sky icon, rain chance, wind and humidity, plus a 7 day chart with one coloured line per city for the max temperature. Highlight which city is warmest, sunniest and least rainy this week. Save my list of cities.",
       "author": "gonzaroman",
       "language": "es",
@@ -4362,6 +4908,9 @@
       "emoji": "🖼️",
       "category": "photo-video",
       "description": "Put up to six photos together with eight layouts, four shapes for posts and stories, background colours, spacing and rounded corners.",
+      "description_i18n": {
+        "es": "Junta hasta seis fotos con ocho diseños, cuatro formatos para publicaciones y stories, colores de fondo, márgenes y esquinas redondeadas."
+      },
       "prompt": "A photo collage maker with eight layouts, square, portrait, story and landscape shapes, background colours, spacing and corner sliders, where you tap a cell to add a photo, drag to frame it and pinch to zoom.",
       "author": "gonzaroman",
       "language": "en",
@@ -4385,6 +4934,9 @@
       "emoji": "🎭",
       "category": "entertainment",
       "description": "Guess the word on your forehead before time runs out: animals, movies, actions, jobs and more.",
+      "description_i18n": {
+        "es": "Adivina la palabra de tu frente antes de que se acabe el tiempo: animales, películas, acciones, profesiones y más."
+      },
       "prompt": "A Heads Up style charades game: the phone shows a word from a deck like animals, movies or jobs, friends give clues, a 30, 60 or 90 second timer, got it and pass buttons and a results list.",
       "author": "gonzaroman",
       "language": "en",
@@ -4408,6 +4960,9 @@
       "emoji": "📝",
       "category": "photo-video",
       "description": "Your AI looks at your photo and writes four captions in the tone you pick, funny, poetic, bold or sweet, with hashtags for each platform.",
+      "description_i18n": {
+        "es": "Tu IA mira tu foto y escribe cuatro pies de foto en el tono que elijas, divertido, poético, atrevido o tierno, con hashtags para cada red."
+      },
       "prompt": "A caption writer powered by the AI: pick a photo, a tone and a platform, add optional context, and get four different captions with hashtags to copy or share.",
       "author": "gonzaroman",
       "language": "en",
@@ -4433,6 +4988,9 @@
       "emoji": "🏛️",
       "category": "education",
       "description": "What's the capital of…? Rounds of 10 by continent with believable wrong answers, best scores and a list to review.",
+      "description_i18n": {
+        "es": "¿Cuál es la capital de…? Rondas de 10 por continente con respuestas falsas creíbles, mejores puntuaciones y una lista para repasar."
+      },
       "prompt": "A capitals quiz: choose a continent or the whole world, see a country with its flag and pick its capital among four options from the same region, with best scores per region and the ones you missed at the end.",
       "author": "gonzaroman",
       "language": "en",
@@ -4456,6 +5014,9 @@
       "emoji": "🪪",
       "category": "business",
       "description": "Design a business card in four styles and colours, save it as an image or share your contact.",
+      "description_i18n": {
+        "es": "Diseña una tarjeta de visita en cuatro estilos y colores, guárdala como imagen o comparte tu contacto."
+      },
       "prompt": "A business card maker with my name, job title, company, phone, email and website, four templates like modern, classic, bold and minimal, colours, a flip animation, saving it as an image and sharing the contact.",
       "author": "gonzaroman",
       "language": "en",
@@ -4479,6 +5040,9 @@
       "emoji": "📐",
       "category": "utilities",
       "description": "A spirit level that uses your phone's sensors, with degrees, calibration and a buzz when it's level.",
+      "description_i18n": {
+        "es": "Un nivel de burbuja que usa los sensores del móvil, con grados, calibración y una vibración cuando está nivelado."
+      },
       "prompt": "A bubble level app with a green vial and a bubble that moves with the phone's tilt sensors, X and Y degrees, calibration, hold reading and a vibration when it is perfectly level.",
       "author": "gonzaroman",
       "language": "en",
@@ -4502,6 +5066,9 @@
       "emoji": "🏓",
       "category": "games",
       "description": "Smash neon bricks with a glowing paddle, catch power-ups and clear level after level.",
+      "description_i18n": {
+        "es": "Rompe ladrillos de neón con una pala brillante, atrapa mejoras y supera nivel tras nivel."
+      },
       "prompt": "A brick breaker game with a paddle you drag, neon bricks in different patterns per level, bricks that need two hits, steel bricks, power-ups for a wider paddle, multi-ball, slow motion and extra lives.",
       "author": "gonzaroman",
       "language": "en",
@@ -4525,6 +5092,9 @@
       "emoji": "📊",
       "category": "business",
       "description": "Find out how many units you must sell each month to cover your costs, with a chart and a profit simulator.",
+      "description_i18n": {
+        "es": "Descubre cuántas unidades debes vender cada mes para cubrir tus costes, con un gráfico y un simulador de beneficios."
+      },
       "prompt": "A break-even calculator for small businesses with fixed costs, selling price and cost per unit, the units needed to break even, a chart of revenue and costs, and a slider to see profit or loss for any sales volume.",
       "author": "gonzaroman",
       "language": "en",
@@ -4548,6 +5118,9 @@
       "emoji": "🧱",
       "category": "games",
       "description": "Classic falling blocks with a ghost piece, hold, next pieces and levels that speed up.",
+      "description_i18n": {
+        "es": "Los clásicos bloques que caen, con pieza fantasma, reserva, siguientes piezas y niveles cada vez más rápidos."
+      },
       "prompt": "A falling blocks puzzle game like Tetris with swipe and tap controls, ghost piece, hold, the next three pieces, levels that get faster and a saved best score.",
       "author": "gonzaroman",
       "language": "en",
@@ -4571,6 +5144,9 @@
       "emoji": "↔️",
       "category": "photo-video",
       "description": "Compare two photos with a slider you drag, side by side or stacked, with your own labels. Great for makeovers, workouts and renovations.",
+      "description_i18n": {
+        "es": "Compara dos fotos con un deslizador, lado a lado o una encima de otra, con tus propias etiquetas. Ideal para cambios de look, entrenamientos y reformas."
+      },
       "prompt": "A before and after photo comparer with a draggable slider, side by side and stacked layouts, editable labels, and saving the comparison as an image.",
       "author": "gonzaroman",
       "language": "en",
@@ -4594,6 +5170,9 @@
       "emoji": "🔋",
       "category": "utilities",
       "description": "Your battery level, charging state and temperature, plus details about your phone and screen.",
+      "description_i18n": {
+        "es": "El nivel de tu batería, si está cargando y su temperatura, además de detalles de tu móvil y tu pantalla."
+      },
       "prompt": "A battery and device info app showing the battery level in a big battery icon, charging status and temperature, device model and Android version, screen, network, language, time zone and storage, with tips to look after the battery.",
       "author": "gonzaroman",
       "language": "en",
@@ -4619,6 +5198,9 @@
       "emoji": "🌧️",
       "category": "music",
       "description": "Mix rain, thunder, waves, wind, fire, birds, a stream and brown noise to sleep, focus or relax, with a sleep timer.",
+      "description_i18n": {
+        "es": "Mezcla lluvia, truenos, olas, viento, fuego, pájaros, un arroyo y ruido marrón para dormir, concentrarte o relajarte, con temporizador."
+      },
       "prompt": "An ambient sound mixer with eight sounds made in the browser (rain, thunder, waves, wind, fire, birds, stream, brown noise), a volume slider each, presets for sleep, focus, beach, camping and storm, and a timer that fades out.",
       "author": "gonzaroman",
       "language": "en",
@@ -4642,6 +5224,9 @@
       "emoji": "🌫️",
       "category": "weather",
       "description": "The air you breathe now: a coloured AQI ring, PM2.5, PM10, ozone and NO2, a 2-day chart and the best hours to run or air the house.",
+      "description_i18n": {
+        "es": "El aire que respiras ahora: un anillo de color con el índice de calidad, PM2.5, PM10, ozono y NO2, un gráfico de 2 días y las mejores horas para correr o ventilar la casa."
+      },
       "prompt": "An air quality app using the free Open-Meteo air quality API with no key, with my location or a searched city. Show the European AQI as a big coloured ring with a word like good or poor, the main pollutants PM2.5, PM10, ozone and nitrogen dioxide with small bars, an hourly AQI chart for the next 2 days, the best hours to go running or open the windows, and health advice for each level. Save favourite cities.",
       "author": "gonzaroman",
       "language": "es",
@@ -4667,6 +5252,9 @@
       "emoji": "🔢",
       "category": "games",
       "description": "Swipe to slide the tiles and merge equal numbers until you reach 2048, with undo.",
+      "description_i18n": {
+        "es": "Desliza las fichas y junta números iguales hasta llegar a 2048, con deshacer."
+      },
       "prompt": "The 2048 puzzle with smooth sliding tiles, swipe controls, undo, a best score and the game saved so I can continue later.",
       "author": "gonzaroman",
       "language": "en",
@@ -4690,6 +5278,9 @@
       "emoji": "🔮",
       "category": "entertainment",
       "description": "Think of anything and your AI tries to guess it with yes or no questions.",
+      "description_i18n": {
+        "es": "Piensa en cualquier cosa y tu IA intenta adivinarla con preguntas de sí o no."
+      },
       "prompt": "A 20 questions game where my AI asks me yes or no questions to guess what I'm thinking of, with categories like animals, famous people or food, and a score of AI against me.",
       "author": "gonzaroman",
       "language": "en",
@@ -4715,6 +5306,9 @@
       "emoji": "🐠",
       "category": "entertainment",
       "description": "A relaxing 3D reef: feed the fish and watch the jellyfish glow at night.",
+      "description_i18n": {
+        "es": "Un arrecife 3D relajante: da de comer a los peces y mira cómo brillan las medusas por la noche."
+      },
       "prompt": "A relaxing 3D aquarium: colorful fish swim in schools between swaying seaweed, coral and rocks, with rising bubbles and light rays from above. Tap the glass to drop food and the fish swim to eat it. Drag to rotate the camera.",
       "author": "gonzaroman",
       "language": "en",
@@ -4740,6 +5334,9 @@
       "emoji": "💪",
       "category": "health-fitness",
       "description": "A workout coach that talks you through a 3-minute routine and vibrates on every change.",
+      "description_i18n": {
+        "es": "Un entrenador que te guía de viva voz en una rutina de 3 minutos y vibra en cada cambio."
+      },
       "prompt": "A personal workout coach that talks: a 3-minute routine of exercises with a big animated countdown ring. The phone says each exercise out loud, counts down the last 3 seconds by voice, vibrates when switching and cheers you at the end. Energetic, modern design.",
       "author": "gonzaroman",
       "language": "en",
@@ -4763,6 +5360,9 @@
       "emoji": "🏙️",
       "category": "games",
       "description": "Build an isometric pixel city with cars, people, a day and night cycle and fireworks.",
+      "description_i18n": {
+        "es": "Construye una ciudad isométrica en píxeles con coches, gente, ciclo de día y noche y fuegos artificiales."
+      },
       "prompt": "An isometric pixel art city builder: tap empty tiles to build houses, shops, parks and skyscrapers. Little cars drive on the roads and tiny people walk around. Money and population counters, and a day and night cycle where the windows light up at night. Cute and colorful.",
       "author": "gonzaroman",
       "language": "en",
@@ -4786,6 +5386,9 @@
       "emoji": "📝",
       "category": "productivity",
       "description": "Notes with checklists, pinned notes, color labels and search.",
+      "description_i18n": {
+        "es": "Notas con listas de tareas, notas fijadas, etiquetas de color y búsqueda."
+      },
       "prompt": "A professional notes app: write notes with a title and text, checklists, pin important notes, color labels and search, with a clean and elegant design.",
       "author": "gonzaroman",
       "language": "en",
@@ -4809,6 +5412,9 @@
       "emoji": "🎨",
       "category": "graphics-design",
       "description": "Draw with your finger and every stroke is mirrored eight ways in glowing neon.",
+      "description_i18n": {
+        "es": "Dibuja con el dedo y cada trazo se refleja ocho veces en neón brillante."
+      },
       "prompt": "A neon kaleidoscope drawing app: draw with your finger and every stroke is mirrored in 8-way symmetry with glowing neon trails, sparkles and colors that slowly shift. Include an autoplay mode that draws by itself, and buttons to clear and change the symmetry.",
       "author": "gonzaroman",
       "language": "en",
@@ -4832,6 +5438,9 @@
       "emoji": "🏎️",
       "category": "games",
       "description": "A 3D race through glowing neon rings over a city at night, with rival drones.",
+      "description_i18n": {
+        "es": "Una carrera 3D a través de anillos de neón sobre una ciudad de noche, con drones rivales."
+      },
       "prompt": "A 3D drone racing game: fly a drone through glowing neon rings over a futuristic city at night, with a lap timer, a boost button and an autopilot demo mode.",
       "author": "gonzaroman",
       "language": "en",
@@ -4855,6 +5464,9 @@
       "emoji": "🎹",
       "category": "music",
       "description": "Four instruments, multitouch keys and recordings you can play back.",
+      "description_i18n": {
+        "es": "Cuatro instrumentos, teclas multitáctiles y grabaciones que puedes volver a escuchar."
+      },
       "prompt": "",
       "author": "gonzaroman",
       "language": "en",
@@ -4878,6 +5490,9 @@
       "emoji": "🥁",
       "category": "music",
       "description": "Eight pads, a 16-step sequencer and saved beats.",
+      "description_i18n": {
+        "es": "Ocho pads, un secuenciador de 16 pasos y ritmos guardados."
+      },
       "prompt": "",
       "author": "gonzaroman",
       "language": "en",
@@ -4901,6 +5516,9 @@
       "emoji": "🏰",
       "category": "games",
       "description": "Hold the castle against waves of enemies and bosses, with an upgrade shop.",
+      "description_i18n": {
+        "es": "Defiende el castillo de oleadas de enemigos y jefes, con una tienda de mejoras."
+      },
       "prompt": "",
       "author": "gonzaroman",
       "language": "en",
@@ -4924,6 +5542,9 @@
       "emoji": "🧮",
       "category": "utilities",
       "description": "A clean calculator with proper operator precedence and a saved history.",
+      "description_i18n": {
+        "es": "Una calculadora limpia que respeta el orden de las operaciones y guarda el historial."
+      },
       "prompt": "",
       "author": "gonzaroman",
       "language": "en",
@@ -4947,6 +5568,9 @@
       "emoji": "🎳",
       "category": "games",
       "description": "Swipe to throw, add hook spin and play a full game with real scoring.",
+      "description_i18n": {
+        "es": "Desliza para lanzar, dale efecto y juega una partida completa con puntuación real."
+      },
       "prompt": "",
       "author": "gonzaroman",
       "language": "en",
@@ -4970,6 +5594,9 @@
       "emoji": "⚖️",
       "category": "health-fitness",
       "description": "Body mass index with a gauge, the healthy range and a progress chart.",
+      "description_i18n": {
+        "es": "Índice de masa corporal con un indicador, el rango saludable y un gráfico de tu evolución."
+      },
       "prompt": "",
       "author": "gonzaroman",
       "language": "en",

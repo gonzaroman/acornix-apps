@@ -10,5 +10,8 @@
   "version": 2,
   "added": "2026-10-29",
   "updated": "2026-10-30",
-  "featured": false
+  "featured": false,
+  "description_i18n": {
+    "es": "Haz una foto a un tique y tu IA apunta la tienda, los productos, el total y la categoría."
+  }
 }

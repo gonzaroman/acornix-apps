@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 14
+  "issue": 14,
+  "description_i18n": {
+    "es": "Memes clásicos con texto grande con borde sobre tu foto o un fondo ya hecho. Arrastra el texto, cambia tamaño y color, y guárdalo."
+  }
 }

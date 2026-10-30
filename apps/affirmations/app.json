@@ -11,5 +11,8 @@
   "added": "2026-10-30",
   "updated": "2026-10-30",
   "featured": false,
-  "issue": 37
+  "issue": 37,
+  "description_i18n": {
+    "es": "Afirmaciones positivas para la calma, la confianza, quererte, la energía y el sueño sobre colores relajantes. Léelas en voz alta, guarda tus favoritas y escribe las tuyas."
+  }
 }

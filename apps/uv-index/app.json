@@ -11,5 +11,8 @@
   "added": "2026-10-29",
   "updated": "2026-10-29",
   "featured": false,
-  "issue": 4
+  "issue": 4,
+  "description_i18n": {
+    "es": "El índice UV de hoy en un indicador de colores, la curva por horas, la hora pico y cuánto tardarías en quemarte según tu piel."
+  }
 }
