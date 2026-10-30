@@ -2,6 +2,29 @@
   "version": 1,
   "apps": [
     {
+      "id": "pixel-art",
+      "name": "Pixel Art",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Draw pixel art on a 16, 24 or 32 grid with a retro palette, fill, picker, mirror mode and undo. Every drawing is kept and saved as a crisp PNG.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9018,
+      "sha256": "3fe16c33d74f8eab634fbbced79aec1445e45a77aa0a9b809091cafde0f7a0c8",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "what-is-this-ai",
       "name": "What Is This?",
       "emoji": "🔎",

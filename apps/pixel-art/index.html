@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Pixel Art</title>
+<style>
+  :root { --bg:#1a1c2c; --card:#262b44; --ink:#f4f4f4; --muted:#94b0c2; --a:#ffcd75; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 12px); gap:10px; }
+  .top { display:flex; align-items:center; gap:6px; }
+  .top h1 { margin:0; font-size:20px; flex:1; }
+  .b { padding:8px 11px; border-radius:10px; background:var(--card); font-weight:800; font-size:14px; }
+  .b.main { background:var(--a); color:#1a1c2c; }
+  .b.on { background:var(--a); color:#1a1c2c; }
+  .b:disabled { opacity:.4; }
+  .stage { flex:1; min-height:0; display:grid; place-items:center; }
+  canvas { touch-action:none; image-rendering:pixelated; border-radius:4px; box-shadow:0 8px 30px #0008; max-width:100%; max-height:100%; }
+  .tools, .sizes { display:flex; gap:6px; }
+  .tools .b { flex:1; font-size:18px; padding:9px 0; }
+  .pal { display:grid; grid-template-columns:repeat(8,1fr); gap:5px; }
+  .pal button { aspect-ratio:1; border-radius:8px; border:2px solid #0004; }
+  .pal button.on { outline:3px solid #fff; outline-offset:1px; }
+  .sizes { align-items:center; font-size:13px; font-weight:800; color:var(--muted); }
+  .sizes .b { font-size:13px; padding:6px 10px; }
+  .sizes span { flex:1; }
+  .gal { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+  .gal::-webkit-scrollbar { display:none; }
+  .gal button { flex:none; width:44px; height:44px; border-radius:8px; background:var(--card); padding:3px; }
+  .gal img { width:100%; height:100%; image-rendering:pixelated; display:block; }
+  .gal button.cur { outline:2px solid var(--a); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🟥 <span id="ttl"></span></h1><button class="b" id="undo">↩️</button><button class="b" id="new">＋</button><button class="b main" id="save"></button></div>
+  <div class="stage"><canvas id="c"></canvas></div>
+  <div class="tools" id="tools"></div>
+  <div class="pal" id="pal"></div>
+  <div class="sizes"><span id="lSize"></span><button class="b" data-s="16">16</button><button class="b" data-s="24">24</button><button class="b" data-s="32">32</button><button class="b" id="grid">#</button></div>
+  <div class="gal" id="gal"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Pixel Art', save:'Guardar', size:'Lienzo', saved:'Imagen guardada en esta app', tools:['Lápiz', 'Borrar', 'Cubo', 'Cuentagotas', 'Espejo'] }
+ : { title:'Pixel Art', save:'Save', size:'Canvas', saved:'Image saved in this app', tools:['Pencil', 'Eraser', 'Fill', 'Picker', 'Mirror'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+// Sweetie 16 plus 8 extra colours.
+const PAL = ['#1a1c2c', '#5d275d', '#b13e53', '#ef7d57', '#ffcd75', '#a7f070', '#38b764', '#257179', '#29366f', '#3b5dc9', '#41a6f6', '#73eff7', '#f4f4f4', '#94b0c2', '#566c86', '#333c57', '#ffffff', '#000000', '#ff77a8', '#ffccaa', '#8f563b', '#d95763', '#fbf236', '#6abe30'];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+$('ttl').textContent = T.title; $('save').textContent = T.save; $('lSize').textContent = T.size;
+let N = 16, px = [], tool = 0, color = 4, mirror = false, grid = true, hist = [], arts = [], cur = -1;
+const blank = n => new Array(n * n).fill(null);
+function fit() { const st = cv.parentElement, s = Math.floor(Math.min(st.clientWidth, st.clientHeight) / N) * N || N * 10; cv.width = cv.height = s * 2; cv.style.width = cv.style.height = s + 'px'; }
+function draw() {
+  const W = cv.width, k = W / N;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const c = px[y * N + x]; cx.fillStyle = c || ((x + y) % 2 ? '#d8dbe2' : '#eceef2'); cx.fillRect(x * k, y * k, k, k); }
+  if (grid) { cx.strokeStyle = '#0000001c'; cx.lineWidth = 1; cx.beginPath(); for (let i = 1; i < N; i++) { cx.moveTo(i * k, 0); cx.lineTo(i * k, W); cx.moveTo(0, i * k); cx.lineTo(W, i * k); } cx.stroke(); }
+  if (mirror) { cx.strokeStyle = '#ff77a8'; cx.lineWidth = 3; cx.setLineDash([10, 8]); cx.beginPath(); cx.moveTo(W / 2, 0); cx.lineTo(W / 2, W); cx.stroke(); cx.setLineDash([]); }
+}
+function ui() {
+  $('tools').innerHTML = ['✏️', '🧽', '🪣', '💧', '🦋'].map((e, i) => `<button class="b ${(i === 4 ? mirror : tool === i) ? 'on' : ''}" data-i="${i}" title="${T.tools[i]}">${e}</button>`).join('');
+  $('tools').querySelectorAll('.b').forEach(b => b.onclick = () => { const i = +b.dataset.i; if (i === 4) mirror = !mirror; else tool = i; ui(); draw(); });
+  $('pal').innerHTML = PAL.map((c, i) => `<button class="${i === color ? 'on' : ''}" data-i="${i}" style="background:${c}"></button>`).join('');
+  $('pal').querySelectorAll('button').forEach(b => b.onclick = () => { color = +b.dataset.i; if (tool > 1) tool = 0; ui(); });
+  document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('on', +b.dataset.s === N));
+  $('grid').classList.toggle('on', grid); $('undo').disabled = !hist.length;
+}
+function set(x, y, c) { px[y * N + x] = c; if (mirror) px[y * N + (N - 1 - x)] = c; }
+function fill(x, y, c) {
+  const from = px[y * N + x]; if (from === c) return; const st = [[x, y]];
+  while (st.length) { const [a, b] = st.pop(); if (a < 0 || b < 0 || a >= N || b >= N || px[b * N + a] !== from) continue; px[b * N + a] = c; st.push([a + 1, b], [a - 1, b], [a, b + 1], [a, b - 1]); }
+}
+function cell(e) { const r = cv.getBoundingClientRect(); return [Math.floor((e.clientX - r.left) / r.width * N), Math.floor((e.clientY - r.top) / r.height * N)]; }
+let down = false;
+function act(e) {
+  const [x, y] = cell(e); if (x < 0 || y < 0 || x >= N || y >= N) return;
+  if (tool === 0) set(x, y, PAL[color]); else if (tool === 1) set(x, y, null);
+  else if (tool === 2) fill(x, y, PAL[color]);
+  else if (tool === 3) { const c = px[y * N + x]; if (c && PAL.includes(c)) { color = PAL.indexOf(c); tool = 0; ui(); } }
+  draw();
+}
+cv.addEventListener('pointerdown', e => { down = true; cv.setPointerCapture(e.pointerId); hist.push(px.slice()); if (hist.length > 60) hist.shift(); act(e); ui(); });
+cv.addEventListener('pointermove', e => { if (down && tool < 2) act(e); });
+const up = () => { if (!down) return; down = false; persist(); };
+cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+$('undo').onclick = () => { if (hist.length) { px = hist.pop(); draw(); ui(); persist(); } };
+$('grid').onclick = () => { grid = !grid; ui(); draw(); };
+document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { if (+b.dataset.s === N) return; persist(); N = +b.dataset.s; px = blank(N); hist = []; cur = -1; fit(); ui(); draw(); });
+$('new').onclick = () => { persist(); px = blank(N); hist = []; cur = -1; ui(); draw(); gal(); };
+function png(scale) { const c = document.createElement('canvas'); c.width = c.height = N * scale; const g = c.getContext('2d'); px.forEach((p, i) => { if (p) { g.fillStyle = p; g.fillRect(i % N * scale, Math.floor(i / N) * scale, scale, scale); } }); return c.toDataURL('image/png'); }
+// Every drawing is kept automatically, newest first.
+function persist() {
+  if (!px.some(Boolean)) return;
+  const item = { n: N, px: px.slice(), thumb: png(4), t: Date.now() };
+  if (cur >= 0 && arts[cur]) arts[cur] = item; else { arts.unshift(item); cur = 0; }
+  arts = arts.slice(0, 30); store.set('arts', arts); gal();
+}
+function gal() {
+  $('gal').innerHTML = arts.map((a, i) => `<button class="${i === cur ? 'cur' : ''}" data-i="${i}"><img src="${a.thumb}"></button>`).join('');
+  $('gal').querySelectorAll('button').forEach(b => b.onclick = () => { persist(); cur = +b.dataset.i; const a = arts[cur]; N = a.n; px = a.px.slice(); hist = []; fit(); ui(); draw(); gal(); });
+}
+$('save').onclick = async () => {
+  persist(); const url = png(Math.max(1, Math.floor(1024 / N))), name = `pixel-art-${Date.now()}.png`;
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+addEventListener('resize', () => { fit(); draw(); });
+(async () => { arts = await store.get('arts', []); px = blank(N); fit(); ui(); draw(); gal(); })();
+</script>
+</body>
+</html>
