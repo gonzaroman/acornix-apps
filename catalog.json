@@ -443,6 +443,32 @@
       "trending": 0
     },
     {
+      "id": "menu-translator",
+      "name": "Menu Translator",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "Snap a menu in any language and your AI translates every dish, explains it, warns about allergies and",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 9048,
+      "sha256": "6b960fae8bf9ffe2ffad279b823f8fd66822cf43664f305b0c0b2ba1c7915f5a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "meal-planner",
       "name": "Meal Planner",
       "emoji": "🍱",

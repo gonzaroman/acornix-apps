@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Menu Translator</title>
+<style>
+  :root { --bg:#fffbf5; --card:#fff; --ink:#2b2014; --muted:#9a8670; --a:#c2410c; --line:#f2e6d6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button, label.btn { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 4px; font-size:26px; } .sub { color:var(--muted); font-weight:600; margin-bottom:14px; }
+  .btns { display:flex; gap:10px; } .btn { flex:1; text-align:center; padding:16px; border-radius:18px; background:var(--a); color:#fff; font-weight:900; display:block; } .btn.alt { background:var(--card); color:var(--ink); border:2px solid var(--line); }
+  input[type=file] { display:none; }
+  .lbl { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:14px 2px 8px; }
+  .row { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; } .row::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 12px; border-radius:20px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:13px; } .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .err { color:#c92a2a; font-weight:700; margin:12px 2px; }
+  .loading { text-align:center; padding:30px; color:var(--muted); font-weight:800; } .loading span { font-size:40px; display:inline-block; animation:r 1.2s ease-in-out infinite; } @keyframes r { 50% { transform:rotate(-15deg) scale(1.1); } }
+  .head { display:flex; gap:12px; align-items:center; background:var(--card); border-radius:18px; padding:12px; margin-top:16px; box-shadow:0 2px 0 var(--line); } .head img { width:64px; height:64px; border-radius:12px; object-fit:cover; } .head b { display:block; font-size:16px; } .head small { color:var(--muted); font-weight:700; }
+  .pick { background:#fff4e6; border:2px solid #ffd8a8; border-radius:16px; padding:12px 14px; margin-top:10px; line-height:1.45; } .pick b { color:var(--a); }
+  .sec { font-size:13px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:16px 4px 6px; }
+  .dish { background:var(--card); border-radius:16px; padding:12px 14px; margin-bottom:7px; box-shadow:0 2px 0 var(--line); }
+  .dish .t { display:flex; gap:8px; align-items:baseline; } .dish b { flex:1; font-size:16px; } .dish .p { font-weight:900; color:var(--a); white-space:nowrap; }
+  .dish .orig { color:var(--muted); font-size:13px; font-style:italic; margin-top:1px; } .dish p { margin:5px 0 0; font-size:14px; line-height:1.4; color:#5a4a39; }
+  .dish .tags { margin-top:6px; display:flex; gap:5px; flex-wrap:wrap; } .dish .tags span { font-size:11px; font-weight:800; padding:3px 8px; border-radius:10px; background:#f6efe6; }
+  .dish .tags .warn { background:#ffe3e3; color:#c92a2a; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🍜 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <div class="btns"><label class="btn"><input type="file" id="cam" accept="image/*" capture="environment">📸 <span id="lCam"></span></label><label class="btn alt"><input type="file" id="file" accept="image/*">🖼️ <span id="lGal"></span></label></div>
+  <div class="lbl" id="lAvoid"></div><div class="row" id="avoid"></div>
+  <div class="err" id="err"></div>
+  <div id="out"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Traductor de menús', sub:'Haz una foto a la carta en cualquier idioma y entiende cada plato', cam:'Foto de la carta', gal:'Galería', avoid:'Evito / soy', avoids:['🌱 Vegetariano', '🌿 Vegano', '🥜 Frutos secos', '🌾 Gluten', '🥛 Lactosa', '🦐 Marisco', '🐷 Cerdo', '🌶️ Picante'], reading:'Leyendo la carta…', noAi:'Abre esta app dentro de Acornix y conecta tu IA para usarla.', failed:'No he podido leerla: ', pick:'Te recomiendo', lang:'Spanish' }
+ : { title:'Menu Translator', sub:'Snap a menu in any language and understand every dish', cam:'Photo of the menu', gal:'Gallery', avoid:'I avoid / I am', avoids:['🌱 Vegetarian', '🌿 Vegan', '🥜 Nuts', '🌾 Gluten', '🥛 Lactose', '🦐 Shellfish', '🐷 Pork', '🌶️ Spicy'], reading:'Reading the menu…', noAi:'Open this app inside Acornix and connect your AI to use it.', failed:'Couldn\'t read it: ', pick:'My pick for you', lang:'English' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'sub', 'lCam', 'lGal', 'lAvoid'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.cam, T.gal, T.avoid][i]);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let avoid = [], last = null;
+function chips() { $('avoid').innerHTML = T.avoids.map((a, i) => `<button class="chip ${avoid.includes(i) ? 'on' : ''}" data-i="${i}">${a}</button>`).join(''); $('avoid').querySelectorAll('.chip').forEach(b => b.onclick = () => { const i = +b.dataset.i, k = avoid.indexOf(i); k >= 0 ? avoid.splice(k, 1) : avoid.push(i); store.set('avoid', avoid); chips(); }); }
+function shrink(file, max) { return new Promise(res => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', .88)); URL.revokeObjectURL(im.src); }; im.src = URL.createObjectURL(file); }); }
+function show(r) {
+  if (!r) { $('out').innerHTML = ''; return; }
+  $('out').innerHTML = `<div class="head"><img src="${r.thumb}"><div><b>${esc(r.restaurant || r.cuisine || '')}</b><small>${esc(r.cuisine || '')}${r.language ? ' · ' + esc(r.language) : ''}</small></div></div>${r.pick ? `<div class="pick">⭐ ${T.pick}: <b>${esc(r.pick)}</b></div>` : ''}` +
+    (r.sections || []).map(s => `<div class="sec">${esc(s.name)}</div>` + (s.dishes || []).map(d => `<div class="dish"><div class="t"><b>${esc(d.name)}</b>${d.price ? `<span class="p">${esc(d.price)}</span>` : ''}</div>${d.original ? `<div class="orig">${esc(d.original)}</div>` : ''}${d.description ? `<p>${esc(d.description)}</p>` : ''}${(d.tags || []).length || (d.warnings || []).length ? `<div class="tags">${(d.warnings || []).map(w => `<span class="warn">⚠️ ${esc(w)}</span>`).join('')}${(d.tags || []).map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}</div>`).join('')).join('');
+}
+async function read(f) {
+  $('err').textContent = ''; if (!window.Acornix) { $('err').textContent = T.noAi; return; }
+  $('out').innerHTML = `<div class="loading"><span>🍽️</span><div>${T.reading}</div></div>`;
+  try {
+    const img = await shrink(f, 1600), avoidTxt = avoid.map(i => T.avoids[i].replace(/^\S+\s/, '')).join(', ');
+    const r = await Acornix.askAI('Translate and explain this menu.', { images: [img], json: true, system: `You help travellers understand restaurant menus. Read every dish in the photo, keep the original name, translate it and explain in one short sentence what it actually is (main ingredients, how it is cooked). Keep prices exactly as written. Add short tags like vegetarian, spicy, house speciality. ${avoidTxt ? `The diner avoids or is: ${avoidTxt}. Add a warning to dishes that likely conflict and do not recommend them.` : ''} Recommend one dish as "pick". Write in ${T.lang}. Reply only with JSON: {"restaurant":"name if visible","cuisine":"","language":"language of the menu","pick":"dish name and why in a few words","sections":[{"name":"","dishes":[{"name":"translated","original":"","price":"","description":"","tags":[""],"warnings":[""]}]}]}` });
+    if (!r || !Array.isArray(r.sections)) throw new Error('?');
+    last = { ...r, thumb: await shrink(f, 200) }; store.set('last', last); show(last); try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { show(last); $('err').textContent = T.failed + (e.message || ''); }
+}
+$('cam').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) read(f); };
+$('file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) read(f); };
+(async () => { avoid = await store.get('avoid', []); last = await store.get('last', null); chips(); show(last); })();
+</script>
+</body>
+</html>
