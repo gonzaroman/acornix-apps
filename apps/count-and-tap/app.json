@@ -1,0 +1,15 @@
+{
+  "id": "count-and-tap",
+  "name": "Count and Tap",
+  "emoji": "🎮",
+  "category": "kids",
+  "description": "Count fruits and animals by tapping them, then pick the right number. From 1 to 20 with stars.",
+  "prompt": "A counting game for preschoolers: a number of fruits or animals appears, the child taps each one to count them out loud with sound and animation, then picks the right number from three big buttons. Levels from 1 to 20 and stars as rewards.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 64
+}

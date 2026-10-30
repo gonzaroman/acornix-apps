@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f6f8ed">
+<title>Cuenta conmigo</title>
+<style>
+:root{--ink:#24483f;--green:#24856b;--mint:#e3f4dd;--cream:#f6f8ed;--yellow:#ffcf56}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--ink);font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow-x:hidden}
+button{font:inherit;cursor:pointer;touch-action:manipulation;border:0;color:inherit}
+button:focus-visible{outline:4px solid #ef9d37;outline-offset:4px}
+button:active{transform:scale(.96)}
+.app{max-width:540px;margin:auto;padding:20px 20px 24px;min-height:100dvh;display:flex;flex-direction:column;gap:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{background:#dceccb;border-radius:17px;width:45px;height:45px;display:grid;place-items:center;font-size:26px;transform:rotate(-7deg)}
+.brand strong{display:block;font-size:17px;letter-spacing:-.5px}
+.brand small{display:block;font-size:11px;font-weight:800;color:#7e9485;letter-spacing:1.6px;margin-top:3px}
+.icon{width:45px;height:45px;border-radius:16px;background:#fff;box-shadow:0 3px 0 #e5e9d9;font-size:21px;display:grid;place-items:center}
+.topline{display:flex;justify-content:space-between;align-items:center}
+.level-link{background:none;padding:8px 0;font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
+.level-link span{background:#e4ecd8;padding:5px 9px;border-radius:9px;font-size:12px}
+.star-total{background:#fff3cf;padding:8px 13px;border-radius:20px;color:#886315;font-weight:900;font-size:14px}
+.progress{display:flex;gap:4px;margin-top:2px}
+.progress i{height:5px;background:#e0e7d7;flex:1;border-radius:8px}
+.progress i.done{background:#6cba89}
+.progress i.current{background:#f2bd43}
+.intro{text-align:center;margin:0}
+.eyebrow{color:#648570;font-size:11px;font-weight:900;letter-spacing:2px;margin:0 0 8px}
+h1{font-size:clamp(27px,7.6vw,36px);letter-spacing:-1.2px;line-height:1.15;margin:0 0 9px}
+.subtitle{font-size:15px;color:#6d8374;margin:0;line-height:1.5}
+.board{position:relative;background:#e4f0db;border:2px solid #d7e7cb;border-radius:30px;padding:16px 12px 12px;box-shadow:0 6px 0 #d9e6ce;flex:1;min-height:245px;display:flex;flex-direction:column;overflow:hidden}
+.board:before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#edf6e7;top:-65px;right:-50px;pointer-events:none}
+.board-label{display:flex;justify-content:space-between;align-items:center;padding:0 7px;position:relative;gap:8px}
+.board-label span{font-size:11px;font-weight:900;letter-spacing:1px;color:#6f8c64}
+.counter{background:white;border-radius:20px;padding:6px 11px;font-size:13px;font-weight:800;min-width:62px;text-align:center}
+.objects{display:grid;grid-template-columns:repeat(var(--cols,3),1fr);gap:7px;align-content:center;justify-content:center;flex:1;padding:13px 3px;position:relative}
+.fruit{position:relative;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.62);border-radius:23px;min-height:65px;padding:4px;font-size:clamp(36px,10vw,54px);box-shadow:0 3px 0 rgba(122,155,101,.15);transition:background .2s,opacity .2s,box-shadow .2s}
+.fruit.counted{background:#c7e3b9;box-shadow:inset 0 0 0 2px #94be80}
+.fruit .emoji{filter:drop-shadow(0 3px 1px rgba(73,84,43,.12));pointer-events:none}
+.fruit.counted .emoji{opacity:.63}
+.fruit .badge{position:absolute;right:3px;top:3px;background:var(--green);color:white;border-radius:50%;width:25px;height:25px;display:grid;place-items:center;font-size:13px;font-weight:900;border:2px solid #e6f0df}
+.fruit.pop{animation:pop .38s ease}
+.objects.dense{gap:6px;padding:12px 0}
+.objects.dense .fruit{min-height:48px;font-size:33px;border-radius:16px}
+.objects.dense .badge{width:22px;height:22px;font-size:11px;right:0;top:0}
+.board-footer{text-align:center;min-height:28px;font-size:13px;font-weight:750;color:#607e54;display:flex;align-items:center;justify-content:center;gap:7px}
+.board-footer .dot{height:7px;width:7px;border-radius:50%;background:#7eb267}
+.answer-section{text-align:center}
+.answer-section h2{font-size:18px;letter-spacing:-.3px;margin:3px 0 12px}
+.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.answer{font-size:39px;font-weight:900;background:#fff;border:2px solid #e7ebde;border-radius:23px;min-height:85px;box-shadow:0 5px 0 #e0e6d5;transition:opacity .2s,background .2s}
+.answer:nth-child(2){background:#fff1ce;border-color:#f5e4b3;box-shadow:0 5px 0 #ebd59b}
+.answer:nth-child(3){background:#e4eefb;border-color:#d3e1f5;box-shadow:0 5px 0 #c8d7ec}
+.answer:disabled{opacity:.45;cursor:default}
+.answer.wrong{animation:shake .35s;background:#ffe0d9;border-color:#edb3a5;opacity:.65}
+.bottom{display:flex;justify-content:center;align-items:center;gap:7px;font-size:12px;color:#839381;padding-top:3px}
+.bottom button{background:none;color:#66826a;text-decoration:underline;padding:7px;font-size:12px}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:90%;background:#24483f;color:white;border-radius:16px;padding:12px 18px;font-size:14px;z-index:20;box-shadow:0 5px 25px #24483f33;text-align:center}
+.overlay{position:fixed;inset:0;background:#193d345e;backdrop-filter:blur(7px);z-index:10;display:flex;align-items:center;justify-content:center;padding:24px}
+.overlay[hidden], [hidden]{display:none!important}
+.sheet{background:var(--cream);border-radius:32px;padding:26px 22px;width:100%;max-width:420px;box-shadow:0 20px 70px #163b3433;text-align:center;max-height:88dvh;overflow:auto;position:relative;animation:arrive .3s ease}
+.close{position:absolute;right:12px;top:12px;background:#e6eddd;border-radius:50%;width:38px;height:38px;font-size:20px}
+.win-icon{font-size:65px;margin:7px 0 0}
+.win-stars{display:flex;justify-content:center;gap:12px;font-size:43px;margin:12px 0}
+.win-stars span{filter:grayscale(1);opacity:.25}
+.win-stars span.earned{filter:none;opacity:1;animation:pop .6s both}
+.win-stars span:nth-child(2){animation-delay:.15s}
+.win-stars span:nth-child(3){animation-delay:.3s}
+.sheet h2{font-size:29px;margin:10px 0;letter-spacing:-1px}
+.sheet p{color:#718572;line-height:1.5;font-size:15px;margin:10px 0 22px}
+.primary{background:var(--green);color:white;min-height:57px;border-radius:18px;padding:14px 20px;font-size:17px;font-weight:800;width:100%;box-shadow:0 5px 0 #176d56}
+.secondary{background:transparent;min-height:48px;font-weight:800;margin-top:11px;padding:12px}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0 4px}
+.level-tile{border-radius:17px;background:white;padding:10px 3px;min-height:70px;font-size:23px;font-weight:850;box-shadow:0 3px 0 #dfe6d5}
+.level-tile small{display:block;font-size:10px;letter-spacing:1px;margin-top:3px;color:#dda72b}
+.level-tile:disabled{opacity:.4}
+.level-tile.active{outline:2px solid var(--green);background:#e0f0d9}
+.confetti{position:fixed;top:-20px;width:10px;height:15px;z-index:15;pointer-events:none;animation:fall 2.5s ease-in forwards}
+@keyframes pop{0%{transform:scale(.8)}45%{transform:scale(1.15) rotate(-5deg)}100%{transform:scale(1)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes arrive{from{opacity:0;transform:translateY(25px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes fall{to{transform:translate(var(--drift),105dvh) rotate(650deg);opacity:0}}
+@media(min-height:800px){.app{gap:23px;padding-top:26px;padding-bottom:28px}.board{min-height:300px}.fruit{min-height:78px}.objects.dense .fruit{min-height:54px}}
+@media(max-height:690px){.app{gap:12px;padding-top:12px}.board{min-height:218px}.answer{min-height:70px}.fruit{min-height:55px}.objects.dense .fruit{min-height:42px;font-size:29px}.intro h1{font-size:27px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div class="brand"><div class="logo" aria-hidden="true">🌱</div><div><strong>Cuenta conmigo</strong><small>PEQUEÑOS GRANDES PASOS</small></div></div>
+<button class="icon" id="sound" aria-label="Desactivar sonido">🔊</button>
+</header>
+<section aria-label="Tu progreso">
+<div class="topline"><button class="level-link" id="openLevels">Nivel <b id="levelNum">1</b> <span>de 20 ▦</span></button><div class="star-total">⭐ <span id="totalStars">0</span></div></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+</section>
+<section class="intro">
+<p class="eyebrow" id="category">VAMOS A CONTAR</p>
+<h1 id="question">¿Cuántas manzanas hay?</h1>
+<p class="subtitle" id="instruction">Toca cada una y cuenta conmigo.</p>
+</section>
+<section class="board" aria-label="Objetos para contar">
+<div class="board-label"><span>TOCA Y DESCUBRE</span><b class="counter" id="counter">0 / 1</b></div>
+<div class="objects" id="objects"></div>
+<div class="board-footer" id="boardHint"><span class="dot"></span> ¡Vamos, toca la primera!</div>
+</section>
+<section class="answer-section">
+<h2 id="answerTitle">Después, elige el número</h2>
+<div class="answers" id="answers"></div>
+</section>
+<footer class="bottom"><span>💛 A tu ritmo, sin prisas.</span><button id="recount">Volver a contar</button></footer>
+</main>
+
+<div class="overlay" id="levelOverlay" hidden>
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="levelsTitle">
+<button class="close" data-close="levelOverlay" aria-label="Cerrar">×</button>
+<div style="font-size:38px">🗺️</div>
+<h2 id="levelsTitle">Tu aventura</h2>
+<p>Un número nuevo en cada nivel.<br>¡Colecciona hasta 60 estrellas!</p>
+<div class="levels" id="levels"></div>
+</section>
+</div>
+
+<div class="overlay" id="winOverlay" hidden>
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+<div class="win-icon" id="winIcon">🎉</div>
+<div class="win-stars" id="winStars" aria-label="Estrellas ganadas"></div>
+<h2 id="winTitle">¡Lo has conseguido!</h2>
+<p id="winText"></p>
+<button class="primary" id="next">Siguiente nivel →</button>
+<button class="secondary" id="repeat">Contar otra vez ↺</button>
+</section>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const key='cuentaConmigo_v1';
+const db=window.Acornix?.db;
+const fruits=[
+{emoji:'🍎',name:'manzanas',singular:'manzana',female:true},
+{emoji:'🐥',name:'pollitos',singular:'pollito',female:false},
+{emoji:'🍓',name:'fresas',singular:'fresa',female:true},
+{emoji:'🐸',name:'ranitas',singular:'ranita',female:true},
+{emoji:'🍊',name:'naranjas',singular:'naranja',female:true},
+{emoji:'🐢',name:'tortugas',singular:'tortuga',female:true},
+{emoji:'🍐',name:'peras',singular:'pera',female:true},
+{emoji:'🦋',name:'mariposas',singular:'mariposa',female:true},
+{emoji:'🍌',name:'plátanos',singular:'plátano',female:false},
+{emoji:'🐠',name:'peces',singular:'pez',female:false},
+{emoji:'🍒',name:'cerezas',singular:'cereza',female:true},
+{emoji:'🐰',name:'conejitos',singular:'conejito',female:false},
+{emoji:'🍋',name:'limones',singular:'limón',female:false},
+{emoji:'🐞',name:'mariquitas',singular:'mariquita',female:true},
+{emoji:'🍉',name:'sandías',singular:'sandía',female:true},
+{emoji:'🐝',name:'abejitas',singular:'abejita',female:true},
+{emoji:'🥝',name:'kiwis',singular:'kiwi',female:false},
+{emoji:'🐙',name:'pulpos',singular:'pulpo',female:false},
+{emoji:'🍑',name:'melocotones',singular:'melocotón',female:false},
+{emoji:'🐱',name:'gatitos',singular:'gatito',female:false}
+];
+const words=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte'];
+let state={level:1,unlocked:1,stars:{},sound:true,round:null};
+let writeQueue=Promise.resolve(),audio=null,toastTimer,loading=true;
+function notify(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,3000)}
+function save(){
+ const snapshot=JSON.parse(JSON.stringify(state));
+ writeQueue=writeQueue.then(async()=>{
+  if(db)await db.set(key,snapshot);else localStorage.setItem(key,JSON.stringify(snapshot));
+ }).catch(()=>notify('No se pudo guardar. Vuelve a intentarlo jugando.'));
+ return writeQueue;
+}
+function choices(n){
+ const set=new Set([n]);
+ while(set.size<3){let candidate=n+Math.floor(Math.random()*7)-3;if(candidate>=1&&candidate<=20)set.add(candidate)}
+ return [...set].sort(()=>Math.random()-.5);
+}
+function newRound(){state.round={tapped:[],options:choices(state.level),wrong:[],finished:false,earned:0}}
+function soundInit(){
+ if(!state.sound)return;
+ try{if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume()}catch(e){}
+}
+function tone(good=true){
+ if(!state.sound)return;soundInit();if(!audio)return;
+ try{const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.type='sine';
+ o.frequency.setValueAtTime(good?620:260,audio.currentTime);
+ o.frequency.exponentialRampToValueAtTime(good?900:220,audio.currentTime+.12);
+ g.gain.setValueAtTime(.08,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.18);
+ o.start();o.stop(audio.currentTime+.2)}catch(e){}
+}
+function say(text){
+ if(!state.sound)return;
+ if('speechSynthesis'in window){
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=.83;u.pitch=1.15;
+   const v=speechSynthesis.getVoices().find(v=>v.lang.startsWith('es'));if(v)u.voice=v;speechSynthesis.speak(u);
+  }catch(e){tone()}
+ }else tone();
+}
+function render(){
+ const n=state.level,r=state.round,f=fruits[n-1],count=r.tapped.length,complete=count===n;
+ $('levelNum').textContent=n;
+ $('totalStars').textContent=Object.values(state.stars).reduce((a,b)=>a+Number(b),0);
+ $('progress').innerHTML=Array.from({length:20},(_,i)=>`<i class="${i+1===n?'current':state.stars[i+1]?'done':''}"></i>`).join('');
+ $('sound').textContent=state.sound?'🔊':'🔇';$('sound').setAttribute('aria-label',state.sound?'Desactivar sonido':'Activar sonido');$('sound').setAttribute('aria-pressed',String(state.sound));
+ $('question').textContent=`¿Cuánt${f.female?'as':'os'} ${f.name} hay?`;
+ $('instruction').textContent=complete?'¡Ya los contaste! Elige tu respuesta.':`Toca cada ${f.singular} y cuenta conmigo.`;
+ $('counter').textContent=`${count} / ${n}`;
+ $('category').textContent=n<=5?'VAMOS A CONTAR':n<=10?'¡LO ESTÁS HACIENDO GENIAL!':'UN POQUITO MÁS LEJOS';
+ const objects=$('objects');objects.innerHTML='';objects.classList.toggle('dense',n>10);
+ objects.style.setProperty('--cols',n===1?2:n<=4?2:n<=9?3:4);
+ for(let i=0;i<n;i++){
+  const order=r.tapped.indexOf(i),btn=document.createElement('button');
+  btn.className='fruit'+(order>=0?' counted':'');
+  if(n===1)btn.style.gridColumn='1 / -1';
+  btn.setAttribute('aria-label',`${f.singular} ${i+1}${order>=0?', contado: '+(order+1):', sin contar'}`);
+  btn.setAttribute('aria-pressed',String(order>=0));
+  btn.innerHTML=`<span class="emoji" aria-hidden="true">${f.emoji}</span>${order>=0?`<span class="badge">${order+1}</span>`:''}`;
+  btn.onclick=()=>tap(i,btn);objects.appendChild(btn);
+ }
+ $('boardHint').textContent=complete?'✨ ¡Muy bien! Ahora elige abajo.':count?`¡Llevas ${count}! Sigue tocando.`:'☝️ ¡Vamos, toca la primera!';
+ $('answerTitle').textContent=complete?'¿Cuántos contaste?':'Después, elige el número';
+ $('answers').innerHTML='';
+ r.options.forEach(value=>{
+  const b=document.createElement('button');b.className='answer';b.textContent=value;
+  b.disabled=!complete||r.finished||r.wrong.includes(value);
+  b.setAttribute('aria-label',String(value));
+  if(r.wrong.includes(value))b.classList.add('wrong');
+  b.onclick=()=>answer(value);$('answers').appendChild(b);
+ });
+ $('winOverlay').hidden=!r.finished;
+ if(r.finished)renderWin();
+}
+function tap(i,btn){
+ if(loading||state.round.finished)return;
+ soundInit();
+ const r=state.round,existing=r.tapped.indexOf(i);
+ if(existing>=0){say(words[existing+1]);btn.classList.remove('pop');void btn.offsetWidth;btn.classList.add('pop');return}
+ r.tapped.push(i);const count=r.tapped.length;
+ say(words[count]);save();render();
+ const fresh=$('objects').children[i];fresh.classList.add('pop');
+ if(count===state.level&&navigator.vibrate)navigator.vibrate(25);
+}
+function answer(value){
+ if(state.round.finished)return;
+ soundInit();
+ if(value!==state.level){
+  state.round.wrong.push(value);save();render();
+  $('boardHint').textContent='💛 Casi… mira tus números y prueba otra vez.';
+  say('Casi. Cuenta otra vez y prueba otro número.');
+  return;
+ }
+ const r=state.round;r.finished=true;r.earned=Math.max(1,3-r.wrong.length);
+ state.stars[state.level]=Math.max(state.stars[state.level]||0,r.earned);
+ state.unlocked=Math.max(state.unlocked,Math.min(20,state.level+1));
+ save();render();tone();say(`¡Muy bien! ${words[state.level]}. ¡Lo has conseguido!`);confetti();
+ setTimeout(()=>$('next').focus(),100);
+}
+function renderWin(){
+ const n=state.level,r=state.round,f=fruits[n-1];
+ $('winStars').innerHTML=Array.from({length:3},(_,i)=>`<span class="${i<r.earned?'earned':''}">⭐</span>`).join('');
+ $('winStars').setAttribute('aria-label',`${r.earned} estrellas ganadas`);
+ $('winIcon').textContent=n===20?'🏆':f.emoji;
+ $('winTitle').textContent=n===20?'¡Llegaste hasta el 20!':'¡Lo has conseguido!';
+ $('winText').textContent=n===20?`¡Has completado todos los niveles! Puedes volver a jugar y conseguir más estrellas.`:`Contaste ${n} ${n===1?f.singular:f.name}. ¡Qué gran trabajo!`;
+ $('next').textContent=n===20?'Ver mis niveles ★':'Siguiente nivel →';
+}
+function confetti(){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ for(let i=0;i<32;i++){
+  const p=document.createElement('i');p.className='confetti';
+  p.style.cssText=`left:${Math.random()*100}%;background:${['#ffcf56','#6dc292','#f3a6a0','#83b8e9'][i%4]};--drift:${Math.random()*140-70}px;animation-delay:${Math.random()*.5}s;border-radius:${i%2?'50%':'2px'}`;
+  document.body.appendChild(p);setTimeout(()=>p.remove(),3200);
+ }
+}
+function start(n){
+ if('speechSynthesis'in window)speechSynthesis.cancel();
+ state.level=n;newRound();save();$('winOverlay').hidden=true;$('levelOverlay').hidden=true;render();
+}
+function showLevels(){
+ $('winOverlay').hidden=true;$('levels').innerHTML='';
+ for(let n=1;n<=20;n++){
+  const b=document.createElement('button'),stars=state.stars[n]||0;
+  b.className='level-tile'+(n===state.level?' active':'');b.disabled=n>state.unlocked;
+  b.innerHTML=`${n>state.unlocked?'🔒':n}<small>${stars?'★'.repeat(stars)+'☆'.repeat(3-stars):n>state.unlocked?'POR DESCUBRIR':'☆☆☆'}</small>`;
+  b.setAttribute('aria-label',`Nivel ${n}${n>state.unlocked?', bloqueado':`, ${stars} estrellas`}`);
+  b.onclick=()=>start(n);$('levels').appendChild(b);
+ }
+ $('levelOverlay').hidden=false;$('levelOverlay').querySelector('.close').focus();
+}
+$('sound').onclick=()=>{
+ state.sound=!state.sound;if(!state.sound&&'speechSynthesis'in window)speechSynthesis.cancel();
+ else{soundInit();say('¡Vamos a contar!')}
+ save();render();
+};
+$('openLevels').onclick=showLevels;
+$('next').onclick=()=>state.level===20?showLevels():start(state.level+1);
+$('repeat').onclick=()=>start(state.level);
+$('recount').onclick=()=>{
+ if(loading)return;
+ state.round.tapped=[];save();render();say('Vamos a contar otra vez.');
+};
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{
+ $(b.dataset.close).hidden=true;if(state.round.finished){$('winOverlay').hidden=false}else $('openLevels').focus();
+});
+$('levelOverlay').addEventListener('click',e=>{if(e.target===$('levelOverlay'))$('levelOverlay').querySelector('.close').click()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('levelOverlay').hidden)$('levelOverlay').querySelector('.close').click()});
+async function reload(){
+ try{
+  const saved=db?await db.get(key):JSON.parse(localStorage.getItem(key)||'null');
+  if(saved&&typeof saved==='object'){
+   state={...state,...saved};
+   state.level=Math.max(1,Math.min(20,Number(state.level)||1));
+   state.unlocked=Math.max(state.level,Math.min(20,Number(state.unlocked)||1));
+   state.stars=state.stars||{};
+  }
+  if(!state.round||!Array.isArray(state.round.tapped)||!Array.isArray(state.round.options)||!Array.isArray(state.round.wrong))newRound();
+ }catch(e){notify('No pudimos cargar el progreso. Puedes seguir jugando.');if(!state.round)newRound()}
+ loading=false;render();
+ if(!$('levelOverlay').hidden)showLevels();
+}
+window.addEventListener('acornixdata',async()=>{await writeQueue;await reload()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&'speechSynthesis'in window)speechSynthesis.cancel()});
+newRound();render();reload();
+})();
+</script>
+</body>
+</html>
