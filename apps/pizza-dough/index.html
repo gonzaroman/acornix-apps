@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pizza Dough</title>
+<style>
+  :root { --bg:#fff6f0; --card:#fff; --ink:#3a1f14; --muted:#a3806f; --a:#d9480f; --g:#2b8a3e; --line:#f6dfd2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .styles { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-bottom:12px; } .styles::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:9px 13px; border-radius:20px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:13px; } .chip.on { background:var(--a); color:#fff; border-color:var(--a); }
+  .card { background:var(--card); border-radius:22px; padding:16px; margin-bottom:12px; box-shadow:0 2px 0 var(--line); }
+  .ctl { display:grid; grid-template-columns:110px 1fr 64px; gap:8px 10px; align-items:center; font-weight:800; font-size:14px; } .ctl input { accent-color:var(--a); width:100%; } .ctl b { text-align:right; font-variant-numeric:tabular-nums; } .ctl small { color:var(--muted); }
+  .res { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .r { border-radius:16px; padding:12px; background:#fff1e8; } .r .e { font-size:22px; } .r b { display:block; font-size:24px; font-variant-numeric:tabular-nums; } .r span { font-size:12px; font-weight:800; color:var(--muted); }
+  .r.total { grid-column:1/-1; background:var(--ink); color:#fff; display:flex; justify-content:space-between; align-items:center; } .r.total span { color:#e9c9b8; }
+  .yeast { display:flex; gap:6px; margin-top:12px; } .yeast button { flex:1; padding:9px 4px; border-radius:12px; background:#fff1e8; font-weight:800; font-size:12px; color:var(--muted); } .yeast button.on { background:var(--ink); color:#fff; }
+  h3 { margin:0 0 10px; font-size:16px; }
+  .plan { display:grid; gap:0; } .p { display:flex; gap:12px; padding:9px 0; border-bottom:1px dashed var(--line); } .p:last-child { border:0; } .p b { min-width:66px; color:var(--a); font-variant-numeric:tabular-nums; } .p span { font-size:14px; line-height:1.4; }
+  .eat { display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px; margin-bottom:10px; } .eat input { flex:1; padding:10px; border-radius:12px; border:2px solid var(--line); font:inherit; color:var(--ink); background:#fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🍕 <span id="ttl"></span></h1>
+  <div class="styles" id="styles"></div>
+  <div class="card ctl" id="ctl"></div>
+  <div class="card"><div class="res" id="res"></div><div class="yeast" id="yeast"></div></div>
+  <div class="card"><h3 id="lPlan"></h3><div class="eat"><span id="lEat"></span><input type="datetime-local" id="eat"></div><div class="plan" id="plan"></div></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Masa de pizza', styles:['Napolitana', 'New York', 'Romana', 'Sartén', 'Rápida (2 h)'], n:'Pizzas', ball:'Peso bola', hyd:'Hidratación', salt:'Sal', hours:'Fermentación', flour:'Harina', water:'Agua', saltR:'Sal', yeast:'Levadura', oil:'Aceite', total:'Masa total', y:['Fresca', 'Seca', 'Masa madre'], plan:'Plan', eat:'Comer a las', steps:['Mezcla agua, levadura y harina; añade la sal al final', 'Amasa 10 min hasta que esté lisa', 'Fermentación en bloque, tapada', 'Haz las bolas y tápalas', 'Si estaban en la nevera, sácalas para que se templen', 'Horno al máximo con la piedra o bandeja dentro', '¡A estirar y hornear!'], fridge:'en la nevera', room:'a temperatura ambiente', h:'h' }
+ : { title:'Pizza Dough', styles:['Neapolitan', 'New York', 'Roman', 'Pan pizza', 'Quick (2 h)'], n:'Pizzas', ball:'Ball weight', hyd:'Hydration', salt:'Salt', hours:'Rise time', flour:'Flour', water:'Water', saltR:'Salt', yeast:'Yeast', oil:'Oil', total:'Total dough', y:['Fresh', 'Dry', 'Sourdough'], plan:'Plan', eat:'Eat at', steps:['Mix water, yeast and flour; add the salt last', 'Knead 10 min until smooth', 'Bulk rise, covered', 'Shape into balls and cover', 'If they were in the fridge, take them out to warm up', 'Oven at max with the stone or tray inside', 'Stretch and bake!'], fridge:'in the fridge', room:'at room temperature', h:'h' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'lPlan', 'lEat'].forEach((id, i) => $(id).textContent = [T.title, T.plan, T.eat][i]);
+// style: ball g, hydration %, salt %, oil %, hours
+const PRE = [[250, 62, 2.8, 0, 24], [280, 63, 2, 2, 48], [180, 60, 2.2, 3, 24], [500, 70, 2, 4, 12], [250, 62, 2.5, 1, 2]];
+let st = { style: 0, n: 4, ball: 250, hyd: 62, salt: 2.8, oil: 0, hours: 24, yt: 0 };
+const save = () => store.set('st', st);
+// Yeast as % of flour for a given rise time (warmer, shorter rises need more). Fresh is 3x dry.
+function yeastPct(h) { const dry = h <= 2 ? 1 : h <= 8 ? .4 : h <= 24 ? .1 : .05; return st.yt === 0 ? dry * 3 : st.yt === 1 ? dry : 20; }
+function render() {
+  $('styles').innerHTML = T.styles.map((s, i) => `<button class="chip ${i === st.style ? 'on' : ''}" data-i="${i}">${s}</button>`).join('');
+  $('styles').querySelectorAll('.chip').forEach(b => b.onclick = () => { const [ball, hyd, salt, oil, hours] = PRE[+b.dataset.i]; st = { ...st, style: +b.dataset.i, ball, hyd, salt, oil, hours }; save(); render(); });
+  const C = [['n', T.n, 1, 12, 1, ''], ['ball', T.ball, 150, 600, 10, 'g'], ['hyd', T.hyd, 55, 80, 1, '%'], ['salt', T.salt, 1.5, 3.5, .1, '%'], ['hours', T.hours, 2, 72, 1, T.h]];
+  $('ctl').innerHTML = C.map(([k, n, a, b, s, u]) => `<span>${n}</span><input type="range" min="${a}" max="${b}" step="${s}" value="${st[k]}" data-k="${k}"><b>${st[k]}<small> ${u}</small></b>`).join('');
+  $('ctl').querySelectorAll('input').forEach(i => i.oninput = () => { st[i.dataset.k] = +i.value; i.nextElementSibling.firstChild.textContent = i.value; save(); calc(); });
+  $('yeast').innerHTML = T.y.map((y, i) => `<button class="${i === st.yt ? 'on' : ''}" data-i="${i}">${y}</button>`).join('');
+  $('yeast').querySelectorAll('button').forEach(b => b.onclick = () => { st.yt = +b.dataset.i; save(); render(); });
+  calc();
+}
+function calc() {
+  const total = st.n * st.ball, yp = yeastPct(st.hours), flour = total / (1 + (st.hyd + st.salt + st.oil + yp) / 100), f = x => Math.round(x * 10) / 10;
+  $('res').innerHTML = `<div class="r"><div class="e">🌾</div><b>${Math.round(flour)} g</b><span>${T.flour}</span></div><div class="r"><div class="e">💧</div><b>${Math.round(flour * st.hyd / 100)} g</b><span>${T.water}</span></div><div class="r"><div class="e">🧂</div><b>${f(flour * st.salt / 100)} g</b><span>${T.saltR}</span></div><div class="r"><div class="e">🦠</div><b>${f(flour * yp / 100)} g</b><span>${T.yeast} · ${T.y[st.yt]}</span></div>${st.oil ? `<div class="r"><div class="e">🫒</div><b>${f(flour * st.oil / 100)} g</b><span>${T.oil}</span></div>` : ''}<div class="r total"><span>${T.total}</span><b>${total} g</b></div>`;
+  plan();
+}
+function plan() {
+  let eat = $('eat').value ? new Date($('eat').value) : null;
+  if (!eat || isNaN(eat)) { const ready = Date.now() + (st.hours + 1.5) * 36e5; eat = new Date(ready); eat.setHours(21, 0, 0, 0); if (eat.getTime() < ready) eat.setDate(eat.getDate() + 1); const p = n => String(n).padStart(2, '0'); $('eat').value = `${eat.getFullYear()}-${p(eat.getMonth() + 1)}-${p(eat.getDate())}T${p(eat.getHours())}:00`; }
+  const cold = st.hours > 8, at = h => new Date(eat.getTime() - h * 36e5), fmt = d => d.toLocaleString(ES ? 'es' : 'en', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+  const bulk = cold ? Math.max(2, st.hours - 4) : Math.max(1, st.hours * .6), start = st.hours + 1.2;
+  const P = [[start, T.steps[0]], [start - .2, T.steps[1]], [start - .4, `${T.steps[2]} · ${Math.round(bulk)} ${T.h} ${cold ? T.fridge : T.room}`], [start - .4 - bulk, T.steps[3]], ...(cold ? [[2.5, T.steps[4]]] : []), [1, T.steps[5]], [0, T.steps[6]]];
+  $('plan').innerHTML = P.map(([h, s]) => `<div class="p"><b>${fmt(at(h))}</b><span>${s}</span></div>`).join('');
+}
+$('eat').onchange = plan;
+(async () => { st = { ...st, ...(await store.get('st', {})) }; render(); })();
+</script>
+</body>
+</html>

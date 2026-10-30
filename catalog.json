@@ -152,6 +152,29 @@
       "trending": 0
     },
     {
+      "id": "pizza-dough",
+      "name": "Pizza Dough",
+      "emoji": "🌰",
+      "category": "food-drink",
+      "description": "Pizza dough calculator for Neapolitan, New York, Roman or pan pizza: flour, water, salt and yeast, plus a timed plan for dinner.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8929,
+      "sha256": "8639540b6ed0e3e27559624b3c708cb2a40a7fa8beb49fe7eef660798673c4c6",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pixel-art",
       "name": "Pixel Art",
       "emoji": "🟥",
