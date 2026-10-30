@@ -658,6 +658,29 @@
       "trending": 0
     },
     {
+      "id": "fuel-cost",
+      "name": "Fuel Cost",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "What a car trip costs in fuel, tolls and per person, in km and litres or miles and gallons, compared with an electric car.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 7279,
+      "sha256": "eea6d56373d851beab918418c18ba5c0bc2c9798a7dce7661c64509a8bd8e610",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "fridge-chef",
       "name": "Fridge Chef",
       "emoji": "👨‍🍳",
