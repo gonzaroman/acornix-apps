@@ -4,16 +4,16 @@
     {
       "id": "star-finder-ar",
       "name": "Star Finder AR",
-      "emoji": "🌰",
+      "emoji": "🔭",
       "category": "education",
       "description": "Point your phone at the sky and see the real stars, constellations, planets and the Moon labelled on the camera. Find any planet with an arrow and travel in time.",
-      "prompt": "",
+      "prompt": "An augmented reality star finder: point the phone at the sky and the camera shows the real stars, constellation lines, planets, the Sun and the Moon with its phase, using the compass and gyroscope, with an arrow to find any planet, a time slider and a city search for your location.",
       "author": "gonzaroman",
-      "language": "es",
+      "language": "en",
       "version": 1,
       "added": "2026-10-30",
       "updated": "2026-10-30",
-      "featured": false,
+      "featured": true,
       "official": true,
       "tags": [
         "camera",
@@ -24,6 +24,32 @@
       ],
       "size": 33158,
       "sha256": "4225444e00dc63d229daa645b655cde7abf829b8bacbfd94ec259596441d06cc",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "ar-space",
+      "name": "AR Space",
+      "emoji": "🪐",
+      "category": "entertainment",
+      "description": "Planets in 3D floating around you on the camera: Earth with clouds and its Moon, Jupiter, Saturn with rings, a space station and a UFO. Tap to learn, snap AR photos.",
+      "prompt": "An augmented reality space scene: on top of the camera, 3D planets float around you and stay in place as you move the phone, Earth with clouds and its Moon, Jupiter, Saturn with rings, Mars, a space station, an asteroid belt and a UFO, with facts when you tap them and AR photos saved to the gallery.",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "camera",
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 21038,
+      "sha256": "4891097900b0776e5d9678f867d036ceada067409b68ce79b41144cc6eb6b7b6",
       "downloads": 0,
       "trending": 0
     },
@@ -258,32 +284,6 @@
       ],
       "size": 12812,
       "sha256": "4b5fac47d671d6384f45ab54d7ad152b32c1fcaad5c783b7c176ba4751ce3bcb",
-      "downloads": 0,
-      "trending": 0
-    },
-    {
-      "id": "ar-space",
-      "name": "AR Space",
-      "emoji": "🪐",
-      "category": "entertainment",
-      "description": "Planets in 3D floating around you on the camera: Earth with clouds and its Moon, Jupiter, Saturn with rings, a space station and a UFO. Tap to learn, snap AR photos.",
-      "prompt": "",
-      "author": "gonzaroman",
-      "language": "es",
-      "version": 1,
-      "added": "2026-10-30",
-      "updated": "2026-10-30",
-      "featured": false,
-      "official": true,
-      "tags": [
-        "camera",
-        "internet"
-      ],
-      "files": [
-        "index.html"
-      ],
-      "size": 21038,
-      "sha256": "4891097900b0776e5d9678f867d036ceada067409b68ce79b41144cc6eb6b7b6",
       "downloads": 0,
       "trending": 0
     },

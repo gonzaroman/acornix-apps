@@ -1,15 +1,15 @@
 {
   "id": "star-finder-ar",
   "name": "Star Finder AR",
-  "emoji": "🌰",
+  "emoji": "🔭",
   "category": "education",
   "description": "Point your phone at the sky and see the real stars, constellations, planets and the Moon labelled on the camera. Find any planet with an arrow and travel in time.",
-  "prompt": "",
+  "prompt": "An augmented reality star finder: point the phone at the sky and the camera shows the real stars, constellation lines, planets, the Sun and the Moon with its phase, using the compass and gyroscope, with an arrow to find any planet, a time slider and a city search for your location.",
   "author": "gonzaroman",
-  "language": "es",
+  "language": "en",
   "version": 1,
   "added": "2026-10-30",
   "updated": "2026-10-30",
-  "featured": false,
+  "featured": true,
   "issue": 32
 }

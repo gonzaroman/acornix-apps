@@ -4,12 +4,12 @@
   "emoji": "🪐",
   "category": "entertainment",
   "description": "Planets in 3D floating around you on the camera: Earth with clouds and its Moon, Jupiter, Saturn with rings, a space station and a UFO. Tap to learn, snap AR photos.",
-  "prompt": "",
+  "prompt": "An augmented reality space scene: on top of the camera, 3D planets float around you and stay in place as you move the phone, Earth with clouds and its Moon, Jupiter, Saturn with rings, Mars, a space station, an asteroid belt and a UFO, with facts when you tap them and AR photos saved to the gallery.",
   "author": "gonzaroman",
-  "language": "es",
+  "language": "en",
   "version": 1,
   "added": "2026-10-30",
   "updated": "2026-10-30",
-  "featured": false,
+  "featured": true,
   "issue": 33
 }
