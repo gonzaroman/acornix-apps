@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meal Planner</title>
+<style>
+  :root { --bg:#f7f5ff; --card:#fff; --ink:#221f3a; --muted:#8a85a8; --a:#6741d9; --line:#e9e5fb; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  .top { display:flex; align-items:center; gap:8px; margin-bottom:12px; } .top h1 { margin:0; font-size:24px; flex:1; }
+  .nav { display:flex; gap:6px; align-items:center; font-weight:800; font-size:13px; color:var(--muted); } .nav button { width:34px; height:34px; border-radius:50%; background:#fff; font-weight:900; box-shadow:0 1px 3px #0001; }
+  .day { background:var(--card); border-radius:18px; padding:12px; margin-bottom:8px; box-shadow:0 2px 0 var(--line); }
+  .day.today { outline:2px solid var(--a); }
+  .day h3 { margin:0 0 8px; font-size:14px; display:flex; justify-content:space-between; color:var(--muted); text-transform:capitalize; } .day.today h3 { color:var(--a); }
+  .meals { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .meal { background:#f6f4ff; border-radius:12px; padding:8px; min-height:58px; text-align:left; display:flex; flex-direction:column; gap:2px; }
+  .meal small { font-size:11px; font-weight:800; color:var(--muted); } .meal span { font-size:13px; font-weight:700; line-height:1.25; }
+  .meal.empty span { color:#c3bde0; font-size:20px; }
+  .acts { display:flex; gap:8px; margin:12px 0; } .acts button { flex:1; padding:13px; border-radius:16px; font-weight:900; background:#fff; box-shadow:0 2px 0 var(--line); font-size:14px; } .acts .ai { background:linear-gradient(135deg,#6741d9,#d6336c); color:#fff; }
+  .sheet { position:fixed; inset:0; background:#221f3a66; display:flex; align-items:flex-end; z-index:5; }
+  .sheet .in { width:100%; max-height:85vh; overflow:auto; background:var(--bg); border-radius:24px 24px 0 0; padding:18px 16px calc(env(safe-area-inset-bottom) + 18px); }
+  .sheet h3 { margin:0 0 10px; text-transform:capitalize; }
+  .sheet input { width:100%; padding:13px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; color:var(--ink); }
+  .sug { display:flex; flex-wrap:wrap; gap:7px; margin:12px 0; } .sug button { padding:8px 12px; border-radius:20px; background:#fff; border:2px solid var(--line); font-weight:700; font-size:13px; }
+  .row { display:flex; gap:8px; } .row button { flex:1; padding:13px; border-radius:14px; font-weight:900; background:#fff; } .row .ok { background:var(--a); color:#fff; }
+  .list { background:#fff; border-radius:16px; padding:6px 14px; } .li { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); cursor:pointer; } .li:last-child { border:0; } .li.got { color:var(--muted); text-decoration:line-through; }
+  .ai-form { display:grid; gap:10px; } .ai-form .chips { display:flex; flex-wrap:wrap; gap:7px; } .chip { padding:8px 12px; border-radius:20px; background:#fff; border:2px solid var(--line); font-weight:800; font-size:13px; } .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .err { color:#c92a2a; font-weight:700; font-size:14px; } .muted { color:var(--muted); font-size:13px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🍱 <span id="ttl"></span></h1><div class="nav"><button id="prev">‹</button><span id="week"></span><button id="next">›</button></div></div>
+  <div class="acts"><button class="ai" id="aiB"></button><button id="shopB"></button></div>
+  <div id="days"></div>
+</div>
+<div class="sheet" id="sheet" hidden><div class="in" id="sheetIn"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Menú semanal', slots:['Desayuno', 'Comida', 'Cena'], ai:'✨ Planificar con IA', shop:'🛒 Lista de la compra', ph:'¿Qué vas a comer?', ok:'Guardar', clear:'Vaciar', cancel:'Cancelar', today:'hoy', sug:[['Tostadas con tomate', 'Yogur con fruta', 'Avena con plátano', 'Huevos revueltos'], ['Lentejas', 'Pasta con verduras', 'Pollo al horno', 'Paella', 'Ensalada de garbanzos'], ['Tortilla francesa', 'Crema de calabaza', 'Salmón con verduras', 'Pizza casera', 'Sopa']], aiTitle:'Planificar la semana', who:'Para cuántos', diet:'Preferencias', diets:['Equilibrado', 'Vegetariano', 'Vegano', 'Rápido (<30 min)', 'Barato', 'Alto en proteína', 'Sin gluten'], extra:'Algo más (opcional): sin pescado, me sobra arroz…', go:'✨ Crear menú', making:'Creando tu menú…', noAi:'Para planificar con IA abre la app en Acornix con tu IA conectada.', failed:'No he podido: ', shopTitle:'Lista de la compra', shopEmpty:'Pide el menú a la IA y tendrás aquí la lista de ingredientes.', lang:'Spanish (Spain)', locale:'es' }
+ : { title:'Meal Planner', slots:['Breakfast', 'Lunch', 'Dinner'], ai:'✨ Plan with AI', shop:'🛒 Shopping list', ph:'What will you eat?', ok:'Save', clear:'Clear', cancel:'Cancel', today:'today', sug:[['Toast and eggs', 'Yogurt and fruit', 'Porridge with banana', 'Smoothie bowl'], ['Chicken salad', 'Veggie pasta', 'Lentil soup', 'Tuna wrap', 'Burrito bowl'], ['Stir-fry with rice', 'Roast salmon and veg', 'Homemade pizza', 'Chili', 'Omelette']], aiTitle:'Plan the week', who:'For how many', diet:'Preferences', diets:['Balanced', 'Vegetarian', 'Vegan', 'Quick (<30 min)', 'Budget', 'High protein', 'Gluten free'], extra:'Anything else (optional): no fish, leftover rice…', go:'✨ Make the menu', making:'Making your menu…', noAi:'To plan with AI, open the app in Acornix with your AI connected.', failed:'Couldn\'t do it: ', shopTitle:'Shopping list', shopEmpty:'Ask the AI for a menu and the ingredients list will appear here.', lang:'English', locale:'en' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id), DAY = 864e5;
+$('ttl').textContent = T.title; $('aiB').textContent = T.ai; $('shopB').textContent = T.shop;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+let plan = {}, shop = { items: [], got: [] }, weekOff = 0, people = 2, diet = 0;
+const save = () => { store.set('plan', plan); store.set('shop', shop); };
+function monday() { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7 + weekOff * 7); return d; }
+const days = () => Array.from({ length: 7 }, (_, i) => new Date(monday().getTime() + i * DAY));
+function render() {
+  const ds = days(), today = key(new Date());
+  $('week').textContent = `${ds[0].toLocaleDateString(T.locale, { day: 'numeric', month: 'short' })} – ${ds[6].toLocaleDateString(T.locale, { day: 'numeric', month: 'short' })}`;
+  $('days').innerHTML = ds.map(d => { const k = key(d), p = plan[k] || []; return `<div class="day ${k === today ? 'today' : ''}"><h3><span>${d.toLocaleDateString(T.locale, { weekday: 'long', day: 'numeric' })}</span>${k === today ? `<span>${T.today}</span>` : ''}</h3><div class="meals">${T.slots.map((s, j) => `<button class="meal ${p[j] ? '' : 'empty'}" data-k="${k}" data-j="${j}"><small>${s}</small><span>${p[j] ? esc(p[j]) : '+'}</span></button>`).join('')}</div></div>`; }).join('');
+  $('days').querySelectorAll('.meal').forEach(b => b.onclick = () => edit(b.dataset.k, +b.dataset.j));
+}
+function edit(k, j) {
+  const d = new Date(k + 'T12:00:00'), cur = (plan[k] || [])[j] || '';
+  $('sheetIn').innerHTML = `<h3>${d.toLocaleDateString(T.locale, { weekday: 'long' })} · ${T.slots[j]}</h3><input id="mi" maxlength="60" value="${esc(cur)}" placeholder="${T.ph}"><div class="sug">${T.sug[j].map(s => `<button>${esc(s)}</button>`).join('')}</div><div class="row"><button id="mc">${T.clear}</button><button class="ok" id="mo">${T.ok}</button></div>`;
+  $('sheet').hidden = false; setTimeout(() => $('mi').focus(), 80);
+  $('sheetIn').querySelectorAll('.sug button').forEach(b => b.onclick = () => { $('mi').value = b.textContent; });
+  const set = v => { plan[k] = plan[k] || ['', '', '']; plan[k][j] = v; save(); render(); $('sheet').hidden = true; };
+  $('mo').onclick = () => set($('mi').value.trim()); $('mc').onclick = () => set(''); $('mi').onkeydown = e => { if (e.key === 'Enter') set($('mi').value.trim()); };
+}
+$('sheet').onclick = e => { if (e.target === $('sheet')) $('sheet').hidden = true; };
+$('prev').onclick = () => { weekOff--; render(); }; $('next').onclick = () => { weekOff++; render(); };
+$('aiB').onclick = () => {
+  $('sheetIn').innerHTML = `<h3>${T.aiTitle}</h3><div class="ai-form"><div class="muted">${T.who}</div><div class="chips" id="pp">${[1, 2, 3, 4, 5, 6].map(n => `<button class="chip ${n === people ? 'on' : ''}" data-n="${n}">${n}</button>`).join('')}</div><div class="muted">${T.diet}</div><div class="chips" id="dd">${T.diets.map((x, i) => `<button class="chip ${i === diet ? 'on' : ''}" data-i="${i}">${x}</button>`).join('')}</div><input id="ex" placeholder="${T.extra}" maxlength="120"><div class="err" id="aerr"></div><div class="row"><button id="ac">${T.cancel}</button><button class="ok" id="ago">${T.go}</button></div></div>`;
+  $('sheet').hidden = false;
+  $('pp').querySelectorAll('.chip').forEach(b => b.onclick = () => { people = +b.dataset.n; $('pp').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); });
+  $('dd').querySelectorAll('.chip').forEach(b => b.onclick = () => { diet = +b.dataset.i; $('dd').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); });
+  $('ac').onclick = () => $('sheet').hidden = true;
+  $('ago').onclick = async () => {
+    if (!window.Acornix) { $('aerr').textContent = T.noAi; return; }
+    $('ago').disabled = true; $('ago').textContent = T.making;
+    try {
+      const r = await Acornix.askAI(`Plan breakfast, lunch and dinner for 7 days (Monday to Sunday) for ${people} people. Style: ${T.diets[diet]}. ${$('ex').value.trim()}`, { json: true, system: `You are a practical home cook planning a varied, realistic week of meals with seasonal food, reusing leftovers smartly and repeating ingredients so shopping is simple. Short dish names (max 5 words). Write in ${T.lang}. Reply only with JSON: {"days":[["breakfast","lunch","dinner"] x7],"shopping":["quantity + item for the whole week, grouped by shop section order"]}` });
+      if (!r || !Array.isArray(r.days) || r.days.length < 7) throw new Error('?');
+      days().forEach((d, i) => { plan[key(d)] = (r.days[i] || []).slice(0, 3).map(String); });
+      shop = { items: (r.shopping || []).map(String), got: [] }; save(); render(); $('sheet').hidden = true; try { Acornix.vibrate(20); } catch (e) {}
+    } catch (e) { $('aerr').textContent = T.failed + (e.message || ''); $('ago').disabled = false; $('ago').textContent = T.go; }
+  };
+};
+$('shopB').onclick = () => {
+  const draw = () => { $('sheetIn').innerHTML = `<h3>${T.shopTitle}</h3>${shop.items.length ? `<div class="list">${shop.items.map((x, i) => `<div class="li ${shop.got.includes(i) ? 'got' : ''}" data-i="${i}">${shop.got.includes(i) ? '✅' : '⬜'} ${esc(x)}</div>`).join('')}</div><div class="row" style="margin-top:10px"><button id="sShare">📤</button></div>` : `<p class="muted">${T.shopEmpty}</p>`}`;
+    $('sheetIn').querySelectorAll('.li').forEach(d => d.onclick = () => { const i = +d.dataset.i, j = shop.got.indexOf(i); j >= 0 ? shop.got.splice(j, 1) : shop.got.push(i); save(); draw(); });
+    const sb = $('sShare'); if (sb) sb.onclick = async () => { const t = T.shopTitle + ':\n' + shop.items.filter((_, i) => !shop.got.includes(i)).map(x => '• ' + x).join('\n'); try { if (window.Acornix) await Acornix.share(t); else if (navigator.share) await navigator.share({ text: t }); } catch (e) {} }; };
+  draw(); $('sheet').hidden = false;
+};
+(async () => { plan = await store.get('plan', {}); shop = await store.get('shop', shop); render(); })();
+</script>
+</body>
+</html>

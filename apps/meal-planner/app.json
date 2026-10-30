@@ -1,0 +1,15 @@
+{
+  "id": "meal-planner",
+  "name": "Meal Planner",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "Plan breakfast, lunch and dinner for the week, or ask your AI for a varied menu for your family with its shopping list.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 46
+}

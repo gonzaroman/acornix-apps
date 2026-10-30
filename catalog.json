@@ -272,6 +272,31 @@
       "trending": 0
     },
     {
+      "id": "meal-planner",
+      "name": "Meal Planner",
+      "emoji": "🌰",
+      "category": "food-drink",
+      "description": "Plan breakfast, lunch and dinner for the week, or ask your AI for a varied menu for your family with its shopping list.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 12707,
+      "sha256": "29e7a084943cc22d0b2c5e8699e986d13ba543e550013b6f061f4fcdc3d14523",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "logo-maker",
       "name": "Logo Maker",
       "emoji": "🔠",
