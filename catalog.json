@@ -291,6 +291,31 @@
       "trending": 0
     },
     {
+      "id": "gift-ideas",
+      "name": "Gift Ideas",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Tell it who, their age, what they love and your budget, and your AI suggests specific, creative gifts. Keep the ones you like.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11053,
+      "sha256": "0933a802278544f3dfcc7226cfda0d71b9a36296f20ff56144dc328e147869e9",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "generative-art",
       "name": "Generative Art",
       "emoji": "🌌",

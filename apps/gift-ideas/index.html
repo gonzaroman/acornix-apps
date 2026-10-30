@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gift Ideas</title>
+<style>
+  :root { --bg:#fff7f0; --card:#fff; --ink:#2f1f17; --muted:#9a8274; --a:#e8590c; --line:#f5e3d6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 4px; font-size:26px; } .sub { color:var(--muted); font-weight:600; margin-bottom:14px; }
+  .lbl { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin:12px 2px 7px; }
+  .row { display:flex; gap:7px; flex-wrap:wrap; }
+  .chip { padding:8px 12px; border-radius:20px; background:var(--card); border:2px solid var(--line); font-weight:800; font-size:14px; }
+  .chip.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  input[type=text] { width:100%; padding:13px 14px; border-radius:14px; border:2px solid var(--line); background:#fff; font:inherit; outline:none; color:var(--ink); }
+  input[type=text]:focus { border-color:var(--a); }
+  .budget { display:flex; align-items:center; gap:12px; font-weight:900; } .budget input { flex:1; accent-color:var(--a); }
+  .go { width:100%; margin-top:16px; padding:16px; border-radius:18px; background:linear-gradient(135deg,#f76707,#e64980); color:#fff; font-weight:900; font-size:17px; box-shadow:0 8px 22px #e8590c44; }
+  .go:disabled { opacity:.5; }
+  .err { color:#c92a2a; font-weight:700; margin:10px 2px; font-size:14px; }
+  .note { color:var(--muted); font-size:13px; font-weight:600; margin:10px 2px; }
+  .gifts { display:grid; gap:10px; margin-top:16px; }
+  .gift { background:var(--card); border-radius:18px; padding:14px; display:flex; gap:12px; box-shadow:0 2px 0 var(--line); }
+  .gift .e { font-size:34px; line-height:1; } .gift .b { flex:1; min-width:0; }
+  .gift b { font-size:16px; } .gift .price { float:right; font-weight:900; color:var(--a); font-size:14px; margin-left:8px; }
+  .gift p { margin:4px 0 0; font-size:14px; line-height:1.4; color:#5c4a40; }
+  .gift .fav { background:none; font-size:20px; align-self:flex-start; }
+  h3 { margin:24px 2px 8px; font-size:16px; }
+  .loading { text-align:center; padding:30px; color:var(--muted); font-weight:800; } .loading span { font-size:38px; display:inline-block; animation:sh 1s infinite; }
+  @keyframes sh { 0%,100% { transform:rotate(-10deg); } 50% { transform:rotate(10deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎁 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <div class="lbl" id="lWho"></div><div class="row" id="who"></div>
+  <div class="lbl" id="lAge"></div><div class="row" id="age"></div>
+  <div class="lbl" id="lLikes"></div><div class="row" id="likes"></div>
+  <div class="lbl" id="lMore"></div><input type="text" id="more" maxlength="120">
+  <div class="lbl" id="lBudget"></div><div class="budget"><input type="range" id="budget" min="5" max="300" step="5" value="40"><span id="budgetV"></span></div>
+  <button class="go" id="go"></button>
+  <div class="err" id="err"></div>
+  <div class="gifts" id="gifts"></div>
+  <h3 id="lFav" hidden></h3><div class="gifts" id="favs"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Ideas de regalo', sub:'Dime para quién es y te doy ideas que acierten', who:'Para', age:'Edad', likes:'Le gusta', more:'Algo más (opcional)', morePh:'Ej: acaba de mudarse, le encanta Harry Potter…', budget:'Presupuesto', cur:'€', go:'✨ Dame ideas', more2:'✨ Más ideas', thinking:'Pensando regalos…', noAi:'Ideas rápidas sin IA. Abre la app en Acornix con tu IA para ideas personalizadas.', failed:'No he podido: ', fav:'Guardadas',
+  whos:['Pareja', 'Madre', 'Padre', 'Amigo/a', 'Hijo/a', 'Abuelo/a', 'Compañero/a', 'Yo'], ages:['Niño', 'Adolescente', '20-35', '35-60', '60+'], likesL:['🍳 Cocina', '📚 Leer', '🎮 Videojuegos', '🏃 Deporte', '🌿 Plantas', '🎵 Música', '✈️ Viajar', '🎨 Arte', '💻 Tecnología', '🧘 Bienestar', '🐶 Mascotas', '☕ Café'], lang:'Spanish (Spain), prices in euros' }
+ : { title:'Gift Ideas', sub:'Tell me who it\'s for and I\'ll find gifts that land', who:'For', age:'Age', likes:'They like', more:'Anything else (optional)', morePh:'E.g. just moved house, loves Harry Potter…', budget:'Budget', cur:'$', go:'✨ Give me ideas', more2:'✨ More ideas', thinking:'Thinking of gifts…', noAi:'Quick ideas without AI. Open the app in Acornix with your AI for personal ones.', failed:'Couldn\'t do it: ', fav:'Saved',
+  whos:['Partner', 'Mum', 'Dad', 'Friend', 'Kid', 'Grandparent', 'Coworker', 'Me'], ages:['Child', 'Teen', '20-35', '35-60', '60+'], likesL:['🍳 Cooking', '📚 Reading', '🎮 Games', '🏃 Sport', '🌿 Plants', '🎵 Music', '✈️ Travel', '🎨 Art', '💻 Tech', '🧘 Wellness', '🐶 Pets', '☕ Coffee'], lang:'English, prices in US dollars' };
+// Ideas without AI, by interest: [emoji, name, price, why].
+const BASIC = ES ? [['🔪', 'Un buen cuchillo de chef', 45, 'Lo usará cada día.'], ['📖', 'Suscripción a libros electrónicos', 10, 'Lectura infinita por poco.'], ['🎧', 'Auriculares inalámbricos', 40, 'Para jugar o escuchar sin cables.'], ['🧦', 'Calcetines técnicos de running', 15, 'Detalle útil que se agradece.'], ['🪴', 'Una planta fácil, como un potus', 15, 'Casi indestructible y bonita.'], ['🎟️', 'Entradas para un concierto', 50, 'Un recuerdo compartido.'], ['🧳', 'Organizadores de maleta', 20, 'Viajar más ordenado.'], ['🖌️', 'Set de acuarelas', 25, 'Para empezar a crear.'], ['🔋', 'Batería externa', 25, 'Siempre viene bien.'], ['🕯️', 'Vela aromática y sales', 20, 'Un momento para cuidarse.'], ['🦴', 'Juguete interactivo para su mascota', 15, 'Feliz mascota, feliz dueño.'], ['☕', 'Café de especialidad', 15, 'Un placer diario.']]
+ : [['🔪', 'A great chef\'s knife', 45, 'They\'ll use it every day.'], ['📖', 'An e-book subscription', 10, 'Endless reading for little.'], ['🎧', 'Wireless earbuds', 40, 'Gaming or music without cables.'], ['🧦', 'Running socks', 15, 'A useful touch they\'ll notice.'], ['🪴', 'An easy plant, like a pothos', 15, 'Pretty and almost unkillable.'], ['🎟️', 'Concert tickets', 50, 'A shared memory.'], ['🧳', 'Packing cubes', 20, 'Tidier trips.'], ['🖌️', 'A watercolour set', 25, 'A start to creating.'], ['🔋', 'A power bank', 25, 'Always handy.'], ['🕯️', 'Scented candle and bath salts', 20, 'A moment of self-care.'], ['🦴', 'An interactive pet toy', 15, 'Happy pet, happy owner.'], ['☕', 'Specialty coffee beans', 15, 'A daily treat.']];
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'sub', 'lWho', 'lAge', 'lLikes', 'lMore', 'lBudget', 'go', 'lFav'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.who, T.age, T.likes, T.more, T.budget, T.go, T.fav][i]); $('more').placeholder = T.morePh;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+let who = 0, age = 2, likes = new Set([0]), gifts = [], favs = [], seen = [];
+function chips(id, list, isOn, onTap) { $(id).innerHTML = list.map((x, i) => `<button class="chip ${isOn(i) ? 'on' : ''}" data-i="${i}">${x}</button>`).join(''); $(id).querySelectorAll('.chip').forEach(b => b.onclick = () => { onTap(+b.dataset.i); form(); }); }
+function form() {
+  chips('who', T.whos, i => i === who, i => who = i); chips('age', T.ages, i => i === age, i => age = i);
+  chips('likes', T.likesL, i => likes.has(i), i => likes.has(i) ? likes.delete(i) : likes.add(i));
+  $('budgetV').textContent = `${$('budget').value} ${T.cur}`;
+}
+$('budget').oninput = form;
+function card(g, list, i) { const isFav = favs.some(f => f.name === g.name); return `<div class="gift"><div class="e">${esc(g.emoji || '🎁')}</div><div class="b"><span class="price">~${esc(g.price)} ${T.cur}</span><b>${esc(g.name)}</b><p>${esc(g.why)}</p></div><button class="fav" data-l="${list}" data-i="${i}">${isFav ? '❤️' : '🤍'}</button></div>`; }
+function render() {
+  $('gifts').innerHTML = gifts.map((g, i) => card(g, 'g', i)).join('');
+  $('favs').innerHTML = favs.map((g, i) => card(g, 'f', i)).join(''); $('lFav').hidden = !favs.length;
+  document.querySelectorAll('.fav').forEach(b => b.onclick = () => { const g = (b.dataset.l === 'g' ? gifts : favs)[+b.dataset.i], j = favs.findIndex(f => f.name === g.name); if (j >= 0) favs.splice(j, 1); else favs.unshift(g); store.set('favs', favs.slice(0, 50)); render(); try { window.Acornix && Acornix.vibrate(10); } catch (e) {} });
+}
+$('go').onclick = async () => {
+  $('err').textContent = ''; const budget = +$('budget').value;
+  if (!window.Acornix) {
+    const pool = [...likes].map(i => BASIC[i]).concat(BASIC).filter((x, i, a) => a.indexOf(x) === i && x[2] <= budget * 1.2);
+    gifts = pool.slice(0, 6).map(([emoji, name, price, why]) => ({ emoji, name, price, why })); $('err').innerHTML = `<span class="note">${T.noAi}</span>`; render(); return;
+  }
+  $('go').disabled = true; $('gifts').innerHTML = `<div class="loading"><span>🎁</span><div>${T.thinking}</div></div>`;
+  try {
+    const ask = `Gift ideas for: ${['partner', 'mother', 'father', 'friend', 'child', 'grandparent', 'coworker', 'myself'][who]}, age ${T.ages[age]}. Likes: ${[...likes].map(i => T.likesL[i]).join(', ') || 'anything'}. ${$('more').value.trim()} Budget about ${budget}.${seen.length ? ' Do not repeat: ' + seen.slice(-18).join('; ') : ''}`;
+    const r = await Acornix.askAI(ask, { json: true, system: `You are a thoughtful gift advisor. Suggest 6 specific, creative gifts (not generic gift cards) within the budget, mixing things and experiences, each fitting the person. Write in ${T.lang}. Reply only with JSON: {"gifts":[{"emoji":"one emoji","name":"specific gift","price":number,"why":"one short sentence on why it fits them"}]}` });
+    gifts = (r && r.gifts || []).slice(0, 6); if (!gifts.length) throw new Error('?'); seen.push(...gifts.map(g => g.name)); $('go').textContent = T.more2; render();
+    try { Acornix.vibrate(20); } catch (e) {}
+  } catch (e) { gifts = []; render(); $('err').textContent = T.failed + (e.message || ''); }
+  $('go').disabled = false;
+};
+(async () => { favs = await store.get('favs', []); form(); render(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "id": "gift-ideas",
+  "name": "Gift Ideas",
+  "emoji": "🌰",
+  "category": "lifestyle",
+  "description": "Tell it who, their age, what they love and your budget, and your AI suggests specific, creative gifts. Keep the ones you like.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 40
+}
