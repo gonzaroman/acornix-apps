@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Perfect Egg</title>
+<style>
+  :root { --bg:#fff9e6; --card:#fff; --ink:#3d2e10; --muted:#a08a5c; --a:#f59f00; --line:#f5e8c4; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:520px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 10px; font-size:26px; text-align:center; }
+  .egg { display:grid; place-items:center; margin:6px 0 4px; } .egg svg { width:min(52vw, 210px); height:auto; filter:drop-shadow(0 10px 20px #a0782022); }
+  .name { text-align:center; font-weight:900; font-size:20px; } .desc { text-align:center; color:var(--muted); font-weight:600; font-size:14px; margin:2px 0 12px; min-height:20px; }
+  .done { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:12px; }
+  .done button { background:var(--card); border-radius:14px; padding:9px 2px; font-size:11px; font-weight:800; border:2px solid var(--line); } .done button i { display:block; width:22px; height:22px; border-radius:50%; margin:0 auto 4px; border:3px solid #fff; box-shadow:0 0 0 1px #0002; } .done button.on { border-color:var(--a); background:#fff4d6; }
+  .opts { background:var(--card); border-radius:18px; padding:12px; display:grid; gap:10px; margin-bottom:14px; }
+  .opt { display:flex; align-items:center; gap:10px; font-weight:800; font-size:13px; } .opt > span { width:86px; color:var(--muted); }
+  .seg { flex:1; display:flex; gap:4px; background:#fbf3dc; border-radius:12px; padding:3px; } .seg button { flex:1; padding:8px 2px; border-radius:9px; font-size:12px; font-weight:800; color:var(--muted); background:none; } .seg button.on { background:#fff; color:var(--ink); box-shadow:0 1px 3px #0001; }
+  .time { text-align:center; font-size:64px; font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:-2px; line-height:1; }
+  .hint { text-align:center; color:var(--muted); font-weight:700; font-size:13px; margin:6px 0 12px; min-height:18px; }
+  .go { width:100%; padding:17px; border-radius:20px; background:var(--a); color:#fff; font-weight:900; font-size:18px; box-shadow:0 8px 22px #f59f0055; }
+  .go.run { background:var(--ink); }
+  .ring { animation:sh .25s infinite; } @keyframes sh { 50% { transform:rotate(3deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🥚 <span id="ttl"></span></h1>
+  <div class="egg" id="eggBox"><svg id="egg" viewBox="0 0 200 250"></svg></div>
+  <div class="name" id="name"></div><div class="desc" id="desc"></div>
+  <div class="done" id="done"></div>
+  <div class="opts"><div class="opt"><span id="lSize"></span><div class="seg" id="size"></div></div><div class="opt"><span id="lFrom"></span><div class="seg" id="from"></div></div><div class="opt"><span id="lAlt"></span><div class="seg" id="alt"></div></div></div>
+  <div class="time" id="time"></div>
+  <div class="hint" id="hint"></div>
+  <button class="go" id="go"></button>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Huevo perfecto', size:'Tamaño', from:'Sale de', alt:'Altitud', sizes:['M', 'L', 'XL'], froms:['Nevera', 'Ambiente'], alts:['Nivel del mar', '1000 m', '2000 m'], start:'▶ Empezar', stop:'⏹ Parar', put:'Pon el huevo en agua hirviendo y pulsa empezar', cool:'¡Listo! A agua con hielo 1 minuto 🧊', left:'Saca el huevo en', notify:'¡Tu huevo está listo!',
+  done:[['Pasado por agua', 'Clara cuajada justa, yema líquida para mojar pan'], ['Mollet', 'Clara firme, yema líquida y espesa'], ['Jammy', 'Yema como mermelada, perfecta para ramen'], ['Casi duro', 'Yema cremosa en el centro'], ['Duro', 'Yema firme pero amarilla, sin anillo verde']] }
+ : { title:'Perfect Egg', size:'Size', from:'From', alt:'Altitude', sizes:['M', 'L', 'XL'], froms:['Fridge', 'Room temp'], alts:['Sea level', '1000 m', '2000 m'], start:'▶ Start', stop:'⏹ Stop', put:'Lower the egg into boiling water and press start', cool:'Done! Into ice water for 1 minute 🧊', left:'Take it out in', notify:'Your egg is ready!',
+  done:[['Soft', 'Just-set white, runny yolk for dipping'], ['Mollet', 'Firm white, thick runny yolk'], ['Jammy', 'Jam-like yolk, perfect for ramen'], ['Medium-hard', 'Creamy centre to the yolk'], ['Hard', 'Firm but golden yolk, no green ring']] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+['ttl', 'lSize', 'lFrom', 'lAlt'].forEach((id, i) => $(id).textContent = [T.title, T.size, T.from, T.alt][i]);
+// Base seconds for a large egg from the fridge at sea level; yolk colour and how runny it is.
+const BASE = [300, 390, 420, 540, 600], YOLK = [['#ffb703', 1], ['#ffb000', .75], ['#f9a01b', .5], ['#f6b93b', .2], ['#ffd166', 0]];
+let st = { d: 2, size: 1, from: 0, alt: 0 }, end = 0, run = null, ringing = null, audio = null;
+const secs = () => Math.round(BASE[st.d] + [-30, 0, 30][st.size] - (st.from ? 60 : 0) + [0, 30, 60][st.alt]);
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.max(0, Math.floor(s % 60))).padStart(2, '0')}`;
+function egg() {
+  const [c, runny] = YOLK[st.d], drip = runny > .4 ? `<path d="M100 150 Q${104 + runny * 6} ${172 + runny * 30} 100 ${180 + runny * 40} Q${96 - runny * 6} ${172 + runny * 30} 100 150Z" fill="${c}"/>` : '';
+  $('egg').innerHTML = `<path d="M100 10 C150 10 185 90 185 150 C185 210 148 242 100 242 C52 242 15 210 15 150 C15 90 50 10 100 10Z" fill="#fff" stroke="#f1e2c0" stroke-width="4"/>
+    <circle cx="100" cy="150" r="${48 + (1 - runny) * 4}" fill="${c}" ${st.d === 4 ? 'stroke="#f4d58d" stroke-width="6"' : ''}/>${drip}
+    ${runny > .4 ? `<ellipse cx="88" cy="136" rx="14" ry="9" fill="#fff6" />` : `<ellipse cx="88" cy="136" rx="10" ry="6" fill="#fff3"/>`}`;
+}
+function seg(id, list, k) { $(id).innerHTML = list.map((x, i) => `<button class="${st[k] === i ? 'on' : ''}" data-i="${i}">${x}</button>`).join(''); $(id).querySelectorAll('button').forEach(b => b.onclick = () => { st[k] = +b.dataset.i; ui(); store.set('st', st); }); }
+function ui() {
+  egg(); $('name').textContent = T.done[st.d][0]; $('desc').textContent = T.done[st.d][1];
+  $('done').innerHTML = T.done.map(([n], i) => `<button class="${i === st.d ? 'on' : ''}" data-i="${i}"><i style="background:${YOLK[i][0]}"></i>${n}</button>`).join('');
+  $('done').querySelectorAll('button').forEach(b => b.onclick = () => { if (run) return; st.d = +b.dataset.i; ui(); store.set('st', st); });
+  seg('size', T.sizes, 'size'); seg('from', T.froms, 'from'); seg('alt', T.alts, 'alt');
+  if (!run) { $('time').textContent = fmt(secs()); $('hint').textContent = T.put; $('go').textContent = T.start; $('go').classList.remove('run'); }
+}
+function bell() { try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); [0, .25, .5].forEach(d => { const o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = 880 + d * 400; g.gain.setValueAtTime(.3, audio.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, audio.currentTime + d + .22); o.connect(g).connect(audio.destination); o.start(audio.currentTime + d); o.stop(audio.currentTime + d + .24); }); } catch (e) {} }
+function stop() { clearInterval(run); run = null; clearInterval(ringing); ringing = null; $('eggBox').classList.remove('ring'); ui(); }
+$('go').onclick = () => {
+  if (run || ringing) { stop(); return; }
+  try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) {}
+  end = Date.now() + secs() * 1000; $('go').textContent = T.stop; $('go').classList.add('run');
+  run = setInterval(() => {
+    const l = (end - Date.now()) / 1000; $('time').textContent = fmt(Math.ceil(l)); $('hint').textContent = `${T.left} ${fmt(Math.ceil(l))}`;
+    if (l <= 0) { clearInterval(run); run = null; $('time').textContent = '0:00'; $('hint').textContent = T.cool; $('eggBox').classList.add('ring'); bell(); ringing = setInterval(bell, 1800); setTimeout(() => { clearInterval(ringing); ringing = null; }, 30000);
+      try { if (window.Acornix) { Acornix.vibrate([400, 200, 400, 200, 400]); Acornix.notify('🥚 ' + T.title, T.notify); } } catch (e) {} }
+  }, 250);
+};
+(async () => { st = { ...st, ...(await store.get('st', {})) }; ui(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "id": "perfect-egg",
+  "name": "Perfect Egg",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "Boil the perfect egg, from runny to hard, adjusted for size, fridge or room temperature and altitude, with an alarm.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 50
+}

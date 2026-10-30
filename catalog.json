@@ -175,6 +175,31 @@
       "trending": 0
     },
     {
+      "id": "perfect-egg",
+      "name": "Perfect Egg",
+      "emoji": "🌰",
+      "category": "food-drink",
+      "description": "Boil the perfect egg, from runny to hard, adjusted for size, fridge or room temperature and altitude, with an alarm.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 8898,
+      "sha256": "77eb63be3c7ed3206399d6fdd356055235b6eac375d654167c85bde443a65570",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pattern-maker",
       "name": "Pattern Maker",
       "emoji": "🔷",
