@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Generative Art</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:#000; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  canvas { position:fixed; inset:0; width:100%; height:100%; touch-action:none; }
+  .top { position:fixed; left:12px; right:12px; top:calc(env(safe-area-inset-top) + 10px); display:flex; gap:8px; align-items:center; }
+  .top h1 { margin:0; font-size:17px; padding:9px 13px; border-radius:14px; background:#0007; backdrop-filter:blur(10px); }
+  .top .sp { flex:1; }
+  .b { padding:10px 13px; border-radius:14px; background:#0007; backdrop-filter:blur(10px); font-weight:800; font-size:14px; }
+  .b.main { background:#fff; color:#000; }
+  .bot { position:fixed; left:10px; right:10px; bottom:calc(env(safe-area-inset-bottom) + 10px); display:flex; flex-direction:column; gap:8px; }
+  .row { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; }
+  .row::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:9px 13px; border-radius:20px; background:#0008; backdrop-filter:blur(10px); font-weight:800; font-size:13px; color:#ccc; }
+  .chip.on { background:#fff; color:#000; }
+  .seed { text-align:center; font:700 12px ui-monospace,monospace; color:#fffa; text-shadow:0 1px 4px #000; }
+  .hint { position:fixed; left:0; right:0; top:42%; text-align:center; font-weight:800; color:#fffc; text-shadow:0 2px 10px #000; pointer-events:none; transition:opacity 1s; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="top"><h1>🌌 <span id="ttl"></span></h1><span class="sp"></span><button class="b" id="pause">⏸️</button><button class="b main" id="save"></button></div>
+<div class="hint" id="hint"></div>
+<div class="bot"><div class="seed" id="seed"></div><div class="row" id="styles"></div><div class="row" id="pals"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Arte generativo', save:'Guardar', hint:'Toca para una obra nueva · arrastra para remover', styles:['Flujo', 'Órbitas', 'Mosaico', 'Ondas', 'Raíces'] }
+ : { title:'Generative Art', save:'Save', hint:'Tap for a new piece · drag to stir it', styles:['Flow', 'Orbits', 'Mosaic', 'Waves', 'Roots'] };
+const PALS = [['#0b0c2a', '#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3'], ['#081c15', '#95d5b2', '#52b788', '#d8f3dc', '#ffd166'], ['#1a1423', '#e0aaff', '#c77dff', '#7b2cbf', '#ffafcc'], ['#f8f4e3', '#2a2a72', '#e63946', '#f4a261', '#264653'], ['#000000', '#ffffff', '#888888', '#ff3c38', '#cccccc'], ['#10002b', '#ff9e00', '#ff6d00', '#ff4800', '#ffd000']];
+const $ = id => document.getElementById(id), cv = $('c'), g = cv.getContext('2d');
+$('ttl').textContent = T.title; $('save').textContent = T.save; $('hint').textContent = T.hint;
+let style = 0, pal = 0, seed = 1, rnd, W, H, parts = [], t = 0, paused = false, stir = null;
+const mk = s => () => (s = (s * 16807) % 2147483647) / 2147483647;
+// Smooth pseudo-noise from layered sines, so the flow field has no dependencies.
+const noise = (x, y, z) => Math.sin(x * 1.7 + Math.sin(y * 2.3 + z) * 1.3) + Math.sin(y * 1.9 + Math.cos(x * 1.1 - z * .7) * 1.5) * .8 + Math.sin((x + y) * .9 + z * 1.3) * .5;
+function start(newSeed) {
+  if (newSeed) seed = 1 + Math.floor(Math.random() * 999999);
+  rnd = mk(seed); const d = Math.min(2, devicePixelRatio || 1); W = cv.width = innerWidth * d; H = cv.height = innerHeight * d; t = 0;
+  const P = PALS[pal]; g.fillStyle = P[0]; g.fillRect(0, 0, W, H);
+  const n = [1400, 260, 0, 90, 26][style];
+  parts = Array.from({ length: n }, (_, i) => ({ x: rnd() * W, y: rnd() * H, c: P[1 + Math.floor(rnd() * 4)], a: rnd() * 6.283, r: 20 + rnd() * Math.max(W, H) * .45, s: (rnd() - .5) * .02, w: .6 + rnd() * 2.4, life: 0, i }));
+  if (style === 2) mosaic(); if (style === 4) parts.forEach(p => { p.x = W / 2 + (rnd() - .5) * W * .3; p.y = H; p.a = -Math.PI / 2 + (rnd() - .5) * .6; });
+  $('seed').textContent = `#${seed}`;
+}
+function mosaic() {
+  const P = PALS[pal], cell = Math.max(W, H) / (8 + Math.floor(rnd() * 10));
+  for (let y = 0; y < H; y += cell) for (let x = 0; x < W; x += cell) {
+    g.fillStyle = P[1 + Math.floor(rnd() * 4)]; const k = Math.floor(rnd() * 5); g.beginPath();
+    if (k === 0) g.arc(x, y, cell, 0, Math.PI / 2), g.lineTo(x, y);
+    else if (k === 1) g.arc(x + cell, y + cell, cell, Math.PI, Math.PI * 1.5), g.lineTo(x + cell, y + cell);
+    else if (k === 2) { g.moveTo(x, y); g.lineTo(x + cell, y); g.lineTo(x, y + cell); }
+    else if (k === 3) g.arc(x + cell / 2, y + cell / 2, cell * .35, 0, 7);
+    else g.rect(x + cell * .2, y + cell * .2, cell * .6, cell * .6);
+    g.fill();
+  }
+}
+function step() {
+  if (paused || style === 2) return; const P = PALS[pal]; t++;
+  if (style === 0) { g.globalAlpha = .06; parts.forEach(p => { const a = noise(p.x / W * 3, p.y / H * 3, seed % 100 + t * .002) * 2 + (stir ? Math.atan2(stir[1] - p.y, stir[0] - p.x) * .6 : 0), nx = p.x + Math.cos(a) * 2.2, ny = p.y + Math.sin(a) * 2.2; g.strokeStyle = p.c; g.lineWidth = p.w; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(nx, ny); g.stroke(); p.x = nx; p.y = ny; if (nx < 0 || ny < 0 || nx > W || ny > H || ++p.life > 600) { p.x = rnd() * W; p.y = rnd() * H; p.life = 0; } }); }
+  if (style === 1) { g.globalAlpha = .08; parts.forEach(p => { const ox = W / 2 + Math.cos(p.a) * p.r, oy = H / 2 + Math.sin(p.a * 1.5) * p.r * .6; p.a += p.s * (stir ? 3 : 1); const nx = W / 2 + Math.cos(p.a) * p.r, ny = H / 2 + Math.sin(p.a * 1.5) * p.r * .6; g.strokeStyle = p.c; g.lineWidth = p.w; g.beginPath(); g.moveTo(ox, oy); g.lineTo(nx, ny); g.stroke(); }); }
+  if (style === 3) { g.globalAlpha = .05; g.fillStyle = P[0]; g.fillRect(0, 0, W, H); g.globalAlpha = .7; parts.forEach((p, i) => { g.strokeStyle = p.c; g.lineWidth = p.w; g.beginPath(); const y0 = H * (i + .5) / parts.length; for (let x = 0; x <= W; x += 8) g.lineTo(x, y0 + Math.sin(x * .004 + t * .02 + i * .3) * 60 * Math.sin(t * .003 + i) + (stir ? (Math.exp(-((x - stir[0]) ** 2 + (y0 - stir[1]) ** 2) / 40000) * 120) : 0)); g.stroke(); }); }
+  if (style === 4) { g.globalAlpha = .5; parts.forEach(p => { if (p.y < -20 || p.life > 900) return; p.life++; p.a += (rnd() - .5) * .25 + (stir ? Math.sign(stir[0] - p.x) * .02 : 0); const nx = p.x + Math.cos(p.a) * 2, ny = p.y + Math.sin(p.a) * 2; g.strokeStyle = p.c; g.lineWidth = Math.max(.4, p.w * (1 - p.life / 900) * 3); g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(nx, ny); g.stroke(); p.x = nx; p.y = ny; if (rnd() < .004 && parts.length < 600) parts.push({ ...p, a: p.a + (rnd() - .5) * 1.2, life: p.life }); }); }
+  g.globalAlpha = 1;
+}
+function loop() { for (let i = 0; i < 2; i++) step(); requestAnimationFrame(loop); }
+function ui() {
+  $('styles').innerHTML = T.styles.map((s, i) => `<button class="chip ${i === style ? 'on' : ''}" data-i="${i}">${['🌊', '🪐', '🧩', '〰️', '🌳'][i]} ${s}</button>`).join('');
+  $('styles').querySelectorAll('.chip').forEach(b => b.onclick = e => { e.stopPropagation(); style = +b.dataset.i; ui(); start(false); });
+  $('pals').innerHTML = PALS.map((p, i) => `<button class="chip ${i === pal ? 'on' : ''}" data-i="${i}" style="background:linear-gradient(90deg,${p.slice(1).join(',')});width:56px;height:28px;padding:0;${i === pal ? 'outline:3px solid #fff' : ''}"></button>`).join('');
+  $('pals').querySelectorAll('.chip').forEach(b => b.onclick = e => { e.stopPropagation(); pal = +b.dataset.i; ui(); start(false); });
+}
+let downAt = 0, moved = 0;
+const pt = e => { const d = Math.min(2, devicePixelRatio || 1); return [e.clientX * d, e.clientY * d]; };
+cv.addEventListener('pointerdown', e => { downAt = Date.now(); moved = 0; stir = pt(e); $('hint').style.opacity = 0; });
+cv.addEventListener('pointermove', e => { if (!stir) return; moved++; stir = pt(e); });
+cv.addEventListener('pointerup', () => { if (moved < 4 && Date.now() - downAt < 400) start(true); stir = null; });
+$('pause').onclick = () => { paused = !paused; $('pause').textContent = paused ? '▶️' : '⏸️'; };
+$('save').onclick = async () => {
+  const url = cv.toDataURL('image/png'), name = `generative-${seed}.png`;
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => start(false), 200); });
+setTimeout(() => $('hint').style.opacity = 0, 4000);
+ui(); start(true); loop();
+</script>
+</body>
+</html>

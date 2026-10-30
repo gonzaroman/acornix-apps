@@ -167,6 +167,29 @@
       "trending": 0
     },
     {
+      "id": "generative-art",
+      "name": "Generative Art",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Endless art made by code: flowing lines, orbits, mosaics, waves and growing roots. Tap for a new piece, drag to stir it, save your favourites.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 8804,
+      "sha256": "1c2ca09d5f966db98d45b7cda7ce7d9ac29e7dc5dc5f6ba840f3d4233548f01d",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "contrast-checker",
       "name": "Contrast Checker",
       "emoji": "🌰",

@@ -1,0 +1,15 @@
+{
+  "id": "generative-art",
+  "name": "Generative Art",
+  "emoji": "🌰",
+  "category": "graphics-design",
+  "description": "Endless art made by code: flowing lines, orbits, mosaics, waves and growing roots. Tap for a new piece, drag to stir it, save your favourites.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 31
+}
