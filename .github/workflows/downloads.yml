@@ -1,10 +1,10 @@
 name: Count downloads
 
-# Once a day, copy how many times each app's ZIP was downloaded into catalog.json,
+# Every 6 hours (GitHub sometimes skips a scheduled run), copy how many times each app's ZIP was downloaded into catalog.json,
 # for the "Popular" and "Trending" lists in Acornix.
 on:
   schedule:
-    - cron: "17 4 * * *"
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
