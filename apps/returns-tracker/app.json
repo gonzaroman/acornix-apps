@@ -1,7 +1,7 @@
 {
   "id": "returns-tracker",
   "name": "Returns Tracker",
-  "emoji": "🌰",
+  "emoji": "📦",
   "category": "shopping",
   "description": "Never miss a return deadline: orders, countdowns and refund status in one place.",
   "prompt": "Track online orders and returns: shop, item, price, order date, return deadline with a countdown, status from ordered to refunded, and reminders of returns about to expire.",

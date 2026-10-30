@@ -1,7 +1,7 @@
 {
   "id": "should-i-buy-it",
   "name": "Should I Buy It",
-  "emoji": "📝",
+  "emoji": "🤔",
   "category": "shopping",
   "description": "Thinking of buying something? Your AI helps you decide with honest questions, pros and cons.",
   "prompt": "Help decide whether to buy something: describe the item, price and why you want it, and Acornix.askAI asks a couple of honest questions and gives a balanced verdict with pros, cons and a wait 48 hours suggestion, with a list of past decisions.",

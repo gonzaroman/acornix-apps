@@ -1,7 +1,7 @@
 {
   "id": "shopping-list",
   "name": "Shopping List",
-  "emoji": "📝",
+  "emoji": "🛒",
   "category": "shopping",
   "description": "A shopping list sorted by aisle, with quantities, quick re-add and sharing.",
   "prompt": "A shopping list grouped by aisle, like fruit, dairy, bakery and cleaning, with quantities, tap to tick, recent items to re-add quickly, several lists, and share the list as text.",

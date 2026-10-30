@@ -1,8 +1,8 @@
 {
   "assets": {
     "abc-animals": {
-      "asset": 691327936,
-      "base": 0,
+      "asset": 691575676,
+      "base": 1,
       "count": 0
     },
     "affirmations": {
@@ -31,7 +31,7 @@
       "count": 0
     },
     "baby-piano": {
-      "asset": 691546082,
+      "asset": 691575995,
       "base": 0,
       "count": 0
     },
@@ -41,7 +41,7 @@
       "count": 0
     },
     "bedtime-stories": {
-      "asset": 691551015,
+      "asset": 691576247,
       "base": 0,
       "count": 0
     },
@@ -91,7 +91,7 @@
       "count": 0
     },
     "bubble-pop": {
-      "asset": 691547507,
+      "asset": 691576072,
       "base": 0,
       "count": 0
     },
@@ -151,7 +151,7 @@
       "count": 0
     },
     "coloring-book": {
-      "asset": 691542788,
+      "asset": 691575838,
       "base": 0,
       "count": 0
     },
@@ -171,7 +171,7 @@
       "count": 0
     },
     "count-and-tap": {
-      "asset": 691541841,
+      "asset": 691575741,
       "base": 0,
       "count": 0
     },
@@ -221,7 +221,7 @@
       "count": 0
     },
     "discount-calculator": {
-      "asset": 691566382,
+      "asset": 691576428,
       "base": 0,
       "count": 0
     },
@@ -231,7 +231,7 @@
       "count": 0
     },
     "drawing-stories": {
-      "asset": 691543699,
+      "asset": 691575896,
       "base": 0,
       "count": 0
     },
@@ -351,7 +351,7 @@
       "count": 0
     },
     "grocery-budget": {
-      "asset": 691569275,
+      "asset": 691576662,
       "base": 0,
       "count": 0
     },
@@ -401,7 +401,7 @@
       "count": 0
     },
     "kids-paint": {
-      "asset": 691552236,
+      "asset": 691576281,
       "base": 0,
       "count": 0
     },
@@ -416,7 +416,7 @@
       "count": 0
     },
     "label-reader": {
-      "asset": 691570179,
+      "asset": 691576717,
       "base": 0,
       "count": 0
     },
@@ -681,7 +681,7 @@
       "count": 0
     },
     "price-tracker": {
-      "asset": 691568248,
+      "asset": 691576598,
       "base": 0,
       "count": 0
     },
@@ -716,7 +716,7 @@
       "count": 0
     },
     "returns-tracker": {
-      "asset": 691571118,
+      "asset": 691576783,
       "base": 0,
       "count": 0
     },
@@ -756,22 +756,22 @@
       "count": 0
     },
     "shapes-and-colors": {
-      "asset": 691544825,
+      "asset": 691575944,
       "base": 0,
       "count": 0
     },
     "shopping-list": {
-      "asset": 691564556,
+      "asset": 691576338,
       "base": 0,
       "count": 0
     },
     "should-i-buy-it": {
-      "asset": 691572171,
+      "asset": 691576817,
       "base": 0,
       "count": 0
     },
     "size-converter": {
-      "asset": 691567318,
+      "asset": 691576550,
       "base": 0,
       "count": 0
     },
@@ -791,7 +791,7 @@
       "count": 0
     },
     "slide-puzzle": {
-      "asset": 691548942,
+      "asset": 691576137,
       "base": 0,
       "count": 0
     },
@@ -901,7 +901,7 @@
       "count": 0
     },
     "tell-the-time": {
-      "asset": 691550053,
+      "asset": 691576195,
       "base": 0,
       "count": 0
     },
@@ -986,7 +986,7 @@
       "count": 0
     },
     "unit-price": {
-      "asset": 691565598,
+      "asset": 691576373,
       "base": 0,
       "count": 0
     },
@@ -1031,7 +1031,7 @@
       "count": 0
     },
     "wish-list": {
-      "asset": 691573671,
+      "asset": 691576478,
       "base": 0,
       "count": 0
     },

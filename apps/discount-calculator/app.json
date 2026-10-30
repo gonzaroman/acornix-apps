@@ -1,7 +1,7 @@
 {
   "id": "discount-calculator",
   "name": "Discount Calculator",
-  "emoji": "🧮",
+  "emoji": "🏷️",
   "category": "shopping",
   "description": "Final price after discounts, stacked offers, 3 for 2 deals and tax",
   "prompt": "A discount calculator: original price, percentage off and extra discounts stacked, shows final price and savings, a quick 2 fo",

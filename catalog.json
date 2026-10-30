@@ -56,13 +56,13 @@
     {
       "id": "wish-list",
       "name": "Wish List",
-      "emoji": "📷",
+      "emoji": "💝",
       "category": "shopping",
       "description": "Things you want, with photos, prices, priorities and how much you have saved for each.",
       "prompt": "A wishlist of things you want to buy with a name, price, link, photo from the gall",
       "author": "gonzaroman",
       "language": "es",
-      "version": 1,
+      "version": 2,
       "added": "2026-10-30",
       "updated": "2026-10-30",
       "featured": false,
@@ -71,15 +71,15 @@
       "files": [
         "index.html"
       ],
-      "size": 27129,
-      "sha256": "4802c7e320e823c5e3702dd26dab6ebe8f14917f85c761cf34de06888ed1b0fb",
+      "size": 27134,
+      "sha256": "1582af9a7a695854f1f6a0dd3c55a1f5f73e00a45b3502d1a3b5a26faa303cf0",
       "downloads": 0,
       "trending": 0
     },
     {
       "id": "unit-price",
       "name": "Unit Price",
-      "emoji": "🌰",
+      "emoji": "⚖️",
       "category": "shopping",
       "description": "Which pack is cheaper? Compare price per kil",
       "prompt": "Compare the real price of products: enter price and size for two or more items in grams, kilos, millilitres, litres or units, and see the price per kilo or litre and which one is the best deal, highlighted.",
@@ -175,7 +175,7 @@
     {
       "id": "tell-the-time",
       "name": "Tell the Time",
-      "emoji": "⏱️",
+      "emoji": "🕐",
       "category": "kids",
       "description": "Learn to read the clock: drag the hands, answer what time it is and earn stars.",
       "prompt": "A game to learn to tell the time: a big analogue clock, questions like what time is it or set the clock to half past three with draggable hands, levels for o clock, half past, quarter and five minutes, and stars.",
@@ -221,7 +221,7 @@
     {
       "id": "slide-puzzle",
       "name": "Slide Puzzle",
-      "emoji": "⏱️",
+      "emoji": "🧩",
       "category": "kids",
       "description": "Slide the tiles to rebuild a rainbow, a lion or a rocket. 3x3 or 4x4.",
       "prompt": "A sliding tile puzzle for kids with 3x3 and 4x4 boards, pictures drawn in code like a rainbow, a lion or a rocket instead of numbers, a move counter, a timer and a celebration when solved.",
@@ -267,7 +267,7 @@
     {
       "id": "size-converter",
       "name": "Size Converter",
-      "emoji": "🌰",
+      "emoji": "👟",
       "category": "shopping",
       "description": "Convert shoe, clothing and ring sizes between EU, UK, US and Japan, and save your own.",
       "prompt": "A clothes and shoe size converter between EU, UK, US and Japan for men, women and kids, plus ring sizes, with your own sizes saved for quick lookup.",
@@ -290,7 +290,7 @@
     {
       "id": "should-i-buy-it",
       "name": "Should I Buy It",
-      "emoji": "📝",
+      "emoji": "🤔",
       "category": "shopping",
       "description": "Thinking of buying something? Your AI helps you decide with honest questions, pros and cons.",
       "prompt": "Help decide whether to buy something: describe the item, price and why you want it, and Acornix.askAI asks a couple of honest questions and gives a balanced verdict with pros, cons and a wait 48 hours suggestion, with a list of past decisions.",
@@ -315,7 +315,7 @@
     {
       "id": "shopping-list",
       "name": "Shopping List",
-      "emoji": "📝",
+      "emoji": "🛒",
       "category": "shopping",
       "description": "A shopping list sorted by aisle, with quantities, quick re-add and sharing.",
       "prompt": "A shopping list grouped by aisle, like fruit, dairy, bakery and cleaning, with quantities, tap to tick, recent items to re-add quickly, several lists, and share the list as text.",
@@ -338,7 +338,7 @@
     {
       "id": "shapes-and-colors",
       "name": "Shapes and Colors",
-      "emoji": "🎮",
+      "emoji": "🔺",
       "category": "kids",
       "description": "Find the red circle or the blue star: a happy game to learn shapes and colours.",
       "prompt": "A toddler game to learn shapes and colours: big shapes like circle, square, triangle, star and heart in bright colours, a voice says find the red circle, the child taps it, happy sounds and confetti when right, and a gentle hint when wrong.",
@@ -384,7 +384,7 @@
     {
       "id": "returns-tracker",
       "name": "Returns Tracker",
-      "emoji": "🌰",
+      "emoji": "📦",
       "category": "shopping",
       "description": "Never miss a return deadline: orders, countdowns and refund status in one place.",
       "prompt": "Track online orders and returns: shop, item, price, order date, return deadline with a countdown, status from ordered to refunded, and reminders of returns about to expire.",
@@ -433,7 +433,7 @@
     {
       "id": "price-tracker",
       "name": "Price Tracker",
-      "emoji": "🌰",
+      "emoji": "📈",
       "category": "shopping",
       "description": "Log prices of the things you buy, see their history on a chart and where they are cheapest.",
       "prompt": "Track prices of products you buy often: add a product and log its price at different shops and dates, see the history as a line chart, the lowest price and where, and an alert when a new price is lower.",
@@ -801,7 +801,7 @@
     {
       "id": "label-reader",
       "name": "Label Reader",
-      "emoji": "📷",
+      "emoji": "🔍",
       "category": "shopping",
       "description": "Snap a food label and your AI explains the ingredients, allergens, additives and sugar.",
       "prompt": "Take a photo of a food ingredients label with the camera and Acornix.askAI with the image explains the ingredients in plain words, highlights allergens, additives and sugar, and gives a simple health score, with a history.",
@@ -875,7 +875,7 @@
     {
       "id": "kids-paint",
       "name": "Kids Paint",
-      "emoji": "🎨",
+      "emoji": "🖌️",
       "category": "kids",
       "description": "Paint with big brushes, a rainbow brush, stickers and bright colours, then save your drawing to the gallery.",
       "prompt": "A simple paint app for young children: a big canvas that fills the screen, thick brushes in three sizes, a big palette of bright colours, a rainbow brush, stamps of stars, hearts and animals, an eraser, undo, clear with a fun animation, and save the drawing to the phone gallery with Acornix.files.export. Huge buttons and no text needed.",
@@ -921,7 +921,7 @@
     {
       "id": "grocery-budget",
       "name": "Grocery Budget",
-      "emoji": "🌰",
+      "emoji": "🧺",
       "category": "shopping",
       "description": "Set a monthly grocery budget, log every shop and see what is left week by week.",
       "prompt": "A monthly grocery budget: set the budget, add each shopping trip with shop and amount, see what is left, spending per week as bars and per shop, and a warning when you go over.",
@@ -1110,7 +1110,7 @@
     {
       "id": "drawing-stories",
       "name": "Drawing Stories",
-      "emoji": "📷",
+      "emoji": "🎨",
       "category": "kids",
       "description": "Snap a child's drawing and your AI turns it into a magical story, read out loud.",
       "prompt": "Take a photo of a child's drawing with the camera and Acornix.askAI with the image writes a short magical bedtime story about what is in the drawing, read it aloud with Acornix.speak, and keep a gallery of drawings with their stories.",
@@ -1136,7 +1136,7 @@
     {
       "id": "discount-calculator",
       "name": "Discount Calculator",
-      "emoji": "🧮",
+      "emoji": "🏷️",
       "category": "shopping",
       "description": "Final price after discounts, stacked offers, 3 for 2 deals and tax",
       "prompt": "A discount calculator: original price, percentage off and extra discounts stacked, shows final price and savings, a quick 2 fo",
@@ -1182,7 +1182,7 @@
     {
       "id": "count-and-tap",
       "name": "Count and Tap",
-      "emoji": "🎮",
+      "emoji": "🔢",
       "category": "kids",
       "description": "Count fruits and animals by tapping them, then pick the right number. From 1 to 20 with stars.",
       "prompt": "A counting game for preschoolers: a number of fruits or animals appears, the child taps each one to count them out loud with sound and animation, then picks the right number from three big buttons. Levels from 1 to 20 and stars as rewards.",
@@ -1228,7 +1228,7 @@
     {
       "id": "coloring-book",
       "name": "Coloring Book",
-      "emoji": "🎨",
+      "emoji": "🖍️",
       "category": "kids",
       "description": "Tap to fill drawings with colour: house, cat, fish, rocket and more. Save your art to the gallery.",
       "prompt": "A coloring book for kids with at least 8 simple line drawings drawn in code, like a house, a cat, a fish, a car, a flower, a rocket, tap an area to fill it with the chosen colour from a big palette, undo, and save the picture with Acornix.files.export.",
@@ -1320,7 +1320,7 @@
     {
       "id": "bubble-pop",
       "name": "Bubble Pop",
-      "emoji": "🎹",
+      "emoji": "🫧",
       "category": "kids",
       "description": "Pop floating bubbles full of stars and animals. A calm game with no losing.",
       "prompt": "A relaxing bubble popping game for kids: shiny bubbles float up from the bottom, tap to pop them with a pop sound and particles, some bubbles hold stars or animals, a counter, and calm music, with no losing.",
@@ -1368,7 +1368,7 @@
     {
       "id": "bedtime-stories",
       "name": "Bedtime Stories",
-      "emoji": "🌰",
+      "emoji": "🌙",
       "category": "kids",
       "description": "Choose a hero, a place and a theme and your AI writes a gentle story, read aloud at bedtime.",
       "prompt": "Bedtime stories for children: pick a hero, a place and a theme and Acornix.askAI writes a gentle short story with the onText option so it appears as it is written, read aloud slowly with Acornix.speak, a dark calm screen, and saved favourite stories. Include three built in stories that work without AI.",
@@ -1464,7 +1464,7 @@
     {
       "id": "abc-animals",
       "name": "ABC Animals",
-      "emoji": "🌰",
+      "emoji": "🔤",
       "category": "kids",
       "description": "Learn the alphabet with a cute animal for every letter, spoken out loud, and a little quiz.",
       "prompt": "An alphabet app for small children: a big letter and a cute animal for each letter, tap to hear the letter and the animal name spoken, swipe for the next, and a small quiz mode where you tap the animal that starts with a letter. Big colourful buttons, no reading needed.",
@@ -1481,8 +1481,8 @@
       ],
       "size": 30059,
       "sha256": "b348183cfa7dae4671b4c3d8dd770755198800c043c97fcf779919459952a108",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "what-is-this-ai",

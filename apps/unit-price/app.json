@@ -1,7 +1,7 @@
 {
   "id": "unit-price",
   "name": "Unit Price",
-  "emoji": "🌰",
+  "emoji": "⚖️",
   "category": "shopping",
   "description": "Which pack is cheaper? Compare price per kil",
   "prompt": "Compare the real price of products: enter price and size for two or more items in grams, kilos, millilitres, litres or units, and see the price per kilo or litre and which one is the best deal, highlighted.",

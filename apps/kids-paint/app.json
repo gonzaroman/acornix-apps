@@ -1,7 +1,7 @@
 {
   "id": "kids-paint",
   "name": "Kids Paint",
-  "emoji": "🎨",
+  "emoji": "🖌️",
   "category": "kids",
   "description": "Paint with big brushes, a rainbow brush, stickers and bright colours, then save your drawing to the gallery.",
   "prompt": "A simple paint app for young children: a big canvas that fills the screen, thick brushes in three sizes, a big palette of bright colours, a rainbow brush, stamps of stars, hearts and animals, an eraser, undo, clear with a fun animation, and save the drawing to the phone gallery with Acornix.files.export. Huge buttons and no text needed.",

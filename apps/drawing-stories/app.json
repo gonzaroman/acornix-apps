@@ -1,7 +1,7 @@
 {
   "id": "drawing-stories",
   "name": "Drawing Stories",
-  "emoji": "📷",
+  "emoji": "🎨",
   "category": "kids",
   "description": "Snap a child's drawing and your AI turns it into a magical story, read out loud.",
   "prompt": "Take a photo of a child's drawing with the camera and Acornix.askAI with the image writes a short magical bedtime story about what is in the drawing, read it aloud with Acornix.speak, and keep a gallery of drawings with their stories.",

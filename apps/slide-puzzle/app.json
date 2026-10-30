@@ -1,7 +1,7 @@
 {
   "id": "slide-puzzle",
   "name": "Slide Puzzle",
-  "emoji": "⏱️",
+  "emoji": "🧩",
   "category": "kids",
   "description": "Slide the tiles to rebuild a rainbow, a lion or a rocket. 3x3 or 4x4.",
   "prompt": "A sliding tile puzzle for kids with 3x3 and 4x4 boards, pictures drawn in code like a rainbow, a lion or a rocket instead of numbers, a move counter, a timer and a celebration when solved.",

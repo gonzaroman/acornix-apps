@@ -1,7 +1,7 @@
 {
   "id": "price-tracker",
   "name": "Price Tracker",
-  "emoji": "🌰",
+  "emoji": "📈",
   "category": "shopping",
   "description": "Log prices of the things you buy, see their history on a chart and where they are cheapest.",
   "prompt": "Track prices of products you buy often: add a product and log its price at different shops and dates, see the history as a line chart, the lowest price and where, and an alert when a new price is lower.",
