@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Spirograph</title>
+<style>
+  :root { --bg:#0a0a14; --card:#171728; --ink:#eeeefa; --muted:#8888aa; --a:#9775fa; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 14px); gap:10px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:20px; flex:1; }
+  .b { padding:9px 13px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; }
+  .b.main { background:var(--a); color:#fff; }
+  .stage { flex:1; min-height:0; display:grid; place-items:center; }
+  canvas { max-width:100%; max-height:100%; border-radius:50%; }
+  .sl { display:grid; grid-template-columns:86px 1fr 36px; gap:6px 10px; align-items:center; font-size:13px; font-weight:800; color:var(--muted); }
+  .sl input { accent-color:var(--a); width:100%; }
+  .sl b { color:var(--ink); text-align:right; font-variant-numeric:tabular-nums; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .chip { padding:8px 12px; border-radius:20px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); }
+  .chip.on { background:var(--a); color:#fff; }
+  .sw { width:30px; height:30px; border-radius:50%; flex:none; border:2px solid #fff3; }
+  .sw.on { outline:3px solid #fff; outline-offset:1px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🌀 <span id="ttl"></span></h1><button class="b" id="rnd">🎲</button><button class="b" id="play">▶️</button><button class="b main" id="save"></button></div>
+  <div class="stage"><canvas id="c" width="1400" height="1400"></canvas></div>
+  <div class="sl" id="sl"></div>
+  <div class="row" id="inks"></div>
+  <div class="row" id="types"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Espirógrafo', save:'Guardar', R:'Aro', r:'Rueda', d:'Lápiz', w:'Grosor', types:['Dentro', 'Fuera'], saved:'Dibujo guardado en esta app' }
+ : { title:'Spirograph', save:'Save', R:'Ring', r:'Wheel', d:'Pen', w:'Width', types:['Inside', 'Outside'], saved:'Drawing saved in this app' };
+const INKS = [['#ff6b6b', '#ffd43b'], ['#4dabf7', '#9775fa'], ['#69db7c', '#3bc9db'], ['#f783ac', '#ffa94d'], ['#ffffff', '#ffffff'], ['#ffe066', '#ff922b']];
+const $ = id => document.getElementById(id), cv = $('c'), cx = cv.getContext('2d');
+$('ttl').textContent = T.title; $('save').textContent = T.save;
+let p = { R: 96, r: 37, d: 62, w: 2, ink: 1, out: 0 }, anim = null;
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+function point(t) {
+  const { R, r, d, out } = p, s = out ? -1 : 1, k = (R - s * r) / r;
+  return [(R - s * r) * Math.cos(t) + s * d * Math.cos(k * t), (R - s * r) * Math.sin(t) - d * Math.sin(k * t)];
+}
+// The curve closes after r / gcd(R, r) turns of the wheel.
+const turns = () => p.r / gcd(p.R, p.r);
+function scaleOf() { const { R, r, d, out } = p; return (cv.width / 2 - 30) / (out ? R + r + d : Math.abs(R - r) + d); }
+function draw(upto = 1) {
+  const W = cv.width, k = scaleOf(), end = turns() * Math.PI * 2 * upto, steps = Math.min(30000, Math.ceil(turns() * 900 * upto)) || 1;
+  cx.fillStyle = '#0a0a14'; cx.fillRect(0, 0, W, W);
+  const [c1, c2] = INKS[p.ink], g = cx.createLinearGradient(0, 0, W, W); g.addColorStop(0, c1); g.addColorStop(1, c2);
+  cx.strokeStyle = g; cx.lineWidth = p.w * 2; cx.lineJoin = 'round'; cx.shadowColor = c1; cx.shadowBlur = 12; cx.globalCompositeOperation = 'lighter';
+  cx.beginPath(); for (let i = 0; i <= steps; i++) { const [x, y] = point(end * i / steps); i ? cx.lineTo(W / 2 + x * k, W / 2 + y * k) : cx.moveTo(W / 2 + x * k, W / 2 + y * k); } cx.stroke();
+  cx.globalCompositeOperation = 'source-over'; cx.shadowBlur = 0;
+}
+function ui() {
+  $('sl').innerHTML = [['R', 40, 150], ['r', 5, 120], ['d', 5, 140], ['w', 1, 8]].map(([k, a, b]) => `<span>${T[k]}</span><input type="range" min="${a}" max="${b}" value="${p[k]}" data-k="${k}"><b>${p[k]}</b>`).join('');
+  $('sl').querySelectorAll('input').forEach(i => i.oninput = () => { p[i.dataset.k] = +i.value; i.nextElementSibling.textContent = i.value; stop(); draw(); });
+  $('inks').innerHTML = INKS.map(([a, b], i) => `<button class="sw ${i === p.ink ? 'on' : ''}" data-i="${i}" style="background:linear-gradient(135deg,${a},${b})"></button>`).join('');
+  $('inks').querySelectorAll('.sw').forEach(b => b.onclick = () => { p.ink = +b.dataset.i; ui(); draw(); });
+  $('types').innerHTML = T.types.map((n, i) => `<button class="chip ${i === p.out ? 'on' : ''}" data-i="${i}">${['⭕', '🌸'][i]} ${n}</button>`).join('');
+  $('types').querySelectorAll('.chip').forEach(b => b.onclick = () => { p.out = +b.dataset.i; ui(); stop(); draw(); });
+}
+function stop() { cancelAnimationFrame(anim); anim = null; $('play').textContent = '▶️'; }
+$('play').onclick = () => {
+  if (anim) { stop(); draw(); return; }
+  const t0 = performance.now(), dur = Math.min(9000, 1500 + turns() * 250); $('play').textContent = '⏹️';
+  const step = now => { const f = Math.min(1, (now - t0) / dur); draw(f); if (f < 1) anim = requestAnimationFrame(step); else stop(); };
+  anim = requestAnimationFrame(step);
+};
+$('rnd').onclick = () => { const R = 60 + Math.floor(Math.random() * 90); p = { ...p, R, r: 7 + Math.floor(Math.random() * (R - 10)), d: 20 + Math.floor(Math.random() * 100), ink: Math.floor(Math.random() * INKS.length), out: Math.random() < .3 ? 1 : 0 }; ui(); stop(); draw(); };
+$('save').onclick = async () => {
+  const url = cv.toDataURL('image/png'), name = `spirograph-${Date.now()}.png`;
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+ui(); draw();
+</script>
+</body>
+</html>

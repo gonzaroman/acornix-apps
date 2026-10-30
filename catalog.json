@@ -2,6 +2,29 @@
   "version": 1,
   "apps": [
     {
+      "id": "spirograph",
+      "name": "Spirograph",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Draw glowing spirograph patterns: change the ring, wheel and pen, watch them draw themselves and save them.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 6234,
+      "sha256": "5f69e5ac333b5d0e573df110a6ebfb37ecc675994f8d3c88f469f7bcbc9bfa0c",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "sketchbook",
       "name": "Sketchbook",
       "emoji": "🌰",
