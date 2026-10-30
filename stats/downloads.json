@@ -1,5 +1,10 @@
 {
   "assets": {
+    "affirmations": {
+      "asset": 690538157,
+      "base": 0,
+      "count": 0
+    },
     "air-quality": {
       "asset": 689382020,
       "base": 0,

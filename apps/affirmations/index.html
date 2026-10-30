@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Affirmations</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; color:#fff; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .bg { position:fixed; inset:0; transition:background 1s; }
+  .bg::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at 30% 20%,#ffffff33,transparent 50%); }
+  .top { position:fixed; left:14px; right:14px; top:calc(env(safe-area-inset-top) + 12px); display:flex; gap:8px; align-items:center; z-index:2; }
+  .top h1 { margin:0; font-size:18px; flex:1; text-shadow:0 1px 6px #0003; }
+  .b { padding:9px 13px; border-radius:14px; background:#ffffff2e; backdrop-filter:blur(8px); font-weight:800; font-size:14px; }
+  .stage { position:fixed; inset:0; display:grid; place-items:center; padding:40px 30px; touch-action:pan-y; }
+  .quote { font-family:Georgia,"Times New Roman",serif; font-size:clamp(26px, 8vw, 38px); line-height:1.3; text-align:center; text-shadow:0 2px 16px #0003; transition:opacity .4s, transform .4s; max-width:520px; }
+  .quote.out { opacity:0; transform:translateY(-16px); }
+  .bot { position:fixed; left:14px; right:14px; bottom:calc(env(safe-area-inset-bottom) + 16px); display:flex; flex-direction:column; gap:10px; z-index:2; }
+  .cats { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; } .cats::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 13px; border-radius:20px; background:#ffffff2e; backdrop-filter:blur(8px); font-weight:800; font-size:13px; }
+  .chip.on { background:#fff; color:#333; }
+  .acts { display:flex; justify-content:center; gap:14px; }
+  .round { width:56px; height:56px; border-radius:50%; background:#ffffff2e; backdrop-filter:blur(8px); font-size:22px; }
+  .round.big { width:66px; height:66px; background:#fff; color:#333; font-size:26px; }
+  .hint { position:fixed; left:0; right:0; top:calc(50% + 120px); text-align:center; font-size:13px; font-weight:700; opacity:.75; }
+  .breath { position:fixed; left:50%; top:50%; width:240px; height:240px; margin:-120px; border-radius:50%; background:#ffffff1a; pointer-events:none; animation:br 8s ease-in-out infinite; }
+  @keyframes br { 0%,100% { transform:scale(.8); } 50% { transform:scale(1.25); } }
+  .add { position:fixed; inset:0; background:#0006; display:grid; place-items:center; padding:20px; z-index:5; }
+  .add .in { width:100%; max-width:420px; background:#fff; color:#333; border-radius:22px; padding:18px; }
+  .add textarea { width:100%; min-height:90px; border:2px solid #eee; border-radius:14px; padding:12px; font:18px Georgia,serif; outline:none; }
+  .add .row { display:flex; gap:8px; margin-top:10px; } .add .row button { flex:1; padding:12px; border-radius:14px; background:#f1f1f1; font-weight:800; } .add .row .ok { background:#333; color:#fff; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+<div class="breath"></div>
+<div class="top"><h1>🌞 <span id="ttl"></span></h1><button class="b" id="plus">✍️</button></div>
+<div class="stage" id="stage"><div class="quote" id="quote"></div></div>
+<div class="hint" id="hint"></div>
+<div class="bot"><div class="cats" id="cats"></div><div class="acts"><button class="round" id="speak">🔊</button><button class="round big" id="next">✨</button><button class="round" id="fav">🤍</button></div></div>
+<div class="add" id="add" hidden><div class="in"><textarea id="mine" maxlength="160"></textarea><div class="row"><button id="cancel"></button><button class="ok" id="okMine"></button></div></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const D = ES ? {
+  calm: ['Respiro hondo. Este momento es suficiente.', 'No tengo que resolverlo todo hoy.', 'Suelto lo que no puedo controlar.', 'Me permito ir despacio.', 'Estoy a salvo, aquí y ahora.', 'La calma también es una decisión.'],
+  confidence: ['Soy capaz de cosas difíciles.', 'Mi voz importa.', 'Me merezco el espacio que ocupo.', 'He superado días peores, y hoy también puedo.', 'Confío en lo que he aprendido.', 'No necesito ser perfecto para ser valioso.'],
+  love: ['Me hablo con cariño.', 'Soy suficiente tal como soy.', 'Mi cuerpo me acompaña cada día; le doy las gracias.', 'Merezco descanso sin ganármelo.', 'Me perdono por no saberlo antes.', 'Elijo tratarme como trataría a un amigo.'],
+  energy: ['Hoy empiezo con un paso pequeño.', 'Cada día es una página en blanco.', 'Tengo la energía que necesito para lo importante.', 'El progreso cuenta, aunque sea lento.', 'Hoy algo bueno va a pasar.', 'Me levanto con ganas de descubrir.'],
+  sleep: ['Hoy hice lo que pude, y está bien.', 'Dejo el día atrás. Mañana es otro.', 'Mi mente se calma, mi cuerpo descansa.', 'Me merezco un sueño tranquilo.', 'Todo lo pendiente puede esperar hasta mañana.', 'Respiro y me suelto.'] }
+ : {
+  calm: ['I breathe deeply. This moment is enough.', 'I don\'t have to solve everything today.', 'I let go of what I can\'t control.', 'I allow myself to go slowly.', 'I am safe, here and now.', 'Calm is also a choice.'],
+  confidence: ['I can do hard things.', 'My voice matters.', 'I deserve the space I take up.', 'I\'ve made it through harder days, and I can do today.', 'I trust what I have learned.', 'I don\'t need to be perfect to be worthy.'],
+  love: ['I speak to myself with kindness.', 'I am enough as I am.', 'My body carries me every day; I thank it.', 'I deserve rest without earning it.', 'I forgive myself for not knowing sooner.', 'I treat myself the way I\'d treat a friend.'],
+  energy: ['Today I start with one small step.', 'Every day is a blank page.', 'I have the energy I need for what matters.', 'Progress counts, even when it\'s slow.', 'Something good will happen today.', 'I wake up curious about the day.'],
+  sleep: ['I did what I could today, and that\'s okay.', 'I leave the day behind. Tomorrow is new.', 'My mind settles, my body rests.', 'I deserve peaceful sleep.', 'Everything unfinished can wait until tomorrow.', 'I breathe and let go.'] };
+const T = ES ? { title:'Afirmaciones', cats:{ calm:'🌊 Calma', confidence:'💪 Confianza', love:'💗 Quererme', energy:'⚡ Energía', sleep:'🌙 Dormir', fav:'⭐ Favoritas', mine:'✍️ Mías' }, hint:'Desliza o toca ✨ para otra · léela en voz alta', write:'Escribe tu propia afirmación…', cancel:'Cancelar', ok:'Guardar', noFav:'Toca 🤍 en las que te gusten y aparecerán aquí.', noMine:'Toca ✍️ arriba para escribir las tuyas.', lang:'es-ES' }
+ : { title:'Affirmations', cats:{ calm:'🌊 Calm', confidence:'💪 Confidence', love:'💗 Self-love', energy:'⚡ Energy', sleep:'🌙 Sleep', fav:'⭐ Favourites', mine:'✍️ Mine' }, hint:'Swipe or tap ✨ for another · read it out loud', write:'Write your own affirmation…', cancel:'Cancel', ok:'Save', noFav:'Tap 🤍 on the ones you like and they\'ll show up here.', noMine:'Tap ✍️ above to write your own.', lang:'en-US' };
+const BG = { calm: ['#4facfe', '#00c6a7'], confidence: ['#f7971e', '#ff5858'], love: ['#ff6a88', '#ff99ac'], energy: ['#f9d423', '#ff4e50'], sleep: ['#141e30', '#4b3b8f'], fav: ['#8e2de2', '#ff6a88'], mine: ['#11998e', '#38ef7d'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('hint').textContent = T.hint; $('mine').placeholder = T.write; $('cancel').textContent = T.cancel; $('okMine').textContent = T.ok;
+let cat = 'calm', favs = [], mine = [], cur = '', idx = -1;
+const list = () => cat === 'fav' ? favs : cat === 'mine' ? mine : D[cat];
+function show(text) {
+  $('quote').classList.add('out');
+  setTimeout(() => { cur = text; $('quote').textContent = text; $('quote').classList.remove('out'); $('fav').textContent = favs.includes(text) ? '❤️' : '🤍'; }, 250);
+}
+function next() {
+  const L = list(); if (!L.length) { cur = ''; $('quote').textContent = cat === 'fav' ? T.noFav : T.noMine; $('quote').classList.remove('out'); return; }
+  let i; do i = Math.floor(Math.random() * L.length); while (L.length > 1 && i === idx); idx = i; show(L[i]);
+}
+function cats() {
+  $('cats').innerHTML = Object.keys(T.cats).map(k => `<button class="chip ${k === cat ? 'on' : ''}" data-k="${k}">${T.cats[k]}</button>`).join('');
+  $('cats').querySelectorAll('.chip').forEach(b => b.onclick = () => { cat = b.dataset.k; idx = -1; cats(); paint(); next(); store.set('cat', cat); });
+}
+function paint() { const [a, b] = BG[cat]; $('bg').style.background = `linear-gradient(160deg, ${a}, ${b})`; }
+$('next').onclick = () => { next(); try { window.Acornix && Acornix.vibrate(8); } catch (e) {} };
+$('fav').onclick = () => { if (!cur) return; const i = favs.indexOf(cur); if (i >= 0) favs.splice(i, 1); else favs.unshift(cur); store.set('favs', favs); $('fav').textContent = favs.includes(cur) ? '❤️' : '🤍'; try { window.Acornix && Acornix.vibrate(12); } catch (e) {} };
+$('speak').onclick = () => { if (!cur) return; try { if (window.Acornix) Acornix.speak(cur, T.lang); else { const u = new SpeechSynthesisUtterance(cur); u.lang = T.lang; u.rate = .9; speechSynthesis.speak(u); } } catch (e) {} };
+$('plus').onclick = () => { $('mine').value = ''; $('add').hidden = false; setTimeout(() => $('mine').focus(), 50); };
+$('cancel').onclick = () => $('add').hidden = true;
+$('okMine').onclick = () => { const t = $('mine').value.trim(); if (!t) return; mine.unshift(t); store.set('mine', mine); $('add').hidden = true; cat = 'mine'; cats(); paint(); show(t); };
+let sx = null; $('stage').addEventListener('pointerdown', e => sx = e.clientX); $('stage').addEventListener('pointerup', e => { if (sx != null && Math.abs(e.clientX - sx) > 50) next(); sx = null; });
+(async () => { favs = await store.get('favs', []); mine = await store.get('mine', []); cat = await store.get('cat', 'calm'); cats(); paint(); next(); })();
+</script>
+</body>
+</html>

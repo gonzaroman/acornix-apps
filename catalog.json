@@ -360,6 +360,31 @@
       "trending": 0
     },
     {
+      "id": "affirmations",
+      "name": "Affirmations",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Positive affirmations for calm, confidence, self-love, energy and sleep on soothing colours. Read them aloud, keep favourites, write your own.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 10501,
+      "sha256": "24a3d46d8119493688332709bf1fa38eb644e9cbac16fc1a5250ce9ecbc67f16",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "what-is-this-ai",
       "name": "What Is This?",
       "emoji": "🔎",
