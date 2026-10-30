@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f5f0ff">
+<title>Pequeño artista</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#51456e;background:#f5f0ff;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+button{font:inherit;border:0;cursor:pointer;touch-action:manipulation;display:grid;place-items:center;flex-shrink:0}
+button:focus-visible{outline:4px solid #ffb428;outline-offset:3px}
+button:active{transform:scale(.91)}
+button:disabled{opacity:.4}
+svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.app{height:100%;height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(12px,env(safe-area-inset-left));max-width:1000px;margin:auto}
+header{height:76px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{width:60px;height:54px;display:grid;place-items:center;transform:rotate(-8deg)}
+.logo svg{width:53px;height:49px;stroke-width:6}
+.actions{display:flex;gap:9px}
+.action{height:49px;width:49px;border-radius:18px;background:white;box-shadow:0 4px 0 #e4dced;color:#776295;transition:transform .15s}
+.action.save{background:#8455ec;color:white;box-shadow:0 4px 0 #6338bc;width:62px}
+.action.clear{color:#f38b54}
+.stage{position:relative;flex:1;min-height:90px;background:#fff;border-radius:27px;overflow:hidden;box-shadow:0 4px 0 #e3daef,0 8px 24px #6950850b;isolation:isolate}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.sizes{position:absolute;left:12px;top:12px;display:flex;gap:3px;padding:4px;background:#ffffffee;border:1px solid #eee8f6;border-radius:20px;box-shadow:0 3px 14px #54406f0c}
+.size{width:41px;height:41px;background:transparent;border-radius:14px;color:#a796c4}
+.size.selected{background:#eee5ff;color:#8050d8}
+.size i{display:block;border-radius:50%;background:currentColor}
+.hint{pointer-events:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-35%) rotate(-9deg);opacity:.17;transition:opacity .2s}
+.hint svg{width:124px;height:110px;stroke:#a18ac7;stroke-width:9}
+.hint.hidden{opacity:0}
+.dock{flex-shrink:0;padding:15px 4px 13px}
+.palette{display:grid;grid-template-columns:repeat(6,1fr);gap:7px 10px;max-width:600px;margin:0 auto 13px}
+.swatch{height:43px;width:100%;background:transparent;border-radius:16px;position:relative}
+.swatch:before{content:"";width:35px;height:35px;background:var(--color);border-radius:50%;box-shadow:inset 0 -3px 0 #00000012;transition:transform .15s}
+.swatch.selected:before{transform:scale(.87);outline:3px solid var(--color);outline-offset:4px}
+.swatch.white:before{border:2px solid #d7cfdf}
+.swatch.selected:after{content:"";position:absolute;width:7px;height:12px;border:solid white;border-width:0 3px 3px 0;transform:rotate(45deg);top:12px}
+.swatch.white.selected:after{border-color:#847093}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:600px;margin:auto}
+.tool{position:relative;height:58px;border-radius:20px;background:#eae1f6;color:#8e79ad;box-shadow:0 3px 0 #ddd1ee;transition:background .15s,transform .15s}
+.tool svg{width:31px;height:31px}
+.tool.selected{background:#8a5be8;color:white;box-shadow:0 3px 0 #663eb3}
+.tool.rainbow:not(.selected){background:linear-gradient(135deg,#ffe0e8,#ffeac4,#d4f6e5,#ddd9ff)}
+.tool.stamps span{font-size:31px;line-height:1}
+.tray{position:absolute;left:12px;right:12px;bottom:13px;z-index:5;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;background:#fff;padding:9px;border:2px solid #eee4ff;border-radius:23px;box-shadow:0 8px 28px #62418625;animation:appear .18s ease-out}
+.tray[hidden]{display:none}
+.stamp{height:49px;border-radius:15px;background:#f7f2ff;font-size:29px}
+.stamp.selected{background:#e6d7ff;outline:2px solid #ac87ef}
+.toast{position:fixed;left:50%;bottom:calc(232px + env(safe-area-inset-bottom));transform:translate(-50%,15px);background:#4d3b68;color:#fff;border-radius:20px;padding:13px 20px;box-shadow:0 5px 20px #44305a25;max-width:88%;width:max-content;text-align:center;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:8}
+.particle{position:absolute;font-size:28px;animation:pop 850ms ease-out forwards}
+.stage.wipe canvas{animation:wipe .45s ease}
+@keyframes pop{0%{opacity:1;transform:translate(0,0) scale(.4) rotate(0)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.25) rotate(150deg)}}
+@keyframes wipe{0%{opacity:.2;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-height:650px){header{height:61px}.dock{padding-top:10px;padding-bottom:9px}.palette{gap:3px 8px;margin-bottom:8px}.swatch{height:36px}.swatch:before{width:29px;height:29px}.swatch.selected:after{top:8px}.tool{height:49px}.sizes{top:8px;left:8px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="brush" viewBox="0 0 32 32"><path d="m12 20 13-15a3 3 0 0 1 4 4L15 23"/><path d="M14 20c-4-2-8 1-7 5-1 2-3 3-4 3 8 3 15-1 11-8Z"/></symbol>
+<symbol id="undo" viewBox="0 0 32 32"><path d="m12 8-7 7 7 6M6 15h13c8 0 9 12-1 12"/></symbol>
+<symbol id="clear" viewBox="0 0 32 32"><path d="m11 23 12-12M9 25l-3 3m18-18 3-3M8 7v6m-3-3h6M23 22v7m-3-3h6"/><path d="m9 21 5 5 10-12-4-4Z"/></symbol>
+<symbol id="save" viewBox="0 0 32 32"><path d="M16 4v16m-6-6 6 6 6-6M5 23v4a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-4"/></symbol>
+<symbol id="eraser" viewBox="0 0 32 32"><path d="m5 18 13-13a3 3 0 0 1 4 0l6 6a3 3 0 0 1 0 4L15 28H9l-4-4a4 4 0 0 1 0-6Z"/><path d="m12 11 12 12M15 28h13"/></symbol>
+</svg>
+<main class="app">
+<header>
+<div class="logo" aria-label="Pequeño artista" role="img">
+<svg viewBox="0 0 60 54"><path d="M7 43V29a23 23 0 0 1 46 0v14" stroke="#ff8d9f"/><path d="M16 43V29a14 14 0 0 1 28 0v14" stroke="#ffc763"/><path d="M25 43V29a5 5 0 0 1 10 0v14" stroke="#8bd5ca"/><path d="M4 46h13m26 0h13" stroke="#cab5ed"/></svg>
+</div>
+<div class="actions">
+<button class="action" id="undoBtn" aria-label="Deshacer"><svg><use href="#undo"/></svg></button>
+<button class="action clear" id="clearBtn" aria-label="Borrar todo"><svg><use href="#clear"/></svg></button>
+<button class="action save" id="saveBtn" aria-label="Guardar dibujo en la galería"><svg><use href="#save"/></svg></button>
+</div>
+</header>
+<section class="stage" id="stage" aria-label="Zona de dibujo">
+<canvas id="canvas" aria-label="Lienzo para pintar"></canvas>
+<div class="hint" id="hint"><svg viewBox="0 0 140 120"><path d="M19 83C-1 37 67 7 51 43S16 112 55 83s57-72 52-36-33 59 13 35"/></svg></div>
+<div class="sizes" aria-label="Tamaño del pincel">
+<button class="size" data-size="0" aria-label="Pincel pequeño"><i style="width:9px;height:9px"></i></button>
+<button class="size" data-size="1" aria-label="Pincel mediano"><i style="width:17px;height:17px"></i></button>
+<button class="size" data-size="2" aria-label="Pincel grande"><i style="width:26px;height:26px"></i></button>
+</div>
+<div class="tray" id="stampTray" aria-label="Elegir sello" hidden></div>
+<div class="particles" id="particles"></div>
+</section>
+<section class="dock" aria-label="Colores y herramientas">
+<div class="palette" id="palette"></div>
+<div class="tools">
+<button class="tool" data-tool="brush" aria-label="Pincel"><svg><use href="#brush"/></svg></button>
+<button class="tool rainbow" data-tool="rainbow" aria-label="Pincel arcoíris"><svg><use href="#brush"/></svg></button>
+<button class="tool stamps" data-tool="stamp" aria-label="Sellos" aria-expanded="false"><span id="stampIcon">⭐</span></button>
+<button class="tool" data-tool="eraser" aria-label="Goma de borrar"><svg><use href="#eraser"/></svg></button>
+</div>
+</section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('canvas'),ctx=canvas.getContext('2d'),stage=$('stage');
+const colors=[
+['#ff525f','Rojo'],['#ff993f','Naranja'],['#ffd43b','Amarillo'],
+['#62cc65','Verde'],['#29c6bb','Turquesa'],['#39bafa','Azul cielo'],
+['#5269e9','Azul'],['#a164e5','Violeta'],['#f576bf','Rosa'],
+['#a8724e','Marrón'],['#343348','Negro'],['#ffffff','Blanco']];
+const stamps=[['⭐','Estrella'],['❤️','Corazón'],['🐱','Gato'],['🐶','Perro'],['🦋','Mariposa'],['🐸','Rana'],['🐰','Conejo'],['🦁','León'],['🐼','Panda'],['🐙','Pulpo'],['🐥','Pollito'],['🦄','Unicornio']];
+const db=window.Acornix?.db;
+const storage={
+get:async()=>db?await db.get('pequenoArtista.v1'):JSON.parse(localStorage.getItem('pequenoArtista.v1')||'null'),
+set:async v=>db?await db.set('pequenoArtista.v1',v):localStorage.setItem('pequenoArtista.v1',JSON.stringify(v))
+};
+let ops=[],settings={color:colors[0][0],size:1,tool:'brush',stamp:'⭐'};
+let current=null,pointer=null,w=1,h=1,ready=false,saveChain=Promise.resolve(),toastTimer,loading=false,reloadPending=false;
+function toast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3000)}
+function persist(){
+const data=JSON.parse(JSON.stringify({ops,settings}));
+saveChain=saveChain.catch(()=>{}).then(()=>storage.set(data)).catch(()=>toast('No se pudo guardar. Comprueba el espacio del teléfono.'));
+}
+function updateUI(){
+document.querySelectorAll('.swatch').forEach(b=>{const selected=b.dataset.color===settings.color;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected)});
+document.querySelectorAll('.size').forEach(b=>{const selected=+b.dataset.size===settings.size;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected)});
+document.querySelectorAll('.tool').forEach(b=>{const selected=b.dataset.tool===settings.tool;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected)});
+document.querySelectorAll('.stamp').forEach(b=>{const selected=b.dataset.stamp===settings.stamp;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected)});
+$('stampIcon').textContent=settings.stamp;
+$('undoBtn').disabled=!ops.length;
+$('hint').classList.toggle('hidden',!!current||ops.some((o,i)=>o.kind!=='clear'&&!ops.slice(i+1).some(a=>a.kind==='clear')));
+}
+function closeTray(){$('stampTray').hidden=true;document.querySelector('[data-tool="stamp"]').setAttribute('aria-expanded','false')}
+colors.forEach(([color,name])=>{
+const b=document.createElement('button');b.className='swatch'+(color==='#ffffff'?' white':'');b.dataset.color=color;b.style.setProperty('--color',color);b.setAttribute('aria-label',name);
+b.onclick=()=>{if(!ready)return;settings.color=color;if(settings.tool!=='stamp')settings.tool='brush';closeTray();updateUI();persist()};$('palette').append(b);
+});
+stamps.forEach(([symbol,name])=>{
+const b=document.createElement('button');b.className='stamp';b.dataset.stamp=symbol;b.textContent=symbol;b.setAttribute('aria-label',name);
+b.onclick=()=>{settings.stamp=symbol;settings.tool='stamp';closeTray();updateUI();persist()};$('stampTray').append(b);
+});
+document.querySelectorAll('.size').forEach(b=>b.onclick=()=>{if(!ready)return;settings.size=+b.dataset.size;updateUI();persist()});
+document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{
+if(!ready)return;
+settings.tool=b.dataset.tool;
+if(settings.tool==='stamp'){$('stampTray').hidden=!$('stampTray').hidden;b.setAttribute('aria-expanded',!$('stampTray').hidden)}else closeTray();
+updateUI();persist();
+});
+function widthFor(op){return [.023,.047,.085][op.size]*Math.min(w,h)}
+function stampAt(op,p){
+const s=[.11,.18,.27][op.size]*Math.min(w,h);
+ctx.save();ctx.globalCompositeOperation='source-over';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=s+'px "Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif';ctx.fillText(op.stamp,p.x*w,p.y*h+s*.06);ctx.restore();
+}
+function segment(op,a,b,index){
+const width=widthFor(op);
+ctx.save();ctx.globalCompositeOperation=op.kind==='eraser'?'destination-out':'source-over';
+ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=width;
+ctx.fillStyle=ctx.strokeStyle=op.kind==='rainbow'?`hsl(${(op.hue+index*6)%360},90%,62%)`:op.color;
+if(a.x===b.x&&a.y===b.y){ctx.beginPath();ctx.arc(a.x*w,a.y*h,width/2,0,Math.PI*2);ctx.fill()}
+else{ctx.beginPath();ctx.moveTo(a.x*w,a.y*h);ctx.lineTo(b.x*w,b.y*h);ctx.stroke()}
+ctx.restore();
+}
+function renderOp(op){
+if(op.kind==='clear'){ctx.clearRect(0,0,w,h);return}
+if(op.kind==='stamp'){op.points.forEach(p=>stampAt(op,p));return}
+op.points.forEach((p,i)=>segment(op,op.points[Math.max(0,i-1)],p,i));
+}
+function render(){ctx.clearRect(0,0,w,h);ops.forEach(renderOp);if(current)renderOp(current)}
+function resize(){
+const r=canvas.getBoundingClientRect();w=Math.max(1,r.width);h=Math.max(1,r.height);
+const d=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);ctx.setTransform(d,0,0,d,0,0);render();
+}
+new ResizeObserver(resize).observe(stage);
+function point(e){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))}}
+canvas.addEventListener('pointerdown',e=>{
+if(!ready||pointer!==null||e.button>0)return;
+e.preventDefault();closeTray();pointer=e.pointerId;canvas.setPointerCapture(pointer);
+current={kind:settings.tool,color:settings.color,size:settings.size,stamp:settings.stamp,hue:Math.random()*360,points:[point(e)]};
+renderOp(current);updateUI();
+});
+canvas.addEventListener('pointermove',e=>{
+if(e.pointerId!==pointer||!current)return;e.preventDefault();
+const events=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+(events.length?events:[e]).forEach(ev=>{
+const p=point(ev),prev=current.points[current.points.length-1];
+const distance=Math.hypot((p.x-prev.x)*w,(p.y-prev.y)*h);
+if(current.kind==='stamp'){
+if(distance<Math.min(w,h)*[.09,.14,.21][current.size])return;
+current.points.push(p);stampAt(current,p);
+}else{
+if(distance<.6)return;
+current.points.push(p);segment(current,prev,p,current.points.length-1);
+}
+});
+});
+function finish(e){
+if(pointer===null||(e&&e.pointerId!==pointer))return;
+if(current){ops.push(current);current=null;persist()}
+pointer=null;updateUI();
+if(reloadPending){reloadPending=false;reload()}
+}
+canvas.addEventListener('pointerup',finish);
+canvas.addEventListener('pointercancel',finish);
+canvas.addEventListener('lostpointercapture',finish);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)finish()});
+$('undoBtn').onclick=()=>{if(!ready)return;finish();ops.pop();render();updateUI();persist()};
+$('clearBtn').onclick=()=>{
+if(!ready)return;finish();closeTray();ops.push({kind:'clear'});render();updateUI();persist();
+stage.classList.remove('wipe');void stage.offsetWidth;stage.classList.add('wipe');
+const symbols=['✨','⭐','🫧','💛','🌈'];
+for(let i=0;i<22;i++){
+const p=document.createElement('span');p.className='particle';p.textContent=symbols[i%symbols.length];
+p.style.left=(15+Math.random()*70)+'%';p.style.top=(25+Math.random()*50)+'%';
+p.style.setProperty('--x',(Math.random()-.5)*260+'px');p.style.setProperty('--y',(-90-Math.random()*160)+'px');
+$('particles').append(p);setTimeout(()=>p.remove(),950);
+}
+};
+$('saveBtn').onclick=async()=>{
+if(!ready)return;finish();closeTray();const b=$('saveBtn');b.disabled=true;b.setAttribute('aria-busy','true');
+try{
+const out=document.createElement('canvas');out.width=canvas.width;out.height=canvas.height;
+const c=out.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,out.width,out.height);c.drawImage(canvas,0,0);
+const blob=await new Promise((resolve,reject)=>out.toBlob(v=>v?resolve(v):reject(Error()),'image/png'));
+const name='Mi-dibujo-'+new Date().toISOString().replace(/[:.]/g,'-')+'.png';
+if(window.Acornix?.files){
+await Acornix.files.save(name,blob);
+await Acornix.files.export(name);
+toast('¡Tu dibujo ya está en el teléfono! 🎉');
+}else{
+const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);toast('¡Dibujo descargado! 🎉');
+}
+}catch(error){toast('No se pudo guardar la imagen. Toca de nuevo para intentarlo.')}
+finally{b.disabled=false;b.removeAttribute('aria-busy')}
+};
+async function reload(){
+if(pointer!==null){reloadPending=true;return}
+if(loading){reloadPending=true;return}
+loading=true;
+try{
+await saveChain;
+const data=await storage.get();
+if(data){
+ops=Array.isArray(data.ops)?data.ops:[];
+const s=data.settings||{};
+settings={color:colors.some(c=>c[0]===s.color)?s.color:colors[0][0],size:[0,1,2].includes(s.size)?s.size:1,tool:['brush','rainbow','stamp','eraser'].includes(s.tool)?s.tool:'brush',stamp:stamps.some(v=>v[0]===s.stamp)?s.stamp:'⭐'};
+}else{ops=[]}
+render();updateUI();
+}catch(e){toast('No pudimos abrir el dibujo guardado. Inténtalo de nuevo.')}
+finally{ready=true;loading=false;if(reloadPending){reloadPending=false;reload()}}
+}
+window.addEventListener('acornixdata',reload);
+resize();updateUI();reload();
+})();
+</script>
+</body>
+</html>
