@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f6f5ef">
+<title>De compras</title>
+<style>
+:root{--bg:#f6f5ef;--ink:#242737;--muted:#85858d;--purple:#6950d8;--purple-light:#eee9ff;--lime:#d9ee97;--line:#e9e8e2;--white:#fff;--shadow:0 12px 35px #2923400c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;color:inherit}button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #ad9ce9;outline-offset:3px}svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.app{max-width:650px;margin:auto;padding:calc(21px + env(safe-area-inset-top)) 22px calc(110px + env(safe-area-inset-bottom))}
+.top{display:flex;align-items:center;gap:11px;margin-bottom:27px}.brand-icon{width:43px;height:43px;border-radius:15px;background:var(--purple);color:white;display:grid;place-items:center;transform:rotate(-6deg)}.brand{font-weight:800;font-size:20px;letter-spacing:-.7px}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.3px;margin-top:1px}.icon-btn{height:44px;width:44px;display:grid;place-items:center;border-radius:15px;background:white;flex-shrink:0;border:1px solid var(--line)}.top .icon-btn{margin-left:auto}
+.eyebrow{color:var(--muted);font-size:11px;font-weight:750;letter-spacing:1.8px;margin-bottom:7px}
+.list-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.list-title{background:none;display:flex;align-items:center;gap:10px;padding:2px 0;text-align:left;min-width:0}.list-title h1{font-size:30px;letter-spacing:-1.2px;line-height:1.2;margin:0;overflow:hidden;text-overflow:ellipsis;max-width:440px}.list-title svg{color:var(--purple);width:21px}.subtitle{font-size:13px;color:var(--muted);margin:9px 0 20px}
+.progress-card{background:var(--lime);border-radius:23px;padding:20px;display:flex;gap:15px;align-items:center;position:relative;overflow:hidden}.progress-copy{flex:1;min-width:0}.progress-copy strong{font-size:16px;display:block;letter-spacing:-.3px}.progress-copy p{font-size:12px;line-height:1.5;margin:5px 0 12px;color:#56653a}.track{height:6px;border-radius:10px;background:#b8d47580;overflow:hidden}.track div{background:#526c28;height:100%;border-radius:10px;transition:width .35s}.progress-circle{width:57px;height:57px;border:2px solid #849d5340;border-radius:50%;display:grid;place-items:center;background:#e8f5c080;position:relative;flex-shrink:0}.progress-circle svg{width:29px;height:29px;color:#506a28}
+.section-line{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:26px 0 13px}.section-line h2{font-size:16px;margin:0;letter-spacing:-.3px}.section-line span{font-size:11px;color:var(--muted)}
+.recent{display:flex;gap:8px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none;margin-right:-22px;padding-right:22px}.recent::-webkit-scrollbar{display:none}.recent button{white-space:nowrap;background:white;border:1px solid var(--line);border-radius:14px;padding:11px 13px;font-size:12px;display:flex;align-items:center;gap:8px}.recent .plus{color:var(--purple);font-size:18px;line-height:14px}.recent button.added{background:var(--purple-light);border-color:#ddd4fa;color:var(--purple)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin:20px 0}.tabs{padding:4px;background:#eae9e3;border-radius:12px;display:flex;gap:3px}.tabs button{font-size:12px;background:none;padding:8px 12px;border-radius:9px;color:#7b7b83;font-weight:650}.tabs button.active{background:white;color:var(--ink);box-shadow:0 2px 6px #00000006}.text-btn{background:none;color:var(--purple);font-size:12px;font-weight:650;min-height:40px;padding:5px 0 5px 8px}
+.group{margin-bottom:20px;animation:appear .22s ease-out}.group-head{display:flex;align-items:center;gap:9px;margin:0 2px 10px}.aisle-icon{height:32px;width:32px;display:grid;place-items:center;border-radius:11px;font-size:17px}.group-head h3{font-size:13px;margin:0;flex:1}.group-count{font-size:11px;color:var(--muted);background:#eeede7;border-radius:8px;padding:4px 8px}.items{background:white;border-radius:20px;padding:0 14px;box-shadow:0 3px 15px #29234003;border:1px solid #eeede8}.item{display:flex;align-items:center;min-height:72px;gap:6px}.item+.item{border-top:1px solid #f0efeb}.tick{background:none;padding:14px 0;display:flex;align-items:center;flex:1;gap:12px;text-align:left;min-width:0}.check{width:23px;height:23px;border:1.7px solid #d9d9df;border-radius:8px;display:grid;place-items:center;flex-shrink:0;transition:.18s}.check svg{width:15px;height:15px;stroke-width:2.7;opacity:0}.item.done .check{background:var(--purple);border-color:var(--purple);color:white}.item.done .check svg{opacity:1}.item-copy{min-width:0}.item-name{display:block;font-size:14px;font-weight:600;overflow-wrap:anywhere}.item-qty{display:block;color:var(--muted);font-size:11px;margin-top:4px}.item.done .item-name{text-decoration:line-through;color:#9d9ba6}.item.done .item-qty{color:#b2b0ba}.edit-item{width:40px;min-height:46px;display:grid;place-items:center;background:none;color:#aaa7b3}.edit-item svg{width:19px}.bottom{position:fixed;bottom:0;left:0;right:0;padding:14px 22px calc(15px + env(safe-area-inset-bottom));background:linear-gradient(0deg,var(--bg) 78%,#f6f5ef00);z-index:5;pointer-events:none}.bottom-inner{max-width:606px;margin:auto;pointer-events:auto}.primary{width:100%;min-height:54px;border-radius:17px;background:var(--purple);color:white;font-weight:650;font-size:14px;display:flex;justify-content:center;align-items:center;gap:10px;box-shadow:0 8px 20px #6950d82b}.empty{text-align:center;padding:30px 15px 35px}.empty .empty-icon{display:grid;place-items:center;width:74px;height:74px;border-radius:26px;background:var(--purple-light);color:var(--purple);margin:0 auto 15px;font-size:30px}.empty h3{font-size:18px;margin:0 0 7px}.empty p{font-size:13px;color:var(--muted);line-height:1.6;margin:0 auto;max-width:260px}
+.overlay{position:fixed;inset:0;background:#22203366;backdrop-filter:blur(4px);z-index:20;display:flex;align-items:flex-end;justify-content:center}.overlay[hidden]{display:none}.sheet{background:var(--bg);width:100%;max-width:650px;border-radius:29px 29px 0 0;padding:10px 23px calc(23px + env(safe-area-inset-bottom));max-height:92dvh;overflow-y:auto;animation:slide .23s ease-out;overscroll-behavior:contain}.handle{width:36px;height:4px;background:#d8d6df;border-radius:5px;margin:0 auto 14px}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:21px;gap:10px}.sheet-head h2{font-size:21px;letter-spacing:-.6px;margin:0}.sheet-head .icon-btn{height:36px;width:36px;background:#eae9e3;border:0;border-radius:50%}.field{display:block;margin:0 0 17px}.field>span{font-size:12px;font-weight:650;display:block;margin:0 0 8px}.field input,.field select,.field textarea{width:100%;min-height:51px;background:white;border:1px solid #e2e0e9;border-radius:13px;color:var(--ink);padding:13px;outline-offset:1px}.field textarea{resize:vertical;min-height:210px;font-size:13px;line-height:1.7}.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stepper{display:flex;align-items:center;background:white;border:1px solid #e2e0e9;border-radius:13px;height:51px}.stepper button{background:none;min-width:42px;height:48px;font-size:21px;color:var(--purple)}.stepper input{border:0;padding:0;min-width:0;text-align:center;min-height:40px;-moz-appearance:textfield}.stepper input::-webkit-inner-spin-button{display:none}.aisle-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:21px}.aisle-option{background:white;border:1px solid var(--line);border-radius:13px;padding:12px 4px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:70px}.aisle-option span{font-size:20px}.aisle-option.active{background:var(--purple-light);border-color:#b9a9ef;color:var(--purple)}.danger{color:#c94e57;background:#fbe9e9;border-radius:14px;width:100%;min-height:48px;font-size:13px;font-weight:600;margin-top:10px}.secondary{background:white;border:1px solid #dedbe9;border-radius:14px;width:100%;min-height:49px;font-size:13px;font-weight:600;margin-top:10px;color:var(--purple)}.list-card{display:flex;align-items:center;background:white;border:1px solid var(--line);border-radius:16px;margin-bottom:9px;overflow:hidden}.list-card.current{border-color:#b4a3ef;background:#f3efff}.list-select{display:flex;gap:12px;align-items:center;text-align:left;flex:1;min-width:0;background:none;padding:16px}.list-emoji{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:#efebff;font-size:20px;flex-shrink:0}.list-info{min-width:0}.list-info strong{font-size:14px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.list-info small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.list-manage{background:none;width:45px;min-height:64px;color:var(--muted);display:grid;place-items:center}.hint{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 18px}.error{font-size:12px;color:#b53548;margin:0 0 12px;line-height:1.5}.toast{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,12px);background:#292637;color:white;padding:12px 18px;border-radius:14px;font-size:12px;z-index:40;max-width:90%;text-align:center;opacity:0;transition:.2s;pointer-events:none;box-shadow:var(--shadow)}.toast.show{opacity:1;transform:translate(-50%,0)}.inline-note{font-size:11px;color:var(--muted);text-align:center;margin:12px 0 0}.confirm-copy{font-size:14px;line-height:1.7;color:#76737f;margin-bottom:23px}.loading{padding:50px;text-align:center;color:var(--muted);font-size:14px}
+@keyframes slide{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:600px){.app{padding-top:35px}.overlay{align-items:center;padding:24px}.sheet{border-radius:27px;max-width:480px;padding-bottom:25px}.list-title h1{max-width:450px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></div>
+<div class="brand">De compras<small>Menos vueltas, más fácil.</small></div>
+<button class="icon-btn" id="shareTop" aria-label="Compartir lista"><svg viewBox="0 0 24 24"><path d="M12 16V3m-4 4 4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
+</header>
+<div class="eyebrow">TU PRÓXIMA COMPRA</div>
+<div class="list-heading"><button class="list-title" id="openLists"><h1 id="listTitle">Mis listas</h1><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><button class="icon-btn" id="listOptions" aria-label="Opciones de la lista"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button></div>
+<p class="subtitle" id="subtitle">Todo en su pasillo. Nada en el olvido.</p>
+<section class="progress-card" aria-label="Progreso de la compra">
+<div class="progress-copy"><strong id="progressTitle">Prepara tu próxima compra</strong><p id="progressText">Añade lo que necesitas y empieza sin prisas.</p><div class="track"><div id="progressBar" style="width:0%"></div></div></div>
+<div class="progress-circle"><svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div>
+</section>
+<section id="recentSection" hidden><div class="section-line"><h2>Otra vez a la cesta</h2><span>Tus recientes</span></div><div class="recent" id="recents"></div></section>
+<div class="toolbar"><div class="tabs"><button id="allTab" class="active">Todo <span id="allCount">0</span></button><button id="pendingTab">Pendientes <span id="pendingCount">0</span></button></div><button class="text-btn" id="clearDone" hidden>Limpiar marcados</button></div>
+<main id="groups"><div class="loading">Preparando tus listas…</div></main>
+</div>
+<div class="bottom"><div class="bottom-inner"><button class="primary" id="addButton"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Añadir producto</button></div></div>
+<div class="overlay" id="overlay" hidden><section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></section></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s);
+const aisles=[
+{id:'fruta',name:'Fruta y verdura',emoji:'🥑',color:'#edf3de'},
+{id:'lacteos',name:'Lácteos y huevos',emoji:'🥛',color:'#e8efff'},
+{id:'pan',name:'Panadería',emoji:'🥐',color:'#fbeddc'},
+{id:'carne',name:'Carne y pescado',emoji:'🐟',color:'#fce8e7'},
+{id:'despensa',name:'Despensa',emoji:'🥫',color:'#f9eedb'},
+{id:'bebidas',name:'Bebidas',emoji:'🧃',color:'#e8f4e8'},
+{id:'congelados',name:'Congelados',emoji:'🧊',color:'#e6f5f8'},
+{id:'limpieza',name:'Limpieza',emoji:'🧽',color:'#f0e9fb'},
+{id:'otros',name:'Otros',emoji:'🛍️',color:'#eeece8'}
+];
+const icons={
+close:'<svg viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg>',
+check:'<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>',
+dots:'<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>',
+edit:'<svg viewBox="0 0 24 24"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg>'
+};
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const KEY='deCompras.v1';
+let state=null,filter='all',saving=Promise.resolve(),toastTimer,lastFocus,modalOpen=false;
+const db=window.Acornix?.db;
+async function read(){if(db)return await db.get(KEY);const v=localStorage.getItem(KEY);return v?JSON.parse(v):null}
+function persist(){
+const snapshot=JSON.parse(JSON.stringify(state));
+saving=saving.catch(()=>{}).then(async()=>{if(db)await db.set(KEY,snapshot);else localStorage.setItem(KEY,JSON.stringify(snapshot))}).catch(()=>notify('No se pudo guardar. Vuelve a intentarlo.'));
+}
+function current(){return state?.lists.find(l=>l.id===state.selected)||state?.lists[0]}
+function normalize(data){
+if(!data||!Array.isArray(data.lists)||!data.lists.length){let id=uid();return {selected:id,lists:[{id,name:'Compra semanal',items:[]}],recents:[]}}
+data.lists=data.lists.map(l=>({...l,items:Array.isArray(l.items)?l.items:[]}));
+data.recents=Array.isArray(data.recents)?data.recents:[];
+if(!data.lists.some(l=>l.id===data.selected))data.selected=data.lists[0].id;
+return data;
+}
+function notify(text){$('#toast').textContent=text;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2700)}
+function quantity(item){return item.qty+' '+(item.unit||'ud.')}
+function render(){
+if(!state)return;
+const l=current(),done=l.items.filter(i=>i.done).length,total=l.items.length,pending=total-done;
+$('#listTitle').textContent=l.name;$('#subtitle').textContent=total?`${total} ${total===1?'producto':'productos'} · ${new Set(l.items.map(i=>i.aisle)).size} ${new Set(l.items.map(i=>i.aisle)).size===1?'pasillo':'pasillos'} · A tu ritmo`:'Todo en su pasillo. Nada en el olvido.';
+$('#progressTitle').textContent=!total?'Una buena compra empieza aquí':!pending?'¡Todo en la cesta!':done?'¡Vas muy bien!':'Tu lista, lista para salir';
+$('#progressText').textContent=!total?'Añade lo que necesitas y olvídate de olvidarlo.':!pending?`${done} de ${total} productos marcados. ¡Compra completada!`:`${done} de ${total} marcados · ${pending} ${pending===1?'por encontrar':'por encontrar'}`;
+$('#progressBar').style.width=(total?done/total*100:0)+'%';
+$('#allCount').textContent=total;$('#pendingCount').textContent=pending;
+$('#allTab').classList.toggle('active',filter==='all');$('#pendingTab').classList.toggle('active',filter==='pending');
+$('#allTab').setAttribute('aria-pressed',filter==='all');$('#pendingTab').setAttribute('aria-pressed',filter==='pending');
+$('#clearDone').hidden=!done;
+$('#recentSection').hidden=!state.recents.length;
+$('#recents').innerHTML=state.recents.slice(0,14).map((r,index)=>{
+const exists=l.items.some(i=>i.name.toLocaleLowerCase()===r.name.toLocaleLowerCase());
+return `<button data-recent="${index}" class="${exists?'added':''}" aria-label="${esc(exists?'Ya en la lista: ':'Añadir ')}${esc(r.name)}"><span class="plus">${exists?'✓':'+'}</span>${esc(r.name)}</button>`;
+}).join('');
+const visible=l.items.filter(i=>filter==='all'||!i.done);
+if(!visible.length){
+$('#groups').innerHTML=`<div class="empty"><div class="empty-icon">${total?'✨':'🛒'}</div><h3>${total?'¡No te falta nada!':'¿Qué hace falta en casa?'}</h3><p>${total?'Has marcado todos los productos. Puedes verlos en «Todo» o añadir algo más.':'Añade tu primer producto. Lo ordenaremos por pasillos para que compres más fácil.'}</p></div>`;return;
+}
+$('#groups').innerHTML=aisles.map(a=>{
+const items=visible.filter(i=>(aisles.some(a=>a.id===i.aisle)?i.aisle:'otros')===a.id).sort((a,b)=>Number(a.done)-Number(b.done));
+if(!items.length)return '';
+return `<section class="group"><div class="group-head"><span class="aisle-icon" style="background:${a.color}">${a.emoji}</span><h3>${a.name}</h3><span class="group-count">${items.length}</span></div><div class="items">${items.map(i=>`<div class="item ${i.done?'done':''}"><button class="tick" data-toggle="${esc(i.id)}" aria-pressed="${!!i.done}" aria-label="${esc((i.done?'Desmarcar ':'Marcar ')+i.name+', '+quantity(i))}"><span class="check">${icons.check}</span><span class="item-copy"><span class="item-name">${esc(i.name)}</span><span class="item-qty">${esc(quantity(i))}</span></span></button><button class="edit-item" data-edit="${esc(i.id)}" aria-label="Editar ${esc(i.name)}">${icons.dots}</button></div>`).join('')}</div></section>`;
+}).join('');
+}
+function remember(item){
+state.recents=state.recents.filter(r=>r.name.toLocaleLowerCase()!==item.name.toLocaleLowerCase());
+state.recents.unshift({name:item.name,qty:item.qty,unit:item.unit,aisle:item.aisle});
+state.recents=state.recents.slice(0,24);
+}
+function openSheet(title,content){
+if(!modalOpen)lastFocus=document.activeElement;
+modalOpen=true;$('#sheet').innerHTML=`<div class="handle"></div><div class="sheet-head"><h2 id="sheetTitle">${esc(title)}</h2><button class="icon-btn" id="closeSheet" aria-label="Cerrar">${icons.close}</button></div>${content}`;
+$('#overlay').hidden=false;document.body.style.overflow='hidden';
+$('#closeSheet').onclick=closeSheet;
+setTimeout(()=>$('#closeSheet')?.focus({preventScroll:true}),30);
+}
+function closeSheet(){$('#overlay').hidden=true;document.body.style.overflow='';modalOpen=false;lastFocus?.focus({preventScroll:true})}
+function askConfirm(title,message,action){
+openSheet(title,`<p class="confirm-copy">${esc(message)}</p><button class="primary" id="confirmAction">Sí, continuar</button><button class="secondary" id="cancelAction">Cancelar</button>`);
+$('#confirmAction').onclick=()=>{action();closeSheet()};$('#cancelAction').onclick=closeSheet;
+}
+function guess(name){
+const n=name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const patterns=[
+['fruta',/manzana|platano|banana|pera|limon|naranja|tomate|lechuga|patata|papa|cebolla|zanahoria|aguacate|fresa|brocoli|calabacin|espinaca|pepino|pimiento|ajo|uva|melon|sandia|fruta/],
+['lacteos',/leche|yogur|queso|huevo|mantequilla|nata|kefir/],
+['pan',/pan\b|baguette|croissant|bollo|tostada|bizcocho/],
+['carne',/pollo|carne|pescado|salmon|merluza|ternera|cerdo|pavo|gamba|atun|jamon/],
+['limpieza',/jabon|detergente|lejia|limpia|suavizante|papel|bolsas|esponja|lavavajillas|champu|gel|pasta de dientes/],
+['congelados',/congelad|helado|hielo/],
+['bebidas',/agua|zumo|jugo|cerveza|vino|refresco|bebida/],
+['despensa',/arroz|pasta|aceite|sal\b|azucar|harina|cafe|te\b|lenteja|garbanzo|galleta|cereal|chocolate|avena|conserva|miel/]
+];return patterns.find(x=>x[1].test(n))?.[0]||'otros';
+}
+function productSheet(id){
+if(!state)return;
+const item=id?current().items.find(i=>i.id===id):null;
+if(id&&!item)return;
+let aisle=item?.aisle||'fruta',manuallySelected=!!item;
+openSheet(item?'Editar producto':'A la lista',`<form id="productForm">
+<label class="field"><span>¿Qué necesitas?</span><input id="productName" placeholder="Por ejemplo, manzanas" value="${esc(item?.name||'')}" maxlength="80" autocomplete="off" required></label>
+<div class="two-cols"><label class="field"><span>Cantidad</span><div class="stepper"><button type="button" id="minus" aria-label="Reducir cantidad">−</button><input id="productQty" type="number" inputmode="decimal" min="0.01" max="9999" step="any" value="${item?.qty||1}" required aria-label="Cantidad"><button type="button" id="plus" aria-label="Aumentar cantidad">+</button></div></label><label class="field"><span>Unidad</span><select id="productUnit">${['ud.','kg','g','l','ml','paquetes','cajas','botellas','latas','docenas'].map(u=>`<option ${item?.unit===u?'selected':''}>${u}</option>`).join('')}</select></label></div>
+<div class="field"><span>Pasillo</span></div><div class="aisle-picker">${aisles.map(a=>`<button type="button" class="aisle-option ${aisle===a.id?'active':''}" data-aisle="${a.id}" aria-pressed="${aisle===a.id}"><span>${a.emoji}</span>${a.name}</button>`).join('')}</div>
+<p class="error" id="formError" hidden></p><button class="primary" type="submit">${item?'Guardar cambios':'Añadir a mi lista'}</button>${item?'<button class="danger" id="deleteItem" type="button">Eliminar producto</button>':''}</form>`);
+const updateAisle=()=>{$$('.aisle-option').forEach(b=>{b.classList.toggle('active',b.dataset.aisle===aisle);b.setAttribute('aria-pressed',b.dataset.aisle===aisle)})};
+$$('.aisle-option').forEach(b=>b.onclick=()=>{aisle=b.dataset.aisle;manuallySelected=true;updateAisle()});
+$('#productName').oninput=()=>{if(!manuallySelected&&$('#productName').value.trim()){aisle=guess($('#productName').value);updateAisle()}};
+$('#minus').onclick=()=>{$('#productQty').value=Math.max(.01,Math.round((Number($('#productQty').value||1)-1)*100)/100)};
+$('#plus').onclick=()=>{$('#productQty').value=Math.min(9999,Math.round((Number($('#productQty').value||0)+1)*100)/100)};
+$('#productForm').onsubmit=e=>{
+e.preventDefault();
+const name=$('#productName').value.trim(),qty=Number($('#productQty').value),unit=$('#productUnit').value;
+if(!name||!Number.isFinite(qty)||qty<=0||qty>9999){$('#formError').textContent='Escribe un nombre y una cantidad entre 0,01 y 9999.';$('#formError').hidden=false;return}
+const duplicate=current().items.find(i=>i.id!==id&&i.name.toLocaleLowerCase()===name.toLocaleLowerCase());
+if(duplicate){$('#formError').textContent='Este producto ya está en la lista. Puedes editar su cantidad desde los tres puntos.';$('#formError').hidden=false;return}
+const data={name,qty,unit,aisle};
+if(item)Object.assign(item,data);else current().items.push({id:uid(),...data,done:false});
+remember(data);persist();render();closeSheet();notify(item?'Producto actualizado':'Añadido a tu lista');
+};
+if(item)$('#deleteItem').onclick=()=>{current().items=current().items.filter(i=>i.id!==id);persist();render();closeSheet();notify('Producto eliminado')};
+}
+function $$(s){return [...document.querySelectorAll(s)]}
+function showLists(){
+if(!state)return;
+openSheet('Tus listas',`<p class="hint">Una para cada plan. Elige la que vas a usar.</p><div>${state.lists.map(l=>`<div class="list-card ${l.id===state.selected?'current':''}"><button class="list-select" data-list="${esc(l.id)}"><span class="list-emoji">${l.id===state.selected?'🛒':'🛍️'}</span><span class="list-info"><strong>${esc(l.name)}</strong><small>${l.items.filter(i=>!i.done).length} pendientes · ${l.items.length} productos</small></span></button><button class="list-manage" data-manage="${esc(l.id)}" aria-label="Editar ${esc(l.name)}">${icons.edit}</button></div>`).join('')}</div><button class="primary" id="newList" style="margin-top:18px">＋ Crear otra lista</button>`);
+$$('[data-list]').forEach(b=>b.onclick=()=>{state.selected=b.dataset.list;filter='all';persist();render();closeSheet()});
+$$('[data-manage]').forEach(b=>b.onclick=()=>editList(b.dataset.manage));
+$('#newList').onclick=()=>editList();
+}
+function editList(id){
+const l=state.lists.find(l=>l.id===id);
+openSheet(l?'Editar lista':'Una nueva lista',`<form id="listForm"><label class="field"><span>Nombre de la lista</span><input id="listName" maxlength="45" value="${esc(l?.name||'')}" placeholder="Por ejemplo, cena del sábado" required autocomplete="off"></label><p class="error" id="listError" hidden></p><button class="primary" type="submit">${l?'Guardar nombre':'Crear lista'}</button></form>${l?'<button class="secondary" id="uncheckAll">Desmarcar todos los productos</button><button class="danger" id="deleteList">Eliminar esta lista</button>':''}`);
+$('#listForm').onsubmit=e=>{
+e.preventDefault();let name=$('#listName').value.trim();
+if(!name){$('#listError').textContent='Escribe un nombre para tu lista.';$('#listError').hidden=false;return}
+if(l)l.name=name;else{let id=uid();state.lists.push({id,name,items:[]});state.selected=id;filter='all'}
+persist();render();closeSheet();notify(l?'Nombre actualizado':'Tu nueva lista está lista');
+};
+if(l){
+$('#uncheckAll').onclick=()=>{l.items.forEach(i=>i.done=false);persist();render();closeSheet();notify('Todo vuelve a estar pendiente')};
+$('#deleteList').onclick=()=>askConfirm('¿Eliminar esta lista?',`Se eliminará «${l.name}» y sus productos. Tus recientes se conservarán.`,()=>{
+state.lists=state.lists.filter(x=>x.id!==id);if(!state.lists.length){const newId=uid();state.lists.push({id:newId,name:'Compra semanal',items:[]})}
+if(state.selected===id)state.selected=state.lists[0].id;
+persist();render();notify('Lista eliminada');
+});
+}
+}
+function shareText(){
+const l=current(),lines=[`🛒 ${l.name}`,''];
+aisles.forEach(a=>{
+const items=l.items.filter(i=>(aisles.some(a=>a.id===i.aisle)?i.aisle:'otros')===a.id);
+if(!items.length)return;
+lines.push(`${a.emoji} ${a.name}`);
+items.forEach(i=>lines.push(`${i.done?'✓':'☐'} ${i.name} — ${quantity(i)}`));
+lines.push('');
+});
+if(!l.items.length)lines.push('Todavía no hay productos.');
+return lines.join('\n').trim();
+}
+function shareSheet(){
+if(!state)return;
+openSheet('Comparte tu lista',`<p class="hint">Envíala por mensaje o copia el texto. Los productos marcados llevan un ✓.</p><label class="field"><span>Vista previa</span><textarea id="shareText" readonly></textarea></label><button class="primary" id="nativeShare">Compartir lista</button><button class="secondary" id="copyText">Copiar texto</button>`);
+$('#shareText').value=shareText();
+const copy=async()=>{
+try{
+if(navigator.clipboard?.writeText)await navigator.clipboard.writeText($('#shareText').value);
+else{$('#shareText').focus();$('#shareText').select();if(!document.execCommand('copy'))throw Error()}
+notify('Texto copiado. Listo para pegar.');
+}catch(e){$('#shareText').focus();$('#shareText').select();notify('Mantén pulsado el texto para copiarlo.')}
+};
+$('#copyText').onclick=copy;
+$('#nativeShare').onclick=async()=>{
+if(!navigator.share){await copy();return}
+try{await navigator.share({title:current().name,text:$('#shareText').value})}
+catch(e){if(e.name!=='AbortError')notify('No se pudo compartir. Prueba a copiar el texto.')}
+};
+}
+$('#addButton').onclick=()=>productSheet();
+$('#openLists').onclick=showLists;
+$('#listOptions').onclick=()=>{if(state)editList(current().id)};
+$('#shareTop').onclick=shareSheet;
+$('#allTab').onclick=()=>{filter='all';render()};
+$('#pendingTab').onclick=()=>{filter='pending';render()};
+$('#clearDone').onclick=()=>{
+if(!state)return;
+const n=current().items.filter(i=>i.done).length;
+askConfirm('¿Limpiar los marcados?',`Quitaremos ${n} ${n===1?'producto marcado':'productos marcados'} de esta lista. Podrás volver a añadirlos desde tus recientes.`,()=>{current().items=current().items.filter(i=>!i.done);persist();render();notify('Lista despejada')});
+};
+$('#groups').onclick=e=>{
+const toggle=e.target.closest('[data-toggle]'),edit=e.target.closest('[data-edit]');
+if(toggle){const item=current().items.find(i=>i.id===toggle.dataset.toggle);if(item){item.done=!item.done;persist();render()}}
+if(edit)productSheet(edit.dataset.edit);
+};
+$('#recents').onclick=e=>{
+const b=e.target.closest('[data-recent]');if(!b)return;
+const r=state.recents[Number(b.dataset.recent)];
+if(current().items.some(i=>i.name.toLocaleLowerCase()===r.name.toLocaleLowerCase())){notify('Ya está en tu lista. Toca sus tres puntos para editarlo.');return}
+current().items.push({id:uid(),...r,done:false});remember(r);persist();render();notify(`${r.name}: añadido`);
+};
+$('#overlay').onclick=e=>{if(e.target===$('#overlay'))closeSheet()};
+document.addEventListener('keydown',e=>{
+if(!modalOpen)return;
+if(e.key==='Escape')closeSheet();
+if(e.key==='Tab'){
+const focusables=$$('#sheet button, #sheet input, #sheet select, #sheet textarea').filter(el=>!el.disabled&&el.offsetParent!==null);
+const first=focusables[0],last=focusables.at(-1);
+if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
+else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
+}
+});
+async function reload(){
+try{await saving;const data=await read();state=normalize(data);render();if(modalOpen)closeSheet();if(!data)persist()}
+catch(e){if(!state){state=normalize(null);render()}notify('No se pudieron cargar los datos guardados.')}
+}
+window.addEventListener('acornixdata',reload);
+reload();
+})();
+</script>
+</body>
+</html>

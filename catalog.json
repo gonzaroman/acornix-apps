@@ -219,6 +219,29 @@
       "trending": 0
     },
     {
+      "id": "shopping-list",
+      "name": "Shopping List",
+      "emoji": "📝",
+      "category": "shopping",
+      "description": "A shopping list sorted by aisle, with quantities, quick re-add and sharing.",
+      "prompt": "A shopping list grouped by aisle, like fruit, dairy, bakery and cleaning, with quantities, tap to tick, recent items to re-add quickly, several lists, and share the list as text.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 30287,
+      "sha256": "06b86b05d386bcdcbf9f45d623808255bef1467ecb86d69143416c52a915a649",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "shapes-and-colors",
       "name": "Shapes and Colors",
       "emoji": "🎮",
