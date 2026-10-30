@@ -148,6 +148,29 @@
       "trending": 0
     },
     {
+      "id": "road-trip-games",
+      "name": "Road Trip Games",
+      "emoji": "🎮",
+      "category": "travel",
+      "description": "Car bingo with 25 things to spot, the alphabet game on signs and I spy with team scores, for long drives.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11166,
+      "sha256": "f4dd3f30b4c073ab5595d146159d2c40ef0c3e06641443cc0597def005ea5667",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "recipe-box",
       "name": "Recipe Box",
       "emoji": "📒",

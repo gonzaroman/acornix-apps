@@ -1,0 +1,15 @@
+{
+  "id": "road-trip-games",
+  "name": "Road Trip Games",
+  "emoji": "🎮",
+  "category": "travel",
+  "description": "Car bingo with 25 things to spot, the alphabet game on signs and I spy with team scores, for long drives.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 61
+}
