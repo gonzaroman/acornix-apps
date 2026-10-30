@@ -54,6 +54,31 @@
       "trending": 0
     },
     {
+      "id": "trip-budget",
+      "name": "Trip Budget",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "Track travel spending in any currency, converted to yours, with what is left, a daily allowance and spending by category.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "internet"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 11654,
+      "sha256": "194ceeecf45877bd11b71487614b8476aa80513f972f8ef8d0e75960cb4d7416",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "spirograph",
       "name": "Spirograph",
       "emoji": "🌀",

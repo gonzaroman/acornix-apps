@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trip Budget</title>
+<style>
+  :root { --bg:#f4f7fb; --card:#fff; --ink:#172033; --muted:#78839a; --a:#0b7285; --line:#e1e7f0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .hero { background:linear-gradient(135deg,#0b7285,#15aabf); color:#fff; border-radius:24px; padding:18px; margin-bottom:12px; box-shadow:0 10px 30px #0b728533; }
+  .hero small { opacity:.85; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.5px; } .hero .big { font-size:38px; font-weight:900; font-variant-numeric:tabular-nums; margin:2px 0; } .hero .sub { opacity:.9; font-weight:700; }
+  .hero .bar { height:10px; border-radius:6px; background:#ffffff40; overflow:hidden; margin:12px 0 8px; } .hero .bar i { display:block; height:100%; background:#fff; border-radius:6px; } .hero .bar i.over { background:#ffa8a8; }
+  .hero .row { display:flex; justify-content:space-between; font-weight:800; font-size:13px; }
+  .setup { display:grid; grid-template-columns:1fr 1fr; gap:8px; background:var(--card); border-radius:18px; padding:12px; margin-bottom:12px; box-shadow:0 2px 0 var(--line); }
+  .setup label { font-size:11px; font-weight:900; color:var(--muted); text-transform:uppercase; display:block; margin-bottom:4px; }
+  .setup input, .setup select { width:100%; padding:10px; border-radius:12px; border:2px solid var(--line); font:inherit; font-weight:700; background:#fff; color:var(--ink); }
+  .add { background:var(--card); border-radius:20px; padding:12px; margin-bottom:12px; box-shadow:0 2px 0 var(--line); }
+  .add .amt { display:flex; gap:8px; align-items:center; } .add .amt input { flex:1; min-width:0; font-size:30px; font-weight:900; border:0; border-bottom:3px solid var(--line); outline:none; padding:4px 0; color:var(--ink); background:none; } .add .amt select { padding:10px; border-radius:12px; border:2px solid var(--line); font:inherit; font-weight:800; background:#fff; }
+  .conv { color:var(--muted); font-weight:700; font-size:13px; margin:6px 2px; min-height:18px; }
+  .cats { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin:8px 0; } .cats button { padding:8px 0; border-radius:12px; background:#f1f4f9; font-size:20px; } .cats button.on { background:var(--ink); }
+  .add .note { width:100%; padding:10px 12px; border-radius:12px; border:2px solid var(--line); font:inherit; outline:none; color:var(--ink); }
+  .add .go { width:100%; margin-top:8px; padding:13px; border-radius:14px; background:var(--a); color:#fff; font-weight:900; }
+  .split { display:flex; height:14px; border-radius:7px; overflow:hidden; margin:4px 0 6px; } .legend { display:flex; flex-wrap:wrap; gap:6px 12px; font-size:12px; font-weight:700; color:var(--muted); margin-bottom:12px; } .legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px; }
+  .day { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; margin:14px 4px 6px; display:flex; justify-content:space-between; }
+  .ex { display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:10px 12px; margin-bottom:6px; } .ex .e { font-size:22px; } .ex .t { flex:1; min-width:0; } .ex b { display:block; font-variant-numeric:tabular-nums; } .ex small { color:var(--muted); font-weight:600; }
+  .ex .x { background:none; color:#c4ccd8; }
+  .err { color:#c92a2a; font-size:12px; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✈️ <span id="ttl"></span></h1>
+  <div class="hero" id="hero"></div>
+  <div class="setup"><div><label id="lBudget"></label><input id="budget" type="number" inputmode="decimal"></div><div><label id="lHome"></label><select id="home"></select></div><div><label id="lStart"></label><input id="start" type="date"></div><div><label id="lEnd"></label><input id="end" type="date"></div></div>
+  <div class="add"><div class="amt"><input id="amt" type="number" inputmode="decimal" placeholder="0"><select id="cur"></select></div><div class="conv" id="conv"></div><div class="cats" id="cats"></div><input class="note" id="note" maxlength="40"><button class="go" id="go"></button></div>
+  <div id="split"></div>
+  <div id="list"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Presupuesto de viaje', budget:'Presupuesto', home:'Tu moneda', start:'Del', end:'Al', spent:'Gastado', left:'Te queda', over:'Te has pasado', perDay:d => `Puedes gastar ${d} al día`, day:n => `Día ${n}`, note:'¿En qué? (opcional)', add:'＋ Añadir gasto', cats:['Comida', 'Transporte', 'Alojamiento', 'Actividades', 'Compras', 'Otros'], offline:'Sin conexión: uso el último cambio guardado', locale:'es' }
+ : { title:'Trip Budget', budget:'Budget', home:'Your currency', start:'From', end:'To', spent:'Spent', left:'Left', over:'Over budget', perDay:d => `You can spend ${d} a day`, day:n => `Day ${n}`, note:'What for? (optional)', add:'＋ Add expense', cats:['Food', 'Transport', 'Stay', 'Activities', 'Shopping', 'Other'], offline:'Offline: using the last saved rate', locale:'en' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const CURS = ['EUR', 'USD', 'GBP', 'JPY', 'MXN', 'BRL', 'CHF', 'CAD', 'AUD', 'THB', 'TRY', 'CZK', 'PLN', 'HUF', 'SEK', 'NOK', 'DKK', 'CNY', 'INR', 'KRW', 'IDR', 'ZAR', 'NZD', 'SGD'];
+const EMO = ['🍽️', '🚌', '🏨', '🎟️', '🛍️', '📦'], COL = ['#f76707', '#1c7ed6', '#7048e8', '#2f9e44', '#e64980', '#868e96'];
+const $ = id => document.getElementById(id), DAY = 864e5;
+['ttl', 'lBudget', 'lHome', 'lStart', 'lEnd', 'go'].forEach((id, i) => $(id).textContent = [T.title, T.budget, T.home, T.start, T.end, T.add][i]); $('note').placeholder = T.note;
+$('home').innerHTML = $('cur').innerHTML = CURS.map(c => `<option>${c}</option>`).join('');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const iso = d => d.toISOString().slice(0, 10);
+let st = { budget: 1000, home: ES ? 'EUR' : 'USD', cur: ES ? 'EUR' : 'USD', start: iso(new Date()), end: iso(new Date(Date.now() + 6 * DAY)), cat: 0, ex: [] }, rates = {}, offline = false;
+const save = () => store.set('trip', st);
+const money = (v, c = st.home) => { try { return new Intl.NumberFormat(T.locale, { style: 'currency', currency: c, maximumFractionDigits: v >= 100 ? 0 : 2 }).format(v); } catch (e) { return Math.round(v) + ' ' + c; } };
+// Rates against the home currency, cached for offline use.
+async function loadRates(rebase) {
+  try { const r = await fetch(`https://api.frankfurter.dev/v1/latest?base=${st.home}`).then(r => r.json()); rates = { ...r.rates, [st.home]: 1 }; offline = false; store.set('rates:' + st.home, rates); }
+  catch (e) { rates = await store.get('rates:' + st.home, { [st.home]: 1 }); offline = true; }
+  // After switching home currency, re-express every expense in the new one.
+  if (rebase) { st.ex.forEach(x => { const h = toHome(x.v, x.cur); if (h != null) x.home = h; }); save(); }
+  conv(); render();
+}
+const toHome = (v, c) => rates[c] ? v / rates[c] : (c === st.home ? v : null);
+function conv() { const v = +$('amt').value; $('conv').innerHTML = st.cur !== st.home && v ? (toHome(v, st.cur) != null ? `≈ ${money(toHome(v, st.cur))}` : '') + (offline ? ` <span class="err">${T.offline}</span>` : '') : ''; }
+function form() {
+  $('budget').value = st.budget; $('home').value = st.home; $('cur').value = st.cur; $('start').value = st.start; $('end').value = st.end;
+  $('cats').innerHTML = EMO.map((e, i) => `<button class="${i === st.cat ? 'on' : ''}" data-i="${i}" title="${T.cats[i]}">${e}</button>`).join('');
+  $('cats').querySelectorAll('button').forEach(b => b.onclick = () => { st.cat = +b.dataset.i; save(); form(); });
+}
+['budget', 'start', 'end'].forEach(id => $(id).onchange = () => { st[id] = id === 'budget' ? +$(id).value || 0 : $(id).value; save(); render(); });
+$('home').onchange = () => { st.home = $('home').value; save(); loadRates(true); };
+$('cur').onchange = () => { st.cur = $('cur').value; save(); conv(); };
+$('amt').oninput = conv;
+$('go').onclick = () => {
+  const v = +$('amt').value; if (!(v > 0)) { $('amt').focus(); return; }
+  const h = toHome(v, st.cur); st.ex.unshift({ t: Date.now(), v, cur: st.cur, home: h == null ? v : h, cat: st.cat, note: $('note').value.trim() }); save();
+  $('amt').value = ''; $('note').value = ''; conv(); render(); try { window.Acornix && Acornix.vibrate(12); } catch (e) {}
+};
+function render() {
+  const spent = st.ex.reduce((a, e) => a + e.home, 0), left = st.budget - spent, s = new Date(st.start + 'T00:00:00'), e = new Date(st.end + 'T00:00:00'), now = new Date(); now.setHours(0, 0, 0, 0);
+  const total = Math.max(1, Math.round((e - s) / DAY) + 1), remDays = Math.max(1, Math.min(total, Math.round((e - now) / DAY) + 1)), pct = st.budget ? Math.min(100, spent / st.budget * 100) : 0;
+  $('hero').innerHTML = `<small>${left >= 0 ? T.left : T.over}</small><div class="big">${money(Math.abs(left))}</div><div class="sub">${left > 0 ? T.perDay(money(left / remDays)) : ''}</div><div class="bar"><i class="${left < 0 ? 'over' : ''}" style="width:${pct}%"></i></div><div class="row"><span>${T.spent} ${money(spent)}</span><span>${T.budget} ${money(st.budget)}</span></div>`;
+  const byCat = T.cats.map((c, i) => st.ex.filter(x => x.cat === i).reduce((a, x) => a + x.home, 0));
+  $('split').innerHTML = spent ? `<div class="split">${byCat.map((v, i) => v ? `<div style="flex:${v};background:${COL[i]}"></div>` : '').join('')}</div><div class="legend">${byCat.map((v, i) => v ? `<span><i style="background:${COL[i]}"></i>${T.cats[i]} ${money(v)}</span>` : '').join('')}</div>` : '';
+  const groups = {}; st.ex.forEach((x, i) => { const k = new Date(x.t); k.setHours(0, 0, 0, 0); (groups[k.getTime()] = groups[k.getTime()] || []).push({ x, i }); });
+  $('list').innerHTML = Object.keys(groups).sort((a, b) => b - a).map(k => { const n = Math.round((+k - s) / DAY) + 1, sum = groups[k].reduce((a, g) => a + g.x.home, 0);
+    return `<div class="day"><span>${n >= 1 && n <= total ? T.day(n) + ' · ' : ''}${new Date(+k).toLocaleDateString(T.locale, { weekday: 'short', day: 'numeric', month: 'short' })}</span><span>${money(sum)}</span></div>` + groups[k].map(({ x, i }) => `<div class="ex"><span class="e">${EMO[x.cat]}</span><div class="t"><b>${money(x.home)}</b><small>${esc(x.note || T.cats[x.cat])}${x.cur !== st.home ? ` · ${money(x.v, x.cur)}` : ''}</small></div><button class="x" data-i="${i}">✕</button></div>`).join(''); }).join('');
+  $('list').querySelectorAll('.x').forEach(b => b.onclick = () => { st.ex.splice(+b.dataset.i, 1); save(); render(); });
+}
+(async () => { st = { ...st, ...(await store.get('trip', {})) }; form(); render(); loadRates(); })();
+</script>
+</body>
+</html>
