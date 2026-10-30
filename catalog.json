@@ -50,6 +50,29 @@
       "trending": 0
     },
     {
+      "id": "gradient-maker",
+      "name": "Gradient Maker",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Design linear, radial and conic gradients with draggable colour stops, copy the CSS and save them as phone wallpapers.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9914,
+      "sha256": "730bf915a558506d02b99975c6f4d7ae8d8b386c5116ddb5ddcfe83595827cdd",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "what-is-this-ai",
       "name": "What Is This?",
       "emoji": "🔎",

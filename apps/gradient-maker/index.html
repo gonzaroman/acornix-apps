@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Gradient Maker</title>
+<style>
+  :root { --bg:#0b0b10; --card:#18181f; --ink:#f5f5fa; --muted:#8e8ea0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 14px); gap:12px; }
+  .top { display:flex; align-items:center; gap:8px; }
+  .top h1 { margin:0; font-size:20px; flex:1; }
+  .b { padding:9px 13px; border-radius:12px; background:var(--card); font-weight:800; font-size:14px; }
+  .b.main { background:#fff; color:#0b0b10; }
+  .prev { flex:1; min-height:120px; border-radius:24px; position:relative; box-shadow:0 20px 50px #0007; }
+  .css { position:absolute; left:10px; right:10px; bottom:10px; padding:9px 12px; border-radius:12px; background:#0009; backdrop-filter:blur(8px); font:600 11px ui-monospace,Menlo,monospace; color:#fff; word-break:break-all; cursor:pointer; }
+  .types { display:flex; gap:6px; }
+  .chip { flex:1; padding:9px; border-radius:12px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); }
+  .chip.on { background:#fff; color:#0b0b10; }
+  .track { position:relative; height:34px; border-radius:17px; margin:0 14px; touch-action:none; }
+  .stop { position:absolute; top:50%; width:30px; height:30px; margin:-15px 0 0 -15px; border-radius:50%; border:4px solid #fff; box-shadow:0 2px 10px #0008; }
+  .stop.sel { transform:scale(1.25); border-color:#ffd43b; }
+  .edit { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:800; color:var(--muted); }
+  .edit input[type=color] { width:46px; height:38px; border:0; border-radius:10px; background:none; padding:0; }
+  .edit input[type=range] { flex:1; accent-color:#fff; }
+  .edit b { color:var(--ink); min-width:40px; }
+  .presets { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+  .presets::-webkit-scrollbar { display:none; }
+  .presets button { flex:none; width:52px; height:52px; border-radius:14px; }
+  .toast { position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom) + 90px); transform:translateX(-50%); opacity:0; padding:9px 16px; border-radius:20px; background:#fff; color:#000; font-weight:800; transition:.2s; pointer-events:none; }
+  .toast.on { opacity:1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🌈 <span id="ttl"></span></h1><button class="b" id="rnd">🎲</button><button class="b main" id="save"></button></div>
+  <div class="prev" id="prev"><div class="css" id="css"></div></div>
+  <div class="types" id="types"></div>
+  <div class="track" id="track"></div>
+  <div class="edit"><input type="color" id="col"><span id="lAng"></span><input type="range" id="ang" min="0" max="360"><b id="angV"></b><button class="b" id="del">🗑️</button></div>
+  <div class="presets" id="presets"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Degradados', save:'Fondo', types:['Lineal', 'Radial', 'Cónico'], ang:'Ángulo', copied:'CSS copiado', saved:'Fondo de pantalla guardado en esta app', hint:'Toca la barra para añadir un color' }
+ : { title:'Gradients', save:'Wallpaper', types:['Linear', 'Radial', 'Conic'], ang:'Angle', copied:'CSS copied', saved:'Wallpaper saved in this app', hint:'Tap the bar to add a colour' };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const PRESETS = [[135, ['#ff9a9e', '#fad0c4']], [120, ['#84fab0', '#8fd3f4']], [160, ['#0f2027', '#203a43', '#2c5364']], [45, ['#f83600', '#f9d423']], [135, ['#667eea', '#764ba2']], [90, ['#00c6ff', '#0072ff']], [200, ['#fc5c7d', '#6a82fb']], [135, ['#43e97b', '#38f9d7']], [180, ['#ffecd2', '#fcb69f']], [315, ['#12c2e9', '#c471ed', '#f64f59']], [135, ['#232526', '#414345']], [60, ['#ff0844', '#ffb199']]];
+const $ = id => document.getElementById(id);
+['ttl', 'save', 'lAng'].forEach((id, i) => $(id).textContent = [T.title, T.save, T.ang][i]);
+let g = { type: 0, angle: 135, stops: [] }, sel = 0;
+const spread = cs => cs.map((c, i) => ({ c, p: Math.round(i / (cs.length - 1) * 100) }));
+function css() { const s = [...g.stops].sort((a, b) => a.p - b.p).map(x => `${x.c} ${x.p}%`).join(', '); return g.type === 0 ? `linear-gradient(${g.angle}deg, ${s})` : g.type === 1 ? `radial-gradient(circle at 50% 50%, ${s})` : `conic-gradient(from ${g.angle}deg, ${s})`; }
+function render() {
+  $('prev').style.background = css(); $('css').textContent = 'background: ' + css() + ';';
+  $('track').style.background = `linear-gradient(90deg, ${[...g.stops].sort((a, b) => a.p - b.p).map(x => `${x.c} ${x.p}%`).join(', ')})`;
+  $('track').innerHTML = g.stops.map((s, i) => `<div class="stop ${i === sel ? 'sel' : ''}" data-i="${i}" style="left:${s.p}%;background:${s.c}"></div>`).join('');
+  $('types').innerHTML = T.types.map((n, i) => `<button class="chip ${i === g.type ? 'on' : ''}" data-i="${i}">${n}</button>`).join('');
+  $('types').querySelectorAll('.chip').forEach(b => b.onclick = () => { g.type = +b.dataset.i; render(); save(); });
+  $('col').value = g.stops[sel].c; $('ang').value = g.angle; $('angV').textContent = g.angle + '°';
+  $('ang').disabled = g.type === 1; $('del').disabled = g.stops.length <= 2; $('del').style.opacity = g.stops.length <= 2 ? .4 : 1;
+}
+const save = () => store.set('g', g);
+$('presets').innerHTML = PRESETS.map(([a, c], i) => `<button data-i="${i}" style="background:linear-gradient(${a}deg,${c.join(',')})"></button>`).join('');
+$('presets').querySelectorAll('button').forEach(b => b.onclick = () => { const [a, c] = PRESETS[+b.dataset.i]; g = { type: g.type, angle: a, stops: spread(c) }; sel = 0; render(); save(); });
+$('col').oninput = e => { g.stops[sel].c = e.target.value; render(); save(); };
+$('ang').oninput = e => { g.angle = +e.target.value; render(); save(); };
+$('del').onclick = () => { if (g.stops.length > 2) { g.stops.splice(sel, 1); sel = 0; render(); save(); } };
+$('rnd').onclick = () => { const h = Math.random() * 360, n = 2 + Math.floor(Math.random() * 2); g.angle = Math.floor(Math.random() * 36) * 10; g.stops = spread(Array.from({ length: n }, (_, i) => `hsl(${Math.round(h + i * (40 + Math.random() * 80)) % 360} ${70 + Math.round(Math.random() * 25)}% ${50 + Math.round(Math.random() * 20)}%)`).map(toHex)); sel = 0; render(); save(); };
+function toHex(c) { const d = document.createElement('canvas').getContext('2d'); d.fillStyle = c; return d.fillStyle; }
+// Drag a stop along the bar; tap an empty spot to add one with the colour at that point.
+let drag = -1, moved = false;
+const pct = e => { const r = $('track').getBoundingClientRect(); return Math.max(0, Math.min(100, Math.round((e.clientX - r.left) / r.width * 100))); };
+$('track').addEventListener('pointerdown', e => {
+  $('track').setPointerCapture(e.pointerId); moved = false;
+  const t = e.target.closest('.stop'); if (t) { drag = sel = +t.dataset.i; render(); return; }
+  const p = pct(e), c = document.createElement('canvas'); c.width = 101; c.height = 1; const x = c.getContext('2d'); const lg = x.createLinearGradient(0, 0, 101, 0); [...g.stops].sort((a, b) => a.p - b.p).forEach(s => lg.addColorStop(s.p / 100, s.c)); x.fillStyle = lg; x.fillRect(0, 0, 101, 1);
+  const d = x.getImageData(p, 0, 1, 1).data; g.stops.push({ c: '#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join(''), p }); drag = sel = g.stops.length - 1; render(); save();
+});
+$('track').addEventListener('pointermove', e => { if (drag < 0) return; moved = true; g.stops[drag].p = pct(e); render(); });
+$('track').addEventListener('pointerup', () => { if (drag >= 0) save(); drag = -1; });
+$('css').onclick = async () => { try { await navigator.clipboard.writeText('background: ' + css() + ';'); } catch (e) {} toast(T.copied); };
+function toast(t) { $('toast').textContent = t; $('toast').classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => $('toast').classList.remove('on'), 1400); }
+$('save').onclick = async () => {
+  const W = 1080, H = 2400, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'), st = [...g.stops].sort((a, b) => a.p - b.p);
+  let gr; if (g.type === 0) { const a = (g.angle - 90) * Math.PI / 180, L = Math.abs(W * Math.cos(a)) + Math.abs(H * Math.sin(a)); gr = x.createLinearGradient(W / 2 - Math.cos(a) * L / 2, H / 2 - Math.sin(a) * L / 2, W / 2 + Math.cos(a) * L / 2, H / 2 + Math.sin(a) * L / 2); }
+  else if (g.type === 1) gr = x.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.hypot(W, H) / 2);
+  else gr = x.createConicGradient ? x.createConicGradient((g.angle - 90) * Math.PI / 180, W / 2, H / 2) : x.createLinearGradient(0, 0, W, H);
+  st.forEach(s => gr.addColorStop(s.p / 100, s.c)); x.fillStyle = gr; x.fillRect(0, 0, W, H);
+  const url = c.toDataURL('image/jpeg', .95), name = `gradient-${Date.now()}.jpg`;
+  try { if (window.Acornix) { await Acornix.files.export(name, url); } else { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); } } catch (e) {}
+};
+(async () => { g = await store.get('g', { type: 0, angle: 135, stops: spread(['#667eea', '#764ba2', '#f64f59']) }); render(); })();
+</script>
+</body>
+</html>
