@@ -1,5 +1,10 @@
 {
   "assets": {
+    "abc-animals": {
+      "asset": 691327936,
+      "base": 0,
+      "count": 0
+    },
     "affirmations": {
       "asset": 690544127,
       "base": 0,

@@ -992,6 +992,29 @@
       "trending": 0
     },
     {
+      "id": "abc-animals",
+      "name": "ABC Animals",
+      "emoji": "🌰",
+      "category": "kids",
+      "description": "Learn the alphabet with a cute animal for every letter, spoken out loud, and a little quiz.",
+      "prompt": "An alphabet app for small children: a big letter and a cute animal for each letter, tap to hear the letter and the animal name spoken, swipe for the next, and a small quiz mode where you tap the animal that starts with a letter. Big colourful buttons, no reading needed.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 30059,
+      "sha256": "b348183cfa7dae4671b4c3d8dd770755198800c043c97fcf779919459952a108",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "what-is-this-ai",
       "name": "What Is This?",
       "emoji": "🔎",
