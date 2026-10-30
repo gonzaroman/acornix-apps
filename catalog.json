@@ -167,6 +167,29 @@
       "trending": 0
     },
     {
+      "id": "avatar-maker",
+      "name": "Avatar Maker",
+      "emoji": "🌰",
+      "category": "graphics-design",
+      "description": "Build your cartoon avatar: skin, hair and colour, eyes, mouth, glasses, hats and background, or roll the dice. Save it as a picture.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12812,
+      "sha256": "4b5fac47d671d6384f45ab54d7ad152b32c1fcaad5c783b7c176ba4751ce3bcb",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "what-is-this-ai",
       "name": "What Is This?",
       "emoji": "🔎",
