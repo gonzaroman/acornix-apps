@@ -1,0 +1,15 @@
+{
+  "id": "price-tracker",
+  "name": "Price Tracker",
+  "emoji": "🌰",
+  "category": "shopping",
+  "description": "Log prices of the things you buy, see their history on a chart and where they are cheapest.",
+  "prompt": "Track prices of products you buy often: add a product and log its price at different shops and dates, see the history as a line chart, the lowest price and where, and an alert when a new price is lower.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 79
+}

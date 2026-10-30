@@ -360,6 +360,29 @@
       "trending": 0
     },
     {
+      "id": "price-tracker",
+      "name": "Price Tracker",
+      "emoji": "🌰",
+      "category": "shopping",
+      "description": "Log prices of the things you buy, see their history on a chart and where they are cheapest.",
+      "prompt": "Track prices of products you buy often: add a product and log its price at different shops and dates, see the history as a line chart, the lowest price and where, and an alert when a new price is lower.",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 42236,
+      "sha256": "b1796d10801d907e4c4e715e49f31393a16fb14ce286e5c7905bba45dd864115",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "plant-care",
       "name": "Plant Care",
       "emoji": "🪴",

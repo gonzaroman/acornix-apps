@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f7f8fc">
+<title>Precio a precio</title>
+<style>
+:root{--bg:#f7f8fc;--ink:#22243c;--muted:#85889f;--primary:#6854dd;--soft:#eeebff;--green:#168873;--line:#ececf4;--red:#ce5364;--shadow:0 10px 35px #29204d0a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);font-size:15px}button,input,select{font:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.55;cursor:default}button,a,input,select{touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c0b5ff;outline-offset:2px}button{color:inherit}svg{vertical-align:middle}button svg{pointer-events:none}.icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.app{max-width:700px;margin:auto;padding:calc(env(safe-area-inset-top) + 20px) 21px calc(110px + env(safe-area-inset-bottom))}.header{display:flex;align-items:center;justify-content:space-between;margin:0 0 24px}.brand{display:flex;gap:10px;align-items:center}.brand-icon{height:43px;width:43px;background:var(--primary);color:white;border-radius:15px;display:grid;place-items:center;transform:rotate(-6deg)}.brand strong{font-size:18px;letter-spacing:-.6px;display:block}.brand small{font-size:11px;color:var(--muted)}.iconbtn{width:44px;height:44px;border-radius:15px;background:white;display:grid;place-items:center;flex-shrink:0}.header-actions{display:flex;gap:7px}.bell{position:relative}.dot{width:8px;height:8px;background:#eea16b;border:2px solid white;border-radius:50%;position:absolute;top:10px;right:11px}.hero{border-radius:25px;padding:23px;background:linear-gradient(120deg,#6b54de,#8a71ec);color:white;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:160px;height:160px;border:30px solid #ffffff0d;border-radius:50%;right:-48px;top:-45px;pointer-events:none}.eyebrow{font-size:10px;letter-spacing:1.7px;font-weight:800;text-transform:uppercase}.hero .eyebrow{color:#e4dcff}.hero h1{font-size:28px;letter-spacing:-1px;line-height:1.18;margin:12px 0 11px}.hero p{font-size:12px;color:#ede7ff;line-height:1.6;max-width:250px;margin:0}.hero-icon{position:absolute;bottom:23px;right:23px;width:58px;height:58px;display:grid;place-items:center;border-radius:20px;background:#ffffff19;transform:rotate(-10deg)}.hero-icon .icon{width:31px;height:31px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:17px 0 25px}.stat{background:white;border:1px solid #f0eff7;border-radius:18px;padding:14px 11px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:23px;letter-spacing:-.7px}.stat span{font-size:10px;color:var(--muted)}.stat .icon{width:16px;height:16px;color:var(--primary);margin-bottom:6px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}h2{font-size:19px;letter-spacing:-.5px;margin:0}.textbtn{color:var(--primary);background:transparent;font-weight:650;font-size:12px;min-height:40px;padding:7px}.search{display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:15px;padding:0 14px;margin-bottom:13px}.search .icon{color:#9798ac;width:19px}.search input{height:48px;border:0;background:transparent;outline:none;min-width:0;width:100%;color:var(--ink);font-size:13px}.chips{display:flex;gap:7px;overflow:auto;padding:1px 0 14px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{white-space:nowrap;background:white;border:1px solid var(--line);padding:9px 14px;border-radius:12px;font-size:11px;font-weight:650;min-height:37px}.chip.active{background:var(--ink);color:white;border-color:var(--ink)}.product-list{display:grid;gap:12px}.product{background:white;border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow);padding:17px;position:relative}.product-main{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:none;padding:0}.emoji{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:#f2efff;font-size:25px;flex-shrink:0}.product-name{font-weight:750;font-size:15px;display:block;overflow-wrap:anywhere}.sub{font-size:11px;color:var(--muted);line-height:1.5}.product-info{min-width:0;flex:1}.product-main>.icon{color:#afb0c1;width:18px}.product-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding-top:16px;margin-top:14px;border-top:1px solid #f3f2f8}.price-label{font-size:10px;color:var(--green);font-weight:650;display:block;margin-bottom:3px}.price{font-size:23px;letter-spacing:-.7px;font-weight:800;line-height:1.2}.shop-caption{color:var(--muted);font-size:10px;display:block;max-width:175px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.mini-area{display:flex;align-items:center;gap:10px}.mini-chart{width:66px;height:29px}.add-mini{width:37px;height:37px;border-radius:12px;background:var(--soft);color:var(--primary);display:grid;place-items:center}.add-mini .icon{width:19px}.empty{padding:30px 20px;text-align:center;background:white;border:1px dashed #d9d5ed;border-radius:22px}.empty-art{margin:0 auto 16px;display:grid;place-items:center;background:var(--soft);color:var(--primary);width:74px;height:74px;border-radius:25px;transform:rotate(-5deg)}.empty-art .icon{width:35px;height:35px}.empty h3{font-size:17px;margin:0 0 8px;letter-spacing:-.3px}.empty p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 auto 20px;max-width:270px}.primary{border-radius:14px;background:var(--primary);color:white;font-weight:700;min-height:49px;padding:13px 20px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:13px}.primary .icon{width:18px}.wide{width:100%}.bottom-nav{position:fixed;bottom:0;left:0;right:0;padding-bottom:env(safe-area-inset-bottom);background:#ffffffed;backdrop-filter:blur(18px);border-top:1px solid var(--line);z-index:15}.nav-inner{max-width:700px;display:grid;grid-template-columns:1fr 80px 1fr;margin:auto;height:74px;align-items:center;padding:0 22px}.nav-btn{background:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:#9a9bb0;font-size:10px;font-weight:650;padding:8px}.nav-btn.active{color:var(--primary)}.fab{height:52px;width:52px;margin:auto;border-radius:18px;color:white;background:var(--primary);box-shadow:0 6px 17px #6854dd44;display:grid;place-items:center}.fab .icon{width:26px;height:26px}.hint{text-align:center;color:#a0a1b3;font-size:10px;margin:22px 0 0}.toast-wrap{position:fixed;z-index:70;top:calc(15px + env(safe-area-inset-top));left:18px;right:18px;pointer-events:none;display:flex;justify-content:center}.toast{max-width:480px;background:var(--ink);color:white;border-radius:17px;box-shadow:0 8px 35px #16163025;padding:15px 18px;font-size:13px;line-height:1.5;animation:slide .25s ease;pointer-events:auto}.toast.success{background:#157f6d}.overlay{position:fixed;inset:0;z-index:40;background:#17132c60;backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center}.sheet{background:var(--bg);width:100%;max-width:700px;max-height:calc(100dvh - env(safe-area-inset-top) - 16px);overflow:auto;border-radius:27px 27px 0 0;padding:9px 23px calc(24px + env(safe-area-inset-bottom));animation:sheetIn .23s ease}.handle{width:35px;height:4px;background:#d9d8e6;border-radius:4px;margin:0 auto 16px}.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:23px}.sheet-head h2{font-size:22px}.sheet-head .iconbtn{background:#eeedf5;width:36px;height:36px;border-radius:12px}.sheet-sub{margin:-12px 0 23px;color:var(--muted);font-size:12px;line-height:1.6}.field{margin-bottom:17px}.field label{display:block;font-size:12px;font-weight:650;margin-bottom:8px}.field input,.field select{width:100%;height:51px;border:1px solid #e1dfec;background:white;border-radius:13px;color:var(--ink);padding:0 14px;outline:none;min-width:0}.field input:focus,.field select:focus{border-color:var(--primary)}.field input::placeholder{color:#aaaabd}.field small{color:var(--muted);font-size:10px;display:block;margin-top:7px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.emoji-picker{display:flex;gap:8px;flex-wrap:wrap}.emoji-pick{width:43px;height:43px;border-radius:13px;background:white;border:2px solid transparent;font-size:23px}.emoji-pick.active{border-color:var(--primary);background:var(--soft)}.form-error{font-size:12px;color:var(--red);margin-bottom:14px;line-height:1.5}.detail{position:fixed;inset:0;background:var(--bg);z-index:25;overflow:auto;padding:calc(16px + env(safe-area-inset-top)) 21px calc(100px + env(safe-area-inset-bottom));animation:fade .2s ease}.detail-inner{max-width:658px;margin:auto}.detail-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}.detail-top span{font-size:12px;color:var(--muted);font-weight:600}.detail-heading{display:flex;gap:15px;align-items:center;margin-bottom:22px}.detail-heading .emoji{width:65px;height:65px;font-size:32px;border-radius:21px}.detail-heading h1{font-size:25px;margin:0 0 5px;letter-spacing:-.8px;overflow-wrap:anywhere}.best-card{background:linear-gradient(120deg,#def5eb,#eaf8f1);border:1px solid #d3eddf;border-radius:22px;padding:21px;color:#1d6856;margin-bottom:17px}.best-top{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700}.best-price{font-weight:800;font-size:36px;letter-spacing:-1.3px;margin:7px 0 5px;overflow-wrap:anywhere}.best-place{font-size:12px;line-height:1.6;overflow-wrap:anywhere}.chart-card{background:white;border:1px solid var(--line);border-radius:22px;padding:18px 15px;margin-bottom:23px}.chart-head{display:flex;justify-content:space-between;align-items:center;gap:7px;margin-bottom:16px}.chart-head h3{font-size:14px;margin:0}.ranges{display:flex;gap:3px;background:#f5f4fa;padding:3px;border-radius:9px}.range{font-size:10px;font-weight:700;background:none;padding:7px 8px;border-radius:7px;color:var(--muted);min-height:32px}.range.active{background:white;color:var(--primary);box-shadow:0 2px 5px #20204009}.chart{width:100%;display:block;overflow:visible}.chart-note{font-size:10px;color:var(--muted);line-height:1.6;margin-top:9px}.chart-tooltip{border-radius:10px;padding:10px 12px;background:var(--soft);color:var(--primary);font-size:11px;line-height:1.5;margin-bottom:10px;overflow-wrap:anywhere}.legend{display:flex;gap:10px 14px;flex-wrap:wrap;margin-top:12px}.legend span{font-size:10px;color:var(--muted);display:flex;gap:5px;align-items:center;overflow-wrap:anywhere;max-width:100%}.legend i{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}.log{display:flex;align-items:center;gap:11px;background:white;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:9px}.log-icon{background:#f3f2f8;color:#9390ad;width:37px;height:37px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}.log-icon .icon{width:18px}.log-info{flex:1;min-width:0}.log-info strong{font-size:12px;display:block;overflow-wrap:anywhere}.log-info small{font-size:10px;color:var(--muted)}.log-price{text-align:right;font-size:15px;font-weight:750;flex-shrink:0}.low-tag{color:var(--green);font-size:8px;font-weight:750;display:block;margin-top:3px}.delete-log{background:none;color:#b4afbf;width:31px;height:38px;padding:5px}.delete-log .icon{width:16px}.detail-footer{position:fixed;bottom:0;left:0;right:0;background:#f7f8fced;backdrop-filter:blur(15px);border-top:1px solid var(--line);padding:12px 21px calc(12px + env(safe-area-inset-bottom));z-index:27}.detail-footer>div{max-width:658px;margin:auto}.alert-card{background:white;border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:12px;position:relative}.alert-card.unread{border-color:#d6ccff}.alert-top{display:flex;gap:12px;align-items:center}.alert-card h3{margin:0 0 3px;font-size:14px;overflow-wrap:anywhere}.alert-card p{font-size:12px;color:var(--muted);line-height:1.6;margin:13px 0}.alert-card .saving{background:#e9f7f0;color:var(--green);border-radius:9px;font-size:11px;font-weight:700;padding:6px 9px;display:inline-block}.alert-card footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:10px;color:var(--muted)}.alert-card .textbtn{min-height:30px;padding:2px}.screen-title{margin:9px 0 7px;font-size:28px;letter-spacing:-1px}.screen-desc{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 24px}.settings-box{background:white;padding:16px;border-radius:16px;font-size:12px;line-height:1.7;color:var(--muted);margin-bottom:20px}.secondary{width:100%;min-height:47px;border:1px solid var(--line);background:white;border-radius:13px;font-size:13px;font-weight:650;margin-top:10px}.danger{background:#fff0f2;color:var(--red)}.loading{text-align:center;padding:65px 0;color:var(--muted);font-size:13px}.spinner{width:27px;height:27px;border:3px solid var(--soft);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 15px}.badges{display:flex;gap:7px;margin-top:8px}.badge{font-size:10px;background:#eeebf9;color:#8275ad;padding:4px 8px;border-radius:6px}.hidden{display:none!important}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes slide{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}@keyframes sheetIn{from{transform:translateY(30px);opacity:.5}to{transform:translateY(0);opacity:1}}@keyframes fade{from{opacity:0}to{opacity:1}}
+@media(min-width:560px){.product-list{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}.hero p{max-width:none}.hero-icon{right:34px;bottom:34px}.stats .stat{padding:17px}.stat span{font-size:12px}.sheet{padding-left:30px;padding-right:30px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 6 6 6 5-5 7 11M15 18h6v-6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-1 3-3 1 1 3-2 2 2 2-1 3 3 1 1 3h6l1-3 3-1-1-3 2-2-2-2 1-3-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7M7 12h14"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-shop" viewBox="0 0 24 24"><path d="M4 10v11h16V10M3 10l2-7h14l2 7c-1 3-4 3-5 0-1 3-4 3-5 0-1 3-4 3-5 0-1 2-2 2-3 0ZM9 21v-7h6v7"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v17h17M8 15l4-5 4 3 5-7"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L20 8l-4-4ZM14 6l4 4"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+</svg>
+<main class="app" id="app"><div class="loading"><div class="spinner"></div>Preparando tus precios…</div></main>
+<nav class="bottom-nav" aria-label="Navegación principal"><div class="nav-inner">
+<button class="nav-btn active" id="nav-products" onclick="goTab('products')"><svg class="icon"><use href="#i-grid"/></svg>Mis productos</button>
+<button class="fab" onclick="productForm()" aria-label="Añadir producto"><svg class="icon"><use href="#i-plus"/></svg></button>
+<button class="nav-btn" id="nav-alerts" onclick="goTab('alerts')"><svg class="icon"><use href="#i-bell"/></svg>Alertas</button>
+</div></nav>
+<div id="detail-root"></div><div id="modal-root"></div><div class="toast-wrap" id="toast-wrap" role="status" aria-live="polite"></div>
+<script>
+const KEY='precio-a-precio-v1';
+const cats=['Alimentación','Bebidas','Hogar','Cuidado personal','Otros'];
+const emojis=['🛒','🥛','🍞','🥚','☕','🍎','🧀','🍚','🧴','🧻','🧼','🐾'];
+const colors=['#7560df','#20a389','#ed9c59','#568ed1','#d96d99','#9b8d48','#40a5ad','#9d6db0'];
+let data={products:[],entries:[],alerts:[],currency:'EUR'},ready=false,tab='products',filter='Todos',query='',detailId=null,range='all',point=null,toastTimer,queue=Promise.resolve(),lastFocus;
+const $=id=>document.getElementById(id);
+const icon=n=>`<svg class="icon" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const dateText=(s,short=false)=>new Date(s+'T12:00:00').toLocaleDateString('es-ES',short?{day:'numeric',month:'short'}:{day:'numeric',month:'short',year:'numeric'});
+const money=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:data.currency,minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+const normalize=s=>s.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const entriesFor=id=>data.entries.filter(e=>e.productId===id).sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created);
+const bestFor=id=>entriesFor(id).reduce((b,e)=>!b||e.price<b.price||(e.price===b.price&&e.date>b.date)?e:b,null);
+function toast(text,success=false){clearTimeout(toastTimer);$('toast-wrap').innerHTML=`<div class="toast ${success?'success':''}">${esc(text)}</div>`;toastTimer=setTimeout(()=>$('toast-wrap').innerHTML='',success?6500:4000)}
+async function read(){return window.Acornix?await Acornix.db.get(KEY):JSON.parse(localStorage.getItem(KEY)||'null')}
+async function save(){
+ const snapshot=JSON.parse(JSON.stringify(data));
+ const task=queue.catch(()=>{}).then(async()=>{if(window.Acornix)await Acornix.db.set(KEY,snapshot);else localStorage.setItem(KEY,JSON.stringify(snapshot))});
+ queue=task;
+ try{await task;return true}catch(e){toast('No se han podido guardar los cambios. Vuelve a intentarlo.');return false}
+}
+async function reload(){
+ try{const saved=await read();if(saved){data={products:[],entries:[],alerts:[],currency:'EUR',...saved};if(!Array.isArray(data.products)||!Array.isArray(data.entries)||!Array.isArray(data.alerts))throw Error() }ready=true;render();renderDetail()}
+ catch(e){ready=true;render();toast('No pudimos cargar tus datos. Intenta abrir la aplicación de nuevo.')}
+}
+window.addEventListener('acornixdata',()=>{queue.catch(()=>{}).then(reload)});
+function header(){return `<header class="header"><div class="brand"><div class="brand-icon">${icon('trend')}</div><div><strong>Precio a precio</strong><small>Tu compra, más inteligente</small></div></div><div class="header-actions"><button class="iconbtn bell" onclick="goTab('alerts')" aria-label="Ver alertas">${icon('bell')}${data.alerts.some(a=>!a.read)?'<i class="dot"></i>':''}</button><button class="iconbtn" onclick="settingsForm()" aria-label="Ajustes">${icon('settings')}</button></div></header>`}
+function render(){
+ if(!ready)return;
+ $('nav-products').classList.toggle('active',tab==='products');$('nav-alerts').classList.toggle('active',tab==='alerts');
+ if(tab==='alerts'){renderAlerts();return}
+ const shops=new Set(data.entries.map(e=>normalize(e.shop.trim())));
+ $('app').innerHTML=header()+`<section class="hero"><div class="eyebrow">Pequeños precios, grandes decisiones</div><h1>Compra lo mismo.<br>Paga menos.</h1><p>Compara tus tiendas y encuentra el mejor<br>momento para comprar.</p><div class="hero-icon">${icon('tag')}</div></section>
+ <section class="stats" aria-label="Tu resumen"><div class="stat">${icon('grid')}<strong>${data.products.length}</strong><span>Productos</span></div><div class="stat">${icon('tag')}<strong>${data.entries.length}</strong><span>Precios anotados</span></div><div class="stat">${icon('shop')}<strong>${shops.size}</strong><span>Tiendas</span></div></section>
+ <div class="section-head"><h2>Tu cesta habitual</h2><button class="textbtn" onclick="productForm()">+ Producto</button></div>
+ ${data.products.length?`<div class="search">${icon('search')}<input id="search" type="search" placeholder="Buscar un producto…" aria-label="Buscar un producto" value="${esc(query)}" oninput="query=this.value;renderList()"></div><div class="chips">${['Todos',...cats.filter(c=>data.products.some(p=>p.category===c))].map(c=>`<button class="chip ${filter===c?'active':''}" data-filter="${esc(c)}" onclick="setFilter(this.dataset.filter)">${c}</button>`).join('')}</div>`:''}<div class="product-list" id="product-list"></div><p class="hint">Cada precio que anotas te ayuda a elegir mejor.</p>`;
+ renderList()
+}
+function setFilter(c){filter=c;document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('active',b.dataset.filter===c));renderList()}
+function spark(entries){
+ if(entries.length<2)return '';
+ const values=entries.slice(-12).map(e=>e.price),min=Math.min(...values),max=Math.max(...values),span=max-min||1;
+ const pts=values.map((v,i)=>`${3+i/(values.length-1)*60},${25-(v-min)/span*20}`).join(' ');
+ return `<svg class="mini-chart" viewBox="0 0 66 30" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="#a596e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+}
+function renderList(){
+ const el=$('product-list');if(!el)return;
+ if(!data.products.length){el.style.display='block';el.innerHTML=`<div class="empty"><div class="empty-art">${icon('shop')}</div><h3>Tu próximo ahorro empieza aquí</h3><p>Añade un producto que compres a menudo y anota su precio en cada tienda. Nosotros te ayudamos a comparar.</p><button class="primary" onclick="productForm()">${icon('plus')}Añadir mi primer producto</button></div>`;return}
+ const list=data.products.filter(p=>(filter==='Todos'||p.category===filter)&&normalize(p.name+' '+p.unit).includes(normalize(query))).sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));
+ el.style.display=list.length?'':'block';
+ el.innerHTML=list.length?list.map(p=>{
+ const entries=entriesFor(p.id),best=bestFor(p.id);
+ return `<article class="product"><button class="product-main" onclick="openDetail('${p.id}')"><span class="emoji">${esc(p.emoji)}</span><span class="product-info"><span class="product-name">${esc(p.name)}</span><span class="sub">${esc(p.unit||p.category)} · ${entries.length} ${entries.length===1?'precio':'precios'}</span></span>${icon('arrow')}</button><div class="product-bottom"><div>${best?`<span class="price-label">Mínimo registrado</span><span class="price">${money(best.price)}</span><span class="shop-caption">${esc(best.shop)} · ${dateText(best.date,true)}</span>`:`<span class="sub">Aún sin precios</span><span class="shop-caption">Empieza a comparar</span>`}</div><div class="mini-area">${spark(entries)}<button class="add-mini" onclick="priceForm('${p.id}')" aria-label="Anotar precio de ${esc(p.name)}">${icon('plus')}</button></div></div></article>`
+ }).join(''):`<div class="empty"><div class="empty-art">${icon('search')}</div><h3>No encontramos productos</h3><p>Prueba con otro nombre o cambia la categoría.</p></div>`;
+}
+function goTab(t){closeModal();detailId=null;renderDetail();tab=t;render();window.scrollTo(0,0)}
+function openDetail(id){closeModal();detailId=id;range='all';point=null;renderDetail();document.body.style.overflow='hidden'}
+function closeDetail(){detailId=null;renderDetail();document.body.style.overflow='';render()}
+function renderDetail(){
+ const p=data.products.find(p=>p.id===detailId);if(!p){$('detail-root').innerHTML='';if(!$('modal-root').innerHTML)document.body.style.overflow='';return}
+ const entries=entriesFor(p.id),best=bestFor(p.id);
+ $('detail-root').innerHTML=`<section class="detail" role="region" aria-label="Detalle del producto"><div class="detail-inner"><header class="detail-top"><button class="iconbtn" onclick="closeDetail()" aria-label="Volver">${icon('back')}</button><span>Detalle del producto</span><button class="iconbtn" onclick="productForm('${p.id}')" aria-label="Editar producto">${icon('edit')}</button></header>
+ <div class="detail-heading"><div class="emoji">${esc(p.emoji)}</div><div><h1>${esc(p.name)}</h1><span class="sub">${esc(p.unit||'Sin presentación especificada')}</span><div class="badges"><span class="badge">${esc(p.category)}</span></div></div></div>
+ ${best?`<section class="best-card"><div class="best-top"><span>✦ TU MEJOR PRECIO HISTÓRICO</span>${icon('trend')}</div><div class="best-price">${money(best.price)}</div><div class="best-place"><strong>${esc(best.shop)}</strong> · ${dateText(best.date)}<br><span style="opacity:.7;font-size:10px">El mínimo entre todos tus registros.</span></div></section>`:''}
+ <section class="chart-card"><div class="chart-head"><h3>Evolución del precio</h3><div class="ranges">${[['30','30 d'],['90','90 d'],['all','Todo']].map(([v,t])=>`<button class="range ${range===v?'active':''}" onclick="changeRange('${v}')">${t}</button>`).join('')}</div></div><div id="chart-body"></div></section>
+ <div class="section-head"><h2>Historial</h2><span class="sub">${entries.length} ${entries.length===1?'registro':'registros'}</span></div>
+ ${entries.length?[...entries].reverse().map(e=>`<article class="log"><span class="log-icon">${icon('shop')}</span><div class="log-info"><strong>${esc(e.shop)}</strong><small>${dateText(e.date)}</small></div><div class="log-price">${money(e.price)}${e.price===best.price?'<span class="low-tag">MÍNIMO</span>':''}</div><button class="delete-log" onclick="confirmEntry('${e.id}')" aria-label="Eliminar precio de ${esc(e.shop)} del ${dateText(e.date)}">${icon('trash')}</button></article>`).join(''):`<div class="empty"><div class="empty-art">${icon('tag')}</div><h3>¿Cuánto cuesta hoy?</h3><p>Anota el primer precio de este producto para empezar a seguir su evolución.</p></div>`}
+ </div></section><footer class="detail-footer"><div><button class="primary wide" onclick="priceForm('${p.id}')">${icon('plus')}Anotar un precio</button></div></footer>`;
+ drawChart()
+}
+function changeRange(r){range=r;point=null;renderDetail()}
+function drawChart(){
+ const container=$('chart-body');if(!container)return;
+ let entries=entriesFor(detailId);
+ if(range!=='all'){let d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-Number(range)+1);entries=entries.filter(e=>new Date(e.date+'T12:00:00')>=d)}
+ if(!entries.length){container.innerHTML=`<div style="padding:35px 12px;text-align:center;color:var(--muted);font-size:12px;line-height:1.7">${data.entries.some(e=>e.productId===detailId)?'No hay precios en este período.<br>Elige «Todo» para ver el historial.':'Tu gráfica aparecerá al anotar el primer precio.'}</div>`;return}
+ const shops=[...new Set(entries.map(e=>e.shop))],W=340,H=195,L=48,R=16,T=18,B=28,vals=entries.map(e=>e.price),lo=Math.min(...vals),hi=Math.max(...vals),pad=(hi-lo)*.15||Math.max(hi*.1,.1),min=Math.max(0,lo-pad),max=hi+pad;
+ const times=entries.map(e=>new Date(e.date+'T12:00:00').getTime()),first=Math.min(...times),last=Math.max(...times);
+ const x=i=>first===last?(L+(W-R-L)/2):L+(times[i]-first)/(last-first)*(W-L-R),y=v=>T+(max-v)/(max-min)*(H-T-B);
+ let svg=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica de precios por fecha. Toca un punto para ver el precio y la tienda.">`;
+ for(let i=0;i<4;i++){const v=min+(max-min)*i/3,yy=y(v);svg+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="#eeedf5" stroke-dasharray="3 4"/><text x="${L-8}" y="${yy+3}" text-anchor="end" font-size="9" fill="#9391a5">${esc(new Intl.NumberFormat('es-ES',{maximumFractionDigits:2,notation:'compact'}).format(v))}</text>`}
+ if(entries.length>1){const path=entries.map((e,i)=>`${i?'L':'M'}${x(i)},${y(e.price)}`).join(' ');svg+=`<defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#b9aaf0" stop-opacity=".24"/><stop offset="100%" stop-color="#b9aaf0" stop-opacity="0"/></linearGradient></defs><path d="${path} L${x(entries.length-1)},${H-B} L${x(0)},${H-B} Z" fill="url(#area)"/><path d="${path}" fill="none" stroke="#b7acd9" stroke-width="2" stroke-linejoin="round"/>`}
+ entries.forEach((e,i)=>{const color=colors[shops.indexOf(e.shop)%colors.length];svg+=`<g role="button" tabindex="0" aria-label="${esc(e.shop)}, ${money(e.price)}, ${dateText(e.date)}" onclick="selectPoint('${e.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint('${e.id}')}"><circle cx="${x(i)}" cy="${y(e.price)}" r="15" fill="transparent"/><circle cx="${x(i)}" cy="${y(e.price)}" r="${point===e.id?6:4.5}" fill="${color}" stroke="white" stroke-width="2"/></g>`});
+ svg+=`<text x="${first===last?W/2:L}" y="${H-6}" text-anchor="${first===last?'middle':'start'}" fill="#9391a5" font-size="9">${dateText(entries[0].date,true)}</text>${first!==last?`<text x="${W-R}" y="${H-6}" text-anchor="end" fill="#9391a5" font-size="9">${dateText(entries[entries.length-1].date,true)}</text>`:''}</svg>`;
+ const selected=entries.find(e=>e.id===point);
+ container.innerHTML=(selected?`<div class="chart-tooltip"><strong>${money(selected.price)}</strong> · ${esc(selected.shop)}<br>${dateText(selected.date)}</div>`:'')+svg+`<div class="legend">${shops.map((s,i)=>`<span><i style="background:${colors[i%colors.length]}"></i>${esc(s)}</span>`).join('')}</div><div class="chart-note">Cada punto es un precio anotado. La línea une los registros por fecha.${entries.length===1?' Añade otro para ver la tendencia.':' Toca un punto para ver el detalle.'}</div>`;
+}
+function selectPoint(id){point=id;drawChart()}
+function modal(content){
+ lastFocus=document.activeElement;
+ $('modal-root').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><section class="sheet" role="dialog" aria-modal="true" aria-label="Formulario"><div class="handle"></div>${content}</section></div>`;
+ document.body.style.overflow='hidden';
+ setTimeout(()=>{const h=$('modal-root').querySelector('input,select,button');if(h)h.focus({preventScroll:true})},80)
+}
+function closeModal(){const had=!!$('modal-root').innerHTML;$('modal-root').innerHTML='';if(!detailId)document.body.style.overflow='';if(had&&lastFocus?.isConnected)lastFocus.focus({preventScroll:true})}
+function sheetHead(title){return `<div class="sheet-head"><h2>${title}</h2><button type="button" class="iconbtn" onclick="closeModal()" aria-label="Cerrar">${icon('close')}</button></div>`}
+function productForm(id){
+ if(!ready)return;
+ const p=data.products.find(p=>p.id===id),editing=!!p;
+ modal(sheetHead(editing?'Editar producto':'Un nuevo habitual')+`<p class="sheet-sub">Compara siempre la misma marca y presentación para que los precios tengan sentido.</p><form id="product-form">
+ <div class="field"><label for="p-name">Nombre del producto</label><input id="p-name" placeholder="Ej. Leche entera" maxlength="80" required value="${esc(p?.name||'')}"></div>
+ <div class="field"><label for="p-unit">Marca y presentación <span style="color:var(--muted);font-weight:400">· opcional</span></label><input id="p-unit" placeholder="Ej. Mi marca · 1 litro" maxlength="80" value="${esc(p?.unit||'')}"></div>
+ <div class="field"><label for="p-category">Categoría</label><select id="p-category">${cats.map(c=>`<option ${c===(p?.category||cats[0])?'selected':''}>${c}</option>`).join('')}</select></div>
+ <div class="field"><label>Elige un icono</label><div class="emoji-picker">${emojis.map(e=>`<button type="button" class="emoji-pick ${e===(p?.emoji||'🛒')?'active':''}" onclick="document.querySelectorAll('.emoji-pick').forEach(b=>b.classList.remove('active'));this.classList.add('active')" aria-label="${esc(e)}">${e}</button>`).join('')}</div></div>
+ <div class="form-error" id="form-error" role="status"></div><button class="primary wide" type="submit">${editing?'Guardar cambios':'Crear y anotar un precio'}${icon(editing?'check':'arrow')}</button>
+ ${editing?`<button type="button" class="secondary danger" onclick="confirmProduct('${id}')">Eliminar producto</button>`:''}</form>`);
+ $('product-form').onsubmit=async ev=>{
+ ev.preventDefault();const name=$('p-name').value.trim(),unit=$('p-unit').value.trim();if(!name){$('form-error').textContent='Escribe el nombre del producto.';return}
+ const btn=ev.submitter;btn.disabled=true;
+ const previous=JSON.parse(JSON.stringify(data)),now=Date.now();
+ const obj={id:p?.id||uid(),name,unit,category:$('p-category').value,emoji:document.querySelector('.emoji-pick.active').textContent,created:p?.created||now,updated:now};
+ if(editing)data.products=data.products.map(x=>x.id===p.id?obj:x);else data.products.push(obj);
+ if(!await save()){data=previous;btn.disabled=false;return}
+ closeModal();filter='Todos';render();renderDetail();
+ if(!editing)priceForm(obj.id);else toast('Producto actualizado.')
+ }
+}
+function priceForm(id){
+ const p=data.products.find(p=>p.id===id);if(!p)return;
+ const shops=[...new Set(data.entries.map(e=>e.shop))].sort((a,b)=>a.localeCompare(b,'es'));
+ modal(sheetHead('Anotar un precio')+`<p class="sheet-sub">${esc(p.emoji)} <strong style="color:var(--ink)">${esc(p.name)}</strong>${p.unit?' · '+esc(p.unit):''}</p><form id="price-form">
+ <div class="field"><label for="e-price">Precio (${esc(data.currency)})</label><input id="e-price" type="text" inputmode="decimal" placeholder="0,00" required autocomplete="off" maxlength="14"><small>Precio de una unidad de esta presentación, con impuestos incluidos.</small></div>
+ <div class="field"><label for="e-shop">Tienda</label><input id="e-shop" list="shop-options" placeholder="Ej. Supermercado del barrio" required maxlength="70" autocomplete="off"><datalist id="shop-options">${shops.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></div>
+ <div class="field"><label for="e-date">Fecha del precio</label><input id="e-date" type="date" required value="${today()}" max="${today()}" min="1900-01-01"></div>
+ <div class="settings-box" style="background:#eeebfc;color:#7968b5">${icon('bell')} Si este precio es inferior a tu mínimo anterior, recibirás una alerta aquí.</div>
+ <div class="form-error" id="form-error" role="status"></div><button class="primary wide" type="submit">${icon('check')}Guardar precio</button></form>`);
+ $('price-form').onsubmit=async ev=>{
+ ev.preventDefault();
+ const raw=$('e-price').value.trim().replace(/\s/g,''),valid=/^\d{1,8}([.,]\d{1,2})?$/.test(raw),price=Number(raw.replace(',','.')),shop=$('e-shop').value.trim(),date=$('e-date').value;
+ if(!valid||!Number.isFinite(price)||price<=0){$('form-error').textContent='Introduce un precio mayor que cero, con un máximo de dos decimales (ej. 2,49).';return}
+ if(!shop){$('form-error').textContent='Indica en qué tienda viste este precio.';return}
+ if(!date||date>today()||date<'1900-01-01'){$('form-error').textContent='Elige una fecha válida que no sea posterior a hoy.';return}
+ ev.submitter.disabled=true;
+ const previous=JSON.parse(JSON.stringify(data)),best=bestFor(id),now=Date.now(),known=data.entries.find(e=>normalize(e.shop)===normalize(shop));
+ const entry={id:uid(),productId:id,price,shop:known?.shop||shop,date,created:now};
+ data.entries.push(entry);p.updated=now;
+ const newLow=best&&price<best.price;
+ if(newLow)data.alerts.unshift({id:uid(),productId:id,entryId:entry.id,productName:p.name,emoji:p.emoji,price,previous:best.price,shop:entry.shop,date,created:now,read:false});
+ if(!await save()){data=previous;ev.submitter.disabled=false;return}
+ closeModal();point=entry.id;render();renderDetail();
+ toast(newLow?`¡Nuevo mínimo para ${p.name}! ${money(price)} en ${entry.shop}. Ahorras ${money(best.price-price)} frente al mínimo anterior.`:'Precio guardado. ¡Un dato más para elegir mejor!',!!newLow);
+ }
+}
+function renderAlerts(){
+ const unread=data.alerts.filter(a=>!a.read).length;
+ $('app').innerHTML=header()+`<h1 class="screen-title">Buenas noticias.</h1><p class="screen-desc">Tus bajadas de precio, en un solo lugar.<br>Una alerta cada vez que registras un nuevo mínimo.</p><div class="section-head"><h2>Alertas de ahorro${unread?' · '+unread:''}</h2>${unread?'<button class="textbtn" onclick="markRead()">Marcar leídas</button>':''}</div>`+
+ (data.alerts.length?data.alerts.map(a=>{
+ const percent=Math.round((a.previous-a.price)/a.previous*100);
+ return `<article class="alert-card ${a.read?'':'unread'}"><div class="alert-top"><span class="emoji">${esc(a.emoji)}</span><div><div class="eyebrow" style="color:var(--green);font-size:8px;margin-bottom:5px">↓ Nuevo mínimo registrado</div><h3>${esc(a.productName)}</h3><span class="sub">${dateText(a.date)}</span></div></div><p><strong style="color:var(--ink)">${esc(a.shop)}</strong> · <strong style="color:var(--green)">${money(a.price)}</strong><br>Tu mínimo anterior era ${money(a.previous)}.</p><span class="saving">${money(a.previous-a.price)} menos${percent>0?' · −'+percent+'%':''}</span><footer><span>${new Date(a.created).toLocaleDateString('es-ES')}${a.read?' · Leída':' · Sin leer'}</span><button class="textbtn" onclick="viewAlert('${a.id}')">Ver producto →</button></footer></article>`
+ }).join(''):`<div class="empty"><div class="empty-art">${icon('bell')}</div><h3>Atentos a la próxima bajada</h3><p>Cuando anotes un precio más bajo que todos los anteriores, te avisaremos aquí. El primer registro será tu punto de partida.</p><button class="primary" onclick="goTab('products')">Ver mis productos</button></div>`)+`<p class="hint">Alertas dentro de la app. Los precios los anotas tú.</p>`;
+}
+async function markRead(){data.alerts.forEach(a=>a.read=true);await save();render()}
+async function viewAlert(id){const a=data.alerts.find(a=>a.id===id);if(!a)return;a.read=true;await save();render();if(data.products.some(p=>p.id===a.productId))openDetail(a.productId);else toast('Este producto ya no está en tu cesta.')}
+function confirmEntry(id){
+ const e=data.entries.find(e=>e.id===id);if(!e)return;
+ modal(sheetHead('¿Eliminar este precio?')+`<p class="sheet-sub">Se eliminará el registro de <strong>${money(e.price)}</strong> en <strong>${esc(e.shop)}</strong> del ${dateText(e.date)}. El mínimo y la gráfica se recalcularán.</p><button class="primary wide danger" onclick="deleteEntry('${id}',this)">Eliminar precio</button><button class="secondary" onclick="closeModal()">Conservar registro</button>`)
+}
+async function deleteEntry(id,btn){
+ btn.disabled=true;const prev=JSON.parse(JSON.stringify(data));
+ data.entries=data.entries.filter(e=>e.id!==id);data.alerts=data.alerts.filter(a=>a.entryId!==id);
+ if(!await save()){data=prev;btn.disabled=false;return}
+ closeModal();point=null;render();renderDetail();toast('Registro eliminado.')
+}
+function confirmProduct(id){
+ const p=data.products.find(p=>p.id===id);if(!p)return;
+ modal(sheetHead('¿Eliminar producto?')+`<p class="sheet-sub">Se eliminarán <strong>${esc(p.name)}</strong>, todos sus precios y sus alertas. Esta acción no se puede deshacer.</p><button class="primary wide danger" onclick="deleteProduct('${id}',this)">Eliminar producto e historial</button><button class="secondary" onclick="productForm('${id}')">Volver a editar</button>`)
+}
+async function deleteProduct(id,btn){
+ btn.disabled=true;const prev=JSON.parse(JSON.stringify(data));
+ data.products=data.products.filter(p=>p.id!==id);data.entries=data.entries.filter(e=>e.productId!==id);data.alerts=data.alerts.filter(a=>a.productId!==id);
+ if(!await save()){data=prev;btn.disabled=false;return}
+ closeModal();closeDetail();filter='Todos';render();toast('Producto eliminado.')
+}
+function settingsForm(){
+ modal(sheetHead('A tu medida')+`<div class="field"><label for="currency">Moneda de tus precios</label><select id="currency">${[['EUR','EUR · Euro'],['USD','USD · Dólar estadounidense'],['MXN','MXN · Peso mexicano'],['ARS','ARS · Peso argentino'],['COP','COP · Peso colombiano'],['CLP','CLP · Peso chileno'],['PEN','PEN · Sol peruano'],['UYU','UYU · Peso uruguayo'],['GBP','GBP · Libra esterlina']].map(([v,t])=>`<option value="${v}" ${data.currency===v?'selected':''}>${t}</option>`).join('')}</select><small>Todos los registros usan la misma moneda. Cambiarla no convierte los importes.</small></div><div class="settings-box"><strong style="color:var(--ink)">Tu pequeño observatorio de precios</strong><br>Los datos se guardan automáticamente en esta aplicación. No consultamos precios de tiendas ni enviamos notificaciones fuera de la app.<br><br>Consejo: crea productos distintos para tamaños distintos. Así compararás siempre lo mismo.</div><button class="primary wide" id="save-settings">${icon('check')}Listo</button>`);
+ $('save-settings').onclick=async function(){this.disabled=true;const prev=data.currency;data.currency=$('currency').value;if(!await save()){data.currency=prev;this.disabled=false;return}closeModal();render();renderDetail();toast('Preferencias actualizadas.')}
+}
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){if($('modal-root').innerHTML)closeModal();else if(detailId)closeDetail()}
+ if(e.key==='Tab'&&$('modal-root').innerHTML){
+ const nodes=[...$('modal-root').querySelectorAll('button:not(:disabled),input,select,[tabindex="0"]')];if(!nodes.length)return;
+ const first=nodes[0],last=nodes[nodes.length-1];
+ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+ }
+});
+reload();
+</script>
+</body>
+</html>
