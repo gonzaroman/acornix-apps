@@ -1,0 +1,15 @@
+{
+  "id": "gratitude-jar",
+  "name": "Gratitude Jar",
+  "emoji": "🌰",
+  "category": "lifestyle",
+  "description": "Write one good thing a day and drop it in the jar. Tap the jar to pull out a happy memory at random.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 35
+}

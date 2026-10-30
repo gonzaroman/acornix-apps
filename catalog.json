@@ -219,6 +219,29 @@
       "trending": 0
     },
     {
+      "id": "gratitude-jar",
+      "name": "Gratitude Jar",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Write one good thing a day and drop it in the jar. Tap the jar to pull out a happy memory at random.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 9014,
+      "sha256": "6bb8b1b94c24c3b72f592edd064dc890f79b0528a55a159ab9e91685feb79a77",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "gradient-maker",
       "name": "Gradient Maker",
       "emoji": "🌈",

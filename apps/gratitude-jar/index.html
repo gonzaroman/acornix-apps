@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gratitude Jar</title>
+<style>
+  :root { --bg:#fff8ee; --ink:#3b2f2a; --muted:#a08d7f; --a:#f59f00; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:linear-gradient(#fff8ee,#ffe8cc); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:520px; margin:0 auto; min-height:100%; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px); gap:12px; }
+  h1 { margin:0; font-size:25px; text-align:center; }
+  .sub { text-align:center; color:var(--muted); font-weight:600; margin-top:-6px; }
+  .jarbox { flex:1; min-height:300px; display:grid; place-items:center; position:relative; }
+  canvas { width:min(78vw, 300px); aspect-ratio:3/4; touch-action:manipulation; cursor:pointer; }
+  .count { position:absolute; bottom:6px; left:0; right:0; text-align:center; font-weight:800; color:var(--muted); font-size:14px; }
+  .add { display:flex; gap:8px; }
+  .add input { flex:1; min-width:0; padding:14px; border-radius:16px; border:2px solid #f3d9b1; background:#fff; font:inherit; outline:none; color:var(--ink); }
+  .add input:focus { border-color:var(--a); }
+  .add button { padding:0 18px; border-radius:16px; background:var(--a); color:#fff; font-weight:900; font-size:20px; }
+  .ideas { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; }
+  .ideas::-webkit-scrollbar { display:none; }
+  .ideas button { flex:none; padding:8px 12px; border-radius:20px; background:#fff; font-size:13px; font-weight:700; color:var(--muted); border:2px solid #f3e1c7; }
+  .note { position:fixed; inset:0; background:#3b2f2a66; display:grid; place-items:center; padding:24px; }
+  .note .paper { max-width:340px; width:100%; padding:28px 24px 20px; border-radius:6px; box-shadow:0 20px 50px #0004; transform:rotate(-2deg); animation:pop .35s ease-out; font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive; }
+  .note p { margin:0 0 14px; font-size:21px; line-height:1.4; }
+  .note small { color:#0008; font-family:system-ui; font-weight:700; }
+  .note .acts { display:flex; justify-content:space-between; margin-top:16px; font-family:system-ui; }
+  .note .acts button { padding:8px 14px; border-radius:12px; background:#0000000f; font-weight:800; }
+  @keyframes pop { from { transform:scale(.6) rotate(-10deg); opacity:0; } }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🫙 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <div class="jarbox"><canvas id="c" width="600" height="800"></canvas><div class="count" id="count"></div></div>
+  <div class="ideas" id="ideas"></div>
+  <form class="add" id="form"><input id="txt" maxlength="160" autocomplete="off"><button>＋</button></form>
+</div>
+<div class="note" id="note" hidden><div class="paper" id="paper"></div></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Bote de gratitud', sub:'Una cosa buena al día. Toca el bote para recordar una.', ph:'Hoy agradezco…', count:n => n === 1 ? '1 recuerdo bonito' : `${n} recuerdos bonitos`, empty:'Escribe la primera cosa buena de hoy 👇', another:'Otro', del:'Quitar', close:'Cerrar', ideas:['Un café rico', 'Alguien que me hizo reír', 'Un paseo al sol', 'Una buena noticia', 'Algo que aprendí', 'Mi cama'] }
+ : { title:'Gratitude Jar', sub:'One good thing a day. Tap the jar to relive one.', ph:'Today I\'m grateful for…', count:n => n === 1 ? '1 happy memory' : `${n} happy memories`, empty:'Write today\'s first good thing 👇', another:'Another', del:'Remove', close:'Close', ideas:['A great coffee', 'Someone made me laugh', 'A walk in the sun', 'Good news', 'Something I learned', 'My bed'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const COLS = ['#ffec99', '#ffc9c9', '#d0ebff', '#d3f9d8', '#e5dbff', '#ffe8cc', '#c5f6fa'];
+const $ = id => document.getElementById(id), cv = $('c'), g = cv.getContext('2d');
+$('ttl').textContent = T.title; $('sub').textContent = T.sub; $('txt').placeholder = T.ph;
+$('ideas').innerHTML = T.ideas.map(i => `<button type="button">${i}</button>`).join('');
+$('ideas').querySelectorAll('button').forEach(b => b.onclick = () => { $('txt').value = b.textContent; $('txt').focus(); });
+let notes = [], drops = [];
+// Each note is a folded paper resting in the jar; positions come from its index so they never move.
+function slot(i) { const r = n => { let x = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return x - Math.floor(x); }; const row = Math.floor(i / 6); return { x: 160 + r(1) * 280, y: 712 - row * 34 - r(2) * 18, a: (r(3) - .5) * 1.2, c: COLS[i % COLS.length] }; }
+function paper(x, y, a, c) { g.save(); g.translate(x, y); g.rotate(a); g.fillStyle = c; g.strokeStyle = '#0000001a'; g.lineWidth = 2; g.beginPath(); g.roundRect ? g.roundRect(-34, -16, 68, 32, 6) : g.rect(-34, -16, 68, 32); g.fill(); g.stroke(); g.strokeStyle = '#00000014'; g.beginPath(); g.moveTo(-20, -2); g.lineTo(20, -2); g.moveTo(-20, 6); g.lineTo(10, 6); g.stroke(); g.restore(); }
+function draw() {
+  g.clearRect(0, 0, 600, 800);
+  // Glass jar.
+  g.fillStyle = '#ffffff55'; g.strokeStyle = '#c9a77c'; g.lineWidth = 8;
+  const jar = new Path2D(); jar.moveTo(130, 190); jar.quadraticCurveTo(80, 230, 85, 330); jar.lineTo(90, 700); jar.quadraticCurveTo(95, 760, 160, 760); jar.lineTo(440, 760); jar.quadraticCurveTo(505, 760, 510, 700); jar.lineTo(515, 330); jar.quadraticCurveTo(520, 230, 470, 190); jar.closePath(); g.fill(jar);
+  g.save(); g.clip(jar);
+  notes.forEach((n, i) => { const s = slot(i); if (s.y > 210 && !n.falling) paper(s.x, s.y, s.a, s.c); });
+  drops.forEach(d => paper(d.x, d.y, d.a, d.c));
+  g.restore(); g.strokeStyle = '#c9a77c'; g.lineWidth = 8; g.stroke(jar);
+  g.fillStyle = '#ffffff66'; g.beginPath(); g.ellipse(140, 450, 16, 160, 0, 0, 7); g.fill();
+  // Lid with a ribbon.
+  g.fillStyle = '#d4a373'; g.beginPath(); g.roundRect ? g.roundRect(118, 140, 364, 56, 14) : g.rect(118, 140, 364, 56); g.fill();
+  g.fillStyle = '#bc8a5f'; g.fillRect(118, 182, 364, 14);
+  g.fillStyle = '#e8590c'; g.fillRect(290, 140, 20, 56); g.beginPath(); g.ellipse(270, 150, 26, 14, -.4, 0, 7); g.ellipse(330, 150, 26, 14, .4, 0, 7); g.fill();
+  if (!notes.length) { g.fillStyle = '#a08d7f'; g.font = '700 30px system-ui'; g.textAlign = 'center'; g.fillText('✨', 300, 480); }
+  $('count').textContent = notes.length ? T.count(notes.length) : T.empty;
+}
+let anim = null;
+function animate() {
+  drops.forEach(d => { d.vy += 1.2; d.y += d.vy; d.a += d.va; if (d.y >= d.ty) { d.y = d.ty; d.done = true; if (notes[d.i]) delete notes[d.i].falling; } });
+  drops = drops.filter(d => !d.done); draw(); if (drops.length) anim = requestAnimationFrame(animate); else anim = null;
+}
+$('form').onsubmit = e => {
+  e.preventDefault(); const t = $('txt').value.trim(); if (!t) return;
+  notes.push({ t: Date.now(), text: t }); store.set('notes', notes); $('txt').value = '';
+  const s = slot(notes.length - 1); drops.push({ i: notes.length - 1, x: s.x, y: 120, ty: s.y, a: 0, va: s.a / 20, vy: 0, c: s.c });
+  notes[notes.length - 1].falling = true; if (!anim) animate();
+  try { window.Acornix && Acornix.vibrate(15); } catch (er) {}
+};
+function open(i) {
+  const n = notes[i]; if (!n) return;
+  $('paper').style.background = slot(i).c;
+  $('paper').innerHTML = `<p></p><small>${new Date(n.t).toLocaleDateString(ES ? 'es' : 'en', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</small><div class="acts"><button id="del">${T.del}</button><span><button id="close">${T.close}</button> <button id="again">${T.another}</button></span></div>`;
+  $('paper').querySelector('p').textContent = n.text; $('note').hidden = false;
+  $('close').onclick = () => $('note').hidden = true;
+  $('again').onclick = () => open(pick(i));
+  $('del').onclick = () => { notes.splice(i, 1); store.set('notes', notes); $('note').hidden = true; draw(); };
+}
+const pick = not => { if (notes.length < 2) return 0; let i; do i = Math.floor(Math.random() * notes.length); while (i === not); return i; };
+cv.onclick = () => { if (notes.length) { open(pick(-1)); try { window.Acornix && Acornix.vibrate([10, 30, 10]); } catch (e) {} } else $('txt').focus(); };
+$('note').onclick = e => { if (e.target === $('note')) $('note').hidden = true; };
+(async () => { notes = await store.get('notes', []); draw(); })();
+</script>
+</body>
+</html>
