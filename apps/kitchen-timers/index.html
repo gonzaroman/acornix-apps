@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kitchen Timers</title>
+<style>
+  :root { --bg:#14110f; --card:#221d1a; --ink:#f8f1ea; --muted:#a39587; --a:#ff922b; --line:#342c27; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 14px; font-size:26px; }
+  .presets { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
+  .pre { background:var(--card); border-radius:16px; padding:10px 4px; text-align:center; } .pre span { font-size:26px; display:block; } .pre b { font-size:12px; display:block; margin-top:2px; } .pre small { color:var(--muted); font-size:11px; font-weight:700; }
+  .custom { display:flex; gap:8px; align-items:center; background:var(--card); border-radius:16px; padding:10px; margin-bottom:16px; }
+  .custom input { width:0; flex:1; min-width:0; padding:10px; border-radius:12px; border:2px solid var(--line); background:#14110f; color:var(--ink); font:inherit; outline:none; text-align:center; font-weight:800; }
+  .custom input.nm { flex:2; text-align:left; }
+  .custom button { padding:11px 16px; border-radius:12px; background:var(--a); color:#1d1206; font-weight:900; }
+  .timer { position:relative; display:flex; align-items:center; gap:14px; background:var(--card); border-radius:22px; padding:14px; margin-bottom:10px; overflow:hidden; }
+  .timer .ring { width:76px; height:76px; flex:none; position:relative; } .timer .ring svg { width:100%; height:100%; transform:rotate(-90deg); } .timer .ring span { position:absolute; inset:0; display:grid; place-items:center; font-size:28px; }
+  .timer .info { flex:1; min-width:0; } .timer b { font-size:15px; display:block; color:var(--muted); } .timer .time { font-size:34px; font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:-1px; }
+  .timer .ctl { display:flex; flex-direction:column; gap:6px; } .timer .ctl button { width:44px; height:38px; border-radius:12px; background:#ffffff14; font-size:16px; font-weight:900; }
+  .timer.done { animation:fl .8s infinite; } @keyframes fl { 50% { background:#7a2e00; } }
+  .timer.done .time { color:var(--a); }
+  .timer.paused .time { color:var(--muted); }
+  .empty { text-align:center; color:var(--muted); padding:30px 10px; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⏲️ <span id="ttl"></span></h1>
+  <div class="presets" id="presets"></div>
+  <form class="custom" id="form"><input class="nm" id="nm" maxlength="20"><input id="mm" type="number" inputmode="numeric" min="0" max="600" value="10"><span>:</span><input id="ss" type="number" inputmode="numeric" min="0" max="59" value="00"><button>▶</button></form>
+  <div id="list"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Temporizadores', name:'Nombre', empty:'Toca un preset o crea el tuyo. Puedes tener varios a la vez.', done:'¡Listo!', notify:'¡Tiempo!', presets:[['🍝', 'Pasta', 9], ['🥚', 'Huevo duro', 10], ['🍚', 'Arroz', 18], ['🍕', 'Pizza', 12], ['🥩', 'Reposar', 5], ['🍪', 'Galletas', 11], ['🫖', 'Té', 4], ['🍞', 'Pan', 35]] }
+ : { title:'Kitchen Timers', name:'Name', empty:'Tap a preset or make your own. Run as many as you like.', done:'Done!', notify:'Time\'s up!', presets:[['🍝', 'Pasta', 9], ['🥚', 'Hard egg', 10], ['🍚', 'Rice', 18], ['🍕', 'Pizza', 12], ['🥩', 'Rest meat', 5], ['🍪', 'Cookies', 11], ['🫖', 'Tea', 4], ['🍞', 'Bread', 35]] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('nm').placeholder = T.name;
+// Each timer keeps its end time, so it stays right even if the app was in the background.
+let timers = [], audio = null;
+const save = () => store.set('timers', timers);
+$('presets').innerHTML = T.presets.map(([e, n, m], i) => `<button class="pre" data-i="${i}"><span>${e}</span><b>${n}</b><small>${m} min</small></button>`).join('');
+$('presets').querySelectorAll('.pre').forEach(b => b.onclick = () => { const [e, n, m] = T.presets[+b.dataset.i]; add(e, n, m * 60); });
+$('form').onsubmit = e => { e.preventDefault(); const s = (+$('mm').value || 0) * 60 + (+$('ss').value || 0); if (s > 0) add('⏱️', $('nm').value.trim() || `${$('mm').value || 0}:${String($('ss').value || 0).padStart(2, '0')}`, s); $('nm').value = ''; };
+function add(emoji, name, secs) { unlock(); timers.unshift({ id: Date.now(), emoji, name, total: secs, end: Date.now() + secs * 1000, left: null, rang: false }); save(); render(); }
+const leftOf = t => t.left != null ? t.left : Math.max(0, Math.round((t.end - Date.now()) / 1000));
+const fmt = s => { const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
+function render() {
+  $('list').innerHTML = timers.length ? timers.map(t => { const l = leftOf(t), p = l / t.total, done = l === 0;
+    return `<div class="timer ${done ? 'done' : ''} ${t.left != null && !done ? 'paused' : ''}" data-id="${t.id}"><div class="ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#342c27" stroke-width="3.5"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="${done ? '#ff6b6b' : '#ff922b'}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="${p * 97.4} 97.4"/></svg><span>${t.emoji}</span></div><div class="info"><b>${t.name.replace(/[<>&]/g, '')}</b><div class="time">${done ? T.done : fmt(l)}</div></div><div class="ctl">${done ? `<button data-a="again">↺</button>` : `<button data-a="pause">${t.left != null ? '▶' : '⏸'}</button><button data-a="plus">+1</button>`}<button data-a="del">✕</button></div></div>`; }).join('') : `<div class="empty">${T.empty}</div>`;
+  $('list').querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+    const t = timers.find(x => x.id === +b.closest('.timer').dataset.id), a = b.dataset.a;
+    if (a === 'del') timers = timers.filter(x => x !== t);
+    if (a === 'pause') { if (t.left != null) { t.end = Date.now() + t.left * 1000; t.left = null; } else t.left = leftOf(t); }
+    if (a === 'plus') { if (t.left != null) t.left += 60; else t.end += 60000; t.total += 60; }
+    if (a === 'again') { t.end = Date.now() + t.total * 1000; t.left = null; t.rang = false; }
+    stopRing(); save(); render();
+  });
+}
+// A gentle kitchen bell from WebAudio, plus vibration and a notification.
+function unlock() { try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) {} }
+let ringing = null;
+function bell() { if (!audio) return; [0, .35, .7].forEach(d => { const o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = 1320; o.type = 'sine'; g.gain.setValueAtTime(.0001, audio.currentTime + d); g.gain.exponentialRampToValueAtTime(.4, audio.currentTime + d + .01); g.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + d + .3); o.connect(g).connect(audio.destination); o.start(audio.currentTime + d); o.stop(audio.currentTime + d + .32); }); }
+function ring(t) { bell(); clearInterval(ringing); ringing = setInterval(bell, 2000); setTimeout(stopRing, 30000); try { if (window.Acornix) { Acornix.vibrate([400, 200, 400, 200, 400]); Acornix.notify(`${t.emoji} ${t.name}`, T.notify); } else navigator.vibrate && navigator.vibrate([400, 200, 400]); } catch (e) {} }
+function stopRing() { clearInterval(ringing); ringing = null; }
+// Only the numbers and rings change every tick; the buttons stay put so taps never get lost.
+function tick() {
+  timers.forEach(t => { const el = $('list').querySelector(`[data-id="${t.id}"]`); if (!el) return; const l = leftOf(t); el.querySelector('.time').textContent = l === 0 ? T.done : fmt(l); el.querySelectorAll('circle')[1].setAttribute('stroke-dasharray', `${l / t.total * 97.4} 97.4`); });
+}
+setInterval(() => { let changed = false; timers.forEach(t => { if (!t.rang && t.left == null && leftOf(t) === 0) { t.rang = true; changed = true; ring(t); } }); if (changed) { save(); render(); } else tick(); }, 500);
+document.addEventListener('pointerdown', () => { unlock(); stopRing(); });
+(async () => { timers = await store.get('timers', []); render(); })();
+</script>
+</body>
+</html>

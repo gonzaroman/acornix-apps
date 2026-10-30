@@ -297,6 +297,31 @@
       "trending": 0
     },
     {
+      "id": "kitchen-timers",
+      "name": "Kitchen Timers",
+      "emoji": "⏱️",
+      "category": "food-drink",
+      "description": "Several kitchen timers at once with presets for pasta, eggs, rice or pizza, a bell, vibration and a notification when each one is done.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 8998,
+      "sha256": "39547692d55ea84619d5171cbfcc80d0a2df3091fde59fc4624d5febf4b325eb",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "gratitude-jar",
       "name": "Gratitude Jar",
       "emoji": "🫙",
