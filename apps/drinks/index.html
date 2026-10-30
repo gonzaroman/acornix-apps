@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Drinks</title>
+<style>
+  :root { --bg:#0d1b2a; --card:#16283b; --ink:#f1f6fb; --muted:#90a7bf; --a:#ff6b9d; --line:#22394f; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:radial-gradient(circle at 50% 0,#1d3557,var(--bg) 60%); background-attachment:fixed; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; min-height:100%; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  .top { display:flex; align-items:center; gap:10px; margin-bottom:12px; } .top h1 { margin:0; font-size:26px; flex:1; }
+  .shake { padding:11px 16px; border-radius:16px; background:var(--a); font-weight:900; box-shadow:0 6px 20px #ff6b9d55; }
+  .flav { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; margin-bottom:14px; } .flav::-webkit-scrollbar { display:none; }
+  .chip { flex:none; padding:8px 13px; border-radius:20px; background:var(--card); font-weight:800; font-size:13px; color:var(--muted); } .chip.on { background:var(--ink); color:var(--bg); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .d { border-radius:20px; padding:14px; text-align:left; position:relative; overflow:hidden; min-height:150px; display:flex; flex-direction:column; justify-content:flex-end; }
+  .d .g { position:absolute; top:10px; right:10px; font-size:44px; filter:drop-shadow(0 4px 8px #0004); }
+  .d b { font-size:16px; text-shadow:0 1px 4px #0005; } .d small { font-size:12px; font-weight:700; opacity:.9; text-shadow:0 1px 4px #0005; }
+  .d .fav { position:absolute; top:10px; left:12px; font-size:16px; }
+  .view { position:fixed; inset:0; z-index:5; overflow:auto; }
+  .view .hero { padding:calc(env(safe-area-inset-top) + 60px) 20px 30px; text-align:center; position:relative; }
+  .view .hero .g { font-size:96px; animation:pop .5s; } @keyframes pop { from { transform:scale(.3) rotate(-20deg); } }
+  .view .hero h2 { margin:8px 0 4px; font-size:28px; } .view .hero p { margin:0; opacity:.9; font-weight:600; }
+  .view .bar { position:absolute; left:12px; right:12px; top:calc(env(safe-area-inset-top) + 10px); display:flex; justify-content:space-between; } .view .bar button { padding:9px 13px; border-radius:14px; background:#0003; font-weight:800; }
+  .view .body { background:var(--bg); border-radius:26px 26px 0 0; padding:20px 18px calc(env(safe-area-inset-bottom) + 30px); min-height:60vh; }
+  .serv { display:flex; align-items:center; gap:14px; justify-content:center; font-weight:800; margin-bottom:12px; } .serv button { width:36px; height:36px; border-radius:50%; background:var(--card); font-weight:900; font-size:18px; }
+  h3 { margin:16px 0 8px; } .ing { display:flex; justify-content:space-between; padding:10px 2px; border-bottom:1px solid var(--line); } .ing b { color:var(--a); }
+  ol { margin:0; padding-left:20px; line-height:1.6; } li { margin-bottom:6px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🍹 <span id="ttl"></span></h1><button class="shake" id="shake"></button></div>
+  <div class="flav" id="flav"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<div class="view" id="view" hidden></div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Bebidas sin alcohol', shake:'🎲 Sorpréndeme', all:'Todas', favs:'❤️', flav:['🍓 Afrutado', '🍋 Ácido', '🫧 Con gas', '🥥 Cremoso', '🌿 Fresco', '🔥 Especiado'], glasses:'vasos', ing:'Ingredientes', how:'Cómo se hace', back:'‹ Volver', min:'min' }
+ : { title:'Drinks', shake:'🎲 Surprise me', all:'All', favs:'❤️', flav:['🍓 Fruity', '🍋 Sour', '🫧 Fizzy', '🥥 Creamy', '🌿 Fresh', '🔥 Spiced'], glasses:'glasses', ing:'Ingredients', how:'How to make it', back:'‹ Back', min:'min' };
+// [name EN, name ES, glass emoji, colours, flavours, ingredients [amount, unit, EN, ES], steps EN, steps ES]
+const D = [
+  ['Virgin Mojito', 'Mojito sin alcohol', '🍃', ['#38b000', '#9ef01a'], [4, 1, 2], [[10, '', 'mint leaves', 'hojas de menta'], [.5, '', 'lime, in wedges', 'lima en gajos'], [2, 'tsp', 'sugar', 'cdta de azúcar'], [150, 'ml', 'soda water', 'agua con gas'], [1, 'cup', 'crushed ice', 'taza de hielo picado']], ['Muddle the mint, lime and sugar in the glass.', 'Fill with crushed ice.', 'Top with soda water and stir.'], ['Machaca la menta, la lima y el azúcar en el vaso.', 'Llena de hielo picado.', 'Completa con agua con gas y remueve.']],
+  ['Strawberry Lemonade', 'Limonada de fresa', '🍓', ['#ff4d6d', '#ffb3c1'], [0, 1], [[5, '', 'strawberries', 'fresas'], [1, '', 'lemon, juiced', 'limón exprimido'], [1, 'tbsp', 'honey', 'cda de miel'], [200, 'ml', 'cold water', 'agua fría']], ['Blend the strawberries with the lemon juice and honey.', 'Add cold water and ice, stir well.'], ['Tritura las fresas con el zumo de limón y la miel.', 'Añade agua fría y hielo, y remueve.']],
+  ['Piña Colada', 'Piña colada', '🥥', ['#ffd166', '#fff3b0'], [0, 3], [[120, 'ml', 'pineapple juice', 'zumo de piña'], [60, 'ml', 'coconut cream', 'crema de coco'], [1, 'cup', 'ice', 'taza de hielo']], ['Blend everything until smooth and frothy.', 'Serve with a pineapple wedge.'], ['Tritura todo hasta que esté cremoso.', 'Sirve con un trozo de piña.']],
+  ['Shirley Temple', 'Shirley Temple', '🍒', ['#e63946', '#ffccd5'], [0, 2], [[200, 'ml', 'ginger ale', 'ginger ale'], [15, 'ml', 'grenadine', 'granadina'], [1, '', 'cherry', 'cereza']], ['Fill a glass with ice and ginger ale.', 'Pour in the grenadine slowly so it sinks.', 'Top with a cherry.'], ['Llena un vaso con hielo y ginger ale.', 'Echa la granadina despacio para que baje.', 'Corona con una cereza.']],
+  ['Cucumber Cooler', 'Refresco de pepino', '🥒', ['#2a9d8f', '#b7e4c7'], [4, 2], [[5, '', 'cucumber slices', 'rodajas de pepino'], [6, '', 'mint leaves', 'hojas de menta'], [15, 'ml', 'lime juice', 'zumo de lima'], [150, 'ml', 'tonic water', 'tónica']], ['Muddle cucumber and mint.', 'Add lime juice and ice.', 'Top with tonic.'], ['Machaca el pepino y la menta.', 'Añade el zumo de lima y hielo.', 'Completa con tónica.']],
+  ['Mango Lassi', 'Lassi de mango', '🥭', ['#ff9f1c', '#ffe5b4'], [0, 3], [[150, 'g', 'ripe mango', 'mango maduro'], [150, 'ml', 'yogurt', 'yogur'], [50, 'ml', 'milk', 'leche'], [1, 'pinch', 'cardamom', 'pizca de cardamomo']], ['Blend everything until smooth.', 'Chill or add ice.'], ['Tritura todo hasta que quede fino.', 'Enfría o añade hielo.']],
+  ['Spiced Apple Fizz', 'Manzana especiada con gas', '🍎', ['#bc4749', '#f2e8cf'], [5, 2, 0], [[120, 'ml', 'apple juice', 'zumo de manzana'], [1, '', 'cinnamon stick', 'rama de canela'], [80, 'ml', 'soda water', 'agua con gas'], [1, 'slice', 'fresh ginger', 'rodaja de jengibre']], ['Warm the apple juice with cinnamon and ginger for 5 min, then cool.', 'Pour over ice and top with soda.'], ['Calienta el zumo con canela y jengibre 5 min y deja enfriar.', 'Sirve con hielo y completa con gas.']],
+  ['Blue Lagoon Soda', 'Laguna azul', '🌊', ['#0077b6', '#90e0ef'], [2, 1], [[150, 'ml', 'lemon soda', 'refresco de limón'], [15, 'ml', 'blue curaçao syrup (alcohol-free)', 'sirope de curaçao azul sin alcohol'], [1, 'slice', 'lemon', 'rodaja de limón']], ['Fill with ice, add the syrup.', 'Top with lemon soda and a lemon slice.'], ['Llena de hielo y añade el sirope.', 'Completa con refresco de limón y una rodaja.']],
+  ['Iced Matcha Latte', 'Matcha latte con hielo', '🍵', ['#6a994e', '#dde5b6'], [3, 4], [[1, 'tsp', 'matcha', 'cdta de matcha'], [40, 'ml', 'hot water', 'agua caliente'], [180, 'ml', 'milk', 'leche'], [1, 'tsp', 'honey', 'cdta de miel']], ['Whisk matcha with hot water until frothy.', 'Pour milk over ice, then the matcha on top.'], ['Bate el matcha con el agua caliente hasta que espume.', 'Vierte la leche sobre hielo y el matcha encima.']],
+  ['Watermelon Agua Fresca', 'Agua fresca de sandía', '🍉', ['#ef476f', '#ffd6e0'], [0, 4], [[300, 'g', 'watermelon', 'sandía'], [100, 'ml', 'water', 'agua'], [1, 'tbsp', 'lime juice', 'cda de zumo de lima']], ['Blend the watermelon with the water.', 'Strain, add lime and serve over ice.'], ['Tritura la sandía con el agua.', 'Cuela, añade lima y sirve con hielo.']],
+  ['Hot Chocolate Deluxe', 'Chocolate caliente', '☕', ['#6f4518', '#d4a373'], [3, 5], [[250, 'ml', 'milk', 'leche'], [30, 'g', 'dark chocolate', 'chocolate negro'], [1, 'pinch', 'cinnamon', 'pizca de canela'], [1, 'tbsp', 'whipped cream', 'cda de nata montada']], ['Heat the milk without boiling.', 'Melt in the chocolate, stirring.', 'Top with cream and cinnamon.'], ['Calienta la leche sin que hierva.', 'Funde el chocolate removiendo.', 'Corona con nata y canela.']],
+  ['Ginger Lemon Tonic', 'Tónica de jengibre y limón', '🍋', ['#f4a261', '#fefae0'], [1, 2, 5], [[3, 'slices', 'fresh ginger', 'rodajas de jengibre'], [20, 'ml', 'lemon juice', 'zumo de limón'], [1, 'tsp', 'honey', 'cdta de miel'], [150, 'ml', 'tonic water', 'tónica']], ['Muddle ginger with honey and lemon.', 'Add ice and tonic.'], ['Machaca el jengibre con la miel y el limón.', 'Añade hielo y tónica.']],
+];
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+$('ttl').textContent = T.title; $('shake').textContent = T.shake;
+let flav = -1, favs = [];
+const nm = d => ES ? d[1] : d[0];
+function render() {
+  $('flav').innerHTML = [`<button class="chip ${flav === -1 ? 'on' : ''}" data-f="-1">${T.all}</button>`, `<button class="chip ${flav === -2 ? 'on' : ''}" data-f="-2">${T.favs}</button>`, ...T.flav.map((f, i) => `<button class="chip ${flav === i ? 'on' : ''}" data-f="${i}">${f}</button>`)].join('');
+  $('flav').querySelectorAll('.chip').forEach(b => b.onclick = () => { flav = +b.dataset.f; render(); });
+  const L = D.map((d, i) => ({ d, i })).filter(({ d, i }) => flav === -1 || (flav === -2 ? favs.includes(i) : d[4].includes(flav)));
+  $('grid').innerHTML = L.map(({ d, i }) => `<button class="d" data-i="${i}" style="background:linear-gradient(160deg,${d[3][1]},${d[3][0]})">${favs.includes(i) ? '<span class="fav">❤️</span>' : ''}<span class="g">${d[2]}</span><b>${nm(d)}</b><small>${d[4].map(f => T.flav[f].split(' ')[0]).join(' ')}</small></button>`).join('');
+  $('grid').querySelectorAll('.d').forEach(b => b.onclick = () => open(+b.dataset.i));
+}
+function open(i) {
+  const d = D[i]; let n = 1;
+  const draw = () => {
+    $('view').style.background = `linear-gradient(170deg,${d[3][1]},${d[3][0]} 40%)`;
+    $('view').innerHTML = `<div class="hero"><div class="bar"><button id="vb">${T.back}</button><button id="vf">${favs.includes(i) ? '❤️' : '🤍'}</button></div><div class="g">${d[2]}</div><h2>${nm(d)}</h2><p>${d[4].map(f => T.flav[f]).join(' · ')}</p></div><div class="body"><div class="serv"><button id="sm">−</button>${n} ${T.glasses}<button id="sp">＋</button></div><h3>${T.ing}</h3>${d[5].map(([q, u, en, es]) => `<div class="ing"><span>${ES ? es : en}</span><b>${Math.round(q * n * 10) / 10} ${!ES ? u : /^(cdta|cda|taza|rodaja|pizca)/.test(es) ? '' : u}</b></div>`).join('')}<h3>${T.how}</h3><ol>${(ES ? d[7] : d[6]).map(s => `<li>${s}</li>`).join('')}</ol></div>`;
+    $('vb').onclick = () => $('view').hidden = true;
+    $('vf').onclick = () => { const k = favs.indexOf(i); k >= 0 ? favs.splice(k, 1) : favs.push(i); store.set('favs', favs); draw(); render(); };
+    $('sm').onclick = () => { if (n > 1) { n--; draw(); } }; $('sp').onclick = () => { n++; draw(); };
+  };
+  draw(); $('view').hidden = false; $('view').scrollTop = 0;
+}
+function surprise() { const L = flav >= 0 ? D.map((d, i) => i).filter(i => D[i][4].includes(flav)) : D.map((d, i) => i); open(L[Math.floor(Math.random() * L.length)]); try { window.Acornix && Acornix.vibrate([20, 40, 20, 40, 60]); } catch (e) {} }
+$('shake').onclick = surprise;
+// Shake the phone for a surprise drink.
+let lastShake = 0; addEventListener('devicemotion', e => { const a = e.accelerationIncludingGravity; if (!a) return; const f = Math.hypot(a.x || 0, a.y || 0, a.z || 0); if (f > 25 && Date.now() - lastShake > 1500) { lastShake = Date.now(); surprise(); } });
+(async () => { favs = await store.get('favs', []); render(); })();
+</script>
+</body>
+</html>

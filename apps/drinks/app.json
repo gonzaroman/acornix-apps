@@ -1,0 +1,15 @@
+{
+  "id": "drinks",
+  "name": "Drinks",
+  "emoji": "🌰",
+  "category": "food-drink",
+  "description": "Alcohol-free drinks and mocktails with colourful recipes for any number of glasses. Shake the phone for a surprise drink.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 49
+}

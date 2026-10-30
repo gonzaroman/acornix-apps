@@ -490,6 +490,29 @@
       "trending": 0
     },
     {
+      "id": "drinks",
+      "name": "Drinks",
+      "emoji": "🌰",
+      "category": "food-drink",
+      "description": "Alcohol-free drinks and mocktails with colourful recipes for any number of glasses. Shake the phone for a surprise drink.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12855,
+      "sha256": "c2a1bf2f2cc61a22cff7a4408fe93002d83a4da964120e0c30b2032a32697f4c",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "contrast-checker",
       "name": "Contrast Checker",
       "emoji": "🌓",
