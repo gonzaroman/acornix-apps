@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f7f6fb">
+<title>Menos · Calculadora de descuentos</title>
+<style>
+:root{--bg:#f7f6fb;--ink:#242138;--muted:#817b93;--purple:#7051e8;--light:#ede7ff;--green:#237c62;--border:#eae6f1}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0;touch-action:manipulation}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #b7a5ff;outline-offset:3px}
+.wrap{max-width:510px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 21px calc(30px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:10px;font-size:25px;font-weight:850;letter-spacing:-1px}
+.logo{display:grid;place-items:center;width:40px;height:40px;border-radius:14px;background:var(--purple);color:white;font-size:24px;box-shadow:0 5px 12px #7051e828}
+.icon-btn{width:45px;height:45px;background:white;border:1px solid var(--border);border-radius:15px;color:var(--ink);display:grid;place-items:center}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h1{font-size:30px;letter-spacing:-1.1px;line-height:1.15;margin:0 0 8px}
+.subtitle{font-size:14px;color:var(--muted);margin:0 0 25px;line-height:1.5}
+.card{background:white;border:1px solid var(--border);border-radius:24px;padding:21px;margin-bottom:16px}
+.label{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:750;color:var(--muted)}
+.price-row{display:flex;align-items:center;gap:12px;margin-top:9px}
+.price-row input{width:100%;min-width:0;background:none;border:0;font-size:39px;font-weight:750;letter-spacing:-1.5px;color:var(--ink);padding:4px 0;outline:none}
+input::placeholder{color:#d4d0df}
+select{max-width:90px;min-height:44px;padding:8px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--ink);font-weight:650}
+.section-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:15px}
+.discount-field{display:flex;align-items:center;background:var(--light);border-radius:12px;padding:5px 12px;color:var(--purple);font-size:22px;font-weight:750}
+.discount-field input{width:61px;text-align:right;border:none;background:none;color:inherit;font:inherit;outline:none;min-height:32px}
+input[type=range]{width:100%;accent-color:var(--purple);height:28px;margin:0 0 12px;cursor:pointer}
+.presets{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.chip{min-height:42px;border-radius:11px;background:var(--bg);color:#79718c;font-weight:650;font-size:13px;border:1px solid transparent}
+.chip.active{background:var(--light);border-color:#c8b9ff;color:var(--purple)}
+.extras{margin-top:18px;padding-top:17px;border-top:1px dashed var(--border)}
+.extra-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;font-size:14px}
+.extra-input{display:flex;align-items:center;gap:7px;color:var(--purple);font-weight:700}
+.extra-input input{width:62px;min-height:42px;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:10px;text-align:right;color:var(--ink)}
+.remove{width:36px;height:40px;background:transparent;color:#9b92ac;font-size:23px}
+.add{background:transparent;color:var(--purple);padding:5px 0;min-height:40px;font-size:14px;font-weight:650;display:flex;align-items:center;gap:7px}
+.helper{font-size:11px;color:var(--muted);line-height:1.5;margin:7px 0 0}
+.promos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.promo{min-height:49px;background:var(--bg);border:1px solid var(--border);border-radius:13px;font-weight:750;color:#81778f}
+.promo.active{background:var(--light);border-color:#bca7ff;color:var(--purple)}
+.result{position:relative;overflow:hidden;background:var(--purple);color:white;border-radius:25px;padding:24px;margin:20px 0 14px;box-shadow:0 12px 30px #7051e82b}
+.result:after{content:"";position:absolute;border:30px solid #ffffff09;width:160px;height:160px;border-radius:50%;right:-85px;top:-45px;pointer-events:none}
+.result-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.result-label{font-size:13px;font-weight:600;color:#e2d9ff}
+.badge{background:#ffffff24;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:750;white-space:nowrap}
+.amount{font-size:clamp(32px,10vw,48px);font-weight:800;letter-spacing:-1.8px;margin:9px 0 15px;overflow-wrap:anywhere;line-height:1.2}
+.savings{display:flex;justify-content:space-between;gap:12px;padding-top:16px;border-top:1px solid #ffffff30;font-size:14px}
+.savings strong{text-align:right}
+.pack{color:#e2d9ff;font-size:12px;line-height:1.5;margin:-5px 0 16px}
+.breakdown{margin:0 3px 17px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6}
+.save{width:100%;min-height:52px;border-radius:16px;background:var(--ink);color:white;font-weight:700;display:flex;justify-content:center;align-items:center;gap:9px}
+.reset{display:block;margin:10px auto 0;background:transparent;color:var(--muted);min-height:42px;font-size:13px}
+.footer{text-align:center;font-size:11px;color:#a49caf;margin-top:14px}
+dialog{border:0;padding:0;border-radius:25px;background:var(--bg);color:var(--ink);width:calc(100% - 30px);max-width:480px;max-height:85dvh;box-shadow:0 20px 70px #29203d40}
+dialog::backdrop{background:#20153680;backdrop-filter:blur(5px)}
+.dialog-inner{padding:22px}
+.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+h2{font-size:21px;margin:0}
+.history-item{background:white;border:1px solid var(--border);padding:16px;border-radius:16px;margin:10px 0}
+.history-top{display:flex;justify-content:space-between;gap:8px;font-size:19px;font-weight:750}
+.history-detail{font-size:12px;color:var(--muted);line-height:1.6;margin:8px 0}
+.history-actions{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.text-btn{background:var(--light);color:var(--purple);min-height:38px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:650}
+.empty{text-align:center;color:var(--muted);font-size:14px;padding:34px 15px;line-height:1.7}
+.toast{position:fixed;z-index:5;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);width:max-content;max-width:90%;padding:13px 19px;border-radius:15px;background:var(--ink);color:white;font-size:13px;box-shadow:0 8px 28px #0003;opacity:0;pointer-events:none;transition:.22s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+<div class="brand"><span class="logo">%</span> menos<span style="color:var(--purple)">.</span></div>
+<button class="icon-btn" id="historyBtn" aria-label="Ver cálculos guardados"><svg viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6M12 7v5l3 2"/></svg></button>
+</header>
+<h1>El precio, sin dudas.</h1>
+<p class="subtitle">Suma descuentos. Descubre cuánto ahorras.</p>
+
+<section class="card">
+<label class="label" for="price">Precio original · por unidad</label>
+<div class="price-row">
+<input id="price" inputmode="decimal" type="text" placeholder="0,00" autocomplete="off" aria-label="Precio original por unidad">
+<select id="currency" aria-label="Moneda">
+<option value="EUR">EUR €</option><option value="USD">USD $</option><option value="MXN">MXN $</option><option value="ARS">ARS $</option><option value="COP">COP $</option><option value="CLP">CLP $</option><option value="PEN">PEN S/</option><option value="GBP">GBP £</option>
+</select>
+</div>
+</section>
+
+<section class="card">
+<div class="section-top">
+<label class="label" for="discount">Descuento principal</label>
+<div class="discount-field"><input id="discount" inputmode="decimal" value="20" aria-label="Porcentaje de descuento"><span>%</span></div>
+</div>
+<input id="slider" type="range" min="0" max="100" step="1" value="20" aria-label="Ajustar descuento">
+<div class="presets" id="presets">
+<button class="chip" data-value="10">10%</button><button class="chip active" data-value="20">20%</button><button class="chip" data-value="30">30%</button><button class="chip" data-value="40">40%</button><button class="chip" data-value="50">50%</button>
+</div>
+<div class="extras">
+<div id="extras"></div>
+<button class="add" id="addExtra"><span style="font-size:21px">＋</span> Añadir descuento extra</button>
+<p class="helper">Cada descuento se aplica al precio ya rebajado, no se suman los porcentajes.</p>
+</div>
+</section>
+
+<section class="card">
+<div class="label">Promociones rápidas</div>
+<div class="promos" id="promos">
+<button class="promo active" data-promo="none">Sin promo</button>
+<button class="promo" data-promo="2x1">2 × 1</button>
+<button class="promo" data-promo="3x2">3 × 2</button>
+</div>
+<p class="helper" id="promoHelp">Combina una promoción con tus descuentos.</p>
+</section>
+
+<section class="result" aria-live="polite" aria-atomic="true">
+<div class="result-top"><span class="result-label" id="resultLabel">Precio final</span><span class="badge" id="effective">−20% real</span></div>
+<div class="amount" id="final">0,00 €</div>
+<p class="pack" id="pack" hidden></p>
+<div class="savings"><span id="savingLabel">Te ahorras</span><strong id="savings">0,00 €</strong></div>
+</section>
+<p class="breakdown" id="breakdown">Introduce un precio para empezar.</p>
+<button class="save" id="saveBtn"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg> Guardar cálculo</button>
+<button class="reset" id="resetBtn">Reiniciar cálculo</button>
+<div class="footer">Tus cálculos se guardan solo en este dispositivo.</div>
+</main>
+
+<dialog id="historyDialog">
+<div class="dialog-inner">
+<div class="dialog-head"><h2>Tus cálculos</h2><button class="icon-btn" id="closeHistory" aria-label="Cerrar">✕</button></div>
+<div id="historyList"></div>
+</div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const defaults=()=>({price:'',discount:'20',extras:[],promo:'none',currency:'EUR'});
+let state=defaults(),history=[],ready=false,queue=Promise.resolve(),toastTimer;
+const db=window.Acornix?.db;
+async function get(key){if(db)return db.get(key);try{return JSON.parse(localStorage.getItem('menos.'+key))}catch{return null}}
+async function set(key,value){if(db)return db.set(key,value);localStorage.setItem('menos.'+key,JSON.stringify(value))}
+function persist(key,value){const snapshot=JSON.parse(JSON.stringify(value));queue=queue.then(()=>set(key,snapshot)).catch(()=>notify('No se pudo guardar. Revisa el almacenamiento.'))}
+function notify(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2800)}
+function number(text){let s=String(text??'').trim().replace(/\s/g,'');if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');return Number(s)||0}
+const pct=v=>Math.min(100,Math.max(0,number(v)));
+function money(n,c=state.currency){return new Intl.NumberFormat('es-ES',{style:'currency',currency:c,minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
+function percent(n){return new Intl.NumberFormat('es-ES',{maximumFractionDigits:2}).format(n)}
+function calculate(s=state){
+const price=Math.min(1e12,Math.max(0,number(s.price)));
+let unit=price*(1-pct(s.discount)/100);
+s.extras.forEach(v=>unit*=1-pct(v)/100);
+const count=s.promo==='2x1'?2:s.promo==='3x2'?3:1;
+const paid=s.promo==='2x1'?1:s.promo==='3x2'?2:1;
+const total=Math.round((unit*paid+Number.EPSILON)*100)/100;
+return {price,count,total,final:total/count,saved:Math.max(0,price*count-total),effective:price?Math.max(0,100-total/(price*count)*100):100*(1-(1-pct(s.discount)/100)*s.extras.reduce((a,v)=>a*(1-pct(v)/100),1)*paid/count)};
+}
+function update(){
+const c=calculate();
+$('final').textContent=money(c.final);
+$('effective').textContent='−'+percent(c.effective)+'% real';
+$('savings').textContent=money(c.saved);
+$('resultLabel').textContent=c.count>1?'Precio final · por unidad':'Precio final';
+$('savingLabel').textContent=c.count>1?'Ahorras en el lote':'Te ahorras';
+$('pack').hidden=c.count===1;
+$('pack').textContent=`Total por ${c.count} unidades: ${money(c.total)}`;
+$('breakdown').textContent=c.price?`Antes ${money(c.price*c.count)}${c.count>1?' el lote':''} · Ahora ${money(c.total)}${c.count>1?' el lote':''}`:'Introduce un precio para empezar.';
+$('slider').value=pct(state.discount);
+document.querySelectorAll('[data-value]').forEach(b=>{const active=+b.dataset.value===pct(state.discount);b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
+document.querySelectorAll('[data-promo]').forEach(b=>{const active=b.dataset.promo===state.promo;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
+$('promoHelp').textContent=state.promo==='2x1'?'Llevas 2 unidades y pagas 1, con los descuentos aplicados.':state.promo==='3x2'?'Llevas 3 unidades y pagas 2, con los descuentos aplicados.':'Combina una promoción con tus descuentos.';
+$('addExtra').hidden=state.extras.length>=5;
+if(ready)persist('state',state);
+}
+function renderExtras(){
+$('extras').replaceChildren();
+state.extras.forEach((v,i)=>{
+const row=document.createElement('div');row.className='extra-row';
+const label=document.createElement('label');label.htmlFor='extra'+i;label.textContent='Descuento extra '+(i+1);
+const field=document.createElement('div');field.className='extra-input';
+const input=document.createElement('input');input.id='extra'+i;input.inputMode='decimal';input.value=v;input.setAttribute('aria-label','Porcentaje extra '+(i+1));
+input.addEventListener('input',()=>{state.extras[i]=input.value;update()});
+input.addEventListener('blur',()=>{state.extras[i]=String(pct(input.value));input.value=state.extras[i];update()});
+const sign=document.createElement('span');sign.textContent='%';
+const remove=document.createElement('button');remove.className='remove';remove.textContent='×';remove.setAttribute('aria-label','Eliminar descuento extra '+(i+1));remove.onclick=()=>{state.extras.splice(i,1);renderExtras();update()};
+field.append(input,sign,remove);row.append(label,field);$('extras').append(row);
+});
+}
+function render(){ $('price').value=state.price;$('discount').value=state.discount;$('currency').value=state.currency;renderExtras();update()}
+$('price').addEventListener('input',e=>{state.price=e.target.value;update()});
+$('price').addEventListener('blur',()=>{if(state.price!==''){state.price=String(Math.min(1e12,Math.max(0,number(state.price)))).replace('.',',');$('price').value=state.price;update()}});
+$('discount').addEventListener('input',e=>{state.discount=e.target.value;update()});
+$('discount').addEventListener('blur',()=>{state.discount=String(pct(state.discount));$('discount').value=state.discount;update()});
+$('slider').addEventListener('input',e=>{state.discount=e.target.value;$('discount').value=state.discount;update()});
+$('currency').onchange=e=>{state.currency=e.target.value;update()};
+$('presets').onclick=e=>{const b=e.target.closest('[data-value]');if(b){state.discount=b.dataset.value;$('discount').value=state.discount;update()}};
+$('promos').onclick=e=>{const b=e.target.closest('[data-promo]');if(b){state.promo=b.dataset.promo;update()}};
+$('addExtra').onclick=()=>{if(state.extras.length>=5)return;state.extras.push('10');renderExtras();update();$('extra'+(state.extras.length-1)).focus()};
+$('resetBtn').onclick=()=>{const currency=state.currency;state=defaults();state.currency=currency;render();notify('Listo para un nuevo cálculo')};
+$('saveBtn').onclick=async()=>{
+if(!calculate().price){notify('Introduce un precio mayor que cero');$('price').focus();return}
+const entry={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),date:Date.now(),state:JSON.parse(JSON.stringify(state))};
+history.unshift(entry);persist('history',history);await queue;renderHistory();notify('Cálculo guardado');
+};
+function renderHistory(){
+const list=$('historyList');list.replaceChildren();
+if(!history.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='Tus buenas ofertas, a mano. Guarda un cálculo para volver a consultarlo aquí.';list.append(empty);return}
+history.forEach(entry=>{
+const s=entry.state,c=calculate(s),card=document.createElement('article');card.className='history-item';
+const top=document.createElement('div');top.className='history-top';
+const amount=document.createElement('span');amount.textContent=money(c.final,s.currency)+(c.count>1?' / ud.':'');
+const tag=document.createElement('span');tag.style.color='var(--purple)';tag.textContent='−'+percent(c.effective)+'%';top.append(amount,tag);
+const detail=document.createElement('div');detail.className='history-detail';detail.textContent=`Original: ${money(c.price,s.currency)} · ${[pct(s.discount),...s.extras.map(pct)].map(n=>percent(n)+'%').join(' + ')}${s.promo!=='none'?' · '+s.promo.replace('x',' × '):''}`;
+const actions=document.createElement('div');actions.className='history-actions';
+const date=document.createElement('span');date.style.cssText='font-size:11px;color:var(--muted)';date.textContent=new Date(entry.date).toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+const load=document.createElement('button');load.className='text-btn';load.textContent='Usar';load.onclick=()=>{state=JSON.parse(JSON.stringify(s));render();$('historyDialog').close();window.scrollTo({top:0,behavior:'smooth'})};
+const del=document.createElement('button');del.className='remove';del.setAttribute('aria-label','Eliminar cálculo');del.innerHTML='<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/></svg>';del.onclick=()=>{history=history.filter(h=>h.id!==entry.id);persist('history',history);renderHistory()};
+actions.append(date,load,del);card.append(top,detail,actions);list.append(card);
+});
+}
+$('historyBtn').onclick=()=>{renderHistory();$('historyDialog').showModal()};
+$('closeHistory').onclick=()=>$('historyDialog').close();
+$('historyDialog').onclick=e=>{if(e.target===$('historyDialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}};
+async function reload(){
+try{
+const [saved,items]=await Promise.all([get('state'),get('history')]);
+ready=false;
+state={...defaults(),...(saved||{})};
+if(!Array.isArray(state.extras))state.extras=[];
+state.extras=state.extras.slice(0,5);
+if(!['none','2x1','3x2'].includes(state.promo))state.promo='none';
+if(!['EUR','USD','MXN','ARS','COP','CLP','PEN','GBP'].includes(state.currency))state.currency='EUR';
+history=Array.isArray(items)?items.filter(e=>e&&e.state&&Array.isArray(e.state.extras)):[];
+render();renderHistory();ready=true;
+}catch{ready=true;render();notify('No se pudieron cargar los datos guardados')}
+}
+window.addEventListener('acornixdata',reload);
+reload();
+})();
+</script>
+</body>
+</html>

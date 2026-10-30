@@ -968,6 +968,29 @@
       "trending": 0
     },
     {
+      "id": "discount-calculator",
+      "name": "Discount Calculator",
+      "emoji": "🧮",
+      "category": "shopping",
+      "description": "Final price after discounts, stacked offers, 3 for 2 deals and tax",
+      "prompt": "A discount calculator: original price, percentage off and extra discounts stacked, shows final price and savings, a quick 2 fo",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 19385,
+      "sha256": "973c4858d9a35d739e3f2fa9a68dbbb921e569a15065a71d93c99d2bc92ad511",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "countries-visited",
       "name": "Countries Visited",
       "emoji": "🌍",
