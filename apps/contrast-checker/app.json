@@ -1,0 +1,15 @@
+{
+  "id": "contrast-checker",
+  "name": "Contrast Checker",
+  "emoji": "🌰",
+  "category": "graphics-design",
+  "description": "Check if two colours are readable: WCAG ratio, AA and AAA for normal and large text, a live preview and a button that fixes the colour.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 30
+}
