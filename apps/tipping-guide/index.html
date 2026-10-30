@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tipping Guide</title>
+<style>
+  :root { --bg:#f3faf5; --card:#fff; --ink:#15281c; --muted:#76907e; --a:#2b8a3e; --line:#dcefe2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:600px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 12px; font-size:26px; }
+  .pick { display:flex; gap:8px; align-items:center; background:var(--card); border-radius:18px; padding:8px 8px 8px 14px; box-shadow:0 2px 0 var(--line); margin-bottom:12px; } .pick span { font-size:34px; } .pick select { flex:1; padding:12px; border-radius:12px; border:0; font:inherit; font-weight:900; font-size:17px; background:#f1f8f3; color:var(--ink); }
+  .norm { border-radius:20px; padding:16px; color:#fff; margin-bottom:12px; } .norm b { font-size:20px; display:block; } .norm p { margin:6px 0 0; opacity:.95; line-height:1.45; font-weight:600; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; } .g { background:var(--card); border-radius:16px; padding:12px; box-shadow:0 2px 0 var(--line); } .g .e { font-size:22px; } .g b { display:block; font-size:16px; margin-top:4px; } .g span { color:var(--muted); font-size:12px; font-weight:800; }
+  .calc { background:var(--card); border-radius:22px; padding:16px; box-shadow:0 2px 0 var(--line); }
+  .calc .bill { display:flex; gap:8px; align-items:center; } .calc input { flex:1; min-width:0; font-size:34px; font-weight:900; border:0; border-bottom:3px solid var(--line); outline:none; background:none; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .pcts { display:flex; gap:6px; margin:14px 0; } .pcts button { flex:1; padding:10px 0; border-radius:12px; background:#f1f8f3; font-weight:900; } .pcts button.on { background:var(--a); color:#fff; }
+  .split { display:flex; align-items:center; gap:12px; font-weight:800; margin-bottom:12px; } .split button { width:36px; height:36px; border-radius:50%; background:#f1f8f3; font-weight:900; font-size:18px; }
+  .out { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; } .out div { background:#f1f8f3; border-radius:14px; padding:10px; text-align:center; } .out b { display:block; font-size:20px; font-variant-numeric:tabular-nums; } .out span { color:var(--muted); font-size:11px; font-weight:800; } .out div:last-child { background:var(--a); color:#fff; } .out div:last-child span { color:#d3f9d8; }
+  .round { margin-top:10px; width:100%; padding:10px; border-radius:12px; background:#f1f8f3; font-weight:800; font-size:13px; }
+  .small { color:var(--muted); font-size:12px; margin-top:12px; line-height:1.45; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💵 <span id="ttl"></span></h1>
+  <div class="pick"><span id="flag"></span><select id="country"></select></div>
+  <div class="norm" id="norm"></div>
+  <div class="grid" id="grid"></div>
+  <div class="calc"><div class="bill"><input id="bill" type="number" inputmode="decimal" placeholder="0"></div><div class="pcts" id="pcts"></div><div class="split"><button id="minus">−</button><span id="people"></span><button id="plus">＋</button></div><div class="out" id="out"></div><button class="round" id="round"></button></div>
+  <div class="small" id="small"></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Propinas', norms:['No se deja propina', 'Opcional: redondear', 'Se agradece', 'Se espera', 'Obligatoria en la práctica'], rest:'Restaurante', bar:'Bar / café', taxi:'Taxi', hotel:'Hotel (maletas)', tip:'Propina', total:'Total', each:'Por persona', person:n => n === 1 ? '1 persona' : `${n} personas`, roundB:'Redondear el total', note:'Guía orientativa: las costumbres cambian según la ciudad y el sitio. Si el servicio ya va incluido ("service compris", "coperto", "service charge"), no hace falta añadir más.', none:'Nada' }
+ : { title:'Tipping Guide', norms:['No tipping', 'Optional: round up', 'Appreciated', 'Expected', 'Practically mandatory'], rest:'Restaurant', bar:'Bar / café', taxi:'Taxi', hotel:'Hotel (bags)', tip:'Tip', total:'Total', each:'Each', person:n => n === 1 ? '1 person' : `${n} people`, roundB:'Round up the total', note:'A rough guide: customs vary by city and place. If service is already included ("service compris", "coperto", "service charge"), there\'s no need to add more.', none:'None' };
+// code, EN, ES, norm 0-4, restaurant, bar, taxi, hotel, default %, note EN, note ES
+const D = [['US', 'United States', 'Estados Unidos', 4, '18–22%', '$1–2/drink', '15–20%', '$2–5/bag', 20, 'Servers earn most of their pay in tips.', 'Los camareros cobran sobre todo de las propinas.'], ['CA', 'Canada', 'Canadá', 3, '15–20%', '$1/drink', '10–15%', '$2/bag', 18, 'Similar to the US, slightly lower.', 'Parecido a EE. UU., algo menos.'], ['MX', 'Mexico', 'México', 3, '10–15%', '10%', 'Round up', '20–50 MXN/bag', 15, 'Check if "propina" is already on the bill.', 'Mira si la "propina" ya viene en la cuenta.'], ['GB', 'United Kingdom', 'Reino Unido', 2, '10–12.5%', 'Not expected', 'Round up', '£1–2', 10, 'Often added as "service charge".', 'A menudo ya viene como "service charge".'], ['IE', 'Ireland', 'Irlanda', 2, '10%', 'Not expected', 'Round up', '€1–2', 10, '', ''], ['ES', 'Spain', 'España', 1, '5–10%', 'Coins', 'Round up', '€1', 5, 'Leaving the small change is normal.', 'Lo normal es dejar las monedas del cambio.'], ['FR', 'France', 'Francia', 1, '5–10%', 'Coins', 'Round up', '€1–2', 5, 'Service is included by law ("service compris").', 'El servicio va incluido por ley ("service compris").'], ['IT', 'Italy', 'Italia', 1, '5–10%', 'Coins', 'Round up', '€1–2', 5, 'A "coperto" cover charge is often added.', 'Suelen cobrar el "coperto" (cubierto).'], ['DE', 'Germany', 'Alemania', 2, '5–10%', 'Round up', '5–10%', '€1–2', 10, 'Say the total you want to pay when handing over cash.', 'Al pagar en efectivo, di el total que quieres pagar.'], ['PT', 'Portugal', 'Portugal', 1, '5–10%', 'Coins', 'Round up', '€1', 5, '', ''], ['NL', 'Netherlands', 'Países Bajos', 1, '5–10%', 'Round up', 'Round up', '€1–2', 5, '', ''], ['CH', 'Switzerland', 'Suiza', 1, 'Round up', 'Round up', 'Round up', 'CHF 1–2', 5, 'Service is included in prices.', 'El servicio va incluido en los precios.'], ['GR', 'Greece', 'Grecia', 2, '5–10%', 'Coins', 'Round up', '€1–2', 10, '', ''], ['TR', 'Türkiye', 'Turquía', 2, '5–10%', 'Round up', 'Round up', '20–50 TRY', 10, '', ''], ['AR', 'Argentina', 'Argentina', 3, '10%', '10%', 'Round up', 'ARS tip', 10, 'Tips are usually given in cash.', 'La propina suele darse en efectivo.'], ['BR', 'Brazil', 'Brasil', 1, '10% included', 'Not expected', 'Round up', 'R$5–10', 0, '10% "serviço" is usually on the bill.', 'Suele venir un 10% de "serviço" en la cuenta.'], ['CO', 'Colombia', 'Colombia', 2, '10% suggested', 'Not expected', 'Round up', 'COP tip', 10, 'They will ask if you want to include it.', 'Te preguntarán si quieres incluirla.'], ['PE', 'Peru', 'Perú', 2, '10%', 'Round up', 'Not expected', 'PEN 3–5', 10, '', ''], ['CL', 'Chile', 'Chile', 3, '10%', '10%', 'Not expected', 'CLP tip', 10, 'The bill usually suggests 10%.', 'La cuenta suele sugerir un 10%.'], ['JP', 'Japan', 'Japón', 0, 'None', 'None', 'None', 'None', 0, 'Tipping can be seen as rude. Great service is the norm.', 'Dar propina puede parecer de mala educación.'], ['KR', 'South Korea', 'Corea del Sur', 0, 'None', 'None', 'None', 'None', 0, '', ''], ['CN', 'China', 'China', 0, 'None', 'None', 'None', 'Small tip in big hotels', 0, '', ''], ['TH', 'Thailand', 'Tailandia', 2, 'Round up or 10%', 'Coins', 'Round up', '20–50 THB', 10, '', ''], ['VN', 'Vietnam', 'Vietnam', 2, '5–10%', 'Not expected', 'Round up', '20,000 VND', 5, '', ''], ['ID', 'Indonesia', 'Indonesia', 2, '5–10%', 'Not expected', 'Round up', '10,000 IDR', 5, 'Bali often adds service.', 'En Bali suele venir incluido.'], ['IN', 'India', 'India', 2, '10%', 'Round up', 'Round up', '₹50–100', 10, '', ''], ['AE', 'United Arab Emirates', 'Emiratos Árabes', 2, '10–15%', '10%', 'Round up', 'AED 5–10', 10, '', ''], ['EG', 'Egypt', 'Egipto', 3, '10–15%', 'Round up', '10%', 'EGP 20+', 10, '"Baksheesh" is part of daily life.', 'El "bakshish" es parte del día a día.'], ['MA', 'Morocco', 'Marruecos', 3, '10%', 'Coins', 'Round up', 'MAD 10–20', 10, '', ''], ['ZA', 'South Africa', 'Sudáfrica', 3, '10–15%', '10%', '10%', 'ZAR 10–20', 12, 'Also tip petrol attendants.', 'También se da propina en las gasolineras.'], ['AU', 'Australia', 'Australia', 1, 'Optional 10%', 'Not expected', 'Round up', 'Not expected', 0, 'Staff earn a decent minimum wage.', 'El sueldo mínimo es alto: no se espera.'], ['NZ', 'New Zealand', 'Nueva Zelanda', 1, 'Optional', 'Not expected', 'Round up', 'Not expected', 0, '', '']];
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id), flag = c => String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt(0)));
+$('ttl').textContent = T.title; $('small').textContent = T.note; $('round').textContent = T.roundB;
+const sorted = D.map((d, i) => ({ d, i })).sort((a, b) => (ES ? a.d[2] : a.d[1]).localeCompare(ES ? b.d[2] : b.d[1], ES ? 'es' : 'en'));
+$('country').innerHTML = sorted.map(({ d, i }) => `<option value="${i}">${ES ? d[2] : d[1]}</option>`).join('');
+const NC = ['#495057', '#1c7ed6', '#2f9e44', '#f08c00', '#e03131'];
+let st = { c: ES ? 5 : 0, pct: null, people: 1, bill: '' }, rounded = false;
+const save = () => store.set('tip', st);
+const tr = s => ES ? s.replace('Not expected', 'No se espera').replace('Round up', 'Redondear').replace('None', 'Nada').replace('Coins', 'Monedas').replace('/drink', '/bebida').replace('/bag', '/maleta').replace('included', 'incluido').replace('suggested', 'sugerido').replace('Optional', 'Opcional').replace('or', 'o').replace('Small tip in big hotels', 'Algo en hoteles grandes') : s;
+function render() {
+  const d = D[st.c], pct = st.pct == null ? d[8] : st.pct;
+  $('country').value = st.c; $('flag').textContent = flag(d[0]);
+  $('norm').style.background = NC[d[3]]; $('norm').innerHTML = `<b>${T.norms[d[3]]}</b>${(ES ? d[10] : d[9]) ? `<p>${ES ? d[10] : d[9]}</p>` : ''}`;
+  $('grid').innerHTML = [['🍽️', T.rest, d[4]], ['☕', T.bar, d[5]], ['🚕', T.taxi, d[6]], ['🧳', T.hotel, d[7]]].map(([e, n, v]) => `<div class="g"><div class="e">${e}</div><b>${tr(v)}</b><span>${n}</span></div>`).join('');
+  $('pcts').innerHTML = [0, 5, 10, 15, 18, 20].map(p => `<button class="${p === pct ? 'on' : ''}" data-p="${p}">${p ? p + '%' : T.none}</button>`).join('');
+  $('pcts').querySelectorAll('button').forEach(b => b.onclick = () => { st.pct = +b.dataset.p; rounded = false; save(); render(); });
+  $('people').textContent = T.person(st.people); $('bill').value = st.bill;
+  calc(pct);
+}
+function calc(pct) {
+  const bill = +st.bill || 0; let tip = bill * pct / 100, total = bill + tip;
+  if (rounded && bill) { total = Math.ceil(total / (total > 50 ? 5 : 1)) * (total > 50 ? 5 : 1); tip = total - bill; }
+  const f = v => v.toLocaleString(ES ? 'es' : 'en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  $('out').innerHTML = `<div><b>${f(tip)}</b><span>${T.tip}</span></div><div><b>${f(total)}</b><span>${T.total}</span></div><div><b>${f(total / st.people)}</b><span>${T.each}</span></div>`;
+}
+$('country').onchange = () => { st.c = +$('country').value; st.pct = null; rounded = false; save(); render(); };
+$('bill').oninput = () => { st.bill = $('bill').value; save(); calc(st.pct == null ? D[st.c][8] : st.pct); };
+$('minus').onclick = () => { if (st.people > 1) { st.people--; save(); render(); } };
+$('plus').onclick = () => { st.people++; save(); render(); };
+$('round').onclick = () => { rounded = !rounded; calc(st.pct == null ? D[st.c][8] : st.pct); };
+(async () => { st = { ...st, ...(await store.get('tip', {})) }; if (!D[st.c]) st.c = 0; render(); })();
+</script>
+</body>
+</html>

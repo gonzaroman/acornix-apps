@@ -79,6 +79,29 @@
       "trending": 0
     },
     {
+      "id": "tipping-guide",
+      "name": "Tipping Guide",
+      "emoji": "🌰",
+      "category": "travel",
+      "description": "How much to tip in restaurants, taxis and hotels in over 30 countries, with a tip calculator and bill splitter.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 12704,
+      "sha256": "4b4a5e72d6ffa06cd16c8e95d51c204638a533621202d5c0d882f71c3a801820",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "spirograph",
       "name": "Spirograph",
       "emoji": "🌀",
