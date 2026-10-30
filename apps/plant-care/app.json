@@ -1,0 +1,15 @@
+{
+  "id": "plant-care",
+  "name": "Plant Care",
+  "emoji": "🌰",
+  "category": "lifestyle",
+  "description": "Your plants and when to water each one, with reminders of who is thirsty. Snap a plant and your AI identifies it and tells you how to care for it.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 36
+}

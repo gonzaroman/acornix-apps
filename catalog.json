@@ -100,6 +100,32 @@
       "trending": 0
     },
     {
+      "id": "plant-care",
+      "name": "Plant Care",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Your plants and when to water each one, with reminders of who is thirsty. Snap a plant and your AI identifies it and tells you how to care for it.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "ai",
+        "camera"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 12832,
+      "sha256": "e44649e0e09ee81c38ccd9bfe119b935992d6aca28a64e5f5998d7d0beaa5c21",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "pixel-art",
       "name": "Pixel Art",
       "emoji": "🟥",
