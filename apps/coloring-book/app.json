@@ -1,0 +1,15 @@
+{
+  "id": "coloring-book",
+  "name": "Coloring Book",
+  "emoji": "🎨",
+  "category": "kids",
+  "description": "Tap to fill drawings with colour: house, cat, fish, rocket and more. Save your art to the gallery.",
+  "prompt": "A coloring book for kids with at least 8 simple line drawings drawn in code, like a house, a cat, a fish, a car, a flower, a rocket, tap an area to fill it with the chosen colour from a big palette, undo, and save the picture with Acornix.files.export.",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 65
+}
