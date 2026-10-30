@@ -1,0 +1,15 @@
+{
+  "id": "wish-list",
+  "name": "Wish List",
+  "emoji": "📷",
+  "category": "shopping",
+  "description": "Things you want, with photos, prices, priorities and how much you have saved for each.",
+  "prompt": "A wishlist of things you want to buy with a name, price, link, photo from the gall",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 84
+}

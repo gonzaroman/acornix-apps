@@ -54,6 +54,29 @@
       "trending": 0
     },
     {
+      "id": "wish-list",
+      "name": "Wish List",
+      "emoji": "📷",
+      "category": "shopping",
+      "description": "Things you want, with photos, prices, priorities and how much you have saved for each.",
+      "prompt": "A wishlist of things you want to buy with a name, price, link, photo from the gall",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 27129,
+      "sha256": "4802c7e320e823c5e3702dd26dab6ebe8f14917f85c761cf34de06888ed1b0fb",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "unit-price",
       "name": "Unit Price",
       "emoji": "🌰",
