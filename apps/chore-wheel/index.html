@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chore Wheel</title>
+<style>
+  :root { --bg:#eef6ff; --card:#fff; --ink:#1b2a41; --muted:#7a8aa3; --a:#3b82f6; --line:#dde8f6; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  button { font:inherit; color:inherit; border:0; cursor:pointer; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 30px); }
+  h1 { margin:0 0 4px; font-size:26px; } .sub { color:var(--muted); font-weight:600; margin-bottom:14px; }
+  .wheelbox { position:relative; width:min(84vw, 340px); aspect-ratio:1; margin:6px auto 12px; }
+  .wheelbox canvas { width:100%; height:100%; }
+  .pin { position:absolute; left:50%; top:-6px; transform:translateX(-50%); width:0; height:0; border-left:16px solid transparent; border-right:16px solid transparent; border-top:30px solid var(--ink); filter:drop-shadow(0 3px 4px #0003); }
+  .spin { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:84px; height:84px; border-radius:50%; background:#fff; font-weight:900; font-size:15px; box-shadow:0 6px 20px #1b2a4133; }
+  .spin:disabled { opacity:.7; }
+  .result { text-align:center; font-weight:900; font-size:18px; min-height:26px; margin-bottom:12px; }
+  .card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:12px; box-shadow:0 2px 0 var(--line); }
+  .card h3 { margin:0 0 10px; font-size:16px; display:flex; justify-content:space-between; align-items:center; }
+  .card h3 small { color:var(--muted); font-weight:700; font-size:13px; }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { padding:7px 10px 7px 12px; border-radius:20px; font-weight:800; font-size:14px; display:inline-flex; gap:6px; align-items:center; }
+  .chip .x { background:none; padding:0 2px; opacity:.6; font-size:13px; }
+  .addrow { display:flex; gap:8px; margin-top:10px; } .addrow input { flex:1; min-width:0; padding:11px 12px; border-radius:12px; border:2px solid var(--line); font:inherit; outline:none; color:var(--ink); } .addrow button { padding:0 16px; border-radius:12px; background:var(--a); color:#fff; font-weight:900; font-size:18px; }
+  .task { display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--line); }
+  .task:first-child { border-top:0; }
+  .task .who { padding:4px 10px; border-radius:12px; font-weight:800; font-size:13px; color:#fff; white-space:nowrap; }
+  .task .t { flex:1; font-weight:600; } .task.done .t { text-decoration:line-through; color:var(--muted); }
+  .task .ck { width:30px; height:30px; border-radius:50%; border:2px solid var(--line); background:#fff; font-size:15px; }
+  .task.done .ck { background:#22c55e; border-color:#22c55e; color:#fff; }
+  .assign { width:100%; padding:14px; border-radius:16px; background:var(--ink); color:#fff; font-weight:900; font-size:15px; margin-top:4px; }
+  .score { display:flex; gap:8px; flex-wrap:wrap; } .score div { flex:1; min-width:90px; border-radius:14px; padding:10px; text-align:center; color:#fff; } .score b { display:block; font-size:22px; } .score span { font-size:12px; font-weight:800; }
+  .muted { color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧹 <span id="ttl"></span></h1>
+  <div class="sub" id="sub"></div>
+  <div class="wheelbox"><canvas id="c" width="680" height="680"></canvas><div class="pin"></div><button class="spin" id="spin"></button></div>
+  <div class="result" id="result"></div>
+  <div class="card"><h3><span id="lWeek"></span><small id="prog"></small></h3><div id="tasks"></div><button class="assign" id="assign"></button></div>
+  <div class="card"><h3 id="lScore"></h3><div class="score" id="score"></div></div>
+  <div class="card"><h3 id="lPeople"></h3><div class="chips" id="people"></div><form class="addrow" id="fP"><input id="iP" maxlength="16"><button>＋</button></form></div>
+  <div class="card"><h3 id="lChores"></h3><div class="chips" id="chores"></div><form class="addrow" id="fC"><input id="iC" maxlength="30"><button>＋</button></form></div>
+</div>
+<script>
+const ES = (navigator.language || '').toLowerCase().startsWith('es');
+const T = ES ? { title:'Ruleta de tareas', sub:'Reparte las tareas de casa de forma justa (y divertida)', spin:'GIRAR', week:'Esta semana', assign:'🎲 Repartir todo al azar', score:'Puntos', people:'Personas', chores:'Tareas', person:'Nombre', chore:'Nueva tarea', gets:(p, c) => `🎉 ${c} → ${p}`, none:'Añade personas y tareas abajo y pulsa repartir.', defP:['Ana', 'Leo', 'Sam'], defC:['🍽️ Fregar', '🧺 Lavadora', '🗑️ Basura', '🧹 Barrer', '🛏️ Hacer camas', '🛒 Compra', '🚿 Baño', '🪴 Regar'] }
+ : { title:'Chore Wheel', sub:'Share the housework fairly (and make it fun)', spin:'SPIN', week:'This week', assign:'🎲 Assign everything at random', score:'Points', people:'People', chores:'Chores', person:'Name', chore:'New chore', gets:(p, c) => `🎉 ${c} → ${p}`, none:'Add people and chores below, then assign.', defP:['Ana', 'Leo', 'Sam'], defC:['🍽️ Dishes', '🧺 Laundry', '🗑️ Trash', '🧹 Sweep', '🛏️ Make beds', '🛒 Groceries', '🚿 Bathroom', '🪴 Water plants'] };
+const store = {
+  async get(k, d) { try { if (window.Acornix) { const v = await Acornix.db.get(k); return v == null ? d : v; } const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  async set(k, v) { try { if (window.Acornix) await Acornix.db.set(k, v); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const COLS = ['#3b82f6', '#f97316', '#22c55e', '#a855f7', '#ef4444', '#14b8a6', '#eab308', '#ec4899'];
+const $ = id => document.getElementById(id), cv = $('c'), g = cv.getContext('2d');
+['ttl', 'sub', 'spin', 'lWeek', 'assign', 'lScore', 'lPeople', 'lChores'].forEach((id, i) => $(id).textContent = [T.title, T.sub, T.spin, T.week, T.assign, T.score, T.people, T.chores][i]);
+$('iP').placeholder = T.person; $('iC').placeholder = T.chore;
+let s = { people: T.defP.slice(), chores: T.defC.slice(), tasks: [], points: {} }, angle = 0, spinning = false;
+const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const colOf = p => COLS[Math.max(0, s.people.indexOf(p)) % COLS.length];
+const save = () => store.set('s', s);
+function wheel() {
+  const n = Math.max(1, s.people.length), R = 330, cx = 340; g.clearRect(0, 0, 680, 680);
+  for (let i = 0; i < n; i++) {
+    const a0 = angle + i * 2 * Math.PI / n, a1 = a0 + 2 * Math.PI / n; g.fillStyle = s.people.length ? COLS[i % COLS.length] : '#cbd5e1';
+    g.beginPath(); g.moveTo(cx, cx); g.arc(cx, cx, R, a0, a1); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 6; g.stroke();
+    if (s.people[i]) { g.save(); g.translate(cx, cx); g.rotate((a0 + a1) / 2); g.fillStyle = '#fff'; g.font = '900 38px system-ui'; g.textAlign = 'right'; g.textBaseline = 'middle'; g.fillText(s.people[i].slice(0, 10), R - 26, 0); g.restore(); }
+  }
+  g.beginPath(); g.arc(cx, cx, R, 0, 7); g.strokeStyle = '#1b2a41'; g.lineWidth = 10; g.stroke();
+}
+// The pin is at the top: which slice is under it.
+const under = () => { const n = s.people.length, a = ((-Math.PI / 2 - angle) % (2 * Math.PI) + 4 * Math.PI) % (2 * Math.PI); return s.people[Math.floor(a / (2 * Math.PI / n))]; };
+$('spin').onclick = () => {
+  if (spinning || !s.people.length) return;
+  // The chore with fewest assignments this week goes on the wheel.
+  const open = s.chores.filter(c => !s.tasks.some(t => t.c === c)), chore = open.length ? open[Math.floor(Math.random() * open.length)] : s.chores[Math.floor(Math.random() * s.chores.length)];
+  if (!chore) return; spinning = true; $('spin').disabled = true; $('result').textContent = chore + ' …';
+  const start = angle, total = 6 * Math.PI + Math.random() * 2 * Math.PI, t0 = performance.now(), dur = 3200; let lastTick = 0;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); angle = start + total * e; wheel();
+    const slice = Math.floor(angle / (2 * Math.PI / s.people.length)); if (slice !== lastTick) { lastTick = slice; try { window.Acornix && Acornix.vibrate(4); } catch (er) {} }
+    if (k < 1) requestAnimationFrame(step); else done(chore);
+  };
+  requestAnimationFrame(step);
+};
+function done(chore) {
+  const p = under(); spinning = false; $('spin').disabled = false; $('result').textContent = T.gets(p, chore);
+  const i = s.tasks.findIndex(t => t.c === chore); if (i >= 0) s.tasks[i].p = p; else s.tasks.push({ c: chore, p, done: false });
+  save(); render(); try { window.Acornix && Acornix.vibrate([30, 50, 30]); } catch (e) {}
+}
+$('assign').onclick = () => {
+  if (!s.people.length || !s.chores.length) return;
+  // Shuffle the chores and deal them out in turn, so everyone gets a fair share.
+  const ch = s.chores.slice().sort(() => Math.random() - .5), ppl = s.people.slice().sort(() => Math.random() - .5);
+  s.tasks = ch.map((c, i) => ({ c, p: ppl[i % ppl.length], done: false })); $('result').textContent = ''; save(); render();
+};
+function render() {
+  wheel();
+  const doneN = s.tasks.filter(t => t.done).length; $('prog').textContent = s.tasks.length ? `${doneN}/${s.tasks.length}` : '';
+  $('tasks').innerHTML = s.tasks.length ? s.tasks.map((t, i) => `<div class="task ${t.done ? 'done' : ''}"><span class="who" style="background:${colOf(t.p)}">${esc(t.p)}</span><span class="t">${esc(t.c)}</span><button class="ck" data-i="${i}">${t.done ? '✓' : ''}</button></div>`).join('') : `<p class="muted">${T.none}</p>`;
+  $('tasks').querySelectorAll('.ck').forEach(b => b.onclick = () => { const t = s.tasks[+b.dataset.i]; t.done = !t.done; s.points[t.p] = (s.points[t.p] || 0) + (t.done ? 1 : -1); save(); render(); if (t.done) try { window.Acornix && Acornix.vibrate(15); } catch (e) {} });
+  $('score').innerHTML = s.people.map(p => `<div style="background:${colOf(p)}"><b>${s.points[p] || 0}</b><span>${esc(p)}</span></div>`).join('');
+  $('people').innerHTML = s.people.map((p, i) => `<span class="chip" style="background:${COLS[i % COLS.length]}22;color:${COLS[i % COLS.length]}">${esc(p)}<button class="x" data-p="${i}">✕</button></span>`).join('');
+  $('chores').innerHTML = s.chores.map((c, i) => `<span class="chip" style="background:#f1f5f9">${esc(c)}<button class="x" data-c="${i}">✕</button></span>`).join('');
+  $('people').querySelectorAll('[data-p]').forEach(b => b.onclick = () => { s.people.splice(+b.dataset.p, 1); save(); render(); });
+  $('chores').querySelectorAll('[data-c]').forEach(b => b.onclick = () => { const c = s.chores.splice(+b.dataset.c, 1)[0]; s.tasks = s.tasks.filter(t => t.c !== c); save(); render(); });
+}
+$('fP').onsubmit = e => { e.preventDefault(); const v = $('iP').value.trim(); if (v && !s.people.includes(v) && s.people.length < 8) { s.people.push(v); $('iP').value = ''; save(); render(); } };
+$('fC').onsubmit = e => { e.preventDefault(); const v = $('iC').value.trim(); if (v && !s.chores.includes(v)) { s.chores.push(v); $('iC').value = ''; save(); render(); } };
+(async () => { s = { ...s, ...(await store.get('s', {})) }; render(); })();
+</script>
+</body>
+</html>

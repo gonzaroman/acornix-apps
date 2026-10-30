@@ -337,6 +337,29 @@
       "trending": 0
     },
     {
+      "id": "chore-wheel",
+      "name": "Chore Wheel",
+      "emoji": "🌰",
+      "category": "lifestyle",
+      "description": "Share the housework fairly: spin the wheel or deal all chores at random, tick them off and see who earns more points.",
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-10-30",
+      "updated": "2026-10-30",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 11417,
+      "sha256": "989844047092b144f2a8155f43e72d414bce81906895a72fbd260f5423fee3c5",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "birthdays",
       "name": "Birthdays",
       "emoji": "🌰",

@@ -1,0 +1,15 @@
+{
+  "id": "chore-wheel",
+  "name": "Chore Wheel",
+  "emoji": "🌰",
+  "category": "lifestyle",
+  "description": "Share the housework fairly: spin the wheel or deal all chores at random, tick them off and see who earns more points.",
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "es",
+  "version": 1,
+  "added": "2026-10-30",
+  "updated": "2026-10-30",
+  "featured": false,
+  "issue": 39
+}
