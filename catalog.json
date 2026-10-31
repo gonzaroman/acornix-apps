@@ -1161,8 +1161,8 @@
       ],
       "size": 8804,
       "sha256": "1c2ca09d5f966db98d45b7cda7ce7d9ac29e7dc5dc5f6ba840f3d4233548f01d",
-      "downloads": 1,
-      "trending": 1
+      "downloads": 2,
+      "trending": 2
     },
     {
       "id": "fuel-cost",
@@ -2185,8 +2185,8 @@
       ],
       "size": 35586,
       "sha256": "4fdd87b5c829801775367384fd34a5eff410e9f6e1c048e05574132de175b995",
-      "downloads": 1,
-      "trending": 1
+      "downloads": 2,
+      "trending": 2
     },
     {
       "id": "water-tracker",
@@ -2747,8 +2747,8 @@
       ],
       "size": 37939,
       "sha256": "f27b39db5718362f7bf5e6670c206059ac44973e7427c0b88ef4ec547959c188",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "sudoku",
@@ -3097,8 +3097,8 @@
       ],
       "size": 10371,
       "sha256": "cfbfaae621006353a60fb00eed708ae250cf88ca5679469ea189e8cadd05b614",
-      "downloads": 2,
-      "trending": 2
+      "downloads": 3,
+      "trending": 3
     },
     {
       "id": "listing-writer-ai",
