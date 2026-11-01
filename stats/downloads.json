@@ -13,7 +13,7 @@
     "air-quality": {
       "asset": 689382020,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "ambient-sounds": {
       "asset": 689917783,
@@ -198,7 +198,7 @@
     "darts-501": {
       "asset": 689455034,
       "base": 0,
-      "count": 0
+      "count": 2
     },
     "date-calculator": {
       "asset": 689379107,
@@ -1486,7 +1486,7 @@
     "2026-11-01": {
       "abc-animals": 1,
       "affirmations": 1,
-      "air-quality": 0,
+      "air-quality": 1,
       "ambient-sounds": 1,
       "ar-space": 2,
       "avatar-maker": 1,
@@ -1523,7 +1523,7 @@
       "country-facts": 0,
       "currency-converter": 3,
       "daily-journal": 1,
-      "darts-501": 0,
+      "darts-501": 2,
       "date-calculator": 0,
       "debt-payoff": 1,
       "decision-wheel": 1,

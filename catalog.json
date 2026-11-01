@@ -4737,8 +4737,8 @@
       ],
       "size": 13125,
       "sha256": "873de3f8cf9c22ad1442cdc31de89bbcd5d66b229ccde69ee514d70ab9f708c1",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 2,
+      "trending": 2
     },
     {
       "id": "daily-journal",
@@ -5243,8 +5243,8 @@
       ],
       "size": 43434,
       "sha256": "bf896f1f3f321123fa24a809bcd3c88327b1df39b196f3bf220c0a647dc1a55f",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "merge-2048",
