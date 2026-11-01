@@ -68,7 +68,7 @@
     "bowling": {
       "asset": 688546710,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "break-even": {
       "asset": 689236127,
@@ -93,7 +93,7 @@
     "bubble-pop": {
       "asset": 691576072,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "bucket-list": {
       "asset": 690544371,
@@ -123,12 +123,12 @@
     "castle-defense": {
       "asset": 688546775,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "castle-siege-3d": {
       "asset": 689103921,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "charades": {
       "asset": 689038539,
@@ -153,7 +153,7 @@
     "coloring-book": {
       "asset": 691575838,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "compare-cities": {
       "asset": 689409627,
@@ -188,7 +188,7 @@
     "currency-converter": {
       "asset": 689202358,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "daily-journal": {
       "asset": 689166836,
@@ -378,7 +378,7 @@
     "hoop-shot-3d": {
       "asset": 689103893,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "invoice-maker": {
       "asset": 689236040,
@@ -518,12 +518,12 @@
     "neon-drift-3d": {
       "asset": 689103848,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "neon-drone-race": {
       "asset": 688546887,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "neon-kaleidoscope": {
       "asset": 688546915,
@@ -838,7 +838,7 @@
     "star-defender": {
       "asset": 688999087,
       "base": 0,
-      "count": 3
+      "count": 5
     },
     "star-finder-ar": {
       "asset": 690496600,
@@ -908,7 +908,7 @@
     "tennis-scorer": {
       "asset": 689454755,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "time-tracker": {
       "asset": 689236084,
@@ -1497,31 +1497,31 @@
       "birthdays": 0,
       "block-drop": 4,
       "bmi": 3,
-      "bowling": 3,
+      "bowling": 4,
       "break-even": 1,
       "breathing": 0,
       "brick-breaker": 5,
       "bubble-level": 3,
-      "bubble-pop": 0,
+      "bubble-pop": 1,
       "bucket-list": 0,
       "business-card": 2,
       "calculator": 2,
       "capitals-quiz": 0,
       "caption-writer": 0,
-      "castle-defense": 1,
-      "castle-siege-3d": 2,
+      "castle-defense": 2,
+      "castle-siege-3d": 3,
       "charades": 2,
       "chore-wheel": 1,
       "coffee-ratio": 0,
       "collage": 0,
-      "coloring-book": 0,
+      "coloring-book": 1,
       "compare-cities": 0,
       "compound-interest": 1,
       "contrast-checker": 0,
       "count-and-tap": 0,
       "countries-visited": 0,
       "country-facts": 0,
-      "currency-converter": 3,
+      "currency-converter": 4,
       "daily-journal": 1,
       "darts-501": 2,
       "date-calculator": 0,
@@ -1559,7 +1559,7 @@
       "habit-streaks": 2,
       "hiit-timer": 1,
       "homework-helper-ai": 0,
-      "hoop-shot-3d": 3,
+      "hoop-shot-3d": 4,
       "invoice-maker": 1,
       "itinerary": 0,
       "kalimba": 0,
@@ -1587,8 +1587,8 @@
       "minesweeper": 1,
       "mood-journal": 0,
       "morse-code": 0,
-      "neon-drift-3d": 2,
-      "neon-drone-race": 2,
+      "neon-drift-3d": 3,
+      "neon-drone-race": 3,
       "neon-kaleidoscope": 3,
       "neon-snake": 5,
       "net-worth": 1,
@@ -1651,7 +1651,7 @@
       "spirograph": 0,
       "split-bill": 1,
       "stack-tower-3d": 2,
-      "star-defender": 3,
+      "star-defender": 5,
       "star-finder-ar": 1,
       "stock-counter": 1,
       "stop-motion": 0,
@@ -1665,7 +1665,7 @@
       "tasks": 1,
       "team-picker": 0,
       "tell-the-time": 0,
-      "tennis-scorer": 0,
+      "tennis-scorer": 1,
       "time-tracker": 1,
       "timer-stopwatch": 1,
       "times-tables": 0,
