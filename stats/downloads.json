@@ -323,7 +323,7 @@
     "generative-art": {
       "asset": 690472696,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "gift-ideas": {
       "asset": 690544318,
@@ -378,7 +378,7 @@
     "hoop-shot-3d": {
       "asset": 689103893,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "invoice-maker": {
       "asset": 689236040,
@@ -783,7 +783,7 @@
     "sky-hopper": {
       "asset": 688998851,
       "base": 0,
-      "count": 6
+      "count": 7
     },
     "sleep-log": {
       "asset": 689415482,
@@ -1970,7 +1970,7 @@
       "freelance-rate": 1,
       "fridge-chef": 0,
       "fuel-cost": 0,
-      "generative-art": 3,
+      "generative-art": 4,
       "gift-ideas": 0,
       "goals": 2,
       "golf-scorecard": 0,
@@ -1981,7 +1981,7 @@
       "habit-streaks": 2,
       "hiit-timer": 1,
       "homework-helper-ai": 0,
-      "hoop-shot-3d": 4,
+      "hoop-shot-3d": 5,
       "invoice-maker": 1,
       "itinerary": 0,
       "kalimba": 0,
@@ -2062,7 +2062,7 @@
       "should-i-buy-it": 0,
       "size-converter": 0,
       "sketchbook": 0,
-      "sky-hopper": 6,
+      "sky-hopper": 7,
       "sleep-log": 0,
       "slide-puzzle": 0,
       "snap-ideas-ai": 3,
