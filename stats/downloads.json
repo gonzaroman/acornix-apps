@@ -1063,7 +1063,7 @@
     "trip-planner": {
       "asset": 691332425,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "trivia-night": {
       "asset": 689038412,
@@ -2444,7 +2444,7 @@
       "tournament": 0,
       "training-plan-ai": 0,
       "trip-budget": 0,
-      "trip-planner": 0,
+      "trip-planner": 1,
       "trivia-night": 1,
       "truth-or-dare": 1,
       "tuner": 0,
