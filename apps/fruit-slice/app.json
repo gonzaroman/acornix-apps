@@ -1,0 +1,18 @@
+{
+  "id": "fruit-slice",
+  "name": "Fruit Slice",
+  "emoji": "🎨",
+  "category": "games",
+  "description": "Swipe to slice flying fruit, chain combos and dodge the bombs.",
+  "description_i18n": {
+    "en": "Swipe to slice flying fruit, rack up combos, and dodge the bombs."
+  },
+  "prompt": "A swipe game like Fruit Ninja: fruits fly up from the bottom, swipe to slice them with a glowing blade trail, juice splashes, combos for slicing several at once, bombs that end the game, 3 lives, arcade and zen modes. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a c",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false,
+  "issue": 90
+}
