@@ -1,0 +1,17 @@
+{
+  "id": "live-markets",
+  "name": "Markets",
+  "emoji": "📈",
+  "category": "finance",
+  "description": "The price of bitcoin, Nvidia, Apple, Google and Amazon, live from the internet.",
+  "description_i18n": {
+    "es": "El precio del bitcoin, Nvidia, Apple, Google y Amazon, de internet y al momento."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

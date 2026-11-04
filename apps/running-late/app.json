@@ -1,0 +1,17 @@
+{
+  "id": "running-late",
+  "name": "Running Late",
+  "emoji": "🏃",
+  "category": "productivity",
+  "description": "Pick how late you'll be and tell someone on WhatsApp, with your location.",
+  "description_i18n": {
+    "es": "Elige cuánto vas a tardar y avisa por WhatsApp con tu ubicación."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

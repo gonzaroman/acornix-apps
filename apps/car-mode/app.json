@@ -1,0 +1,17 @@
+{
+  "id": "car-mode",
+  "name": "Car Mode",
+  "emoji": "🚗",
+  "category": "travel",
+  "description": "Turns the volume up, opens Maps and plays your music. Automate it with your car's Bluetooth.",
+  "description_i18n": {
+    "es": "Sube el volumen, abre Maps y pone tu música. Automatízalo con el Bluetooth del coche."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

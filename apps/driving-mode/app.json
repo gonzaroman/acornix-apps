@@ -1,0 +1,17 @@
+{
+  "id": "driving-mode",
+  "name": "Driving",
+  "emoji": "🚗",
+  "category": "travel",
+  "description": "Turns Bluetooth on, opens Google Maps to your destination, volume up and Do not disturb.",
+  "description_i18n": {
+    "es": "Enciende el Bluetooth, abre Google Maps hacia tu destino, volumen al máximo y No molestar."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

@@ -1,0 +1,17 @@
+{
+  "id": "drink-water",
+  "name": "Drink Water",
+  "emoji": "💧",
+  "category": "health-fitness",
+  "description": "A buzz and a reminder to drink water. Schedule it a few times a day.",
+  "description_i18n": {
+    "es": "Una vibración y un aviso para beber agua. Prográmalo varias veces al día."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

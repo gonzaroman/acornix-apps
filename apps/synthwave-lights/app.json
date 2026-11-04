@@ -1,0 +1,17 @@
+{
+  "id": "synthwave-lights",
+  "name": "Synthwave Lights",
+  "emoji": "🎶",
+  "category": "music",
+  "description": "Plays synthwave music on YouTube while the flashlight flashes.",
+  "description_i18n": {
+    "es": "Pone música synthwave en YouTube y la linterna parpadea al ritmo."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

@@ -1,0 +1,17 @@
+{
+  "id": "sos-location",
+  "name": "SOS With My Location",
+  "emoji": "🆘",
+  "category": "utilities",
+  "description": "Sends your location to someone you trust and flashes the flashlight in SOS.",
+  "description_i18n": {
+    "es": "Manda tu ubicación a alguien de confianza y hace parpadear la linterna en SOS."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

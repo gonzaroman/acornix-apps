@@ -1,0 +1,17 @@
+{
+  "id": "bedtime-mode",
+  "name": "Bedtime Mode",
+  "emoji": "😴",
+  "category": "lifestyle",
+  "description": "Do not disturb, low brightness, low volume and tomorrow's alarm, in one tap.",
+  "description_i18n": {
+    "es": "No molestar, brillo bajo, volumen bajo y la alarma de mañana, con un toque."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

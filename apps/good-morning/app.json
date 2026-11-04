@@ -1,0 +1,17 @@
+{
+  "id": "good-morning",
+  "name": "Good Morning",
+  "emoji": "☀️",
+  "category": "lifestyle",
+  "description": "The date, the weather in your city and your battery, out loud, and Do not disturb off.",
+  "description_i18n": {
+    "es": "La fecha, el tiempo en tu ciudad y tu batería, en voz alta, y quita el No molestar."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

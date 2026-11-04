@@ -2,6 +2,296 @@
   "version": 1,
   "apps": [
     {
+      "id": "weather-out-loud",
+      "name": "What's the Weather?",
+      "emoji": "🌦️",
+      "category": "weather",
+      "description": "Says the temperature of your city out loud, straight from the internet.",
+      "description_i18n": {
+        "es": "Te dice en voz alta la temperatura de tu ciudad, directamente de internet."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 25296,
+      "sha256": "b111118cdca61c4fd2f001c22bec276233f1093bf965520b22a802441f684461",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "synthwave-lights",
+      "name": "Synthwave Lights",
+      "emoji": "🎶",
+      "category": "music",
+      "description": "Plays synthwave music on YouTube while the flashlight flashes.",
+      "description_i18n": {
+        "es": "Pone música synthwave en YouTube y la linterna parpadea al ritmo."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24439,
+      "sha256": "0beb120096e72b268b6fbb4aab61f23eb28402b229fbe06a9f656e7186fe9537",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "sos-location",
+      "name": "SOS With My Location",
+      "emoji": "🆘",
+      "category": "utilities",
+      "description": "Sends your location to someone you trust and flashes the flashlight in SOS.",
+      "description_i18n": {
+        "es": "Manda tu ubicación a alguien de confianza y hace parpadear la linterna en SOS."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24414,
+      "sha256": "4a49dfb897273e62b4dd33752cc96c5a0b9eee5faa5ebf1267fd1ef49ecac7b3",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "night-mode",
+      "name": "Night Mode",
+      "emoji": "🌙",
+      "category": "lifestyle",
+      "description": "Lowest brightness, volume at 80 %, Do not disturb, and it tells you the time.",
+      "description_i18n": {
+        "es": "Brillo al mínimo, volumen al 80 %, No molestar y te dice la hora."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24275,
+      "sha256": "6f5a8c504ec1d38a79922c21c8486888d27dcdb76efa8905cf4cc352db849d82",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "live-markets",
+      "name": "Markets",
+      "emoji": "📈",
+      "category": "finance",
+      "description": "The price of bitcoin, Nvidia, Apple, Google and Amazon, live from the internet.",
+      "description_i18n": {
+        "es": "El precio del bitcoin, Nvidia, Apple, Google y Amazon, de internet y al momento."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 26385,
+      "sha256": "96dea76a366e1c0589a6cc3c7c9a891c2164169e0443607ab7ad1fdaf12bc141",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "driving-mode",
+      "name": "Driving",
+      "emoji": "🚗",
+      "category": "travel",
+      "description": "Turns Bluetooth on, opens Google Maps to your destination, volume up and Do not disturb.",
+      "description_i18n": {
+        "es": "Enciende el Bluetooth, abre Google Maps hacia tu destino, volumen al máximo y No molestar."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24652,
+      "sha256": "44556c596375d896ee9d793ff703030fb22e49acb81cb33d7b7097e01299d10e",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "car-mode",
+      "name": "Car Mode",
+      "emoji": "🚗",
+      "category": "travel",
+      "description": "Turns the volume up, opens Maps and plays your music. Automate it with your car's Bluetooth.",
+      "description_i18n": {
+        "es": "Sube el volumen, abre Maps y pone tu música. Automatízalo con el Bluetooth del coche."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24315,
+      "sha256": "bbc23f834dd69eb77a0aa8124e5a20e8ca7851ae3a8051b9fa8b48552cca10d3",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "bedtime-mode",
+      "name": "Bedtime Mode",
+      "emoji": "😴",
+      "category": "lifestyle",
+      "description": "Do not disturb, low brightness, low volume and tomorrow's alarm, in one tap.",
+      "description_i18n": {
+        "es": "No molestar, brillo bajo, volumen bajo y la alarma de mañana, con un toque."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": true,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24675,
+      "sha256": "07f04d2076cdf6988ac9f8c9e8be957b41188e328853c99a2d4eaf1fe44d13a9",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "running-late",
+      "name": "Running Late",
+      "emoji": "🏃",
+      "category": "productivity",
+      "description": "Pick how late you'll be and tell someone on WhatsApp, with your location.",
+      "description_i18n": {
+        "es": "Elige cuánto vas a tardar y avisa por WhatsApp con tu ubicación."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24618,
+      "sha256": "691fbd549f3178a7e14c6026c491a4252f706b12aab585dbce615d9db44350de",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "music-mode",
+      "name": "Music Mode",
+      "emoji": "🎵",
+      "category": "music",
+      "description": "Turns the volume up, opens YouTube Music and presses play.",
+      "description_i18n": {
+        "es": "Sube el volumen, abre YouTube Music y le da a reproducir."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24323,
+      "sha256": "080428f30dece3f971622dbec2cd4591b4ca204ff6ee38d02012a0562868384a",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "merge-drop",
       "name": "Merge Drop",
       "emoji": "🍉",
@@ -24,6 +314,35 @@
       ],
       "size": 41355,
       "sha256": "2e2424f5f88cc6ec6bdc58c2430df07cbd0d54adb26c6887e5b39e517239f5ff",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "light-alarm",
+      "name": "Light Alarm",
+      "emoji": "⏰",
+      "category": "lifestyle",
+      "description": "The alarm rings at the time you choose, the flashlight flashes and it says good morning.",
+      "description_i18n": {
+        "es": "Suena la alarma a la hora que elijas, la linterna parpadea y te da los buenos días."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24296,
+      "sha256": "bff7f2a7f0df3ca1884a23175830c2a12da94b07fe51e6ba3f4265175bcb757f",
       "downloads": 0,
       "trending": 0
     },
@@ -54,6 +373,122 @@
       "trending": 0
     },
     {
+      "id": "cooking-timer",
+      "name": "Kitchen Timer",
+      "emoji": "🍳",
+      "category": "food-drink",
+      "description": "Pick what you are cooking and it sets the right timer.",
+      "description_i18n": {
+        "es": "Elige qué cocinas y pone el temporizador justo."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 25313,
+      "sha256": "70d735486f70a2e53ee5bfd4e79035afa4ef52ba9de650d5a66864518f021a9f",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "im-home",
+      "name": "I'm Home",
+      "emoji": "🏠",
+      "category": "lifestyle",
+      "description": "Tells someone on WhatsApp that you got home, with your location.",
+      "description_i18n": {
+        "es": "Avisa por WhatsApp de que has llegado, con tu ubicación."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24306,
+      "sha256": "d50a2c297e49dc0f972f91edddc02a3bc08b0c320bdd15dabfe0c2a7eae1eb15",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "battery-check",
+      "name": "How's My Battery?",
+      "emoji": "🔋",
+      "category": "utilities",
+      "description": "If the battery is low it dims the screen and warns you; otherwise it says how much is left.",
+      "description_i18n": {
+        "es": "Si queda poca batería baja el brillo y te avisa; si no, te dice cuánta te queda."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24559,
+      "sha256": "7c663e8253ef99fc027f104cdc5ced70ff8f170e7350f08aea610753e8a89a36",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "good-morning",
+      "name": "Good Morning",
+      "emoji": "☀️",
+      "category": "lifestyle",
+      "description": "The date, the weather in your city and your battery, out loud, and Do not disturb off.",
+      "description_i18n": {
+        "es": "La fecha, el tiempo en tu ciudad y tu batería, en voz alta, y quita el No molestar."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 25477,
+      "sha256": "300bac13a6783e8b0d85690ae7d3496a967c7f21176cc0f0d6b745c5a656a4fb",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "fruit-slice",
       "name": "Fruit Slice",
       "emoji": "🍓",
@@ -76,6 +511,35 @@
       ],
       "size": 45874,
       "sha256": "825e2f6458436857ffefa4df6f5b40fb5a020740b05eaf84cfbb7d41c3fcc6bd",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "drink-water",
+      "name": "Drink Water",
+      "emoji": "💧",
+      "category": "health-fitness",
+      "description": "A buzz and a reminder to drink water. Schedule it a few times a day.",
+      "description_i18n": {
+        "es": "Una vibración y un aviso para beber agua. Prográmalo varias veces al día."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24101,
+      "sha256": "afa21323815f0eadf32bc7f1abf4b7f95b98c29d70b11f7330f7d26014017fce",
       "downloads": 0,
       "trending": 0
     },
@@ -106,6 +570,35 @@
       "trending": 0
     },
     {
+      "id": "voice-countdown",
+      "name": "Countdown",
+      "emoji": "🔁",
+      "category": "utilities",
+      "description": "Counts down out loud from the number you choose.",
+      "description_i18n": {
+        "es": "Cuenta hacia atrás en voz alta desde el número que elijas."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24680,
+      "sha256": "8d9b6dd5796c5ada8021ca4dbb05af4c3f64a3e621f5586cee69bbac406962d5",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "color-dash",
       "name": "Color Dash",
       "emoji": "🌈",
@@ -128,6 +621,35 @@
       ],
       "size": 35299,
       "sha256": "daef77fb46e5b65af3f2deed5d0a372ebc226be0186d45f5a6ffdebaa4c39ddc",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
+      "id": "cinema-mode",
+      "name": "Cinema Mode",
+      "emoji": "🎬",
+      "category": "entertainment",
+      "description": "Silent, Do not disturb and the lowest brightness to watch a film.",
+      "description_i18n": {
+        "es": "Silencio, No molestar y brillo al mínimo para ver una película."
+      },
+      "prompt": "",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [
+        "phone",
+        "shortcut"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "size": 24259,
+      "sha256": "9da2fddb89bdb1118c9d8be70be3f8f1b6321f002fef4ca2f45d1976e518349b",
       "downloads": 0,
       "trending": 0
     },

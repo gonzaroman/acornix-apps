@@ -1,0 +1,17 @@
+{
+  "id": "cinema-mode",
+  "name": "Cinema Mode",
+  "emoji": "🎬",
+  "category": "entertainment",
+  "description": "Silent, Do not disturb and the lowest brightness to watch a film.",
+  "description_i18n": {
+    "es": "Silencio, No molestar y brillo al mínimo para ver una película."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

@@ -1,0 +1,17 @@
+{
+  "id": "battery-check",
+  "name": "How's My Battery?",
+  "emoji": "🔋",
+  "category": "utilities",
+  "description": "If the battery is low it dims the screen and warns you; otherwise it says how much is left.",
+  "description_i18n": {
+    "es": "Si queda poca batería baja el brillo y te avisa; si no, te dice cuánta te queda."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

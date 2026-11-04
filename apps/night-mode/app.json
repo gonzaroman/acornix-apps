@@ -1,0 +1,17 @@
+{
+  "id": "night-mode",
+  "name": "Night Mode",
+  "emoji": "🌙",
+  "category": "lifestyle",
+  "description": "Lowest brightness, volume at 80 %, Do not disturb, and it tells you the time.",
+  "description_i18n": {
+    "es": "Brillo al mínimo, volumen al 80 %, No molestar y te dice la hora."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

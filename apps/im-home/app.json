@@ -1,0 +1,17 @@
+{
+  "id": "im-home",
+  "name": "I'm Home",
+  "emoji": "🏠",
+  "category": "lifestyle",
+  "description": "Tells someone on WhatsApp that you got home, with your location.",
+  "description_i18n": {
+    "es": "Avisa por WhatsApp de que has llegado, con tu ubicación."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

@@ -1,0 +1,17 @@
+{
+  "id": "light-alarm",
+  "name": "Light Alarm",
+  "emoji": "⏰",
+  "category": "lifestyle",
+  "description": "The alarm rings at the time you choose, the flashlight flashes and it says good morning.",
+  "description_i18n": {
+    "es": "Suena la alarma a la hora que elijas, la linterna parpadea y te da los buenos días."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}

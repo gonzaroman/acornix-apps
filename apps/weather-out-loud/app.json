@@ -1,0 +1,17 @@
+{
+  "id": "weather-out-loud",
+  "name": "What's the Weather?",
+  "emoji": "🌦️",
+  "category": "weather",
+  "description": "Says the temperature of your city out loud, straight from the internet.",
+  "description_i18n": {
+    "es": "Te dice en voz alta la temperatura de tu ciudad, directamente de internet."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": true
+}

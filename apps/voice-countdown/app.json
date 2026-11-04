@@ -1,0 +1,17 @@
+{
+  "id": "voice-countdown",
+  "name": "Countdown",
+  "emoji": "🔁",
+  "category": "utilities",
+  "description": "Counts down out loud from the number you choose.",
+  "description_i18n": {
+    "es": "Cuenta hacia atrás en voz alta desde el número que elijas."
+  },
+  "prompt": "",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false
+}
