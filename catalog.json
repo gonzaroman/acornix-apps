@@ -28,6 +28,32 @@
       "trending": 0
     },
     {
+      "id": "color-dash",
+      "name": "Color Dash",
+      "emoji": "🎨",
+      "category": "games",
+      "description": "Tap to jump through spinning rings, only through your own color.",
+      "description_i18n": {
+        "en": "Tap to jump through spinning rings—but only through your matching color!"
+      },
+      "prompt": "A one-tap game like Color Switch: tap to make a ball jump upward through rotating colored rings, it can only pass through the segment of its own color, color changers between obstacles, endless levels getting faster. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a ca",
+      "author": "gonzaroman",
+      "language": "es",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 35299,
+      "sha256": "daef77fb46e5b65af3f2deed5d0a372ebc226be0186d45f5a6ffdebaa4c39ddc",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "star-finder-ar",
       "name": "Star Finder AR",
       "emoji": "🔭",
