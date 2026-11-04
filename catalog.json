@@ -82,13 +82,13 @@
     {
       "id": "daily-word",
       "name": "Daily Word",
-      "emoji": "🎨",
+      "emoji": "🟩",
       "category": "games",
       "description": "Guess the word of the day in six tries and share your emoji grid.",
       "description_i18n": {
-        "en": "Guess the word of the day in six tries and share your emoji grid."
+        "es": "Adivina la palabra del día en seis intentos y comparte tu cuadrícula."
       },
-      "prompt": "A daily word game like Wordle: guess the hidden 5 letter word in 6 tries, tiles turn green, yellow or gray with flip animations, on-screen keyboard, the same word for everyone each day picked from the date, separate word lists for Spanish and English with at least 300 common words each, statistics and guess distribution. Share as an emoji grid text with Acornix.files.share or navigator.share. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, ve",
+      "prompt": "A daily word game like Wordle: guess the hidden 5 letter word in 6 tries, tiles turn green, yellow or gray with flip animations, on-screen keyboard, the same word for everyone each day picked from the date, separate word lists for Spanish and English with at least 300 common words each, statistics and guess distribution. Share as an emoji grid text with Acornix.files.share or navigator.share. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
       "author": "gonzaroman",
       "language": "en",
       "version": 1,
@@ -100,8 +100,8 @@
       "files": [
         "index.html"
       ],
-      "size": 60560,
-      "sha256": "4177c2ca36a563cebce857774e4f3dcae5c52aa8404b9fc8a0ee2c51efbb1716",
+      "size": 60561,
+      "sha256": "25e36cd3f56729b2112db7542143407741cadb391b11e3508c83de4d5c5339d4",
       "downloads": 0,
       "trending": 0
     },
