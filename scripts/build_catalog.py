@@ -34,7 +34,7 @@ DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 # What the code uses, shown as labels so people know before installing.
 TAGS = {
     "ai": re.compile(r"\baskAI\b|\bai\.chat\b"),
-    "phone": re.compile(r"Acornix\.(speak|flashlight|notify|battery|deviceInfo|listApps|openApp|alarm|timer|call|sms|whatsapp|maps|launchApp|volume|ringer|doNotDisturb|brightness|keepAwake|media|calendar|clipboard|done)\b"),
+    "phone": re.compile(r"id=\"acornix-recipe\"|Acornix\.(speak|flashlight|notify|battery|deviceInfo|listApps|openApp|alarm|timer|call|sms|whatsapp|maps|launchApp|volume|ringer|doNotDisturb|brightness|keepAwake|media|calendar|clipboard|done)\b"),
     "camera": re.compile(r"getUserMedia\s*\(\s*\{[^}]*video|\bcapture\s*=|facingMode"),
     "microphone": re.compile(r"getUserMedia\s*\(\s*\{[^}]*audio|SpeechRecognition"),
     # Loading scripts or modules from the web, or fetching from a web address, even when the address is kept
