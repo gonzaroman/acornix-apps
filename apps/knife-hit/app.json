@@ -1,0 +1,18 @@
+{
+  "id": "knife-hit",
+  "name": "Knife Hit",
+  "emoji": "🎨",
+  "category": "games",
+  "description": "Throw knives into a spinning log without hitting the others.",
+  "description_i18n": {
+    "en": "Throw knives at a spinning log without hitting the other knives."
+  },
+  "prompt": "A one-tap game like Knife Hit: throw knives into a spinning wooden log, do not hit knives already stuck in it, apples to slice for points, a boss log every 5 stages with changing rotation speed and direction, splinter particles. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result",
+  "author": "gonzaroman",
+  "language": "en",
+  "version": 1,
+  "added": "2026-11-04",
+  "updated": "2026-11-04",
+  "featured": false,
+  "issue": 89
+}
