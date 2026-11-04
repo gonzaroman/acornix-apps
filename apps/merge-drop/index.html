@@ -256,7 +256,7 @@ function hideModal(){
 function drop(){
  if(!loaded||paused||gameOver||time-dropAt<.42)return;
  audioInit();const r=R[current];
- fruits.push({id:uid++,k:current,x:Math.max(14+r,Math.min(W-14-r,aim)),y:31,vx:0,vy:5,born:time,rot:(Math.random()-.5)*.25,spin:0});
+ fruits.push({id:uid++,k:current,x:Math.max(14+r,Math.min(W-14-r,aim)),y:31,vx:(Math.random()-.5)*.8,vy:5,born:time,rot:(Math.random()-.5)*.25,spin:0});
  current=next;next=randFruit();dropAt=time;drops++;tone(0,true);vibrate(12);save();updateUI();
 }
 let pointer=null;

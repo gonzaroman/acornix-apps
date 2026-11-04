@@ -1,13 +1,13 @@
 {
   "id": "merge-drop",
   "name": "Merge Drop",
-  "emoji": "🎮",
+  "emoji": "🍉",
   "category": "games",
   "description": "Drop fruits, merge equal ones into bigger ones and do not let the jar overflow.",
   "description_i18n": {
-    "en": "Drop fruits, merge matching ones into bigger fruits, and don’t let the jar overflow."
+    "es": "Suelta frutas, junta las iguales para hacerlas más grandes y que no se desborde el tarro."
   },
-  "prompt": "A fruit merging physics game like Suika: drop fruits i",
+  "prompt": "A fruit merging physics game like Suika: drop fruits into a jar, two equal fruits touching merge into a bigger one, game over when the jar overflows. Real 2D physics, cute faces on the fruits, next fruit preview, combo popups. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
   "author": "gonzaroman",
   "language": "en",
   "version": 1,
