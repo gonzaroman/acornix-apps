@@ -80,6 +80,32 @@
       "trending": 0
     },
     {
+      "id": "daily-word",
+      "name": "Daily Word",
+      "emoji": "🎨",
+      "category": "games",
+      "description": "Guess the word of the day in six tries and share your emoji grid.",
+      "description_i18n": {
+        "en": "Guess the word of the day in six tries and share your emoji grid."
+      },
+      "prompt": "A daily word game like Wordle: guess the hidden 5 letter word in 6 tries, tiles turn green, yellow or gray with flip animations, on-screen keyboard, the same word for everyone each day picked from the date, separate word lists for Spanish and English with at least 300 common words each, statistics and guess distribution. Share as an emoji grid text with Acornix.files.share or navigator.share. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, ve",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 60560,
+      "sha256": "4177c2ca36a563cebce857774e4f3dcae5c52aa8404b9fc8a0ee2c51efbb1716",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "color-dash",
       "name": "Color Dash",
       "emoji": "🌈",

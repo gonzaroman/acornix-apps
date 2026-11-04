@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#101321">
+<title>Ritmo</title>
+<style>
+:root{color-scheme:dark;--bg:#101321;--panel:#1b2033;--muted:#969eb8;--ink:#f6f5ff;--green:#37c993;--yellow:#e8b94f;--gray:#444b62;--line:#353c55;--accent:#b8a0ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:radial-gradient(ellipse at 15% 0%,#302647 0,transparent 45%),radial-gradient(ellipse at 100% 65%,#132d35 0,transparent 45%),var(--bg)}
+button{font:inherit;cursor:pointer;border:0;color:inherit;touch-action:manipulation}
+button:disabled{cursor:default;opacity:.5}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.app{height:100%;height:100dvh;max-width:480px;margin:auto;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px calc(env(safe-area-inset-bottom,0px) + 8px);display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:52px}
+.brand{display:flex;align-items:center;gap:9px}
+.logo{width:31px;height:33px;display:grid;grid-template-columns:repeat(2,1fr);gap:3px;transform:rotate(-7deg)}
+.logo i{background:var(--green);border-radius:4px}.logo i:nth-child(2){background:var(--yellow)}.logo i:nth-child(3){background:#9b83ee}
+h1{font-size:25px;letter-spacing:3px;margin:0;font-weight:900}
+.tools{display:flex;gap:3px}
+.icon{background:transparent;border-radius:12px;min-width:42px;height:44px;display:grid;place-items:center;color:#c5cae0}
+.icon svg{height:21px;width:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.daily{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:9px 2px 0;flex-shrink:0}
+.eyebrow{text-transform:uppercase;letter-spacing:1.7px;font-size:10px;font-weight:800;color:var(--accent)}
+#dateLabel{font-size:13px;color:#bfc5da;margin-top:4px}
+.streak{border:1px solid #ffffff13;border-radius:16px;background:#ffffff05;padding:8px 12px;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800}
+.streak small{font-size:10px;font-weight:500;color:var(--muted);display:block}
+.status{min-height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#bcc4db;margin-top:8px}
+.status .dot{width:6px;height:6px;border-radius:100%;background:var(--green);box-shadow:0 0 10px #37c99360}
+.board-wrap{flex:1;min-height:0;display:flex;justify-content:center;align-items:center;padding:7px 0 12px}
+.board{height:100%;max-height:384px;aspect-ratio:5/6;width:auto;max-width:85vw;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:6px}
+.tile{border:1.5px solid var(--line);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,5.8vw,29px);font-weight:800;line-height:1;background:#191e30b3;backface-visibility:hidden;min-width:0;min-height:0;text-transform:uppercase;box-shadow:0 3px 0 #070a121a}
+.tile.filled{border-color:#8c80b4;background:#27283e}
+.tile.green{background:var(--green);border-color:var(--green);color:#082e26}
+.tile.yellow{background:var(--yellow);border-color:var(--yellow);color:#3a2c0e}
+.tile.gray{background:var(--gray);border-color:var(--gray);color:white}
+.tile.pop{animation:pop .15s ease-out}
+.tile.flip{animation:flip .52s ease-in-out}
+.tile.jump{animation:jump .5s ease}
+.board.shake{animation:shake .35s ease}
+@keyframes pop{50%{transform:scale(1.12)}}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+@keyframes jump{35%{transform:translateY(-11px)}65%{transform:translateY(2px)}}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.keyboard{display:flex;flex-direction:column;gap:6px;flex-shrink:0;user-select:none;touch-action:manipulation;padding-top:2px}
+.key-row{display:flex;justify-content:center;gap:5px}
+.key{height:47px;min-width:0;flex:1;max-width:44px;border-radius:9px;background:#30374f;font-size:14px;font-weight:750;box-shadow:0 3px 0 #080b1480;transition:background .18s,transform .08s;display:flex;align-items:center;justify-content:center;padding:0}
+.key:active{transform:translateY(2px);box-shadow:none}
+.key.wide{flex:1.55;max-width:65px;font-size:10px}
+.key.green{background:var(--green);color:#082e26}.key.yellow{background:var(--yellow);color:#3a2c0e}.key.gray{background:#222839;color:#737d96;box-shadow:0 3px 0 #080b1430}
+.bottom{height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;color:#77829d;font-size:10px}
+.link{padding:6px 2px;background:none;color:#b8a0ff;font-size:11px}
+#toast{position:fixed;z-index:30;top:calc(env(safe-area-inset-top,0px) + 76px);left:50%;transform:translate(-50%,-8px);opacity:0;pointer-events:none;padding:13px 18px;border-radius:14px;background:#f1eefc;color:#21233a;box-shadow:0 12px 35px #0005;font-size:13px;font-weight:700;text-align:center;max-width:90vw;width:max-content;transition:.2s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.overlay{position:fixed;inset:0;z-index:20;background:#080b16bb;backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 17px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.overlay.open{display:flex}
+.sheet{position:relative;background:linear-gradient(145deg,#262a43,#181e30);border:1px solid #ffffff16;border-radius:26px;padding:25px 23px;max-width:420px;width:100%;max-height:100%;overflow-y:auto;box-shadow:0 30px 90px #0007;animation:enter .23s ease-out}
+@keyframes enter{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+.close{position:absolute;right:10px;top:10px;font-size:26px;font-weight:300}
+.sheet h2{font-size:25px;margin:5px 35px 7px 0;letter-spacing:-.5px}
+.sheet p{color:#b7c0d9;line-height:1.6;font-size:13px;margin:9px 0}
+.badge{color:var(--green);font-size:11px;letter-spacing:1.5px;font-weight:800;text-transform:uppercase}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:22px 0}
+.metric{text-align:center}.metric b{display:block;font-size:26px;letter-spacing:-1px}.metric span{display:block;font-size:10px;color:#a6b0ca;line-height:1.4;margin-top:4px}
+.section-title{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin:20px 0 12px;color:#c7cce0}
+.dist{display:flex;flex-direction:column;gap:6px}
+.dist-row{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;height:22px}.dist-row>span{width:9px}
+.track{flex:1;height:100%;background:#ffffff05;border-radius:5px;overflow:hidden}
+.bar{background:#515974;height:100%;min-width:24px;border-radius:5px;text-align:right;padding:3px 7px}
+.bar.today{background:var(--green);color:#0d3026}
+.primary,.secondary{width:100%;min-height:48px;border-radius:14px;font-weight:800;font-size:14px;margin-top:10px;padding:12px}
+.primary{background:linear-gradient(100deg,#c6aeff,#a995f5);color:#251c43;box-shadow:0 5px 20px #a995f523}
+.secondary{background:#ffffff09;border:1px solid #ffffff13;color:#d7dcf1}
+.next{text-align:center;margin-top:17px;color:#8994b1;font-size:11px}.next b{display:block;color:#d7dbed;letter-spacing:2px;font-size:20px;margin:5px}
+.example{display:flex;gap:5px;margin:15px 0 8px}.example span{width:40px;height:42px;border-radius:8px;display:grid;place-items:center;font-weight:800;background:#444b62}.example .g{background:var(--green);color:#082e26}.example .y{background:var(--yellow);color:#3a2c0e}
+.legend{display:flex;gap:10px;align-items:center;margin:13px 0;font-size:13px;color:#c1c9dd}.swatch{height:22px;width:22px;flex-shrink:0;border-radius:6px}
+.setting{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff0d;padding:15px 0;gap:12px;font-size:14px}
+.segment{display:flex;gap:4px;background:#111629;border-radius:10px;padding:4px}.segment button{padding:9px 11px;border-radius:7px;background:transparent;font-size:12px}.segment button.active{background:#a995f5;color:#201934;font-weight:800}
+.toggle{background:#414962;border-radius:25px;width:50px;height:29px;padding:4px}.toggle::after{content:"";display:block;width:21px;height:21px;border-radius:100%;background:white;transition:transform .2s}.toggle.on{background:var(--green)}.toggle.on::after{transform:translateX(21px)}
+.fine{font-size:11px!important;color:#8994b1!important}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+.confetto{position:absolute;top:-20px;width:8px;height:13px;border-radius:2px;animation:fall 2.1s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--drift),105vh) rotate(700deg);opacity:.2}}
+@media(max-height:640px){.daily{margin-top:2px}.status{margin-top:3px;min-height:23px}.key{height:42px}.bottom{height:24px}header{height:45px}.board{gap:5px}.tile{border-radius:8px}.app{padding-top:calc(env(safe-area-inset-top,0px) + 3px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div class="brand"><div class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 id="brand">RITMO</h1></div>
+<div class="tools">
+<button class="icon" id="helpBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 0 1 4.6 1c0 1.7-2.3 1.8-2.3 3.4M12 17h.01"/></svg></button>
+<button class="icon" id="statsBtn"><svg viewBox="0 0 24 24"><path d="M4 20V12h4v8M10 20V4h4v16M16 20V8h4v12"/></svg></button>
+<button class="icon" id="settingsBtn"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#101321"/><circle cx="16" cy="17" r="3" fill="#101321"/></svg></button>
+</div>
+</header>
+<div class="daily"><div><div class="eyebrow" id="dailyLabel"></div><div id="dateLabel"></div></div><div class="streak"><span aria-hidden="true">🔥</span><div><span id="streakValue">0</span><small id="streakLabel"></small></div></div></div>
+<div id="status" class="status" aria-live="polite"></div>
+<div class="board-wrap"><div class="board" id="board" role="img"></div></div>
+<div class="keyboard" id="keyboard"></div>
+<div class="bottom"><span id="footer"></span><button class="link" id="bottomAction"></button></div>
+</main>
+<div id="toast" role="status"></div>
+<div class="overlay" id="overlay">
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+<button class="icon close" id="closeModal">×</button>
+<div id="modalContent"></div>
+</section>
+</div>
+<div id="confetti" aria-hidden="true"></div>
+<script>
+'use strict';
+const T = {
+es:{
+brand:'RITMO',daily:'Tu dosis diaria de palabras',streak:'días en racha',help:'Cómo jugar',stats:'Estadísticas',settings:'Ajustes',close:'Cerrar',
+footer:'Una palabra. Un momento para ti.',play:'¡A por la palabra de hoy!',attempt:'Intento {n} de 6',complete:'Reto completado',lostStatus:'Mañana, una nueva oportunidad',viewResult:'Ver resultado',how:'Cómo se juega',
+helpIntro:'Encuentra la palabra de 5 letras en 6 intentos. Cada intento debe estar en nuestro diccionario.',
+correct:'Letra y posición correctas.',present:'Está en la palabra, en otra posición.',absent:'No aparece, o ya has encontrado todas sus copias.',
+helpEnd:'Una misma palabra para todo el mundo, cada día. El reto cambia a las 00:00 UTC. Español e inglés tienen palabras y estadísticas independientes.',
+accents:'Escribe sin tildes. La Ñ sí cuenta como una letra distinta.',go:'¡Vamos allá!',enter:'ENVIAR',backspace:'Borrar',short:'Necesitas 5 letras',unknown:'No está en el diccionario',already:'Ya has probado esa palabra',
+brilliant:'¡Extraordinario!',great:'¡Qué buena jugada!',nice:'¡Lo conseguiste!',lose:'Hoy se resistió',winSub:'Un pequeño triunfo. Una gran racha.',loseSub:'Cada intento cuenta. ¡Vuelve mañana!',answer:'La palabra era {word}',yourStats:'Tu recorrido',played:'Jugadas',winRate:'Victorias',currentStreak:'Racha actual',bestStreak:'Mejor racha',distribution:'Distribución de intentos',shareCard:'Compartir tarjeta ✨',shareText:'Compartir cuadrícula',sharing:'Preparando…',next:'Tu próxima palabra en',language:'Idioma del juego',spanish:'Español',english:'English',sound:'Sonidos',haptics:'Vibración',settingsNote:'Cada idioma tiene su propio reto. Tus partidas se guardan automáticamente.',saveError:'No se pudo guardar. Reintentando…',loadError:'No se pudieron cargar tus datos.',retry:'Reintentar',shareError:'No se pudo compartir. Inténtalo de nuevo.',copied:'Cuadrícula copiada',copy:'Copiar cuadrícula',shareTitle:'Ritmo · Reto diario',cardTag:'TU MOMENTO DE CADA DÍA',cardWin:'¡Palabra encontrada!',cardLose:'Nos vemos mañana',cardStreak:'RACHA',cardTries:'INTENTOS',days:'días',made:'Made with Acornix',newDay:'¡Ya está aquí la palabra de hoy!',board:'Tablero: {n} intentos realizados.',row:'Intento {n}',empty:'Vacío',green:'correcta',yellow:'otra posición',gray:'ausente',utc:'Nueva palabra a las 00:00 UTC',noGames:'Tu historia empieza con la palabra de hoy.',textReady:'Tu resultado está listo para compartir.',shareUnavailable:'Comparte copiando el texto de abajo.',on:'Activado',off:'Desactivado'
+},
+en:{
+brand:'RITMO',daily:'Your daily dose of words',streak:'day streak',help:'How to play',stats:'Statistics',settings:'Settings',close:'Close',
+footer:'One word. A moment for yourself.',play:'Meet your word of the day!',attempt:'Guess {n} of 6',complete:'Daily challenge complete',lostStatus:'A fresh chance tomorrow',viewResult:'View result',how:'How to play',
+helpIntro:'Find the 5-letter word in 6 tries. Each guess must be in our dictionary.',
+correct:'Right letter, right spot.',present:'In the word, but in another spot.',absent:'Not in the word, or all copies are already accounted for.',
+helpEnd:'The same word for everyone, every day. A new challenge starts at 00:00 UTC. Spanish and English have separate words and statistics.',
+accents:'In Spanish, type without accents. Ñ is a separate letter.',go:'Let’s play!',enter:'ENTER',backspace:'Delete',short:'You need 5 letters',unknown:'Not in the dictionary',already:'You already tried that word',
+brilliant:'Absolutely brilliant!',great:'Beautifully done!',nice:'You found your rhythm!',lose:'A tricky one today',winSub:'A little win. A growing streak.',loseSub:'Every guess counts. Come back tomorrow!',answer:'The word was {word}',yourStats:'Your journey',played:'Played',winRate:'Win rate',currentStreak:'Current streak',bestStreak:'Best streak',distribution:'Guess distribution',shareCard:'Share result card ✨',shareText:'Share emoji grid',sharing:'Preparing…',next:'Your next word in',language:'Game language',spanish:'Español',english:'English',sound:'Sounds',haptics:'Haptics',settingsNote:'Each language has its own challenge. Your games are saved automatically.',saveError:'Could not save. Retrying…',loadError:'Your data could not be loaded.',retry:'Retry',shareError:'Could not share. Please try again.',copied:'Grid copied',copy:'Copy grid',shareTitle:'Ritmo · Daily challenge',cardTag:'YOUR DAILY MOMENT',cardWin:'You found the word!',cardLose:'See you tomorrow',cardStreak:'STREAK',cardTries:'GUESSES',days:'days',made:'Made with Acornix',newDay:'Your new daily word is here!',board:'Board: {n} guesses made.',row:'Guess {n}',empty:'Empty',green:'correct',yellow:'another position',gray:'absent',utc:'New word at 00:00 UTC',noGames:'Your story starts with today’s word.',textReady:'Your result is ready to share.',shareUnavailable:'Share by copying the text below.',on:'On',off:'Off'
+}
+};
+const L = ((window.Acornix && Acornix.language) || navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+const RAW_EN = `
+about above abuse actor acute adapt admit adopt adult after again agent agile agree ahead aisle alarm album alert alike alive allow alone along alter amber amend ample angel anger angle angry ankle apart apple apply arena argue arise armor aroma array arrow aside asset atlas attic audio audit avoid awake award aware awful bacon badge badly baker basic basin basis batch beach beard beast began begin begun being belly below bench berry birth black blade blame bland blank blast blaze bleed blend bless blind blink bliss block blond blood bloom blown blunt board boast bonus boost booth bound brain brake brand brass brave bread break breed brick bride brief bring brisk broad broke brown brush build built bunch bunny burst buyer cabin cable cacao camel canal candy canoe cargo carry carve catch cause cease cedar chain chair chalk champ chaos charm chart chase cheap cheat check cheek cheer chess chest chick chief child chill china choir chose chunk cider cigar civic civil claim clamp clash class clean clear clerk click cliff climb cling clock close cloth cloud clown coach coast cocoa color coral couch could count court cover crack craft crane crash crawl crazy cream creek creep crest cried crime crisp cross crowd crown cruel crush crust curve cycle daily dairy daisy dance dealt death debit debug decay decor delay delta demon dense depth derby devil diary digit diner dirty disco ditch diver dizzy dodge doing donor donut doubt dough dozen draft drain drama drank drawn dream dress dried drift drill drink drive drone drove drown eager eagle early earth eaten eater ebony eight elbow elder elect elite empty enemy enjoy enter entry equal equip erase error erupt essay event every exact exile exist extra fable facet facts faint fairy faith false fancy fatal fatty fault favor feast fence ferry fetch fever fiber field fiery fifth fifty fight final finer first flame flank flash flask fleet flesh flick flies fling float flock flood floor flora flour fluid flush flute focus foggy force forge forth forty forum found frame frank fraud fresh fried front frost fruit fully funny fuzzy gamer games gamma gases gauge ghost giant given giver gland glare glass glaze glide globe gloom glory gloss glove going grace grade grain grand grape graph grasp grass grave great greed green greet grief grill grind groan groom gross group grove grown guard guess guest guide guilt habit hairy handy happy hardy harsh haste hasty hatch hated haunt haven hazel heard heart heavy hedge hello hence herbs hobby honey honor horse hotel house human humid humor hurry ideal image imply inbox incur index indie inner input intro irony issue ivory jelly jewel joint joker jolly judge juice juicy jumbo kayak karma khaki kiosk kitty knack knead kneel knife knock known label labor laden lager lance large laser later laugh layer learn lease leash least leave ledge legal lemon level lever light liked lilac limit linen liner links lions liver llama lobby local lodge lofty logic loose loser lotus lover lower loyal lucky lunar lunch lying lyric magic major maker mango manor maple march marry marsh match maybe mayor medal media melon mercy merge merit merry metal meter metro micro midst might minor minus mixed mixer model modem moist money month moody moral motor mound mount mouse mouth moved movie muddy mural music naive naked nasal nasty naval needy nerve never newer newly nicer niche niece night noble noise noisy north notch novel nurse nylon occur ocean offer often olive onion onset opera orbit order organ other otter ought ounce outer ovens owner oxide ozone paddy pagan paint panel panic pansy paper parks party pasta paste patch patio pause peace peach pearl pedal penal penny perch peril petty phase phone photo piano piece pilot pinch pinky pitch pizza place plaid plain plane plank plant plate plaza plead pluck plumb plume plush poems point poker polar porch posed pound power prank press price pride prime print prior prize probe prone proof prose proud prove proxy pulse pupil puppy puree purse queen query quest queue quick quiet quilt quite quota quote radar radio rainy raise rally ranch range rapid ratio raven razor reach react ready realm rebel recap recur refer reign relax relay relic remix renew repay reply reset resin retro retry rider ridge rifle right rigid rinse ripen risen rival river roast robin robot rocky rodeo rogue rolls roots ropes rough round route royal rugby ruler rural rusty sadly safer saint salad salon salsa salty sandy satin sauce saved saver savor scale scare scarf scary scene scent scoop scope score scout screw seeds sense serve setup seven shade shady shaft shake shall shame shape share shark sharp shave shawl sheep sheer sheet shelf shell shine shiny shirt shock shoes shook shoot shore short shout shove shown siege sight silly since siren sixth sixty skate skill skirt skull slack slain slang slash slate slave sleek sleep slept slice slide slope small smart smash smell smile smoke snack snail snake sneak sniff snore snowy sober socks solar solid solve sonic sorry sound south space spade spare spark speak spear speed spell spend spent spice spicy spill spine spite split spoil spoke spoon sport spray spree squad stack staff stage stain stair stake stale stalk stamp stand stare stark stars start state stays steak steal steam steel steep steer stems stern stick stiff still sting stink stock stole stone stood stool stops store storm story stove strap straw stray strip stuck study stuff stump style sugar suite sunny super surge sushi swamp swear sweat sweep sweet swept swift swing swirl sword sworn table taken tales talks tally tango tasty teach tears tease teddy teeth tempo tends tenet tense tenth terms terra tests thank theft their theme there these thick thief thigh thing think third thorn those three threw throw thumb tiger tight tiles timer times timid tired title toast today token tonal tones tonic tooth topic torch total touch tough towel tower toxic trace track trade trail train trait trash treat trend trial tribe trick tried troop truck truly trunk trust truth tutor twice twist tying ultra uncle under undue unfed union unite unity until upper upset urban usage usher using usual utter vague valid value valve vapor vault vegan venue verse video views villa vinyl viola viral virus visit vista vital vivid vocal vodka voice voter vowel wagon waist walks walls waltz wants waste watch water waves waxed weary weave wedge weeds weigh weird whale wheat wheel where which while white whole whose widen wider widow width wield winds windy wiser witch woman women woods woody words world worry worse worst worth would wound woven wreck wrist write wrong wrote yacht yearn years yeast yield young yours youth zebra zesty zonal
+`;
+const RAW_ES = `
+abajo abeto abrir abono abuso acabo acera acero acido actor acude acudo acuna agita agito aguda agudo aguja ahora ajena ajeno alado alamo albas album aldea alega alego aleja alejo aleta algas algun alias aliar alisa aliso altar altas altos alzar amaba amada amado amaga amago amara amaro ambas ambos amiga amigo amora amorf amule ancha ancho andan andar andas anden andes anexo angel anglo anima anime animo anual antes antro anula anulo añada añade añado añeja añejo aorta apaga apago apela apelo apena apeno apnea apoyo arado araña arbol arcas arcos arden arder ardes ardia ardor arena arias arida arido arman armar armas arnes aroma arroz asada asado asilo asoma asomo aspan hasta astro ataba atada atado atajo atara ateos atica atico atino atlas atomo atril atroz audaz audio aulas autos autor avaro avena aviar avion aviso ayuda ayudo ayuna ayuno azada azote azul
+babas babor bache bahia baila baile bailo bajan bajar bajas bajel bajos balas balda balde balon balsa banal banca banco banda bando baños barba barca barco bardo bares barra barro basan basar bases basta baste basto batas baten batea batel batir batis beban bebas beben beber bebes bebia bella bello besan besar besas besos bestia bicho biela bilis bingo birra bizco blanca bodas boina bolas bolsa bolso bomba bondad bonos borde bordo borra borro botas botar botes boton boxer brasa brava bravo brazo breva breve brisa broma brota brote broto bruja brujo bruma bruta bruto buena bueno bufan bufar buhos bulto buque burla burlo burra burro busca busco busto buzon
+cabal caben caber cabes cabia cable cabra cacao cacer cafes caida caido cajas cajon calan calar calas calca calco caldo caliz calla calle callo calma calmo calor calva calvo camas cambia campo canal canas canje canoa cansa canso canta cante canto capaz capas capta capto caras carga cargo carne carro carta casas casar casco casos casta casto catar catre causa cauto cavan cavar cavas cazan cazar cazas cedan cedas ceden ceder cedro cejas celda celos cenan cenar cenas censo cerca cerco cerdo ceros cesan cesar cesas cesen ceses cesta cesto chapa charco chata chato checo chica chico chile china chino choca choco choza chula chulo chupa chupo ciclo ciega ciego cieno cifra cinco cinta circo cisne cita citar citas clara claro clase clava clave clavo clima clips cloro cobre cocer coces cocia coche cocos codal codos cofre cojan cojas cogen coger coges cojin cojos colar colas colmo colon color coman comas comen comer comes comic comio comun conde conos coral coros corre corro corta corte corto cosas coser costa cotos craso crean crear creas crece creci credo creen creer crees crema crepe cria criar crias crimen cruce cruda crudo cruel cruza cruzo cuajo cuale cubas cubos cubre cubri cucos cuela cuelo cuida cuide cuido culos culpa culta culto cunde cundo cuñada cupos curan curar curas curva curvo cutis cuyo cuyos
+dados dagas daños danza dando daria datos debar deban debas deben deber debes debil decae decir decia dedos dejas dejan dejar dejen dejes delta densa denso dente deseo desde deste deuda deudo diaria dicen dices dicha dicho dicta dicto diego dieta digna digno diosa disco doble dobla doblo doce docil doler dolor domar dones donde donas dorar dorso dosis dotar drama droga dubio ducha ducho dudas duelo dueña dueño dulce dunas duran durar duras duros
+ebano echar echas echan edita edito edad edito educa educo ejes elige elijo elite ellos ellas emana emano emite emito enana enano enero enojo entra entre entro envia envio epoca equis erizo error escala espia estas estan estar esten estes estoy etica etico euros evade evado evita evito exige exijo exito extra
+falda falla fallo falsa falso falta falto fama fango farol fases fatal fauna favor fecha fecho feliz felpa feria feroz fetal fibra ficha ficho fiera fiero fijas fijan fijar fijos filas filme filma filmo filtro final finca finos firma firme firmo flaca flaco fleco floja flojo flora flota floto fluir fluyo fobia focal focos folio fondo forma forme formo forja forro fosas fotos frase frena freno fresa freir frita frito frota froto fruta fruto fuego fuera fuese fuga fugaz fugas fumar fumas fuman funda fundo furia fusil
+gafas galan ganas ganar ganan gases gasta gasto gatas gatos gemas genio gente gesto giran girar giras giros globo goles golpe goma gomas gorra gorro gotas gozan gozar grado gramo grana grano grasa grata grato grave grifo grita grito grupo gruta guapa guapo guasa guion guisa guiso gusta gusto
+habas haber habia habla hable hablo hacen hacer haces hacha hacia hagan hagas halle halla hallo hasta hayan hayas hecha hecho heces helar hemos herir heroe hielo hiena higos hijas hijos hilos himno hogar hojas hola honda hondo honra honro hongo honor horas horno hotel hoyos hueso huevo huida huido huira humos humor hurto
+icono ideal ideas idolo igual ilesa ileso imita imito impar india indio infla inflo insta insto ira irian irias islam istmo items
+jabon jadeo jamas jamon jefas jefes jerga jinet joyas joven juega juego jugos julia julio junco junta junto jurar justa justo juzga juzgo
+kilos kiwi
+labia labio lacra lados lagos laica laico lanas lanza lanzo lapiz larga largo latas laten latir laton laudo lavan lavar lavas lecho legal lejos lemas lenta lento leona lepra letal letra leves leyes libra libre libro liceo lider liga ligar ligas limar limas limbo limon linda lindo linea lino liras lista listo litro llama llame llamo llana llano llave lleno llena lleva llevo llora lloro llosa llosa llueve lobos local locas locos logra logro lomas lomos lonja lotes lucha lucho luces lucen lucir luego lugar lujos lunar lunes lupas
+madre mafia magia magos maiz malla malas males malos malta mamas mando manda manga mango mania mansa manso manta manto mapa mapas marca marco marea mares maria marra marzo masas matar matan matas mates mayor mecha media medio medir mejor melon menor menos mente merma meses metal meter metro mezcla miedo migas miles mimar minas mirar miran miras misma mismo mitad mixta mixto modas modos mojar mojas molde moles monte monta monto moral morir morro mosca motel motor mover movia mozos mucha mucho muda mudar mudas mujer mulas multa mundo mural muros musgo museo muslo
+nacer naces nacio nadan nadar nadas nadie naipe nariz natal natas naval naves necia necio negar negra negro nervio netas netos nevar nexo nicho niega niego nieta nieto nieve niñas niños nivel noble noche norma norte notas notar novel novia novio nubes nucas nudos nuera nueva nuevo nunca
+oasis obesa obeso obrar obras obvio ocaso ochos odiar odias odian odios oeste oidas oidos ojala ojera ojean ojear ojeas olear oleos olivo ollas ondas onzas opera opina opino optar orden oreja orina orino oruga osada osado osito otras otros oveja ovalo ovulo oxido
+pacto padre pagas pagan pagar pagos pajar palas palco palma palmo palos palpa palpo pampa panal panda panel paños panza papel parar paran paras parda pardo pares parir parra parte parto pasan pasar pasas paseo pasos pasta pasto patas patio patos pausa pavor payas peaje peces pecho pedir pegar pegas pegan peine peina peino pelas pelos penal penas peñas peona peral peras perla perro persa pesar pesas pesca pesco pesos peste petos piano picar picas pican picos pieza pilar pilas pilla pillo piloto pinar pinos pinta pinto pinza piñas piojo pipas pisar pisos pista pizca placa plaga plana plano plata plato playa plazo plena pleno pluma pobla poblo pobre poder podar podio poeta polar polos polvo pompa ponen poner pones poros porta porto posar poses pozo pozos prado presa preso prima primo prisa prosa prota prueba pudor pueda puede puedo pugna pulga pulir pulpo pulso punto puñal puños pura puras puros
+quema quemo queda quede quedo queja quejo queso quita quite quito quiza
+rabia racha radar radio rajar rajas ralla rallo ramas rampa ramos rango rapar rara raras raros rasca rasco rasgo raspa raspo ratas raton ratos rayar rayas rayos razon reata recae recio recta recto redes regar regia regio regla reglo reina reino rejas reloj remar remos renal renta resto resta restos retos reuma rezan rezar rezas ricos riegan riega riego riñas rifar rifas rifle rigor rimas rinde rindo risas rizar rizos roban robar robas robos rocas roces rocio rodea rodeo rogar rojas rojos rollo rombo rompe rompo ronca ronco ronda rondo ropas roque rosas rosca rotan rotar rotas rotos rubia rubio rubor rueda ruedo rugir rugio ruina ruido rulos rumba rumbo rural rusas rusos rutas
+saber sabes sabia sabio sable sacan sacar sacas sacos sacro saeta sagaz sagra salas salen salir sales salia salto salta salvo salva salud sanar sanas santo santa sanyo sapos saque sarna saten sauce secan secar secas secos secta sedas sedes segar segun selva semen senda señor señas seria serio serie setas sexos sidra siega siete sigan sigas siglo signo sigue sillas silba silbo sismo sitios situa situo sober sobre sobra sobro socia socio sodio solar solas soles solos sonar sonda soñad soñar soñas somos sopas sopla soplo sorbo sorda sordo sucia sucio sudan sudar sudas sudor suela suelo suena sueno sueño sufro sufre sumar suman sumas super supo suple surco surge surja surjo susto sutil suyas suyos
+tabla tabon tacha tacho tacos tacto tajos talar tales tallo talla talon tango tanta tanto tapas tapar tapia tapon tarde tarea tarro tasas tazas tebas techa techo tecla tejer telar telas temas temen temer temor tenga tengo tenia tenia tenue terco tersa terso tesis teson testa texto tiana tibia tibio tigre tilde timon tinta tinto tipas tipos tirar tiran tiras tiros titos tiza tizas tocad tocan tocar tocas todas todos toldo toman tomar tomas tomos tonal tonta tonto topan topar topes toque torax torpe torre torta tosco total toser traje tramo trapo trazo trece trepa trepo tribu trigo trino tripa triste trota trote troto trozo truco tumba tumbo tumor tunel turba turco turno tutel tutor tuyas tuyos
+ubica ubico untar untan untas ultra umbra unido unida unica unico unian unias unira unire urbes urdir urgente urnas usada usado usar usare usted usual utero utiles
+vacas vacia vacio vagar vagas vagos valen valer vales valle valor vamos vapor varas variar varon vasta vasto vayan vayas vedar vedas vegas velan velar velas velos vemos venas vence venzo venda vende vendo vengo venia venir venta venus veran veras verbo verde verja versa verso vetar vetas veces viaja viaje viajo vicio vidas video vieja viejo vigas vigia vigor villa vimos vinos viola violo viral virus visar vista visto vital vivan vivas viven vives vivir vivia vivos vocal voces volar volea volvi voraz votar votan votas votos vuela vuelo
+yates yegua yemas yendo yerba yerno yesca yogur yunta
+zanja zanco zorro zurda zurdo zumba zumbo zumos zueco
+`;
+function normalizeWord(w){return w.toLowerCase().replace(/ñ/g,'~').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/~/g,'ñ');}
+const WORDS={en:[...new Set(RAW_EN.trim().split(/\s+/).map(normalizeWord).filter(w=>/^[a-z]{5}$/.test(w)))],es:[...new Set(RAW_ES.trim().split(/\s+/).map(normalizeWord).filter(w=>/^[a-zñ]{5}$/.test(w)))]};
+// Keep daily answers to familiar base words; the larger lists also accept ordinary inflections.
+const ANSWER_ES=`abajo abeto abrir abono abuso acera acero actor aguja ahora ajena ajeno alamo album aldea aleta algas alias altar altas altos alzar amada amado ambas ambos amiga amigo ancha ancho andar anexo angel anima animo anual antes antro añejo aorta apoyo arado araña arbol arcos ardor arena arida arido armar arnes aroma arroz asado asilo astro atajo atico atlas atomo atril atroz audaz audio aulas autor avaro avena avion aviso ayuda ayuno azada azote babor bache bahia baile bajar balde balon balsa banal banca banco banda barba barca barco bares barra barro bases basta baten bella bello besar besos bicho biela bilis bingo boina bolas bolsa bolso bomba bonos borde borrar botas boton brasa brava bravo brazo breve brisa broma brote bruja brujo bruma bruta bruto buena bueno buhos bulto buque burla burra burro busca busto buzon cabal caben cable cabra cacao cafes caida caido cajas cajon caldo caliz calle calma calor calva calvo camas campo canal canas canje canoa canto capaz capas caras carga cargo carne carro carta casas casco casos casta casto causa cauto cazar cedro cejas celda celos cenar censo cerca cerco cerdo ceros cesar cesta cesto chapa chata chato chica chico chile china chino choza chula chulo ciclo ciega ciego cifra cinco cinta circo cisne clara claro clase clave clavo clima cloro cobre cocer coche cocos codos cofre cojin colar colas colmo colon color comer comic comun conde coral coros corte corto cosas coser costa crear credo crema cruce cruda crudo cruel cubos culpa culta culto cupos curar curva curvo cutis dados daños danza datos deber debil decir dedos dejar delta densa denso deseo desde deuda diosa disco doble docil dolor domar donde dorar dorso dosis drama droga ducha dudas duelo dueña dueño dulce dunas durar duras duros ebano echar elite enero enojo entrar envio epoca equis erizo error espia estar etica etico euros exito extra falda falla fallo falsa falso falta fango farol fases fatal fauna favor fecha feliz felpa feria feroz fetal fibra ficha fiera fiero filas filme final finca firma firme flaca flaco fleco floja flojo flora flota fluir fobia focal focos folio fondo forma forja forro fosas fotos frase freno fresa freir frita frito fruta fruto fuego fuera fugaz fumar funda furia fusil gafas galan ganar gases gasto gatos gemas genio gente gesto girar globo goles golpe gorra gorro gotas gozar grado gramo grano grasa grata grato grave grifo grito grupo gruta guapa guapo guion guiso gusto habas haber habla hacer hacha hacia hasta hecha hecho helar herir heroe hielo hiena higos hijas hijos hilos himno hogar hojas honda hondo honra hongo honor horas horno hotel hoyos hueso huevo huida humor hurto icono ideal ideas idolo igual ilesa ileso impar india indio islam istmo jabon jadeo jamas jamon jefas jefes jerga joyas joven juego jugos julio junco junta junto jurar justa justo kilos labia labio lacra lados lagos laica laico lanas lanza lapiz larga largo latas latir laton laudo lavar lecho legal lejos lemas lenta lento leona lepra letal letra leves leyes libra libre libro liceo lider limas limbo limon linda lindo linea liras lista listo litro llama llana llano llave lleno llena llora lobos local locas locos logro lomas lomos lonja lotes lucha luces lucir luego lugar lujos lunar lunes lupas madre mafia magia magos malla malas males malos malta mando manga mango mania mansa manso manta manto mapas marca marco marea mares marzo masas matar mates mayor mecha media medio medir mejor melon menor menos mente merma meses metal meter metro miedo migas miles mimar minas mirar misma mismo mitad mixta mixto modas modos mojar molde moles monte moral morir morro mosca motel motor mover mozos mucha mucho mujer mulas multa mundo mural muros musgo museo muslo nacer nadar nadie naipe nariz natal natas naval naves necia necio negar negra negro netas netos nevar nicho nieta nieto nieve niñas niños nivel noble noche norma norte notas notar novel novia novio nubes nucas nudos nuera nueva nuevo nunca oasis obesa obeso obrar obras obvio ocaso odiar odios oeste oidos ojala ojera oleos olivo ollas ondas onzas opera optar orden oreja orina oruga osada osado osito otras otros oveja ovalo ovulo oxido pacto padre pagar pagos pajar palas palco palma palmo palos pampa panal panda panel paños panza papel parar parda pardo pares parir parra parte parto pasar paseo pasos pasta pasto patas patio patos pausa pavor peaje peces pecho pedir pegar peine pelos penal penas peñas peona peral peras perla perro persa pesar pesca pesos peste petos piano picar picos pieza pilar pilas pinar pinos pinta pinza piñas piojo pipas pisar pisos pista pizca placa plaga plana plano plata plato playa plazo plena pleno pluma pobre poder podar podio poeta polar polos polvo pompa poner poros posar pozos prado presa preso prima primo prisa prosa pudor pugna pulga pulir pulpo pulso punto puñal puños puras puros quema queda queja queso quita quiza rabia racha radar radio rajar rajas ramas rampa ramos rango rapar raras raros rasgo ratas raton ratos rayar rayas rayos razon recio recta recto redes regar regia regio regla reina reino rejas reloj remar remos renal renta resto retos reuma rezar ricos riñas rifas rifle rigor rimas risas rizar rizos robar robos rocas roces rocio rodeo rogar rojas rojos rollo rombo ronca ronco ronda ropas rosas rosca rotar rotas rotos rubia rubio rubor rueda rugir ruina ruido rulos rumba rumbo rural rusas rusos rutas saber sabia sabio sable sacar sacos sacro saeta sagaz salas salir sales salto salvo salud sanar sanas santo santa sapos sarna saten sauce secar secas secos secta sedas sedes segar segun selva senda señor señas seria serio serie setas sidra siega siete siglo signo silba sismo sobre sobra socia socio sodio solar solas soles solos sonar sonda soñar somos sopas sorbo sorda sordo sucia sucio sudar sudor suela suelo sueño sumar sumas super surco susto sutil suyas suyos tabla tacha tacos tacto tajos talar tales tallo talla talon tango tanta tanto tapas tapar tapia tapon tarde tarea tarro tasas tazas techo tecla tejer telar telas temas temer temor tenue terco tersa terso tesis teson texto tibia tibio tigre tilde timon tinta tinto tipos tirar tiras tiros tizas tocar todas todos toldo tomar tomas tomos tonal tonta tonto topes toque torax torpe torre torta tosco total toser traje tramo trapo trazo trece tribu trigo trino tripa trote trozo truco tumba tumor tunel turba turco turno tutor tuyas tuyos untar ultra unido unida unica unico urbes urdir urnas usada usado usted usual utero vacas vacia vacio vagar vagas vagos valer vales valle valor vapor varas varon vasta vasto vedar vedas vegas velar velas velos venas venda venir venta venus verbo verde verja verso vetar vetas veces viaje vicio vidas video vieja viejo vigas vigia vigor villa vinos viola viral virus vista visto vital vivir vivos vocal voces volar volea voraz votar votos vuelo yates yegua yemas yerba yerno yesca yogur yunta zanja zanco zorro zurda zurdo zumba zumos zueco`.split(/\s+/).filter(w=>WORDS.es.includes(w));
+const ANSWERS={en:WORDS.en,es:[...new Set(ANSWER_ES)]};
+const SETS={es:new Set(WORDS.es),en:new Set(WORDS.en)};
+const $=id=>document.getElementById(id);
+let state={settings:{lang:L,sound:true,haptics:true},games:{}};
+let lang=L,day='',draft='',busy=false,loaded=false,modalType='',toastTimer,writeChain=Promise.resolve(),pendingWrites=0,saveRetry,externalPending=false,focusBefore;
+const DBKEY='ritmo.daily.v1';
+const storage={
+get:async()=>window.Acornix?.db?await Acornix.db.get(DBKEY):JSON.parse(localStorage.getItem(DBKEY)||'null'),
+set:async data=>{if(window.Acornix?.db)await Acornix.db.set(DBKEY,data);else localStorage.setItem(DBKEY,JSON.stringify(data));}
+};
+function t(key,params={}){let s=T[lang][key]||key;for(const k in params)s=s.replaceAll('{'+k+'}',params[k]);return s;}
+function utcDay(){return new Date().toISOString().slice(0,10);}
+function dayNum(d){return Math.floor(Date.parse(d+'T00:00:00Z')/86400000);}
+function answerFor(d,l){let n=dayNum(d),hash=2166136261;for(const c of 'ritmo-1:'+n+':'+l){hash^=c.charCodeAt(0);hash=Math.imul(hash,16777619);}return ANSWERS[l][(hash>>>0)%ANSWERS[l].length];}
+function game(){return state.games[lang+':'+day]||{day,lang,guesses:[],answer:answerFor(day,lang),finished:false,won:false};}
+function score(guess,answer){let result=Array(5).fill('gray'),remaining=answer.split('');for(let i=0;i<5;i++)if(guess[i]===answer[i]){result[i]='green';remaining[i]=null;}for(let i=0;i<5;i++)if(result[i]!=='green'){let p=remaining.indexOf(guess[i]);if(p!==-1){result[i]='yellow';remaining[p]=null;}}return result;}
+function persist(){const data=JSON.parse(JSON.stringify(state));pendingWrites++;writeChain=writeChain.catch(()=>{}).then(()=>storage.set(data)).then(()=>{clearTimeout(saveRetry);}).catch(()=>{toast(t('saveError'));clearTimeout(saveRetry);saveRetry=setTimeout(persist,3500);}).finally(()=>{pendingWrites--;});return writeChain;}
+function toast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2500);}
+function vibrate(pattern=12){if(!state.settings.haptics)return;try{if(window.Acornix?.vibrate)Acornix.vibrate(pattern);else navigator.vibrate?.(pattern);}catch(e){}}
+let audio;
+function sound(kind,i=0){
+if(!state.settings.sound)return;
+try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let now=audio.currentTime;
+let notes=kind==='win'?[523.25,659.25,783.99,1046.5]:kind==='error'?[155]:kind==='flip'?[310+i*50]:[420];
+notes.forEach((freq,j)=>{let o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.type=kind==='error'?'triangle':'sine';o.frequency.setValueAtTime(freq,now+j*.1);g.gain.setValueAtTime(0,now+j*.1);g.gain.linearRampToValueAtTime(kind==='tap'?.025:.065,now+j*.1+.008);g.gain.exponentialRampToValueAtTime(.001,now+j*.1+.15);o.start(now+j*.1);o.stop(now+j*.1+.17);});
+}catch(e){}
+}
+function stats(){
+let all=Object.values(state.games).filter(g=>g.lang===lang&&g.finished).sort((a,b)=>a.day.localeCompare(b.day));
+let wins=all.filter(g=>g.won),dist=[0,0,0,0,0,0],best=0,run=0,prev=-2;
+for(const g of all){let d=dayNum(g.day);if(g.won){run=d===prev+1?run+1:1;best=Math.max(best,run);dist[g.guesses.length-1]++;}else run=0;prev=d;}
+let last=all[all.length-1],current=last&&dayNum(day)-dayNum(last.day)<=1?run:0;
+return {played:all.length,rate:all.length?Math.round(wins.length/all.length*100):0,current,best,dist};
+}
+function localDate(){return new Intl.DateTimeFormat(lang==='es'?'es-ES':'en-US',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(day+'T12:00:00Z'));}
+function render(){
+document.documentElement.lang=lang;$('brand').textContent=t('brand');
+for(const [id,key]of [['helpBtn','help'],['statsBtn','stats'],['settingsBtn','settings'],['closeModal','close']]){$(id).setAttribute('aria-label',t(key));$(id).title=t(key);}
+$('dailyLabel').textContent=t('daily');$('dateLabel').textContent=localDate()+' · '+(lang==='es'?'ES':'EN');$('streakValue').textContent=stats().current;$('streakLabel').textContent=t('streak');$('footer').textContent=t('footer');
+let g=game();$('status').replaceChildren();let dot=document.createElement('span');dot.className='dot';$('status').append(dot,document.createTextNode(g.finished?(g.won?t('complete'):t('lostStatus')):g.guesses.length?t('attempt',{n:g.guesses.length+1}):t('play')));
+$('bottomAction').textContent=g.finished?t('viewResult'):t('help');
+renderBoard();renderKeyboard();
+}
+function renderBoard(){
+const b=$('board'),g=game();b.innerHTML='';let spoken=[];
+for(let r=0;r<6;r++){
+let word=g.guesses[r]||(r===g.guesses.length?draft:''),colors=g.guesses[r]?score(word,g.answer):null;
+for(let c=0;c<5;c++){let el=document.createElement('div');el.className='tile'+(colors?' '+colors[c]:(word[c]?' filled':''));el.textContent=(word[c]||'').toUpperCase();b.appendChild(el);}
+if(colors)spoken.push(t('row',{n:r+1})+': '+word.toUpperCase().split('').map((ch,c)=>ch+' '+t(colors[c])).join(', '));
+}
+b.setAttribute('aria-label',t('board',{n:g.guesses.length})+' '+spoken.join('. '));
+}
+function renderKeyboard(){
+let container=$('keyboard');container.innerHTML='';
+let rows=lang==='es'?['QWERTYUIOP','ASDFGHJKLÑ','↵ZXCVBNM⌫']:['QWERTYUIOP','ASDFGHJKL','↵ZXCVBNM⌫'];
+let colors={},rank={gray:1,yellow:2,green:3},g=game();
+for(const word of g.guesses){let s=score(word,g.answer);[...word].forEach((ch,i)=>{if(!colors[ch]||rank[s[i]]>rank[colors[ch]])colors[ch]=s[i];});}
+for(const row of rows){let div=document.createElement('div');div.className='key-row';for(const ch of row){let key=document.createElement('button');key.className='key'+(ch==='↵'||ch==='⌫'?' wide':'')+(colors[ch.toLowerCase()]?' '+colors[ch.toLowerCase()]:'');key.textContent=ch==='↵'?t('enter'):ch;key.setAttribute('aria-label',ch==='⌫'?t('backspace'):ch==='↵'?t('enter'):ch);key.addEventListener('click',()=>input(ch));div.appendChild(key);}container.appendChild(div);}
+}
+function input(ch){
+if(!loaded||busy||modalType)return;
+if(utcDay()!==day){newDay();return;}
+if(game().finished){showStats();return;}
+if(ch==='↵'){submit();return;}
+if(ch==='⌫'){if(draft){draft=draft.slice(0,-1);vibrate(7);renderBoard();}return;}
+ch=normalizeWord(ch);if(draft.length>=5||!(lang==='es'?/^[a-zñ]$/:/^[a-z]$/).test(ch))return;
+draft+=ch;sound('tap');vibrate(7);renderBoard();
+let tile=$('board').children[game().guesses.length*5+draft.length-1];tile?.classList.add('pop');
+}
+function invalid(key){toast(t(key));sound('error');vibrate([20,35,20]);$('board').classList.remove('shake');void $('board').offsetWidth;$('board').classList.add('shake');}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function submit(){
+if(draft.length!==5){invalid('short');return;}
+let g=game();
+if(!SETS[lang].has(draft)){invalid('unknown');return;}
+if(g.guesses.includes(draft)){invalid('already');return;}
+busy=true;const row=g.guesses.length,guess=draft;
+g.guesses.push(guess);g.won=guess===g.answer;g.finished=g.won||g.guesses.length===6;
+state.games[lang+':'+day]=g;draft='';persist();
+let colors=score(guess,g.answer),tiles=[...$('board').children].slice(row*5,row*5+5);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+await Promise.all(tiles.map(async(tile,i)=>{await sleep(reduced?0:i*115);tile.classList.remove('pop');tile.classList.add('flip');await sleep(reduced?0:255);tile.className='tile flip '+colors[i];sound('flip',i);if(colors[i]==='green')vibrate(10);await sleep(reduced?0:270);tile.classList.remove('flip');}));
+render();
+if(g.finished){
+if(g.won){sound('win');vibrate([30,65,30,65,75]);tiles=[...$('board').children].slice(row*5,row*5+5);tiles.forEach((tile,i)=>setTimeout(()=>tile.classList.add('jump'),i*65));confetti();toast(t(g.guesses.length<=2?'brilliant':g.guesses.length<=4?'great':'nice'));}
+await sleep(reduced?150:1000);busy=false;showStats();
+}else busy=false;
+if(externalPending){externalPending=false;reload();}
+}
+function confetti(){
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const container=$('confetti');container.innerHTML='';
+for(let i=0;i<46;i++){let e=document.createElement('i');e.className='confetto';e.style.left=Math.random()*100+'%';e.style.background=['#37c993','#e8b94f','#b8a0ff','#f6f5ff'][i%4];e.style.animationDelay=Math.random()*.4+'s';e.style.setProperty('--drift',(Math.random()-.5)*200+'px');container.appendChild(e);}
+setTimeout(()=>container.innerHTML='',3000);
+}
+function openModal(type,html){
+focusBefore=document.activeElement;modalType=type;$('modalContent').innerHTML=html;$('overlay').classList.add('open');$('closeModal').focus();
+}
+function closeModal(){modalType='';$('overlay').classList.remove('open');focusBefore?.focus?.();}
+function showHelp(){
+openModal('help',`<div class="badge">${t('daily')}</div><h2 id="modalTitle">${t('how')}</h2><p>${t('helpIntro')}</p><div class="example" aria-hidden="true"><span class="g">R</span><span class="y">I</span><span>T</span><span>M</span><span>O</span></div><div class="legend"><i class="swatch" style="background:var(--green)"></i>${t('correct')}</div><div class="legend"><i class="swatch" style="background:var(--yellow)"></i>${t('present')}</div><div class="legend"><i class="swatch" style="background:var(--gray)"></i>${t('absent')}</div><p>${t('helpEnd')}</p><p class="fine">${t('accents')}</p><button class="primary" id="playBtn">${t('go')}</button>`);
+$('playBtn').onclick=closeModal;
+}
+function showStats(){
+let s=stats(),g=game(),finished=g.finished;
+let title=finished?(g.won?t(g.guesses.length<=2?'brilliant':g.guesses.length<=4?'great':'nice'):t('lose')):t('yourStats');
+let max=Math.max(1,...s.dist);
+openModal('stats',`<div class="badge">${finished?(g.won?'✦ '+t('complete'):t('daily')):t('brand')}</div><h2 id="modalTitle">${title}</h2><p>${finished?(g.won?t('winSub'):t('answer',{word:g.answer.toUpperCase()})):t('noGames')}</p>
+<div class="metrics">${[[s.played,'played'],[s.rate+'%','winRate'],[s.current,'currentStreak'],[s.best,'bestStreak']].map(([v,k])=>`<div class="metric"><b>${v}</b><span>${t(k)}</span></div>`).join('')}</div>
+<div class="section-title">${t('distribution')}</div><div class="dist">${s.dist.map((n,i)=>`<div class="dist-row"><span>${i+1}</span><div class="track"><div class="bar ${g.won&&g.guesses.length===i+1?'today':''}" style="width:${Math.max(9,n/max*100)}%">${n}</div></div></div>`).join('')}</div>
+${finished?`<button class="primary" id="shareCardBtn">${t('shareCard')}</button><button class="secondary" id="shareTextBtn">${t('shareText')}</button>`:''}
+<div class="next">${t('next')}<b class="countdown"></b><span>${t('utc')}</span></div>`);
+tickCountdown();
+if(finished){$('shareCardBtn').onclick=shareCard;$('shareTextBtn').onclick=shareGrid;}
+}
+function showSettings(){
+openModal('settings',`<div class="badge">${t('brand')}</div><h2 id="modalTitle">${t('settings')}</h2>
+<div class="setting"><span>${t('language')}</span><div class="segment"><button id="langEs" class="${lang==='es'?'active':''}">${t('spanish')}</button><button id="langEn" class="${lang==='en'?'active':''}">${t('english')}</button></div></div>
+<div class="setting"><span>${t('sound')}</span><button class="toggle ${state.settings.sound?'on':''}" id="soundToggle" role="switch" aria-checked="${state.settings.sound}" aria-label="${t('sound')}"></button></div>
+<div class="setting"><span>${t('haptics')}</span><button class="toggle ${state.settings.haptics?'on':''}" id="hapticToggle" role="switch" aria-checked="${state.settings.haptics}" aria-label="${t('haptics')}"></button></div>
+<p class="fine">${t('settingsNote')}</p>`);
+$('langEs').onclick=()=>changeLanguage('es');$('langEn').onclick=()=>changeLanguage('en');
+$('soundToggle').onclick=()=>{state.settings.sound=!state.settings.sound;persist();showSettings();sound('tap');};
+$('hapticToggle').onclick=()=>{state.settings.haptics=!state.settings.haptics;persist();showSettings();vibrate();};
+}
+function changeLanguage(l){if(lang===l)return;lang=l;state.settings.lang=l;draft='';persist();render();showSettings();}
+function resultText(){
+let g=game();
+return `${t('brand')} · ${day} · ${lang.toUpperCase()}\n${g.won?g.guesses.length:'X'}/6\n\n`+g.guesses.map(w=>score(w,g.answer).map(c=>({green:'🟩',yellow:'🟨',gray:'⬛'}[c])).join('')).join('\n')+`\n\n${t('made')}`;
+}
+async function shareGrid(){
+const text=resultText();
+try{
+if(window.Acornix?.files?.share){await Acornix.files.share('ritmo-'+day+'.txt',text);}
+else if(navigator.share){await navigator.share({title:t('shareTitle'),text});}
+else showCopy(text);
+}catch(e){if(e?.name!=='AbortError'){toast(t('shareError'));showCopy(text);}}
+}
+function showCopy(text){
+openModal('copy',`<h2 id="modalTitle">${t('shareText')}</h2><p>${t('shareUnavailable')}</p><textarea id="gridText" readonly style="resize:none;width:100%;height:225px;border:1px solid #515974;border-radius:12px;padding:14px;background:#111629;color:#f6f5ff;font:14px system-ui"></textarea><button class="primary" id="copyBtn">${t('copy')}</button>`);
+$('gridText').value=text;
+$('copyBtn').onclick=async()=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{$('gridText').select();$('gridText').setSelectionRange(0,text.length);if(!document.execCommand('copy'))throw Error();}toast(t('copied'));}catch(e){$('gridText').focus();$('gridText').select();}};
+}
+function roundRect(ctx,x,y,w,h,r,fill){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();ctx.fillStyle=fill;ctx.fill();}
+function drawCard(){
+const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;let ctx=canvas.getContext('2d'),g=game(),s=stats();
+let bg=ctx.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#302647');bg.addColorStop(.5,'#151b2d');bg.addColorStop(1,'#153c3b');ctx.fillStyle=bg;ctx.fillRect(0,0,1080,1350);
+ctx.save();ctx.globalAlpha=.13;ctx.strokeStyle='#cbb9ff';ctx.lineWidth=1;
+for(let i=-1100;i<2200;i+=65){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+1350,1350);ctx.stroke();}ctx.restore();
+roundRect(ctx,68,60,944,1230,44,'#121728d9');
+ctx.textAlign='center';ctx.fillStyle='#b8a0ff';ctx.font='700 20px system-ui';ctx.fillText(t('cardTag'),540,123);
+const x=350,y=163,z=24;
+roundRect(ctx,x,y,z,z,5,'#37c993');roundRect(ctx,x+30,y,z,z,5,'#e8b94f');roundRect(ctx,x,y+30,z,z,5,'#b8a0ff');roundRect(ctx,x+30,y+30,z,z,5,'#37c993');
+ctx.textAlign='left';ctx.fillStyle='#f6f5ff';ctx.font='900 69px system-ui';ctx.fillText(t('brand'),430,217);
+ctx.textAlign='center';ctx.fillStyle='#adb6cf';ctx.font='500 23px system-ui';ctx.fillText(day+'  ·  '+lang.toUpperCase(),540,265);
+ctx.fillStyle='#f6f5ff';ctx.font='800 43px system-ui';ctx.fillText(g.won?t('cardWin'):t('cardLose'),540,338);
+const size=77,gap=13,startX=(1080-(5*size+4*gap))/2,startY=385;
+for(let r=0;r<6;r++){let colors=g.guesses[r]?score(g.guesses[r],g.answer):null;for(let c=0;c<5;c++){let fill=colors?({green:'#37c993',yellow:'#e8b94f',gray:'#444b62'}[colors[c]]):'#252c43';roundRect(ctx,startX+c*(size+gap),startY+r*(size+gap),size,size,14,fill);if(!colors){ctx.fillStyle='#5b6580';ctx.beginPath();ctx.arc(startX+c*(size+gap)+size/2,startY+r*(size+gap)+size/2,3,0,Math.PI*2);ctx.fill();}}}
+ctx.fillStyle='#f6f5ff';ctx.font='900 56px system-ui';ctx.fillText((g.won?g.guesses.length:'X')+'/6',360,1027);ctx.fillText(String(s.current),720,1027);
+ctx.fillStyle='#a5b0cd';ctx.font='700 18px system-ui';ctx.fillText(t('cardTries'),360,1065);ctx.fillText(t('cardStreak'),720,1065);
+ctx.strokeStyle='#ffffff18';ctx.beginPath();ctx.moveTo(540,980);ctx.lineTo(540,1075);ctx.stroke();
+ctx.fillStyle='#c1b0ef';ctx.font='500 23px system-ui';ctx.fillText(t('footer'),540,1156);
+ctx.fillStyle='#8091ac';ctx.font='500 20px system-ui';ctx.fillText(t('made'),540,1233);
+return canvas;
+}
+async function shareCard(){
+let btn=$('shareCardBtn');if(!btn)return;btn.disabled=true;btn.textContent=t('sharing');
+try{
+const canvas=drawCard();
+if(window.Acornix?.files?.share){await Acornix.files.share('result.png',canvas.toDataURL('image/png'));}
+else {
+let blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error()),'image/png')),file=new File([blob],'result.png',{type:'image/png'});
+if(navigator.share&&navigator.canShare?.({files:[file]}))await navigator.share({title:t('shareTitle'),text:resultText(),files:[file]});
+else if(navigator.share)await navigator.share({title:t('shareTitle'),text:resultText()});
+else{
+let a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='result.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);showCopy(resultText());
+}
+}
+}catch(e){if(e?.name!=='AbortError')toast(t('shareError'));}
+finally{if(btn.isConnected){btn.disabled=false;btn.textContent=t('shareCard');}}
+}
+function tickCountdown(){
+let now=Date.now(),seconds=Math.ceil((Math.floor(now/86400000)*86400000+86400000-now)/1000),str=[Math.floor(seconds/3600),Math.floor(seconds/60)%60,seconds%60].map(n=>String(n).padStart(2,'0')).join(':');
+document.querySelectorAll('.countdown').forEach(el=>el.textContent=str);
+}
+function newDay(){if(busy)return;day=utcDay();draft='';closeModal();render();toast(t('newDay'));}
+async function reload(){
+if(busy||pendingWrites){externalPending=true;return;}
+try{const saved=await storage.get();if(saved&&saved.games&&saved.settings){state={settings:{lang:L,sound:true,haptics:true,...saved.settings},games:saved.games};lang=state.settings.lang==='es'?'es':'en';draft='';day=utcDay();render();if(modalType==='stats')showStats();if(modalType==='settings')showSettings();if(modalType==='help')showHelp();}}catch(e){toast(t('loadError'));}
+}
+async function init(){
+try{const saved=await storage.get();if(saved?.games&&saved?.settings){state={settings:{lang:L,sound:true,haptics:true,...saved.settings},games:saved.games};lang=state.settings.lang==='es'?'es':'en';}day=utcDay();loaded=true;render();}
+catch(e){day=utcDay();render();openModal('error',`<h2 id="modalTitle">${t('loadError')}</h2><button class="primary" id="retryLoad">${t('retry')}</button>`);$('retryLoad').onclick=()=>{closeModal();init();};}
+}
+$('helpBtn').onclick=()=>{if(!busy&&loaded)showHelp();};$('statsBtn').onclick=()=>{if(!busy&&loaded)showStats();};$('settingsBtn').onclick=()=>{if(!busy&&loaded)showSettings();};
+$('bottomAction').onclick=()=>{if(!busy&&loaded)(game().finished?showStats:showHelp)();};
+$('closeModal').onclick=()=>{if(modalType!=='error')closeModal();};
+$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&modalType!=='error')closeModal();});
+document.addEventListener('keydown',e=>{
+if(modalType){
+if(e.key==='Escape'&&modalType!=='error'){e.preventDefault();closeModal();}
+if(e.key==='Tab'){const items=[...$('overlay').querySelectorAll('button,textarea,[tabindex="0"]')].filter(el=>!el.disabled);let first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}
+return;
+}
+if(e.ctrlKey||e.metaKey||e.altKey)return;
+if(e.key==='Enter'){e.preventDefault();input('↵');}
+else if(e.key==='Backspace'){e.preventDefault();input('⌫');}
+else if(/^[a-zA-ZñÑáéíóúÁÉÍÓÚ]$/.test(e.key)){e.preventDefault();input(e.key);}
+});
+window.addEventListener('acornixdata',reload);
+window.addEventListener('storage',e=>{if(e.key===DBKEY)reload();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(utcDay()!==day)newDay();else reload();}});
+setInterval(()=>{tickCountdown();if(loaded&&utcDay()!==day&&!busy)newDay();if(externalPending&&!busy&&!pendingWrites){externalPending=false;reload();}},1000);
+init();
+</script>
+</body>
+</html>
