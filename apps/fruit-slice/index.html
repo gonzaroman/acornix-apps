@@ -214,7 +214,7 @@ document.title=t('name');
 document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
 $('brand').innerHTML=t('name')+'<b>®</b>';
 $('heroTitle').innerHTML=t('hero');
-$('tagline').innerHTML=t('tagline');
+if($('tagline'))$('tagline').innerHTML=t('tagline');
 $('pauseBtn').setAttribute('aria-label',t('pause'));
 
 const soundIcon='<svg viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5z"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>';

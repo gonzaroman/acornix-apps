@@ -1,13 +1,13 @@
 {
   "id": "fruit-slice",
   "name": "Fruit Slice",
-  "emoji": "🎨",
+  "emoji": "🍓",
   "category": "games",
   "description": "Swipe to slice flying fruit, chain combos and dodge the bombs.",
   "description_i18n": {
-    "en": "Swipe to slice flying fruit, rack up combos, and dodge the bombs."
+    "es": "Desliza para cortar fruta en el aire, encadena combos y esquiva las bombas."
   },
-  "prompt": "A swipe game like Fruit Ninja: fruits fly up from the bottom, swipe to slice them with a glowing blade trail, juice splashes, combos for slicing several at once, bombs that end the game, 3 lives, arcade and zen modes. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a c",
+  "prompt": "A swipe game like Fruit Ninja: fruits fly up from the bottom, swipe to slice them with a glowing blade trail, juice splashes, combos for slicing several at once, bombs that end the game, 3 lives, arcade and zen modes. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
   "author": "gonzaroman",
   "language": "en",
   "version": 1,

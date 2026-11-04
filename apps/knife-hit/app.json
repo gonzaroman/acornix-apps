@@ -1,13 +1,13 @@
 {
   "id": "knife-hit",
   "name": "Knife Hit",
-  "emoji": "🎨",
+  "emoji": "🔪",
   "category": "games",
   "description": "Throw knives into a spinning log without hitting the others.",
   "description_i18n": {
-    "en": "Throw knives at a spinning log without hitting the other knives."
+    "es": "Lanza cuchillos a un tronco que gira sin chocar con los demás."
   },
-  "prompt": "A one-tap game like Knife Hit: throw knives into a spinning wooden log, do not hit knives already stuck in it, apples to slice for points, a boss log every 5 stages with changing rotation speed and direction, splinter particles. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result",
+  "prompt": "A one-tap game like Knife Hit: throw knives into a spinning wooden log, do not hit knives already stuck in it, apples to slice for points, a boss log every 5 stages with changing rotation speed and direction, splinter particles. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
   "author": "gonzaroman",
   "language": "en",
   "version": 1,

@@ -30,13 +30,13 @@
     {
       "id": "knife-hit",
       "name": "Knife Hit",
-      "emoji": "🎨",
+      "emoji": "🔪",
       "category": "games",
       "description": "Throw knives into a spinning log without hitting the others.",
       "description_i18n": {
-        "en": "Throw knives at a spinning log without hitting the other knives."
+        "es": "Lanza cuchillos a un tronco que gira sin chocar con los demás."
       },
-      "prompt": "A one-tap game like Knife Hit: throw knives into a spinning wooden log, do not hit knives already stuck in it, apples to slice for points, a boss log every 5 stages with changing rotation speed and direction, splinter particles. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result",
+      "prompt": "A one-tap game like Knife Hit: throw knives into a spinning wooden log, do not hit knives already stuck in it, apples to slice for points, a boss log every 5 stages with changing rotation speed and direction, splinter particles. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
       "author": "gonzaroman",
       "language": "en",
       "version": 1,
@@ -56,13 +56,13 @@
     {
       "id": "fruit-slice",
       "name": "Fruit Slice",
-      "emoji": "🎨",
+      "emoji": "🍓",
       "category": "games",
       "description": "Swipe to slice flying fruit, chain combos and dodge the bombs.",
       "description_i18n": {
-        "en": "Swipe to slice flying fruit, rack up combos, and dodge the bombs."
+        "es": "Desliza para cortar fruta en el aire, encadena combos y esquiva las bombas."
       },
-      "prompt": "A swipe game like Fruit Ninja: fruits fly up from the bottom, swipe to slice them with a glowing blade trail, juice splashes, combos for slicing several at once, bombs that end the game, 3 lives, arcade and zen modes. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a c",
+      "prompt": "A swipe game like Fruit Ninja: fruits fly up from the bottom, swipe to slice them with a glowing blade trail, juice splashes, combos for slicing several at once, bombs that end the game, 3 lives, arcade and zen modes. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
       "author": "gonzaroman",
       "language": "en",
       "version": 1,
@@ -74,23 +74,23 @@
       "files": [
         "index.html"
       ],
-      "size": 45857,
-      "sha256": "ffdc4a9ff99a3a6c47a57d0af62dcf6bfb54c4df33924420ddcba96b7f4510eb",
+      "size": 45874,
+      "sha256": "825e2f6458436857ffefa4df6f5b40fb5a020740b05eaf84cfbb7d41c3fcc6bd",
       "downloads": 0,
       "trending": 0
     },
     {
       "id": "color-dash",
       "name": "Color Dash",
-      "emoji": "🎨",
+      "emoji": "🌈",
       "category": "games",
       "description": "Tap to jump through spinning rings, only through your own color.",
       "description_i18n": {
-        "en": "Tap to jump through spinning rings—but only through your matching color!"
+        "es": "Toca para saltar a través de anillos que giran, solo por tu color."
       },
-      "prompt": "A one-tap game like Color Switch: tap to make a ball jump upward through rotating colored rings, it can only pass through the segment of its own color, color changers between obstacles, endless levels getting faster. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a ca",
+      "prompt": "A one-tap game like Color Switch: tap to make a ball jump upward through rotating colored rings, it can only pass through the segment of its own color, color changers between obstacles, endless levels getting faster. Make it addictive and viral: a daily challenge, streak or progress that brings people back every day, very satisfying animations, haptics with Acornix.vibrate and sounds made with Web Audio, records saved with Acornix.db, and a Share button that draws a beautiful result card on a canvas with the result, the app name and a small footer Made with Acornix, then shares it with Acornix.files.share and the file name result.png. Polished, colorful, premium design.",
       "author": "gonzaroman",
-      "language": "es",
+      "language": "en",
       "version": 1,
       "added": "2026-11-04",
       "updated": "2026-11-04",
