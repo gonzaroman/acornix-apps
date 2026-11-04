@@ -35,6 +35,8 @@ DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 TAGS = {
     "ai": re.compile(r"\baskAI\b|\bai\.chat\b"),
     "phone": re.compile(r"id=\"acornix-recipe\"|Acornix\.(speak|flashlight|notify|battery|deviceInfo|listApps|openApp|alarm|timer|call|sms|whatsapp|maps|launchApp|volume|ringer|doNotDisturb|brightness|keepAwake|media|calendar|clipboard|done)\b"),
+    # Shortcuts make the phone do things (alarms, volume, messages, apps…), not just speak or vibrate.
+    "shortcut": re.compile(r"id=\"acornix-recipe\"|Acornix\.(done|alarm|timer|volume|ringer|doNotDisturb|brightness|media|whatsapp|sms|call|launchApp|maps|calendar|youtube)\b"),
     "camera": re.compile(r"getUserMedia\s*\(\s*\{[^}]*video|\bcapture\s*=|facingMode"),
     "microphone": re.compile(r"getUserMedia\s*\(\s*\{[^}]*audio|SpeechRecognition"),
     # Loading scripts or modules from the web, or fetching from a web address, even when the address is kept
