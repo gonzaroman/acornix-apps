@@ -2,6 +2,32 @@
   "version": 1,
   "apps": [
     {
+      "id": "merge-drop",
+      "name": "Merge Drop",
+      "emoji": "🎮",
+      "category": "games",
+      "description": "Drop fruits, merge equal ones into bigger ones and do not let the jar overflow.",
+      "description_i18n": {
+        "en": "Drop fruits, merge matching ones into bigger fruits, and don’t let the jar overflow."
+      },
+      "prompt": "A fruit merging physics game like Suika: drop fruits i",
+      "author": "gonzaroman",
+      "language": "en",
+      "version": 1,
+      "added": "2026-11-04",
+      "updated": "2026-11-04",
+      "featured": false,
+      "official": true,
+      "tags": [],
+      "files": [
+        "index.html"
+      ],
+      "size": 41335,
+      "sha256": "ff67f280c00c2ea30923ae476bfd1d771810d290d7ad74015557f0b2de44c664",
+      "downloads": 0,
+      "trending": 0
+    },
+    {
       "id": "star-finder-ar",
       "name": "Star Finder AR",
       "emoji": "🔭",
