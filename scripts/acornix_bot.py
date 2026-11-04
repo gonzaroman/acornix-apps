@@ -166,6 +166,29 @@ def sha256(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+COPY_SIMILARITY = 0.85
+
+
+def code_lines(code):
+    """The code's lines without indentation or blank lines, so reformatting doesn't hide a copy."""
+    return [line.strip() for line in code.splitlines() if line.strip()]
+
+
+def copy_of(code, author):
+    """The gallery app by someone else whose index.html this code is (nearly) the same as, or None."""
+    import difflib
+    mine = code_lines(code)
+    for index in sorted((ROOT / "apps").glob("*/index.html")):
+        meta = existing(index.parent.name)
+        if not meta or meta.get("author", "").lower() == author.lower():
+            continue
+        theirs = code_lines(index.read_text(encoding="utf-8"))
+        matcher = difflib.SequenceMatcher(None, mine, theirs, autojunk=False)
+        if matcher.real_quick_ratio() >= COPY_SIMILARITY and matcher.quick_ratio() >= COPY_SIMILARITY and matcher.ratio() >= COPY_SIMILARITY:
+            return meta
+    return None
+
+
 def existing(app_id):
     path = ROOT / "apps" / app_id / "app.json"
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None

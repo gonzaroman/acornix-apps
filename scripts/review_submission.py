@@ -13,7 +13,7 @@ import sys
 import anthropic
 
 from acornix_bot import (
-    Rejected, close, comment, event, existing, fetch_gist, github, parse_submission,
+    Rejected, close, comment, copy_of, event, existing, fetch_gist, github, parse_submission,
     repo, set_labels, sha256, split_files,
 )
 import build_catalog
@@ -149,6 +149,10 @@ def main():
         current = existing(sub["id"])
         if current and current["author"].lower() != author.lower():
             raise Rejected(f"There's already an app called \"{current['name']}\" by @{current['author']} with this id. Rename yours and send it again.")
+        original = copy_of(app["index.html"], author)
+        if original:
+            raise Rejected(f"This is the same app as \"{original['name']}\" by @{original['author']}, which is already in the gallery. "
+                           "To share your own take on it, tap **Make your version** in Acornix, change it with your AI and publish that.")
     except Rejected as e:
         reject(number, str(e))
         return
