@@ -608,7 +608,7 @@
     "neon-drone-race": {
       "asset": 688546887,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "neon-kaleidoscope": {
       "asset": 688546915,
@@ -943,7 +943,7 @@
     "star-finder-ar": {
       "asset": 690496600,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "stock-counter": {
       "asset": 689236298,
@@ -2587,7 +2587,7 @@
       "morse-code": 0,
       "music-mode": 0,
       "neon-drift-3d": 3,
-      "neon-drone-race": 3,
+      "neon-drone-race": 4,
       "neon-kaleidoscope": 3,
       "neon-snake": 6,
       "net-worth": 1,
@@ -2654,7 +2654,7 @@
       "split-bill": 1,
       "stack-tower-3d": 3,
       "star-defender": 5,
-      "star-finder-ar": 1,
+      "star-finder-ar": 2,
       "stock-counter": 1,
       "stop-motion": 0,
       "subscriptions": 1,
