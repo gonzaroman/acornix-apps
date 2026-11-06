@@ -683,7 +683,7 @@
     "periodic-table": {
       "asset": 689343842,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "photo-booth": {
       "asset": 690386565,
@@ -2836,7 +2836,7 @@
       "pantry": 0,
       "pattern-maker": 0,
       "perfect-egg": 0,
-      "periodic-table": 4,
+      "periodic-table": 5,
       "photo-booth": 1,
       "photo-coach": 0,
       "photo-filters": 0,
