@@ -43,7 +43,7 @@
     "battery-info": {
       "asset": 689141947,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "bedtime-mode": {
       "asset": 710090617,
@@ -683,12 +683,12 @@
     "periodic-table": {
       "asset": 689343842,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "photo-booth": {
       "asset": 690386565,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "photo-coach": {
       "asset": 690284919,
@@ -713,7 +713,7 @@
     "piano": {
       "asset": 688546992,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "pill-tracker": {
       "asset": 689415752,
@@ -803,7 +803,7 @@
     "reef-aquarium": {
       "asset": 688547079,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "returns-tracker": {
       "asset": 691576783,
@@ -978,7 +978,7 @@
     "synth-pad": {
       "asset": 689917533,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "synthwave-lights": {
       "asset": 710091030,
@@ -2708,7 +2708,7 @@
       "avatar-maker": 1,
       "baby-piano": 0,
       "battery-check": 0,
-      "battery-info": 3,
+      "battery-info": 4,
       "bedtime-mode": 0,
       "bedtime-stories": 0,
       "before-and-after": 0,
@@ -2836,13 +2836,13 @@
       "pantry": 0,
       "pattern-maker": 0,
       "perfect-egg": 0,
-      "periodic-table": 3,
-      "photo-booth": 0,
+      "periodic-table": 4,
+      "photo-booth": 1,
       "photo-coach": 0,
       "photo-filters": 0,
       "photo-palette": 0,
       "phrasebook": 0,
-      "piano": 2,
+      "piano": 3,
       "pill-tracker": 1,
       "pitch-writer-ai": 1,
       "pixel-art": 0,
@@ -2860,7 +2860,7 @@
       "random-picker": 2,
       "receipt-scanner-ai": 3,
       "recipe-box": 0,
-      "reef-aquarium": 3,
+      "reef-aquarium": 4,
       "returns-tracker": 0,
       "road-trip-games": 0,
       "roman-numerals": 0,
@@ -2895,7 +2895,7 @@
       "sudoku": 2,
       "sun-and-moon": 1,
       "symbols": 0,
-      "synth-pad": 0,
+      "synth-pad": 1,
       "synthwave-lights": 0,
       "tactics-board": 0,
       "task-breaker-ai": 2,
