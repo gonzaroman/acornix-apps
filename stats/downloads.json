@@ -568,7 +568,7 @@
     "merge-2048": {
       "asset": 688998694,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "merge-drop": {
       "asset": 708914987,
@@ -3047,7 +3047,7 @@
       "meme-maker": 0,
       "memory-match": 4,
       "menu-translator": 0,
-      "merge-2048": 1,
+      "merge-2048": 2,
       "merge-drop": 0,
       "metronome": 0,
       "minesweeper": 1,
