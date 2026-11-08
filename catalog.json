@@ -709,7 +709,7 @@
       "size": 21038,
       "sha256": "4891097900b0776e5d9678f867d036ceada067409b68ce79b41144cc6eb6b7b6",
       "downloads": 2,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "wish-list",
@@ -2054,7 +2054,7 @@
       "size": 24429,
       "sha256": "1a0604865ef658a2bf0834556ed13666e781ef9764a501c42767cc362ec93cfb",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "coffee-ratio",
@@ -2158,7 +2158,7 @@
       "size": 21920,
       "sha256": "aa8e6a1dfaf1dffd4314ff6d62a45c9eda51e3327b8aafe305c95c2a23e842d2",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "birthdays",
@@ -2516,7 +2516,7 @@
       "size": 15682,
       "sha256": "53c87b03a1d99cb1c5b9a84b6bb2b96a6d2a7f3779e24dd075d04543135d6d55",
       "downloads": 3,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "guitar-chords",
@@ -2596,7 +2596,7 @@
       "size": 24794,
       "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
       "downloads": 6,
-      "trending": 4
+      "trending": 3
     },
     {
       "id": "breathing",
@@ -3214,7 +3214,7 @@
       "size": 12239,
       "sha256": "ba4e0d7d0cdbe71e15fcfd0432440c815d53ca3278bff09d39626f3beea128d1",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "team-picker",
@@ -3560,7 +3560,7 @@
       "size": 14360,
       "sha256": "f10d1cbb14ef5334b87dd09240c204546a8b50d5b786007f2d2894e158245c43",
       "downloads": 6,
-      "trending": 3
+      "trending": 1
     },
     {
       "id": "split-bill",
@@ -3750,7 +3750,7 @@
       "size": 10371,
       "sha256": "cfbfaae621006353a60fb00eed708ae250cf88ca5679469ea189e8cadd05b614",
       "downloads": 8,
-      "trending": 4
+      "trending": 3
     },
     {
       "id": "listing-writer-ai",
@@ -4883,7 +4883,7 @@
       "size": 15978,
       "sha256": "d6a9df0386f111d3de07c04615c2e3873946d7f547e3a7372441a2a267f29cea",
       "downloads": 7,
-      "trending": 4
+      "trending": 3
     },
     {
       "id": "homework-helper-ai",
@@ -5390,7 +5390,7 @@
       "size": 13125,
       "sha256": "873de3f8cf9c22ad1442cdc31de89bbcd5d66b229ccde69ee514d70ab9f708c1",
       "downloads": 3,
-      "trending": 3
+      "trending": 1
     },
     {
       "id": "daily-journal",
@@ -5444,7 +5444,7 @@
       "size": 7205,
       "sha256": "ac9a25bc786f7d2b76a7b4000bd26740cd747a26301aecc6d95c6363147a4b52",
       "downloads": 4,
-      "trending": 3
+      "trending": 0
     },
     {
       "id": "country-facts",
@@ -5736,7 +5736,7 @@
       "size": 12704,
       "sha256": "decec9c9fe5df459fecff424309e3b3b439e51113852ebb454bee45db059065a",
       "downloads": 8,
-      "trending": 4
+      "trending": 3
     },
     {
       "id": "break-even",
@@ -5842,7 +5842,7 @@
       "size": 7279,
       "sha256": "8856c2e3704fb9d73c507c1bb54616f7c2f7517b96e9163ca3f5ca1022467ba9",
       "downloads": 4,
-      "trending": 3
+      "trending": 2
     },
     {
       "id": "ambient-sounds",
@@ -5896,7 +5896,7 @@
       "size": 43434,
       "sha256": "bf896f1f3f321123fa24a809bcd3c88327b1df39b196f3bf220c0a647dc1a55f",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "merge-2048",
@@ -6108,7 +6108,7 @@
       "size": 43995,
       "sha256": "5cafc3b54bed5793458b147e7446ddd1dd7c5617bb3ef1eef4f21d671048e060",
       "downloads": 5,
-      "trending": 3
+      "trending": 2
     },
     {
       "id": "piano",
@@ -6186,7 +6186,7 @@
       "size": 24672,
       "sha256": "5d5c82a0e2c46c9e589a4c9abedbab43683cdd83f3271c743bb4237baabd0391",
       "downloads": 2,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "calculator",
@@ -6238,7 +6238,7 @@
       "size": 21036,
       "sha256": "5fb37beb36bd019b6b4a6774f3eec65901349a3817cfe13f2d68586b53512b81",
       "downloads": 5,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "bmi",
