@@ -18,12 +18,12 @@
     "ambient-sounds": {
       "asset": 689917783,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "ar-space": {
       "asset": 690496690,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "avatar-maker": {
       "asset": 690472594,
@@ -43,7 +43,7 @@
     "battery-info": {
       "asset": 689141947,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "bedtime-mode": {
       "asset": 710090617,
@@ -68,7 +68,7 @@
     "block-drop": {
       "asset": 689038867,
       "base": 1,
-      "count": 4
+      "count": 5
     },
     "bmi": {
       "asset": 688546680,
@@ -93,7 +93,7 @@
     "brick-breaker": {
       "asset": 688998917,
       "base": 0,
-      "count": 9
+      "count": 10
     },
     "bubble-level": {
       "asset": 689141729,
@@ -373,7 +373,7 @@
     "generative-art": {
       "asset": 690472696,
       "base": 0,
-      "count": 6
+      "count": 7
     },
     "gift-ideas": {
       "asset": 690544318,
@@ -433,7 +433,7 @@
     "hoop-shot-3d": {
       "asset": 689103893,
       "base": 0,
-      "count": 8
+      "count": 9
     },
     "im-home": {
       "asset": 710090836,
@@ -453,7 +453,7 @@
     "kalimba": {
       "asset": 689917563,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "kanban": {
       "asset": 689166735,
@@ -603,7 +603,7 @@
     "neon-drift-3d": {
       "asset": 689103848,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "neon-drone-race": {
       "asset": 688546887,
@@ -618,7 +618,7 @@
     "neon-snake": {
       "asset": 688998655,
       "base": 0,
-      "count": 6
+      "count": 7
     },
     "net-worth": {
       "asset": 689202407,
@@ -713,7 +713,7 @@
     "piano": {
       "asset": 688546992,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "pill-tracker": {
       "asset": 689415752,
@@ -803,7 +803,7 @@
     "reef-aquarium": {
       "asset": 688547079,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "returns-tracker": {
       "asset": 691576783,
@@ -863,7 +863,7 @@
     "should-i-buy-it": {
       "asset": 691576817,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "size-converter": {
       "asset": 691576550,
@@ -903,7 +903,7 @@
     "solar-system": {
       "asset": 689343994,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "solitaire": {
       "asset": 688999041,
@@ -933,7 +933,7 @@
     "stack-tower-3d": {
       "asset": 689103786,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "star-defender": {
       "asset": 688999087,
@@ -1038,12 +1038,12 @@
     "tone-matrix": {
       "asset": 689917631,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "torch-sos": {
       "asset": 689141648,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "tournament": {
       "asset": 689454807,
@@ -3405,22 +3405,22 @@
       "abc-animals": 1,
       "affirmations": 1,
       "air-quality": 1,
-      "ambient-sounds": 1,
-      "ar-space": 2,
+      "ambient-sounds": 2,
+      "ar-space": 3,
       "avatar-maker": 1,
       "baby-piano": 0,
       "battery-check": 0,
-      "battery-info": 4,
+      "battery-info": 5,
       "bedtime-mode": 0,
       "bedtime-stories": 0,
       "before-and-after": 0,
       "birthdays": 0,
-      "block-drop": 5,
+      "block-drop": 6,
       "bmi": 3,
       "bowling": 5,
       "break-even": 1,
       "breathing": 1,
-      "brick-breaker": 9,
+      "brick-breaker": 10,
       "bubble-level": 5,
       "bubble-pop": 1,
       "bucket-list": 0,
@@ -3476,7 +3476,7 @@
       "fridge-chef": 0,
       "fruit-slice": 0,
       "fuel-cost": 0,
-      "generative-art": 6,
+      "generative-art": 7,
       "gift-ideas": 0,
       "goals": 2,
       "golf-scorecard": 0,
@@ -3488,11 +3488,11 @@
       "habit-streaks": 2,
       "hiit-timer": 1,
       "homework-helper-ai": 0,
-      "hoop-shot-3d": 8,
+      "hoop-shot-3d": 9,
       "im-home": 0,
       "invoice-maker": 1,
       "itinerary": 0,
-      "kalimba": 0,
+      "kalimba": 1,
       "kanban": 1,
       "kids-paint": 1,
       "kitchen-converter": 0,
@@ -3522,10 +3522,10 @@
       "mood-journal": 0,
       "morse-code": 1,
       "music-mode": 0,
-      "neon-drift-3d": 3,
+      "neon-drift-3d": 4,
       "neon-drone-race": 5,
       "neon-kaleidoscope": 4,
-      "neon-snake": 6,
+      "neon-snake": 7,
       "net-worth": 1,
       "night-mode": 1,
       "noise-meter": 5,
@@ -3544,7 +3544,7 @@
       "photo-filters": 0,
       "photo-palette": 0,
       "phrasebook": 0,
-      "piano": 4,
+      "piano": 5,
       "pill-tracker": 1,
       "pitch-writer-ai": 1,
       "pixel-art": 1,
@@ -3562,7 +3562,7 @@
       "random-picker": 2,
       "receipt-scanner-ai": 3,
       "recipe-box": 0,
-      "reef-aquarium": 4,
+      "reef-aquarium": 5,
       "returns-tracker": 0,
       "road-trip-games": 0,
       "roman-numerals": 0,
@@ -3574,7 +3574,7 @@
       "scoreboard": 0,
       "shapes-and-colors": 0,
       "shopping-list": 0,
-      "should-i-buy-it": 0,
+      "should-i-buy-it": 1,
       "size-converter": 0,
       "sketchbook": 0,
       "sky-hopper": 8,
@@ -3582,13 +3582,13 @@
       "slide-puzzle": 0,
       "snap-ideas-ai": 3,
       "snap-translate-ai": 1,
-      "solar-system": 3,
+      "solar-system": 4,
       "solitaire": 1,
       "sos-location": 1,
       "spelling-bee": 0,
       "spirograph": 1,
       "split-bill": 1,
-      "stack-tower-3d": 3,
+      "stack-tower-3d": 4,
       "star-defender": 6,
       "star-finder-ar": 3,
       "stock-counter": 1,
@@ -3609,8 +3609,8 @@
       "timer-stopwatch": 1,
       "times-tables": 1,
       "tipping-guide": 0,
-      "tone-matrix": 0,
-      "torch-sos": 2,
+      "tone-matrix": 1,
+      "torch-sos": 3,
       "tournament": 0,
       "training-plan-ai": 0,
       "trip-budget": 0,
