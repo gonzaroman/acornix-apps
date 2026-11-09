@@ -2595,8 +2595,8 @@
       ],
       "size": 24794,
       "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
-      "downloads": 6,
-      "trending": 3
+      "downloads": 7,
+      "trending": 4
     },
     {
       "id": "breathing",
@@ -2621,8 +2621,8 @@
       ],
       "size": 9066,
       "sha256": "3c721b22d1d67c8e567694f8bd88c4fad45e289f840e90019a365bb1f85f3671",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "would-you-rather",
