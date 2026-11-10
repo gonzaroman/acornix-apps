@@ -68,7 +68,7 @@
     "block-drop": {
       "asset": 689038867,
       "base": 1,
-      "count": 5
+      "count": 6
     },
     "bmi": {
       "asset": 688546680,
@@ -93,7 +93,7 @@
     "brick-breaker": {
       "asset": 688998917,
       "base": 0,
-      "count": 10
+      "count": 11
     },
     "bubble-level": {
       "asset": 689141729,
@@ -3649,12 +3649,12 @@
       "bedtime-stories": 0,
       "before-and-after": 0,
       "birthdays": 0,
-      "block-drop": 6,
+      "block-drop": 7,
       "bmi": 3,
       "bowling": 5,
       "break-even": 1,
       "breathing": 1,
-      "brick-breaker": 10,
+      "brick-breaker": 11,
       "bubble-level": 5,
       "bubble-pop": 1,
       "bucket-list": 0,
