@@ -18,12 +18,12 @@
     "ambient-sounds": {
       "asset": 689917783,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "ar-space": {
       "asset": 690496690,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "avatar-maker": {
       "asset": 690472594,
@@ -233,7 +233,7 @@
     "darts-501": {
       "asset": 689455034,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "date-calculator": {
       "asset": 689379107,
@@ -248,7 +248,7 @@
     "decision-wheel": {
       "asset": 689038579,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "desk-stretches": {
       "asset": 689415663,
@@ -268,7 +268,7 @@
     "drawing-stories": {
       "asset": 691575896,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "drink-water": {
       "asset": 710090715,
@@ -373,7 +373,7 @@
     "generative-art": {
       "asset": 690472696,
       "base": 0,
-      "count": 7
+      "count": 8
     },
     "gift-ideas": {
       "asset": 690544318,
@@ -433,7 +433,7 @@
     "hoop-shot-3d": {
       "asset": 689103893,
       "base": 0,
-      "count": 9
+      "count": 10
     },
     "im-home": {
       "asset": 710090836,
@@ -608,7 +608,7 @@
     "neon-drone-race": {
       "asset": 688546887,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "neon-kaleidoscope": {
       "asset": 688546915,
@@ -638,7 +638,7 @@
     "notes": {
       "asset": 688546959,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "number-bases": {
       "asset": 689379143,
@@ -803,7 +803,7 @@
     "reef-aquarium": {
       "asset": 688547079,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "returns-tracker": {
       "asset": 691576783,
@@ -933,12 +933,12 @@
     "stack-tower-3d": {
       "asset": 689103786,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "star-defender": {
       "asset": 688999087,
       "base": 0,
-      "count": 6
+      "count": 7
     },
     "star-finder-ar": {
       "asset": 690496600,
@@ -953,7 +953,7 @@
     "stop-motion": {
       "asset": 690386725,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "subscriptions": {
       "asset": 689202312,
@@ -3873,8 +3873,8 @@
       "abc-animals": 1,
       "affirmations": 1,
       "air-quality": 1,
-      "ambient-sounds": 2,
-      "ar-space": 3,
+      "ambient-sounds": 3,
+      "ar-space": 4,
       "avatar-maker": 1,
       "baby-piano": 0,
       "battery-check": 0,
@@ -3916,14 +3916,14 @@
       "currency-converter": 4,
       "daily-journal": 1,
       "daily-word": 0,
-      "darts-501": 3,
+      "darts-501": 4,
       "date-calculator": 0,
       "debt-payoff": 1,
-      "decision-wheel": 2,
+      "decision-wheel": 3,
       "desk-stretches": 0,
       "discount-calculator": 0,
       "dragon-quest-ai": 1,
-      "drawing-stories": 0,
+      "drawing-stories": 1,
       "drink-water": 1,
       "drinks": 0,
       "driving-mode": 0,
@@ -3944,7 +3944,7 @@
       "fridge-chef": 0,
       "fruit-slice": 0,
       "fuel-cost": 0,
-      "generative-art": 7,
+      "generative-art": 8,
       "gift-ideas": 0,
       "goals": 2,
       "golf-scorecard": 0,
@@ -3956,7 +3956,7 @@
       "habit-streaks": 2,
       "hiit-timer": 1,
       "homework-helper-ai": 0,
-      "hoop-shot-3d": 9,
+      "hoop-shot-3d": 10,
       "im-home": 0,
       "invoice-maker": 1,
       "itinerary": 0,
@@ -3991,13 +3991,13 @@
       "morse-code": 1,
       "music-mode": 0,
       "neon-drift-3d": 4,
-      "neon-drone-race": 5,
+      "neon-drone-race": 6,
       "neon-kaleidoscope": 4,
       "neon-snake": 7,
       "net-worth": 1,
       "night-mode": 1,
       "noise-meter": 5,
-      "notes": 5,
+      "notes": 6,
       "number-bases": 0,
       "outfit-advisor": 1,
       "pace-calculator": 0,
@@ -4030,7 +4030,7 @@
       "random-picker": 2,
       "receipt-scanner-ai": 3,
       "recipe-box": 0,
-      "reef-aquarium": 5,
+      "reef-aquarium": 6,
       "returns-tracker": 0,
       "road-trip-games": 0,
       "roman-numerals": 0,
@@ -4056,11 +4056,11 @@
       "spelling-bee": 0,
       "spirograph": 1,
       "split-bill": 1,
-      "stack-tower-3d": 4,
-      "star-defender": 6,
+      "stack-tower-3d": 5,
+      "star-defender": 7,
       "star-finder-ar": 3,
       "stock-counter": 1,
-      "stop-motion": 0,
+      "stop-motion": 1,
       "subscriptions": 1,
       "sudoku": 2,
       "sun-and-moon": 1,
