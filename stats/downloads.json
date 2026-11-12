@@ -983,7 +983,7 @@
     "synthwave-lights": {
       "asset": 710091030,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "tactics-board": {
       "asset": 690386781,
@@ -4300,7 +4300,7 @@
       "sun-and-moon": 1,
       "symbols": 0,
       "synth-pad": 1,
-      "synthwave-lights": 0,
+      "synthwave-lights": 1,
       "tactics-board": 0,
       "task-breaker-ai": 2,
       "tasks": 1,
