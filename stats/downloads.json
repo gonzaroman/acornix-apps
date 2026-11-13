@@ -78,7 +78,7 @@
     "bowling": {
       "asset": 688546710,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "break-even": {
       "asset": 689236127,
@@ -4353,7 +4353,7 @@
       "birthdays": 0,
       "block-drop": 7,
       "bmi": 3,
-      "bowling": 5,
+      "bowling": 6,
       "break-even": 1,
       "breathing": 1,
       "brick-breaker": 11,
