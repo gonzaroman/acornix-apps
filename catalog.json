@@ -3560,7 +3560,7 @@
       "size": 14360,
       "sha256": "f10d1cbb14ef5334b87dd09240c204546a8b50d5b786007f2d2894e158245c43",
       "downloads": 7,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "split-bill",
@@ -4300,8 +4300,8 @@
       ],
       "size": 9270,
       "sha256": "10851f5f426f495d5d64226789a8e3b54b04af9939bc974a838a6ec833eab557",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "photo-booth",
@@ -4937,8 +4937,8 @@
       ],
       "size": 9761,
       "sha256": "8c5bb02099a815a96a6d0ce2b60e1dae25e58ffd87bed8af5a99db441384a2a1",
-      "downloads": 2,
-      "trending": 0
+      "downloads": 3,
+      "trending": 1
     },
     {
       "id": "hiit-timer",
@@ -5175,8 +5175,8 @@
       ],
       "size": 13833,
       "sha256": "90b307b93509ddb0958ca10a8d89b173f46d60db0818e4ea2e8359aff10fd5b2",
-      "downloads": 1,
-      "trending": 0
+      "downloads": 2,
+      "trending": 1
     },
     {
       "id": "emoji-movies",
@@ -5922,7 +5922,7 @@
       "size": 10020,
       "sha256": "f388ec364d7be9b372e64c6dda88e76320d54eb6d3eb5030d8abf8855c62c138",
       "downloads": 2,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "twenty-questions-ai",
@@ -6108,7 +6108,7 @@
       "size": 43995,
       "sha256": "5cafc3b54bed5793458b147e7446ddd1dd7c5617bb3ef1eef4f21d671048e060",
       "downloads": 6,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "piano",
