@@ -709,7 +709,7 @@
       "size": 21038,
       "sha256": "4891097900b0776e5d9678f867d036ceada067409b68ce79b41144cc6eb6b7b6",
       "downloads": 4,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "wish-list",
@@ -1001,7 +1001,7 @@
       "size": 25420,
       "sha256": "ecaa7fdaed1ffc0b9ca21e27f8091cd14830734aa837b5cdfd2f5e88b4f592ff",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "shopping-list",
@@ -1814,7 +1814,7 @@
       "size": 8804,
       "sha256": "1c2ca09d5f966db98d45b7cda7ce7d9ac29e7dc5dc5f6ba840f3d4233548f01d",
       "downloads": 9,
-      "trending": 3
+      "trending": 2
     },
     {
       "id": "fuel-cost",
@@ -2407,7 +2407,7 @@
       "size": 11385,
       "sha256": "72a8123355b9b98d586e8a3befe6e7d0cad63105181ba4013748863b40e50e35",
       "downloads": 5,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "solar-system",
@@ -2433,7 +2433,7 @@
       "size": 12191,
       "sha256": "ebc64668cf4f3dc02ed3e3ccd3d0e2f86ca7c29795a83c7b16e83df83bb7f955",
       "downloads": 4,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "plate-check-ai",
@@ -2516,7 +2516,7 @@
       "size": 15682,
       "sha256": "53c87b03a1d99cb1c5b9a84b6bb2b96a6d2a7f3779e24dd075d04543135d6d55",
       "downloads": 4,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "guitar-chords",
@@ -2596,7 +2596,7 @@
       "size": 24794,
       "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
       "downloads": 7,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "breathing",
@@ -2622,7 +2622,7 @@
       "size": 9066,
       "sha256": "3c721b22d1d67c8e567694f8bd88c4fad45e289f840e90019a365bb1f85f3671",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "would-you-rather",
@@ -3082,7 +3082,7 @@
       "size": 5665,
       "sha256": "34bbda2a76882b081f51ffacbc34ae2c81ce3519e07a8cd489fe8261b3de13ec",
       "downloads": 3,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "tone-matrix",
@@ -3108,7 +3108,7 @@
       "size": 8874,
       "sha256": "3bf873a35d7b22f91c9a693689ddbe455566110494b375103ce6e05825383174",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "times-tables",
@@ -4461,7 +4461,7 @@
       "size": 13125,
       "sha256": "054196f4842d27207bb3f854fe1849435bc80c37f5e5493fe8de9aeb4cb769e6",
       "downloads": 7,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "morse-code",
@@ -4829,7 +4829,7 @@
       "size": 8880,
       "sha256": "9d543af2c376f13716a0db0b0aadb4e2d5662be124d097dc5205f3cea8bb6a3a",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "invoice-maker",
@@ -4883,7 +4883,7 @@
       "size": 15978,
       "sha256": "d6a9df0386f111d3de07c04615c2e3873946d7f547e3a7372441a2a267f29cea",
       "downloads": 10,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "homework-helper-ai",
@@ -5736,7 +5736,7 @@
       "size": 12704,
       "sha256": "decec9c9fe5df459fecff424309e3b3b439e51113852ebb454bee45db059065a",
       "downloads": 12,
-      "trending": 3
+      "trending": 2
     },
     {
       "id": "break-even",
@@ -5788,7 +5788,7 @@
       "size": 16183,
       "sha256": "26056a5995f5927daaef0341639d6cfca9f367ce4cdec92157360737f16c8d40",
       "downloads": 7,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "before-and-after",
@@ -5842,7 +5842,7 @@
       "size": 7279,
       "sha256": "8856c2e3704fb9d73c507c1bb54616f7c2f7517b96e9163ca3f5ca1022467ba9",
       "downloads": 5,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "ambient-sounds",
@@ -5868,7 +5868,7 @@
       "size": 10406,
       "sha256": "c11939eb7dcb61b6069268a85cac6051410e22abadf3ba9ccfda8213f5ac8e42",
       "downloads": 3,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "air-quality",
@@ -5978,7 +5978,7 @@
       "size": 39085,
       "sha256": "0937f19cd4edf57ea23c70a0782ec698cccf3fcb8d13b4881463ec6b48ebe040",
       "downloads": 6,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "pocket-coach",
@@ -6134,7 +6134,7 @@
       "size": 17868,
       "sha256": "df5c8b94080bdeb74bfc0ed76fd89a76a07f5901479c8c03c522a381e6d244e9",
       "downloads": 5,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "drummer",
@@ -6263,8 +6263,8 @@
       ],
       "size": 16997,
       "sha256": "2d51ad0205cba2a9454f2ffc95de8d34271c2d4f1d30d15581891d0480b2a3e8",
-      "downloads": 3,
-      "trending": 0
+      "downloads": 4,
+      "trending": 1
     }
   ]
 }
