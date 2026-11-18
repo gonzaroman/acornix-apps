@@ -1813,8 +1813,8 @@
       ],
       "size": 8804,
       "sha256": "1c2ca09d5f966db98d45b7cda7ce7d9ac29e7dc5dc5f6ba840f3d4233548f01d",
-      "downloads": 9,
-      "trending": 1
+      "downloads": 10,
+      "trending": 2
     },
     {
       "id": "fuel-cost",
@@ -1923,8 +1923,8 @@
       ],
       "size": 28820,
       "sha256": "ac6a0688eef11297ca77289df45515e07f4994aa92468060a07e117ec93b2594",
-      "downloads": 1,
-      "trending": 0
+      "downloads": 2,
+      "trending": 1
     },
     {
       "id": "discount-calculator",
@@ -2487,8 +2487,8 @@
       ],
       "size": 11177,
       "sha256": "ff2c45fb1f28b8d270782ac0dbc134af14565c45d17b0429ecdf8597b8550c1e",
-      "downloads": 6,
-      "trending": 0
+      "downloads": 7,
+      "trending": 1
     },
     {
       "id": "neon-drift-3d",
@@ -3965,8 +3965,8 @@
       ],
       "size": 9522,
       "sha256": "80dd0955470a113fee5835c85cd2a6ff464de4ee8284013fb3245bdb7580359a",
-      "downloads": 3,
-      "trending": 0
+      "downloads": 4,
+      "trending": 1
     },
     {
       "id": "random-picker",
@@ -4408,8 +4408,8 @@
       ],
       "size": 6777,
       "sha256": "57168949a21c183895ab4ff1dfd8930a28e71f9b549834625e7a0cc53c5b132b",
-      "downloads": 5,
-      "trending": 0
+      "downloads": 6,
+      "trending": 1
     },
     {
       "id": "net-worth",

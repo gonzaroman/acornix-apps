@@ -268,7 +268,7 @@
     "drawing-stories": {
       "asset": 691575896,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "drink-water": {
       "asset": 710090715,
@@ -373,7 +373,7 @@
     "generative-art": {
       "asset": 690472696,
       "base": 0,
-      "count": 9
+      "count": 10
     },
     "gift-ideas": {
       "asset": 690544318,
@@ -633,7 +633,7 @@
     "noise-meter": {
       "asset": 689141839,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "notes": {
       "asset": 688546959,
@@ -683,7 +683,7 @@
     "periodic-table": {
       "asset": 689343842,
       "base": 0,
-      "count": 6
+      "count": 7
     },
     "photo-booth": {
       "asset": 690386565,
@@ -793,7 +793,7 @@
     "receipt-scanner-ai": {
       "asset": 690386837,
       "base": 2,
-      "count": 1
+      "count": 2
     },
     "recipe-box": {
       "asset": 690593998,
@@ -5561,7 +5561,7 @@
       "desk-stretches": 0,
       "discount-calculator": 0,
       "dragon-quest-ai": 1,
-      "drawing-stories": 1,
+      "drawing-stories": 2,
       "drink-water": 1,
       "drinks": 0,
       "driving-mode": 0,
@@ -5582,7 +5582,7 @@
       "fridge-chef": 0,
       "fruit-slice": 0,
       "fuel-cost": 0,
-      "generative-art": 9,
+      "generative-art": 10,
       "gift-ideas": 0,
       "goals": 2,
       "golf-scorecard": 0,
@@ -5634,7 +5634,7 @@
       "neon-snake": 7,
       "net-worth": 1,
       "night-mode": 1,
-      "noise-meter": 5,
+      "noise-meter": 6,
       "notes": 6,
       "number-bases": 0,
       "outfit-advisor": 1,
@@ -5644,7 +5644,7 @@
       "pantry": 0,
       "pattern-maker": 0,
       "perfect-egg": 0,
-      "periodic-table": 6,
+      "periodic-table": 7,
       "photo-booth": 1,
       "photo-coach": 1,
       "photo-filters": 0,
@@ -5666,7 +5666,7 @@
       "pushup-counter": 1,
       "quiz-me-ai": 0,
       "random-picker": 2,
-      "receipt-scanner-ai": 3,
+      "receipt-scanner-ai": 4,
       "recipe-box": 0,
       "reef-aquarium": 6,
       "returns-tracker": 0,
