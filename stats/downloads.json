@@ -23,7 +23,7 @@
     "ar-space": {
       "asset": 690496690,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "avatar-maker": {
       "asset": 690472594,
@@ -43,7 +43,7 @@
     "battery-info": {
       "asset": 689141947,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "bedtime-mode": {
       "asset": 710090617,
@@ -243,7 +243,7 @@
     "debt-payoff": {
       "asset": 689202462,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "decision-wheel": {
       "asset": 689038579,
@@ -263,7 +263,7 @@
     "dragon-quest-ai": {
       "asset": 689038801,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "drawing-stories": {
       "asset": 691575896,
@@ -358,7 +358,7 @@
     "fridge-chef": {
       "asset": 690594569,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "fruit-slice": {
       "asset": 708981111,
@@ -398,12 +398,12 @@
     "gradient-maker": {
       "asset": 690472245,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "gratitude-jar": {
       "asset": 690544052,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "grocery-budget": {
       "asset": 691576662,
@@ -413,7 +413,7 @@
     "guitar-chords": {
       "asset": 689917501,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "habit-streaks": {
       "asset": 689166708,
@@ -433,7 +433,7 @@
     "hoop-shot-3d": {
       "asset": 689103893,
       "base": 0,
-      "count": 11
+      "count": 12
     },
     "im-home": {
       "asset": 710090836,
@@ -443,7 +443,7 @@
     "invoice-maker": {
       "asset": 689236040,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "itinerary": {
       "asset": 691332083,
@@ -453,7 +453,7 @@
     "kalimba": {
       "asset": 689917563,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "kanban": {
       "asset": 689166735,
@@ -558,7 +558,7 @@
     "memory-match": {
       "asset": 688998975,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "menu-translator": {
       "asset": 691332317,
@@ -603,7 +603,7 @@
     "neon-drift-3d": {
       "asset": 689103848,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "neon-drone-race": {
       "asset": 688546887,
@@ -688,7 +688,7 @@
     "photo-booth": {
       "asset": 690386565,
       "base": 0,
-      "count": 1
+      "count": 3
     },
     "photo-coach": {
       "asset": 690284919,
@@ -753,12 +753,12 @@
     "plate-check-ai": {
       "asset": 689415628,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "pocket-coach": {
       "asset": 688547043,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "pocket-dictionary-ai": {
       "asset": 689379273,
@@ -803,7 +803,7 @@
     "reef-aquarium": {
       "asset": 688547079,
       "base": 0,
-      "count": 6
+      "count": 7
     },
     "returns-tracker": {
       "asset": 691576783,
@@ -893,7 +893,7 @@
     "snap-ideas-ai": {
       "asset": 688998611,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "snap-translate-ai": {
       "asset": 689141875,
@@ -903,7 +903,7 @@
     "solar-system": {
       "asset": 689343994,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "solitaire": {
       "asset": 688999041,
@@ -943,7 +943,7 @@
     "star-finder-ar": {
       "asset": 690496600,
       "base": 0,
-      "count": 3
+      "count": 4
     },
     "stock-counter": {
       "asset": 689236298,
@@ -953,7 +953,7 @@
     "stop-motion": {
       "asset": 690386725,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "subscriptions": {
       "asset": 689202312,
@@ -968,7 +968,7 @@
     "sun-and-moon": {
       "asset": 689363174,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "symbols": {
       "asset": 689379225,
@@ -1043,7 +1043,7 @@
     "torch-sos": {
       "asset": 689141648,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "tournament": {
       "asset": 689454807,
@@ -1063,7 +1063,7 @@
     "trip-planner": {
       "asset": 691332425,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "trivia-night": {
       "asset": 689038412,
@@ -1113,7 +1113,7 @@
     "weather-now": {
       "asset": 689299939,
       "base": 0,
-      "count": 4
+      "count": 5
     },
     "weather-out-loud": {
       "asset": 710091089,
@@ -1128,7 +1128,7 @@
     "what-is-this-ai": {
       "asset": 689379056,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "what-to-wear": {
       "asset": 689395635,
@@ -1158,7 +1158,7 @@
     "would-you-rather": {
       "asset": 689038460,
       "base": 0,
-      "count": 1
+      "count": 2
     }
   },
   "history": {
@@ -6214,11 +6214,11 @@
       "affirmations": 1,
       "air-quality": 2,
       "ambient-sounds": 3,
-      "ar-space": 5,
+      "ar-space": 6,
       "avatar-maker": 1,
       "baby-piano": 0,
       "battery-check": 0,
-      "battery-info": 5,
+      "battery-info": 6,
       "bedtime-mode": 0,
       "bedtime-stories": 0,
       "before-and-after": 0,
@@ -6258,11 +6258,11 @@
       "daily-word": 0,
       "darts-501": 4,
       "date-calculator": 0,
-      "debt-payoff": 1,
+      "debt-payoff": 2,
       "decision-wheel": 3,
       "desk-stretches": 0,
       "discount-calculator": 0,
-      "dragon-quest-ai": 1,
+      "dragon-quest-ai": 2,
       "drawing-stories": 3,
       "drink-water": 1,
       "drinks": 0,
@@ -6281,7 +6281,7 @@
       "focus-timer": 1,
       "fortune-cookie": 1,
       "freelance-rate": 1,
-      "fridge-chef": 0,
+      "fridge-chef": 1,
       "fruit-slice": 0,
       "fuel-cost": 0,
       "generative-art": 10,
@@ -6289,18 +6289,18 @@
       "goals": 2,
       "golf-scorecard": 0,
       "good-morning": 0,
-      "gradient-maker": 1,
-      "gratitude-jar": 1,
+      "gradient-maker": 2,
+      "gratitude-jar": 2,
       "grocery-budget": 0,
-      "guitar-chords": 0,
+      "guitar-chords": 1,
       "habit-streaks": 3,
       "hiit-timer": 1,
       "homework-helper-ai": 0,
-      "hoop-shot-3d": 11,
+      "hoop-shot-3d": 12,
       "im-home": 0,
-      "invoice-maker": 1,
+      "invoice-maker": 2,
       "itinerary": 0,
-      "kalimba": 1,
+      "kalimba": 2,
       "kanban": 1,
       "kids-paint": 1,
       "kitchen-converter": 0,
@@ -6321,7 +6321,7 @@
       "meal-planner": 0,
       "meditation": 0,
       "meme-maker": 0,
-      "memory-match": 5,
+      "memory-match": 6,
       "menu-translator": 0,
       "merge-2048": 2,
       "merge-drop": 0,
@@ -6330,7 +6330,7 @@
       "mood-journal": 1,
       "morse-code": 1,
       "music-mode": 0,
-      "neon-drift-3d": 4,
+      "neon-drift-3d": 5,
       "neon-drone-race": 6,
       "neon-kaleidoscope": 5,
       "neon-snake": 8,
@@ -6347,7 +6347,7 @@
       "pattern-maker": 0,
       "perfect-egg": 0,
       "periodic-table": 7,
-      "photo-booth": 1,
+      "photo-booth": 3,
       "photo-coach": 1,
       "photo-filters": 0,
       "photo-palette": 0,
@@ -6360,8 +6360,8 @@
       "pixel-photo": 0,
       "pizza-dough": 0,
       "plant-care": 0,
-      "plate-check-ai": 0,
-      "pocket-coach": 1,
+      "plate-check-ai": 1,
+      "pocket-coach": 2,
       "pocket-dictionary-ai": 5,
       "pollen": 0,
       "price-tracker": 0,
@@ -6370,7 +6370,7 @@
       "random-picker": 2,
       "receipt-scanner-ai": 4,
       "recipe-box": 0,
-      "reef-aquarium": 6,
+      "reef-aquarium": 7,
       "returns-tracker": 0,
       "road-trip-games": 0,
       "roman-numerals": 0,
@@ -6388,9 +6388,9 @@
       "sky-hopper": 9,
       "sleep-log": 0,
       "slide-puzzle": 0,
-      "snap-ideas-ai": 3,
+      "snap-ideas-ai": 4,
       "snap-translate-ai": 1,
-      "solar-system": 4,
+      "solar-system": 5,
       "solitaire": 1,
       "sos-location": 1,
       "spelling-bee": 0,
@@ -6398,12 +6398,12 @@
       "split-bill": 1,
       "stack-tower-3d": 5,
       "star-defender": 7,
-      "star-finder-ar": 3,
+      "star-finder-ar": 4,
       "stock-counter": 1,
-      "stop-motion": 1,
+      "stop-motion": 2,
       "subscriptions": 1,
       "sudoku": 2,
-      "sun-and-moon": 1,
+      "sun-and-moon": 2,
       "symbols": 0,
       "synth-pad": 1,
       "synthwave-lights": 1,
@@ -6418,11 +6418,11 @@
       "times-tables": 1,
       "tipping-guide": 0,
       "tone-matrix": 1,
-      "torch-sos": 4,
+      "torch-sos": 5,
       "tournament": 0,
       "training-plan-ai": 0,
       "trip-budget": 0,
-      "trip-planner": 1,
+      "trip-planner": 2,
       "trivia-night": 1,
       "truth-or-dare": 1,
       "tuner": 0,
@@ -6432,16 +6432,16 @@
       "uv-index": 0,
       "voice-countdown": 0,
       "water-tracker": 0,
-      "weather-now": 4,
+      "weather-now": 5,
       "weather-out-loud": 0,
       "weight-tracker": 1,
-      "what-is-this-ai": 0,
+      "what-is-this-ai": 1,
       "what-to-wear": 0,
       "will-it-rain": 0,
       "wind-and-waves": 0,
       "wish-list": 0,
       "world-clock": 0,
-      "would-you-rather": 1
+      "would-you-rather": 2
     }
   }
 }
