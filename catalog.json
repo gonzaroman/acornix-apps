@@ -2837,8 +2837,8 @@
       ],
       "size": 35586,
       "sha256": "4fdd87b5c829801775367384fd34a5eff410e9f6e1c048e05574132de175b995",
-      "downloads": 3,
-      "trending": 0
+      "downloads": 4,
+      "trending": 1
     },
     {
       "id": "water-tracker",
@@ -4301,7 +4301,7 @@
       "size": 9270,
       "sha256": "10851f5f426f495d5d64226789a8e3b54b04af9939bc974a838a6ec833eab557",
       "downloads": 1,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "photo-booth",
@@ -4938,7 +4938,7 @@
       "size": 9761,
       "sha256": "8c5bb02099a815a96a6d0ce2b60e1dae25e58ffd87bed8af5a99db441384a2a1",
       "downloads": 3,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "hiit-timer",
@@ -5176,7 +5176,7 @@
       "size": 13833,
       "sha256": "90b307b93509ddb0958ca10a8d89b173f46d60db0818e4ea2e8359aff10fd5b2",
       "downloads": 2,
-      "trending": 1
+      "trending": 0
     },
     {
       "id": "emoji-movies",
