@@ -27,8 +27,8 @@
       ],
       "size": 25296,
       "sha256": "b111118cdca61c4fd2f001c22bec276233f1093bf965520b22a802441f684461",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "synthwave-lights",
@@ -230,8 +230,8 @@
       ],
       "size": 24675,
       "sha256": "07f04d2076cdf6988ac9f8c9e8be957b41188e328853c99a2d4eaf1fe44d13a9",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "running-late",
@@ -288,8 +288,8 @@
       ],
       "size": 24323,
       "sha256": "080428f30dece3f971622dbec2cd4591b4ca204ff6ee38d02012a0562868384a",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 2,
+      "trending": 2
     },
     {
       "id": "merge-drop",
@@ -1814,7 +1814,7 @@
       "size": 8804,
       "sha256": "1c2ca09d5f966db98d45b7cda7ce7d9ac29e7dc5dc5f6ba840f3d4233548f01d",
       "downloads": 10,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "fuel-cost",
@@ -5736,7 +5736,7 @@
       "size": 12704,
       "sha256": "decec9c9fe5df459fecff424309e3b3b439e51113852ebb454bee45db059065a",
       "downloads": 13,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "break-even",
