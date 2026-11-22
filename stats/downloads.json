@@ -93,7 +93,7 @@
     "brick-breaker": {
       "asset": 688998917,
       "base": 0,
-      "count": 13
+      "count": 14
     },
     "bubble-level": {
       "asset": 689141729,
@@ -6462,7 +6462,7 @@
       "bowling": 6,
       "break-even": 1,
       "breathing": 1,
-      "brick-breaker": 13,
+      "brick-breaker": 14,
       "bubble-level": 6,
       "bubble-pop": 1,
       "bucket-list": 0,
