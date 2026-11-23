@@ -38,7 +38,7 @@
     "battery-check": {
       "asset": 710090589,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "battery-info": {
       "asset": 689141947,
@@ -143,7 +143,7 @@
     "castle-siege-3d": {
       "asset": 689103921,
       "base": 0,
-      "count": 8
+      "count": 9
     },
     "charades": {
       "asset": 689038539,
@@ -6685,7 +6685,7 @@
       "ar-space": 6,
       "avatar-maker": 1,
       "baby-piano": 0,
-      "battery-check": 0,
+      "battery-check": 1,
       "battery-info": 6,
       "bedtime-mode": 1,
       "bedtime-stories": 0,
@@ -6706,7 +6706,7 @@
       "caption-writer": 0,
       "car-mode": 0,
       "castle-defense": 2,
-      "castle-siege-3d": 8,
+      "castle-siege-3d": 9,
       "charades": 3,
       "chore-wheel": 1,
       "cinema-mode": 0,

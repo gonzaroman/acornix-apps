@@ -456,8 +456,8 @@
       ],
       "size": 24559,
       "sha256": "7c663e8253ef99fc027f104cdc5ced70ff8f170e7350f08aea610753e8a89a36",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "good-morning",
@@ -2595,8 +2595,8 @@
       ],
       "size": 24794,
       "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
-      "downloads": 8,
-      "trending": 1
+      "downloads": 9,
+      "trending": 2
     },
     {
       "id": "breathing",
