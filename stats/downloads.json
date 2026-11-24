@@ -208,7 +208,7 @@
     "countries-visited": {
       "asset": 691332142,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "country-facts": {
       "asset": 689379179,
@@ -483,7 +483,7 @@
     "label-reader": {
       "asset": 691576717,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "lap-timer": {
       "asset": 689455123,
@@ -513,7 +513,7 @@
     "logo-maker": {
       "asset": 690472452,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "lyrics-writer-ai": {
       "asset": 689917662,
@@ -1063,7 +1063,7 @@
     "trip-planner": {
       "asset": 691332425,
       "base": 0,
-      "count": 2
+      "count": 3
     },
     "trivia-night": {
       "asset": 689038412,
@@ -6953,7 +6953,7 @@
       "contrast-checker": 0,
       "cooking-timer": 0,
       "count-and-tap": 0,
-      "countries-visited": 0,
+      "countries-visited": 1,
       "country-facts": 0,
       "currency-converter": 4,
       "daily-journal": 1,
@@ -7008,13 +7008,13 @@
       "kitchen-converter": 0,
       "kitchen-timers": 1,
       "knife-hit": 1,
-      "label-reader": 0,
+      "label-reader": 1,
       "lap-timer": 0,
       "light-alarm": 0,
       "listing-writer-ai": 2,
       "live-markets": 1,
       "loan-calculator": 1,
-      "logo-maker": 0,
+      "logo-maker": 1,
       "lyrics-writer-ai": 0,
       "magic-8-ball": 1,
       "magnifier": 1,
@@ -7124,7 +7124,7 @@
       "tournament": 0,
       "training-plan-ai": 0,
       "trip-budget": 0,
-      "trip-planner": 2,
+      "trip-planner": 3,
       "trivia-night": 1,
       "truth-or-dare": 1,
       "tuner": 1,

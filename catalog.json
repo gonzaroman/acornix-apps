@@ -788,8 +788,8 @@
       ],
       "size": 10807,
       "sha256": "62cb39daefdef0bc10627c9b53a6a9220442b6ccd5663dfb5e6d83ca9dc7eb8b",
-      "downloads": 2,
-      "trending": 1
+      "downloads": 3,
+      "trending": 2
     },
     {
       "id": "trip-budget",
@@ -1546,8 +1546,8 @@
       ],
       "size": 13137,
       "sha256": "18c7639096350f4a33fb8a00dec6488908122c639a3b86d10dba496d81181cda",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "label-reader",
@@ -1575,8 +1575,8 @@
       ],
       "size": 31244,
       "sha256": "4be5b45375814b388c52b3653f37893ad926ccb7739be69a0b86124e9f5eb55e",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "kitchen-timers",
@@ -1975,8 +1975,8 @@
       ],
       "size": 13328,
       "sha256": "e97bb51a6dc184ba37e53949c5846b70b42a03a353d1a8e5ddd967c62293714d",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "count-and-tap",
