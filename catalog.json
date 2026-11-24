@@ -143,8 +143,8 @@
       ],
       "size": 26385,
       "sha256": "96dea76a366e1c0589a6cc3c7c9a891c2164169e0443607ab7ad1fdaf12bc141",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "driving-mode",
@@ -650,8 +650,8 @@
       ],
       "size": 24259,
       "sha256": "9da2fddb89bdb1118c9d8be70be3f8f1b6321f002fef4ca2f45d1976e518349b",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "star-finder-ar",
@@ -2515,8 +2515,8 @@
       ],
       "size": 15682,
       "sha256": "53c87b03a1d99cb1c5b9a84b6bb2b96a6d2a7f3779e24dd075d04543135d6d55",
-      "downloads": 5,
-      "trending": 1
+      "downloads": 6,
+      "trending": 2
     },
     {
       "id": "guitar-chords",
@@ -2541,8 +2541,8 @@
       ],
       "size": 12097,
       "sha256": "0c4fc3869954a96cc5fa0f86a953fa49e89854c454f9162fd7fc3a7501045a4e",
-      "downloads": 1,
-      "trending": 1
+      "downloads": 2,
+      "trending": 2
     },
     {
       "id": "first-aid",
@@ -2596,7 +2596,7 @@
       "size": 24794,
       "sha256": "4c68742efd44c2463e216f8b66c593d98f4cf1df3b0eaf11b30d95bbda95aa92",
       "downloads": 9,
-      "trending": 2
+      "trending": 1
     },
     {
       "id": "breathing",
@@ -2947,8 +2947,8 @@
       ],
       "size": 10634,
       "sha256": "e562877b8c9b5209bd27449f26c5e6b6a8dabeba150e47d47758dea4eec28572",
-      "downloads": 0,
-      "trending": 0
+      "downloads": 1,
+      "trending": 1
     },
     {
       "id": "truth-or-dare",
@@ -4566,8 +4566,8 @@
       ],
       "size": 10613,
       "sha256": "2b27bf5f7cd2fefd118058db69e37b0f8515c2962ef810e50f3c11e04cb7d575",
-      "downloads": 6,
-      "trending": 2
+      "downloads": 7,
+      "trending": 3
     },
     {
       "id": "meme-maker",
@@ -5309,8 +5309,8 @@
       ],
       "size": 11121,
       "sha256": "9a83096cc2149f484d0aef5ec51949035f98da866279bfdcf214f476e08e3387",
-      "downloads": 3,
-      "trending": 0
+      "downloads": 4,
+      "trending": 1
     },
     {
       "id": "debt-payoff",
@@ -5841,8 +5841,8 @@
       ],
       "size": 7279,
       "sha256": "8856c2e3704fb9d73c507c1bb54616f7c2f7517b96e9163ca3f5ca1022467ba9",
-      "downloads": 6,
-      "trending": 1
+      "downloads": 7,
+      "trending": 2
     },
     {
       "id": "ambient-sounds",
@@ -6081,8 +6081,8 @@
       ],
       "size": 26946,
       "sha256": "c1a050895a9537a20646aa8be94e5395e1899603174f0cffa3a122e6659cb5f8",
-      "downloads": 5,
-      "trending": 1
+      "downloads": 6,
+      "trending": 2
     },
     {
       "id": "neon-drone-race",
