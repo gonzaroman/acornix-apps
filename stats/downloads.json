@@ -628,7 +628,7 @@
     "night-mode": {
       "asset": 710090959,
       "base": 0,
-      "count": 1
+      "count": 2
     },
     "noise-meter": {
       "asset": 689141839,
@@ -683,7 +683,7 @@
     "periodic-table": {
       "asset": 689343842,
       "base": 0,
-      "count": 7
+      "count": 8
     },
     "photo-booth": {
       "asset": 690386565,
@@ -7271,7 +7271,7 @@
       "neon-kaleidoscope": 6,
       "neon-snake": 8,
       "net-worth": 1,
-      "night-mode": 1,
+      "night-mode": 2,
       "noise-meter": 6,
       "notes": 6,
       "number-bases": 0,
@@ -7282,7 +7282,7 @@
       "pantry": 0,
       "pattern-maker": 0,
       "perfect-egg": 0,
-      "periodic-table": 7,
+      "periodic-table": 8,
       "photo-booth": 3,
       "photo-coach": 1,
       "photo-filters": 0,
