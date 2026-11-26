@@ -143,7 +143,7 @@
     "castle-siege-3d": {
       "asset": 689103921,
       "base": 0,
-      "count": 9
+      "count": 10
     },
     "charades": {
       "asset": 689038539,
@@ -603,7 +603,7 @@
     "neon-drift-3d": {
       "asset": 689103848,
       "base": 0,
-      "count": 7
+      "count": 8
     },
     "neon-drone-race": {
       "asset": 688546887,
@@ -7408,7 +7408,7 @@
       "caption-writer": 0,
       "car-mode": 1,
       "castle-defense": 2,
-      "castle-siege-3d": 9,
+      "castle-siege-3d": 10,
       "charades": 3,
       "chore-wheel": 1,
       "cinema-mode": 1,
@@ -7500,7 +7500,7 @@
       "mood-journal": 1,
       "morse-code": 1,
       "music-mode": 2,
-      "neon-drift-3d": 7,
+      "neon-drift-3d": 8,
       "neon-drone-race": 6,
       "neon-kaleidoscope": 6,
       "neon-snake": 8,
