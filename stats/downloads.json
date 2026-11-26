@@ -553,7 +553,7 @@
     "meme-maker": {
       "asset": 690386469,
       "base": 0,
-      "count": 0
+      "count": 1
     },
     "memory-match": {
       "asset": 688998975,
@@ -713,7 +713,7 @@
     "piano": {
       "asset": 688546992,
       "base": 0,
-      "count": 5
+      "count": 6
     },
     "pill-tracker": {
       "asset": 689415752,
@@ -7490,7 +7490,7 @@
       "math-sprint": 0,
       "meal-planner": 0,
       "meditation": 0,
-      "meme-maker": 0,
+      "meme-maker": 1,
       "memory-match": 7,
       "menu-translator": 0,
       "merge-2048": 2,
@@ -7522,7 +7522,7 @@
       "photo-filters": 0,
       "photo-palette": 0,
       "phrasebook": 0,
-      "piano": 5,
+      "piano": 6,
       "pill-tracker": 1,
       "pitch-writer-ai": 1,
       "pixel-art": 1,
