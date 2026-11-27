@@ -43,7 +43,7 @@
     "battery-info": {
       "asset": 689141947,
       "base": 0,
-      "count": 8
+      "count": 9
     },
     "bedtime-mode": {
       "asset": 710090617,
@@ -603,7 +603,7 @@
     "neon-drift-3d": {
       "asset": 689103848,
       "base": 0,
-      "count": 8
+      "count": 9
     },
     "neon-drone-race": {
       "asset": 688546887,
@@ -7622,7 +7622,7 @@
       "avatar-maker": 1,
       "baby-piano": 0,
       "battery-check": 1,
-      "battery-info": 8,
+      "battery-info": 9,
       "bedtime-mode": 1,
       "bedtime-stories": 0,
       "before-and-after": 0,
@@ -7734,7 +7734,7 @@
       "mood-journal": 1,
       "morse-code": 1,
       "music-mode": 2,
-      "neon-drift-3d": 8,
+      "neon-drift-3d": 9,
       "neon-drone-race": 6,
       "neon-kaleidoscope": 6,
       "neon-snake": 8,
